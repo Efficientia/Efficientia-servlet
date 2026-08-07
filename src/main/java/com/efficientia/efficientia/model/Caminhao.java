@@ -39,8 +39,9 @@ public class Caminhao {
         return placaCarreta;
     }
 
-    //Placa carreta nao é alterável no sistemas
+    //Placa carreta nao é alterável no sistema
 
+    //Definir funcionamento de placa cavalo depois
     public String getPlacaCavalo() {
         return placaCavalo;
     }
