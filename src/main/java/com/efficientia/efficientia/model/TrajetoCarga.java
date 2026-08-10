@@ -16,6 +16,9 @@ public class TrajetoCarga {
         this.quantidade = quantidade;
     }
 
+    public TrajetoCarga() {
+    }
+
     public int getId() {
         return id;
     }

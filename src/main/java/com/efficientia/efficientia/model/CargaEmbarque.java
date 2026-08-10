@@ -13,6 +13,9 @@ public class CargaEmbarque {
         this.tipo = tipo;
     }
 
+    public CargaEmbarque() {
+    }
+
     public int getId() {
         return id;
     }

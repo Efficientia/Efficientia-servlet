@@ -13,6 +13,9 @@ public class InfoEmbarque {
         this.id = id;
     }
 
+    public InfoEmbarque() {
+    }
+
     public int getId() {
         return id;
     }
