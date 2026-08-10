@@ -8,7 +8,7 @@ public class ParadaImprevista {
     private Trajeto trajeto; //Classe que reune as informações do documento
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
-    private String motivo; //Penso em fazer isso firar um arquivo txt
+    private String motivo; //Penso em fazer isso virar um arquivo txt
 
     public ParadaImprevista(int id,
                             Trajeto trajeto,
