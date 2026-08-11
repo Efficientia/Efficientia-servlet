@@ -33,6 +33,9 @@ public class InfoDesembarque {
         this.assinaturaMotorista = motorista.getAssinatura();
     }
 
+    public InfoDesembarque() {
+    }
+
     public int getId() {
         return id;
     }
