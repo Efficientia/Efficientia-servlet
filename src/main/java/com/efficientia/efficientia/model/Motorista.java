@@ -26,6 +26,10 @@ public class Motorista {
         this.senha = senha;
         this.email = email;
         this.telefone = telefone;
+
+        if(telefone.length() > 11){
+            this.telefone = "nulo";
+        }
     }
 
     public Motorista() {
