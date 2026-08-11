@@ -29,11 +29,6 @@ public class Caminhao {
         return capacidadeMaxima;
     }
 
-    public void setCapacidadeMaxima(int capacidadeMaxima) {
-        this.capacidadeMaxima = capacidadeMaxima;
-    }
-
-    //Capacidade maxima inalterável
 
     public String getPlacaCarreta() {
         return placaCarreta;
@@ -46,7 +41,5 @@ public class Caminhao {
         return placaCavalo;
     }
 
-    public void setPlacaCavalo(String placaCavalo) {
-        this.placaCavalo = placaCavalo;
-    }
+
 }

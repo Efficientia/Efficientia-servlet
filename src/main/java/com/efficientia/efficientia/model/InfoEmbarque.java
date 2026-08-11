@@ -29,5 +29,5 @@ public class InfoEmbarque {
     }
 
 
-    //Não possui setters por nao ter nada mutável
+    //Não possui setters por nao ter nada mutável, mas dar uma olhada
 }

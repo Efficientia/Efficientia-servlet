@@ -72,5 +72,6 @@ public class InfoDesembarque {
         return assinaturaMotorista;
     }
 }
+//adicionar setters onde for necessario
 
 

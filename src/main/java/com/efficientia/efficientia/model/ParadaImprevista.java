@@ -47,17 +47,10 @@ public class ParadaImprevista {
         return dataHoraFim;
     }
 
-    public void setDataHoraFim(LocalDateTime dataHoraFim) {
-        this.dataHoraFim = dataHoraFim;
-    }
-
     public String getMotivo() {
         return motivo;
     }
 
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
-    }
 
-
+    //Adicionar setters
 }
