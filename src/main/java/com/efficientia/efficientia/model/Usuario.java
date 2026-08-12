@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class Usuario {
+public abstract class Usuario {
     private String nome;
     private String assinatura; //Virar hash
     private LocalDate dataNascimento;
