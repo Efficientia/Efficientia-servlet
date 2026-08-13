@@ -3,35 +3,35 @@ package com.efficientia.efficientia.model;
 import java.time.LocalDate;
 
 public abstract class Usuario {
+    private int id;
     private String nome;
     private String assinatura; //Virar hash
     private LocalDate dataNascimento;
     private String senha; //Hash
     private String email;
     private String telefone;
-    private String codigo; //codigo na empresa
 
-    public Usuario(String codigo,
-                   String telefone,
-                   String email,
-                   String senha,
-                   LocalDate dataNascimento,
+    public Usuario(int id,
+                   String nome,
                    String assinatura,
-                   String nome) {
-        this.codigo = codigo;
-        this.telefone = telefone;
-        this.email = email;
-        this.senha = senha;
-        this.dataNascimento = dataNascimento;
-        this.assinatura = assinatura;
+                   LocalDate dataNascimento,
+                   String senha,
+                   String email,
+                   String telefone) {
+        this.id = id;
         this.nome = nome;
-
-        if(telefone.length() > 11){
-            this.telefone = "nulo";
-        }
+        this.assinatura = assinatura;
+        this.dataNascimento = dataNascimento;
+        this.senha = senha;
+        this.email = email;
+        this.telefone = telefone;
     }
 
     public Usuario() {
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNome() {
@@ -58,9 +58,23 @@ public abstract class Usuario {
         return telefone;
     }
 
-    public String getCodigo() {
-        return codigo;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    //adicionar setters
+    public void setAssinatura(String assinatura) {
+        this.assinatura = assinatura;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

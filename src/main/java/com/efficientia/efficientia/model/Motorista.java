@@ -4,14 +4,14 @@ import java.time.LocalDate;
 
 public class Motorista extends Usuario{
 
-    public Motorista(String codigo,
-                     String telefone,
-                     String email,
-                     String senha,
-                     LocalDate dataNascimento,
+    public Motorista(int id,
+                     String nome,
                      String assinatura,
-                     String nome) {
-        super(codigo, telefone, email, senha, dataNascimento, assinatura, nome);
+                     LocalDate dataNascimento,
+                     String senha,
+                     String email,
+                     String telefone) {
+        super(id, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
     public Motorista() {
