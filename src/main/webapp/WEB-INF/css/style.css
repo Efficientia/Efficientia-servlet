@@ -1,0 +1,610 @@
+/* ==========================================================================
+   1. RESET & GLOBAIS
+   ========================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2, h3 {
+    font-family: 'Manrope', sans-serif;
+}
+
+h1, h2 {
+    font-size: 48px;
+    font-style: normal;
+    line-height: normal;
+}
+
+p, a, span {
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.destaque {
+    color: #56D867;
+}
+
+/* ==========================================================================
+   2. ESTRUTURA GERAL & COMPONENTES REUTILIZÁVEIS
+   ========================================================================== */
+
+.hero, .problema, .solucao, .impacto {
+    position: relative;
+    width: 100%;
+}
+
+.conteudo-problema, .conteudo-solucao, .conteudo-impacto, .conteudo-proximo-passo {
+    padding: 80px 0;
+    margin-left: 65px;
+    z-index: 2;
+    position: relative;
+}
+
+/* Linhas Orgânicas (Elementos Decorativos) */
+.linhas-organicas {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.linhas-organicas img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.linhas-organicas #linha2 {
+    transform: translateY(7%);
+}
+
+#linha3 {
+    transform: scaleX(-1);
+    transform: scaleY(-1);
+}
+
+/* Badges */
+.badge {
+    display: flex;
+    justify-content: center;
+    border-radius: 30px;
+    background: rgba(217, 217, 217, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    max-width: 160px;
+}
+
+.badge p {
+    color: #0F51AE;
+    font-size: 16px;
+    padding: 10px 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+#badge-solucao p {
+    color: #56D867;
+}
+
+#badge-proximo-passo {
+    max-width: 200px;
+}
+
+#badge-proximo-passo p {
+    color: #56D867;
+}
+
+/* ==========================================================================
+   3. MENU DE NAVEGAÇÃO
+   ========================================================================== */
+
+.menu {
+    background-color: #0F51AE;
+    width: 100%;
+    height: 70px;
+    position: fixed;
+    left: 50%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 50px;
+    padding: 15px 50px;
+    transform: translateX(-50%);
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.menu-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.link-menu {
+    color: #FFF8E1;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: normal;
+    text-decoration: none;
+    transform: translateY(3px);
+    transition: opacity 0.3s ease;
+}
+
+.link-menu:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+#logo {
+    height: 45px;
+    width: auto;
+}
+
+/* ==========================================================================
+   4. SEÇÃO HERO
+   ========================================================================== */
+
+.hero {
+    min-height: 100vh;
+    padding-top: 110px;
+    overflow: visible;
+}
+
+.video-fundo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.conteudo-hero {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1350px;
+    margin: 0 65px;
+}
+
+.hero-texto-botoes {
+    width: 100%;
+    max-width: 440px;
+}
+
+.conteudo-hero h1 {
+    color: #FFF8E1;
+    margin-bottom: 20px;
+}
+
+.conteudo-hero span {
+    color: #56D867;
+    text-decoration: underline;
+    text-decoration-thickness: 4px;
+    text-underline-offset: 8px;
+}
+
+#hero-texto {
+    color: #FFF8E1;
+    font-size: 24px;
+    margin-bottom: 40px;
+}
+
+.botoes-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 460px;
+}
+
+.botao-ativo {
+    border-radius: 40px;
+    background: #56D867;
+    color: #FFF8E1;
+    padding: 18px 25px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: filter 0.3s;
+}
+
+.botao-ativo:hover {
+    filter: brightness(1.1);
+}
+
+.botao-desativado {
+    border-radius: 40px;
+    background: rgba(255, 248, 225, 0.12);
+    color: #FFF8E1;
+    padding: 18px 25px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid rgba(255, 248, 225, 0.3);
+    transition: background 0.3s;
+}
+
+.botao-desativado:hover {
+    background: rgba(255, 248, 225, 0.2);
+}
+
+.hero-imagem {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#mockup-celular-hero {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    transform: scale(1.4) translateY(100px) translateX(40px);
+}
+
+.hero-lista {
+    width: 100%;
+    max-width: 360px;
+}
+
+.lista-funcionalidades-hero {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.lista-funcionalidades-hero li {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.lista-funcionalidades-hero li span {
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.lista-funcionalidades-hero li img {
+    width: 65px;
+    height: 65px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    object-fit: contain;
+}
+
+/* ==========================================================================
+   5. SEÇÃO PROBLEMA
+   ========================================================================== */
+
+
+   .background-problema {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -10;
+}
+
+.problema-titulo {
+    color: #0F51AE;
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.problema-texto {
+    color: #0F51AE;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.mockup-desktop {
+    width: 100%;
+    max-width: 850px;
+    height: auto;
+    display: block;
+    margin: auto;
+    margin-top: 0;
+    transform: translateX(50px);
+}
+
+.cards-problema {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1375px;
+    margin: 0 auto;
+    margin-top: -190px;
+}
+
+.card-problema {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.70);
+    border-radius: 20px;
+    border: 1px solid #B5B5B5;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 445px;
+    height: 130px;
+    padding: 40px;
+}
+
+.card-problema div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.card-problema h3 {
+    color: #0F51AE;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.card-problema p {
+    color: #121212;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.card-problema img {
+    max-width: 65px;
+}
+
+/* ==========================================================================
+   6. SEÇÃO SOLUÇÃO
+   ========================================================================== */
+
+.solucao {
+    border-radius: 30px;
+    background: linear-gradient(to bottom right, #0F51AE 0%, #001D89 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #0F51AE 0%, #001D89 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #0F51AE 0%, #001D89 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #0F51AE 0%, #001D89 50%) top right / 50% 50% no-repeat;
+    overflow: visible;
+}
+
+.solucao-titulo, .solucao-texto {
+    color: #FFF8E1;
+}
+
+.solucao-texto {
+    font-size: 20px;
+    padding-top: 10px;
+}
+
+.cards-solucao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    z-index: 2;
+    transform: translateX(-30px);
+}
+
+.card-solucao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 320px;
+}
+
+.conteudo-card-solucao {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(0deg, rgba(255, 248, 225, 0.10) 0%, rgba(153, 149, 135, 0.10) 100%);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    width: 340px;
+    max-width: 345px;
+    height: 130px;
+    margin-top: -54px;
+    position: relative;
+    z-index: 2;
+}
+
+.conteudo-card-solucao img {
+    padding-left: 30px;
+    max-height: 45px;
+}
+
+.conteudo-texto-card-solucao {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.conteudo-texto-card-solucao h3 {
+    color: #FFF8E1;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.conteudo-texto-card-solucao p {
+    color: #FFF8E1;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ==========================================================================
+   7. SEÇÃO IMPACTO
+   ========================================================================== */
+
+
+.conteudo-impacto {
+    padding-bottom: 0px;
+}
+
+.conteudo-impacto h2 {
+    color: #0F51AE;
+}
+
+.impacto-texto {
+    color: #0F51AE;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 31px;
+}
+
+.conteudo-impacto img {
+    transform: translateY(-85px);
+    margin-bottom: -60px;
+}
+
+.img-impacto {
+    display: block;
+    max-width: 1400px;
+    width: 100%;
+}
+
+/* ==========================================================================
+   8. SEÇÃO PRÓXIMO PASSO
+   ========================================================================== */
+
+.proximo-passo {
+    background: linear-gradient(90deg, #0F51AE 0%, #001D89 100%);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+}
+
+.conteudo-proximo-passo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 80px 0;
+    padding-bottom: 0;
+}
+
+.esquerda-proximo-passo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 550px;
+    flex-shrink: 0;
+}
+
+.texto-proximo-passo {
+    color: #FFF8E1;
+    font-weight: 500;
+    line-height: normal;
+    font-style: normal;
+}
+
+.texto-proximo-passo p {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+.botoes-proximo-passo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 535px;
+    margin-top: 40px;
+}
+
+.imagens-proximo-passo {
+    display: flex;
+    align-items: flex-start;
+    flex: 1;
+    justify-content: flex-end;
+    position: relative;
+}
+
+#mockup-celular-proximo-passo {
+    max-height: 750px;
+    position: relative;
+    z-index: 2;
+    transform: translateY(70px) translateX(100px);
+}
+
+#dashboard-proximo-passo {
+    max-width: 450px;
+    position: relative;
+    z-index: 1;
+}
+
+
+
+.rodape {
+    background-color: #001D89;
+    width: 100%;
+    height: 100px;
+    position: relative;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 50px;
+    padding: 15px 50px;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    margin-top: -15px;
+}
+
+.links-rodape {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.links-rodape a {
+    color: #FFF8E1;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: normal;
+    text-decoration: none;
+    transform: translateY(3px);
+    transition: opacity 0.3s ease;
+}
+
+.links-rodape:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+#logo-rodape {
+    max-height: 45px;
+    width: auto;
+}
+.rodape p {
+    color: #FFF8E1;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: normal;
+    margin-left: auto;
+    text-align: right;
+}
