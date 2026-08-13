@@ -29,23 +29,17 @@ public class Caminhao {
         return capacidadeMaxima;
     }
 
-    public void setCapacidadeMaxima(int capacidadeMaxima) {
-        this.capacidadeMaxima = capacidadeMaxima;
-    }
-
-    //Capacidade maxima inalterável
 
     public String getPlacaCarreta() {
         return placaCarreta;
     }
 
-    //Placa carreta nao é alterável no sistemas
+    //Placa carreta nao é alterável no sistema
 
+    //Definir funcionamento de placa cavalo depois
     public String getPlacaCavalo() {
         return placaCavalo;
     }
 
-    public void setPlacaCavalo(String placaCavalo) {
-        this.placaCavalo = placaCavalo;
-    }
+
 }

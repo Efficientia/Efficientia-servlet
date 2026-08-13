@@ -62,10 +62,6 @@ public class Trajeto {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     //Status vai mudando a medida que o trajeto vai se desenrolando
 
     public LocalDateTime getDataHoraInicio() {
@@ -78,9 +74,7 @@ public class Trajeto {
         return dataHoraFim;
     }
 
-    public void setDataHoraFim(LocalDateTime dataHoraFim) {
-        this.dataHoraFim = dataHoraFim;
-    }
+
 
     public Integer getKmSaida() {
         return kmSaida;
@@ -90,7 +84,5 @@ public class Trajeto {
         return kmChegada;
     }
 
-    public void setKmChegada(Integer kmChegada) {
-        this.kmChegada = kmChegada;
-    }
+//Adicionar setters
 }

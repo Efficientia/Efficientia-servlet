@@ -57,15 +57,9 @@ public class Dirige {
 
     //A relação pode voltar a acontecer
 
-    public void setDataFim(LocalDate dataFim) {
-        this.dataFim = dataFim;
-    }
-
     public boolean isAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
-    }
+    //adicionar setters
 }
