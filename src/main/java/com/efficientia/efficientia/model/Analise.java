@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 //testando
 import java.time.LocalDateTime;
 
-public class Analisa {
+public class Analise {
     private int id;
     private Analista analista;
     private Trajeto trajeto;
@@ -10,7 +10,7 @@ public class Analisa {
     private String statusAnalise; //pode virar enum
     private String observacao; //pode virar um txt
 
-    public Analisa(int id, Analista analista,
+    public Analise(int id, Analista analista,
                    Trajeto trajeto,
                    LocalDateTime dataAnalise,
                    String statusAnalise,
@@ -23,7 +23,7 @@ public class Analisa {
         this.observacao = observacao;
     }
 
-    public Analisa() {
+    public Analise() {
     }
 
     public int getId() {
@@ -50,5 +50,11 @@ public class Analisa {
         return observacao;
     }
 
-    //Adicionar setter onde for necessario
+    public void setStatusAnalise(String statusAnalise) {
+        this.statusAnalise = statusAnalise;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
 }

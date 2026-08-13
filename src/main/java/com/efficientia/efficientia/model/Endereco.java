@@ -70,4 +70,13 @@ public class Endereco {
     }
 
     //Adicionar setter onde for necessario
+
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 }
