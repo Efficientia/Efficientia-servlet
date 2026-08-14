@@ -1,7 +1,6 @@
 package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Analista extends Usuario{
 
