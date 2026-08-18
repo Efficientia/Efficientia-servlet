@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface AnalistaDAO extends UsuarioDAO{
     void salvar(AnalistaDAO analistaDAO);
-    List<AnalistaDAO> listar();
+    List<UsuarioDAO> listar();
     void deletar(int id);
 }

@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public abstract class Usuario {
+public abstract class UsuarioModel {
     protected int id;
     protected String nome;
     protected String assinatura; //Virar hash
@@ -11,7 +11,7 @@ public abstract class Usuario {
     protected String email;
     protected String telefone;
 
-    public Usuario(int id,
+    public UsuarioModel(int id,
                    String nome,
                    String assinatura,
                    LocalDate dataNascimento,
@@ -27,7 +27,7 @@ public abstract class Usuario {
         this.telefone = telefone;
     }
 
-    public Usuario() {
+    public UsuarioModel() {
     }
 
     public int getId() {
