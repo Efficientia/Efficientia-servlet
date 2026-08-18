@@ -1,6 +1,6 @@
 package com.efficientia.efficientia.model;
 
-public class Endereco {
+public class EnderecoModel {
     private int id;
     private String cep;
     private String tipo; //Virar enum
@@ -11,14 +11,14 @@ public class Endereco {
     private String pais;
     private String complemento;
 
-    public Endereco(int id, String cep,
-                    String tipo,
-                    String numero,
-                    String rua,
-                    String cidade,
-                    String estado,
-                    String pais,
-                    String complemento) {
+    public EnderecoModel(int id, String cep,
+                         String tipo,
+                         String numero,
+                         String rua,
+                         String cidade,
+                         String estado,
+                         String pais,
+                         String complemento) {
         this.id = id;
         this.cep = cep;
         this.tipo = tipo;
@@ -30,7 +30,7 @@ public class Endereco {
         this.complemento = complemento;
     }
 
-    public Endereco() {
+    public EnderecoModel() {
     }
 
     public int getId() {

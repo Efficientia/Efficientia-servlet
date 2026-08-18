@@ -2,11 +2,11 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
-public class Trajeto {
+public class TrajetoModel {
 
     private int id;
-    private Motorista motorista; //Motorista da relação
-    private Caminhao caminhao; //Caminhão da relação
+    private MotoristaModel motoristaModel; //Motorista da relação
+    private CaminhaoModel caminhaoModel; //Caminhão da relação
 
     private String status; //Qual o estado do trajeto
 
@@ -36,28 +36,28 @@ public class Trajeto {
     // getters e setters
 
 
-    public Trajeto(int id,
-                   Motorista motorista,
-                   Caminhao caminhao,
-                   String status,
-                   LocalDateTime dataHoraInicio,
-                   LocalDateTime dataHoraFim,
-                   Integer kmSaida,
-                   Integer kmChegada,
-                   String nomePecuarista,
-                   String numeroGTA,
-                   String numeroNotaFiscal,
-                   LocalDateTime horarioEmbarque,
-                   int qtdMacho,
-                   int qtdFemea,
-                   int qtdMarruco,
-                   LocalDateTime horarioDesembarque,
-                   String numeroCurral,
-                   String nomeCurraleiro,
-                   String nomeManobrista) {
+    public TrajetoModel(int id,
+                        MotoristaModel motoristaModel,
+                        CaminhaoModel caminhaoModel,
+                        String status,
+                        LocalDateTime dataHoraInicio,
+                        LocalDateTime dataHoraFim,
+                        Integer kmSaida,
+                        Integer kmChegada,
+                        String nomePecuarista,
+                        String numeroGTA,
+                        String numeroNotaFiscal,
+                        LocalDateTime horarioEmbarque,
+                        int qtdMacho,
+                        int qtdFemea,
+                        int qtdMarruco,
+                        LocalDateTime horarioDesembarque,
+                        String numeroCurral,
+                        String nomeCurraleiro,
+                        String nomeManobrista) {
         this.id = id;
-        this.motorista = motorista;
-        this.caminhao = caminhao;
+        this.motoristaModel = motoristaModel;
+        this.caminhaoModel = caminhaoModel;
         this.status = status;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -74,6 +74,6 @@ public class Trajeto {
         this.numeroCurral = numeroCurral;
         this.nomeCurraleiro = nomeCurraleiro;
         this.nomeManobrista = nomeManobrista;
-        this.assinaturaMotorista = this.motorista.getAssinatura();
+        this.assinaturaMotorista = this.motoristaModel.getAssinatura();
     }
 }

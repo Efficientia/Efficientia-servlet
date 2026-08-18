@@ -2,27 +2,27 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
-public class ParadaImprevista {
+public class ParadaImprevistaModel {
 
     private int id;//PK da tabela
-    private Trajeto trajeto; //Classe que reune as informações do documento
+    private TrajetoModel trajetoModel; //Classe que reune as informações do documento
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
     private String motivo; //Penso em fazer isso virar um arquivo txt
 
-    public ParadaImprevista(int id,
-                            Trajeto trajeto,
-                            LocalDateTime dataHoraInicio,
-                            LocalDateTime dataHoraFim,
-                            String motivo) {
+    public ParadaImprevistaModel(int id,
+                                 TrajetoModel trajetoModel,
+                                 LocalDateTime dataHoraInicio,
+                                 LocalDateTime dataHoraFim,
+                                 String motivo) {
         this.id = id;
-        this.trajeto = trajeto;
+        this.trajetoModel = trajetoModel;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
         this.motivo = motivo;
     }
 
-    public ParadaImprevista() {
+    public ParadaImprevistaModel() {
     }
 
     public int getId() {
@@ -31,8 +31,8 @@ public class ParadaImprevista {
 
     //PK não alteravel
 
-    public Trajeto getTrajeto() {
-        return trajeto;
+    public TrajetoModel getTrajeto() {
+        return trajetoModel;
     }
 
     //trajeto é unico

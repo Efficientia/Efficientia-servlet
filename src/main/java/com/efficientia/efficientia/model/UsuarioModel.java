@@ -3,13 +3,13 @@ package com.efficientia.efficientia.model;
 import java.time.LocalDate;
 
 public abstract class Usuario {
-    private int id;
-    private String nome;
-    private String assinatura; //Virar hash
-    private LocalDate dataNascimento;
-    private String senha; //Hash
-    private String email;
-    private String telefone;
+    protected int id;
+    protected String nome;
+    protected String assinatura; //Virar hash
+    protected LocalDate dataNascimento;
+    protected String senha; //Hash
+    protected String email;
+    protected String telefone;
 
     public Usuario(int id,
                    String nome,
