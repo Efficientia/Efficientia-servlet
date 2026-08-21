@@ -76,4 +76,85 @@ public class TrajetoModel implements Model{
         this.nomeManobrista = nomeManobrista;
         this.assinaturaMotorista = this.motoristaModel.getAssinatura();
     }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    public MotoristaModel getMotoristaModel() {
+        return motoristaModel;
+    }
+
+    public CaminhaoModel getCaminhaoModel() {
+        return caminhaoModel;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getDataHoraInicio() {
+        return dataHoraInicio;
+    }
+
+    public LocalDateTime getDataHoraFim() {
+        return dataHoraFim;
+    }
+
+    public Integer getKmSaida() {
+        return kmSaida;
+    }
+
+    public Integer getKmChegada() {
+        return kmChegada;
+    }
+
+    public String getNomePecuarista() {
+        return nomePecuarista;
+    }
+
+    public String getNumeroGTA() {
+        return numeroGTA;
+    }
+
+    public String getNumeroNotaFiscal() {
+        return numeroNotaFiscal;
+    }
+
+    public LocalDateTime getHorarioEmbarque() {
+        return horarioEmbarque;
+    }
+
+    public int getQtdMacho() {
+        return qtdMacho;
+    }
+
+    public int getQtdFemea() {
+        return qtdFemea;
+    }
+
+    public int getQtdMarruco() {
+        return qtdMarruco;
+    }
+
+    public LocalDateTime getHorarioDesembarque() {
+        return horarioDesembarque;
+    }
+
+    public String getNumeroCurral() {
+        return numeroCurral;
+    }
+
+    public String getNomeCurraleiro() {
+        return nomeCurraleiro;
+    }
+
+    public String getNomeManobrista() {
+        return nomeManobrista;
+    }
+
+    public String getAssinaturaMotorista() {
+        return assinaturaMotorista;
+    }
 }

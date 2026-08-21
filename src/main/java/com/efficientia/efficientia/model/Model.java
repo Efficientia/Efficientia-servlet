@@ -1,4 +1,5 @@
 package com.efficientia.efficientia.model;
 
-public interface Model {
+public interface Model{
+    int getId();
 }
