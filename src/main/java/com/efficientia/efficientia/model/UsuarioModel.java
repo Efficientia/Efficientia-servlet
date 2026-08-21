@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public abstract class UsuarioModel {
+public abstract class UsuarioModel implements Model{
     protected int id;
     protected String nome;
     protected String assinatura; //Virar hash

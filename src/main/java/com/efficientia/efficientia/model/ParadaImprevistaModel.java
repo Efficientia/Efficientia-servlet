@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
-public class ParadaImprevistaModel {
+public class ParadaImprevistaModel implements Model{
 
     private int id;//PK da tabela
     private TrajetoModel trajetoModel; //Classe que reune as informações do documento

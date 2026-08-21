@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class MotoristaModel extends UsuarioModel{
+public class MotoristaModel extends UsuarioModel implements Model{
 
     public MotoristaModel(int id,
                           String nome,

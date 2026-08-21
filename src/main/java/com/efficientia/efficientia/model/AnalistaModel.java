@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class AnalistaModel extends UsuarioModel{
+public class AnalistaModel extends UsuarioModel implements Model{
 
     private String codigo;
 

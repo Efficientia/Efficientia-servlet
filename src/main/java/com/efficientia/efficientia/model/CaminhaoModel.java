@@ -1,6 +1,6 @@
 package com.efficientia.efficientia.model;
 
-public class CaminhaoModel {
+public class CaminhaoModel implements Model{
     private int id; //Código único PK
     private int capacidadeMaxima; //Capacidade maxima de animais no caminhão
     private String placaCarreta; //Placa do caminhão

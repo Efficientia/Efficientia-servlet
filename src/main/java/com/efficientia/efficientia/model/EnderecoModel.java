@@ -1,6 +1,6 @@
 package com.efficientia.efficientia.model;
 
-public class EnderecoModel {
+public class EnderecoModel implements Model{
     private int id;
     private String cep;
     private String tipo; //Virar enum

@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 //testando
 import java.time.LocalDateTime;
 
-public class AnaliseModel {
+public class AnaliseModel implements Model{
     private int id;
     private AnalistaModel analistaModel;
     private TrajetoModel trajetoModel;

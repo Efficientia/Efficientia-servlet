@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
-public class TrajetoModel {
+public class TrajetoModel implements Model{
 
     private int id;
     private MotoristaModel motoristaModel; //Motorista da relação

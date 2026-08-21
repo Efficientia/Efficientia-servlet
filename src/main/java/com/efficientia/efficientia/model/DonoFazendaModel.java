@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
-public class DonoFazendaModel {
+public class DonoFazendaModel implements Model{
     private int id;
     private String cpf;
     private String assinatura; //vai virar hash
