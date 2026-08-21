@@ -103,20 +103,20 @@ p, a, span {
    ========================================================================== */
 
 .menu {
-    background-color: #0F51AE;
-    width: 100%;
+    background-color: #9C9C9C5C;
+    backdrop-filter: blur(15px); 
+    width: 98%; 
     height: 70px;
     position: fixed;
-    left: 50%;
+    margin-top: 10px;
+    margin-left: 1%;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 50px;
     padding: 15px 50px;
-    transform: translateX(-50%);
-    border-bottom-right-radius: 15px;
-    border-bottom-left-radius: 15px;
+    border-radius: 25px;
 }
 
 .menu-links {
@@ -126,6 +126,7 @@ p, a, span {
 }
 
 .link-menu {
+    font-family: "Manrope", sans-serif;
     color: #FFF8E1;
     text-align: center;
     font-size: 24px;
