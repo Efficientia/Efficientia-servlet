@@ -2,6 +2,10 @@
    1. RESET & GLOBAIS
    ========================================================================== */
 
+html {
+    scroll-behavior: smooth;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -221,6 +225,11 @@ p, a, span {
     cursor: pointer;
     border: none;
     transition: filter 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .botao-ativo:hover {
@@ -237,6 +246,11 @@ p, a, span {
     cursor: pointer;
     border: 1px solid rgba(255, 248, 225, 0.3);
     transition: background 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .botao-desativado:hover {
