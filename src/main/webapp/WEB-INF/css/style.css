@@ -103,8 +103,9 @@ p, a, span {
    ========================================================================== */
 
 .menu {
-    background-color: #9C9C9C5C;
-    backdrop-filter: blur(15px); 
+    background-color: rgba(0, 21, 75, 0.65);
+    backdrop-filter: blur(15px) brightness(0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     width: 98%; 
     height: 70px;
     position: fixed;
@@ -592,7 +593,7 @@ p, a, span {
     transition: opacity 0.3s ease;
 }
 
-.links-rodape:hover {
+.links-rodape :hover {
     opacity: 0.8;
     text-decoration: underline;
 }
