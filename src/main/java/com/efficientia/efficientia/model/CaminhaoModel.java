@@ -19,6 +19,7 @@ public class CaminhaoModel implements Model{
     public CaminhaoModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

@@ -40,6 +40,7 @@ public class DonoFazendaModel implements Model{
     public DonoFazendaModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

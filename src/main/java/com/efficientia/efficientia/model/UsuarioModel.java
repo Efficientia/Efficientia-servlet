@@ -30,6 +30,7 @@ public abstract class UsuarioModel implements Model{
     public UsuarioModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

@@ -29,6 +29,7 @@ public class AdminModel implements Model{
         this.nome = nome;
     }
 
+    @Override
     public int getId() {
         return id;
     }

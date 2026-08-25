@@ -16,6 +16,7 @@ public class InfoEmbarqueModel implements Model{
     public InfoEmbarqueModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

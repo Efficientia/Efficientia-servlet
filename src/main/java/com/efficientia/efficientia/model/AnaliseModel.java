@@ -26,6 +26,7 @@ public class AnaliseModel implements Model{
     public AnaliseModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

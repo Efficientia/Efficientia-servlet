@@ -28,7 +28,7 @@ public class CaminhaoMotoristaModel implements Model{
 
     // getters e setters
 
-
+    @Override
     public int getId() {
         return id;
     }

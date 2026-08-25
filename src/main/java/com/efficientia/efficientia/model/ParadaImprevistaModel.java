@@ -25,6 +25,7 @@ public class ParadaImprevistaModel implements Model{
     public ParadaImprevistaModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

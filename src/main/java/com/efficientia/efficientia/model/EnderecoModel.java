@@ -33,6 +33,7 @@ public class EnderecoModel implements Model{
     public EnderecoModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }
