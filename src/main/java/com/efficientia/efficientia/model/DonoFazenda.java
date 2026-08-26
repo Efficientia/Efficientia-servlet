@@ -73,4 +73,25 @@ public class DonoFazenda {
     }
 
     //adicionar setter onde necessario
+
+
+    public void setAssinatura(String assinatura) {
+        this.assinatura = assinatura;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
 }

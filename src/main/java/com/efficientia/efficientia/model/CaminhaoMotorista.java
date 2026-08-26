@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class Dirige {
+public class CaminhaoMotorista {
 
     private int id; //Id código unico
     private Motorista motorista; //Motorista da relação
@@ -11,11 +11,11 @@ public class Dirige {
     private LocalDate dataFim; //Data do fim da relação
     private boolean ativo; //Se a relação esta aiva
 
-    public Dirige(int id,
-                  Motorista motorista,
-                  Caminhao caminhao,
-                  LocalDate dataInicio,
-                  boolean ativo) {
+    public CaminhaoMotorista(int id,
+                             Motorista motorista,
+                             Caminhao caminhao,
+                             LocalDate dataInicio,
+                             boolean ativo) {
         this.id = id;
         this.motorista = motorista;
         this.caminhao = caminhao;
@@ -23,7 +23,7 @@ public class Dirige {
         this.ativo = ativo;
     }
 
-    public Dirige() {
+    public CaminhaoMotorista() {
     }
 
     // getters e setters
@@ -61,5 +61,11 @@ public class Dirige {
         return ativo;
     }
 
-    //adicionar setters
+    public void setDataFim(LocalDate dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
 }
