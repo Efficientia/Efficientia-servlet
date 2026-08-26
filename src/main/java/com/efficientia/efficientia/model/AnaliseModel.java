@@ -2,40 +2,41 @@ package com.efficientia.efficientia.model;
 //testando
 import java.time.LocalDateTime;
 
-public class Analise {
+public class AnaliseModel implements Model{
     private int id;
-    private Analista analista;
-    private Trajeto trajeto;
+    private AnalistaModel analistaModel;
+    private TrajetoModel trajetoModel;
     private LocalDateTime dataAnalise;
     private String statusAnalise; //pode virar enum
     private String observacao; //pode virar um txt
 
-    public Analise(int id, Analista analista,
-                   Trajeto trajeto,
+    public AnaliseModel(int id, AnalistaModel analistaModel,
+                   TrajetoModel trajetoModel,
                    LocalDateTime dataAnalise,
                    String statusAnalise,
                    String observacao) {
         this.id = id;
-        this.analista = analista;
-        this.trajeto = trajeto;
+        this.analistaModel = analistaModel;
+        this.trajetoModel = trajetoModel;
         this.dataAnalise = dataAnalise;
         this.statusAnalise = statusAnalise;
         this.observacao = observacao;
     }
 
-    public Analise() {
+    public AnaliseModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
-    public Analista getAnalista() {
-        return analista;
+    public AnalistaModel getAnalista() {
+        return analistaModel;
     }
 
-    public Trajeto getTrajeto() {
-        return trajeto;
+    public TrajetoModel getTrajeto() {
+        return trajetoModel;
     }
 
     public LocalDateTime getDataAnalise() {

@@ -2,16 +2,16 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public abstract class Usuario {
-    private int id;
-    private String nome;
-    private String assinatura; //Virar hash
-    private LocalDate dataNascimento;
-    private String senha; //Hash
-    private String email;
-    private String telefone;
+public abstract class UsuarioModel implements Model{
+    protected int id;
+    protected String nome;
+    protected String assinatura; //Virar hash
+    protected LocalDate dataNascimento;
+    protected String senha; //Hash
+    protected String email;
+    protected String telefone;
 
-    public Usuario(int id,
+    public UsuarioModel(int id,
                    String nome,
                    String assinatura,
                    LocalDate dataNascimento,
@@ -27,9 +27,10 @@ public abstract class Usuario {
         this.telefone = telefone;
     }
 
-    public Usuario() {
+    public UsuarioModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

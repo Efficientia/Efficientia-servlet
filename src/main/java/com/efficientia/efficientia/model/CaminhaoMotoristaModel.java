@@ -2,47 +2,47 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class CaminhaoMotorista {
+public class CaminhaoMotoristaModel implements Model{
 
     private int id; //Id código unico
-    private Motorista motorista; //Motorista da relação
-    private Caminhao caminhao; //Caminhão da relação
+    private MotoristaModel motoristaModel; //Motorista da relação
+    private CaminhaoModel caminhaoModel; //Caminhão da relação
     private LocalDate dataInicio; //Data de início da relação
     private LocalDate dataFim; //Data do fim da relação
     private boolean ativo; //Se a relação esta aiva
 
-    public CaminhaoMotorista(int id,
-                             Motorista motorista,
-                             Caminhao caminhao,
-                             LocalDate dataInicio,
-                             boolean ativo) {
+    public CaminhaoMotoristaModel(int id,
+                                  MotoristaModel motoristaModel,
+                                  CaminhaoModel caminhaoModel,
+                                  LocalDate dataInicio,
+                                  boolean ativo) {
         this.id = id;
-        this.motorista = motorista;
-        this.caminhao = caminhao;
+        this.motoristaModel = motoristaModel;
+        this.caminhaoModel = caminhaoModel;
         this.dataInicio = dataInicio;
         this.ativo = ativo;
     }
 
-    public CaminhaoMotorista() {
+    public CaminhaoMotoristaModel() {
     }
 
     // getters e setters
 
-
+    @Override
     public int getId() {
         return id;
     }
 
     //id imutável
 
-    public Motorista getMotorista() {
-        return motorista;
+    public MotoristaModel getMotorista() {
+        return motoristaModel;
     }
 
     //O motorista da relação não pode mudar, caso o contrario a relação acaba
 
-    public Caminhao getCaminhao() {
-        return caminhao;
+    public CaminhaoModel getCaminhao() {
+        return caminhaoModel;
     }
 
     //O caminhão da relação não pode mudar
