@@ -1,24 +1,25 @@
 package com.efficientia.efficientia.model;
 
-public class Caminhao {
+public class CaminhaoModel implements Model{
     private int id; //Código único PK
     private int capacidadeMaxima; //Capacidade maxima de animais no caminhão
     private String placaCarreta; //Placa do caminhão
     private String placaCavalo;
 
-    public Caminhao(String placaCavalo,
-                    String placaCarreta,
-                    int capacidadeMaxima,
-                    int id) {
+    public CaminhaoModel(String placaCavalo,
+                         String placaCarreta,
+                         int capacidadeMaxima,
+                         int id) {
         this.placaCavalo = placaCavalo;
         this.placaCarreta = placaCarreta;
         this.capacidadeMaxima = capacidadeMaxima;
         this.id = id;
     }
 
-    public Caminhao() {
+    public CaminhaoModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }

@@ -1,27 +1,28 @@
 package com.efficientia.efficientia.model;
 
-public class InfoEmbarque {
+public class InfoEmbarqueModel implements Model{
     private int id; //PK
-    private Trajeto trajeto; //Trajeto da relação
+    private TrajetoModel trajetoModel; //Trajeto da relação
     private String nome;//Mudar para enum depois //Parte informações embarque do documento com o checklist
 
-    public InfoEmbarque(String nome,
-                        Trajeto trajeto,
-                        int id) {
+    public InfoEmbarqueModel(String nome,
+                             TrajetoModel trajetoModel,
+                             int id) {
         this.nome = nome;
-        this.trajeto = trajeto;
+        this.trajetoModel = trajetoModel;
         this.id = id;
     }
 
-    public InfoEmbarque() {
+    public InfoEmbarqueModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
-    public Trajeto getTrajeto() {
-        return trajeto;
+    public TrajetoModel getTrajeto() {
+        return trajetoModel;
     }
 
     public String getNome() {

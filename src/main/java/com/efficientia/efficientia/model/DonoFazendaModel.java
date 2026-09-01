@@ -2,7 +2,7 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
-public class DonoFazenda {
+public class DonoFazendaModel implements Model{
     private int id;
     private String cpf;
     private String assinatura; //vai virar hash
@@ -12,13 +12,13 @@ public class DonoFazenda {
     private String email;
     private String telefone;
 
-    public DonoFazenda(int id, String cpf,
-                       String assinatura,
-                       LocalDateTime dataNascimento,
-                       String nome,
-                       String senha,
-                       String email,
-                       String telefone) {
+    public DonoFazendaModel(int id, String cpf,
+                            String assinatura,
+                            LocalDateTime dataNascimento,
+                            String nome,
+                            String senha,
+                            String email,
+                            String telefone) {
         this.id = id;
         this.cpf = cpf;
         this.assinatura = assinatura;
@@ -37,9 +37,10 @@ public class DonoFazenda {
         }
     }
 
-    public DonoFazenda() {
+    public DonoFazendaModel() {
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -73,4 +74,25 @@ public class DonoFazenda {
     }
 
     //adicionar setter onde necessario
+
+
+    public void setAssinatura(String assinatura) {
+        this.assinatura = assinatura;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
 }
