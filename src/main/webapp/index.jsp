@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -201,7 +202,7 @@
                 </div>
                 
                 <div class="botoes-proximo-passo">
-                    <a href="#solucao" class="botao-ativo">Ver fluxo completo</a>
+                    <a href="" class="botao-ativo">Ver fluxo completo</a>
                     <a href="#funcionalidades" class="botao-desativado">Funcionalidades</a>
                 </div>
             </div>
