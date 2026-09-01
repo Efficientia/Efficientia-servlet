@@ -1,12 +1,12 @@
 package com.efficientia.efficientia.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class DonoFazendaModel implements Model{
     private int id;
     private String cpf;
     private String assinatura; //vai virar hash
-    private LocalDateTime dataNascimento;
+    private LocalDate dataNascimento;
     private String nome;
     private String senha; //vai virar hash
     private String email;
@@ -14,7 +14,7 @@ public class DonoFazendaModel implements Model{
 
     public DonoFazendaModel(int id, String cpf,
                             String assinatura,
-                            LocalDateTime dataNascimento,
+                            LocalDate dataNascimento,
                             String nome,
                             String senha,
                             String email,
@@ -53,7 +53,7 @@ public class DonoFazendaModel implements Model{
         return assinatura;
     }
 
-    public LocalDateTime getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
