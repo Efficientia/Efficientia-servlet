@@ -47,4 +47,16 @@ VALUES (?,
             e.printStackTrace();
         }
     }
+
+    public void delete(DonoFazendaModel donoFazendaModel) throws SQLException {
+        String sql = """
+DELETE FROM dono_fazenda WHERE id = ?
+""";
+
+        try(Connection connection = ConnectionFactory.getConnection()){
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, donoFazendaModel.getId());
+            stmt.executeUpdate();
+        }
+    }
 }
