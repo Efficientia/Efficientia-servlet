@@ -11,6 +11,19 @@ public abstract class UsuarioModel implements Model{
     protected String email;
     protected String telefone;
 
+    public UsuarioModel(String nome,
+                        String assinatura,
+                        LocalDate dataNascimento,
+                        String senha,
+                        String email,
+                        String telefone) {
+        this.nome = nome;
+        this.assinatura = assinatura;
+        this.dataNascimento = dataNascimento;
+        this.senha = senha;
+        this.email = email;
+        this.telefone = telefone;
+    }
     public UsuarioModel(int id,
                    String nome,
                    String assinatura,
@@ -25,9 +38,6 @@ public abstract class UsuarioModel implements Model{
         this.senha = senha;
         this.email = email;
         this.telefone = telefone;
-    }
-
-    public UsuarioModel() {
     }
 
     @Override
@@ -77,5 +87,18 @@ public abstract class UsuarioModel implements Model{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "UsuarioModel{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", assinatura='" + assinatura + '\'' +
+                ", dataNascimento=" + dataNascimento +
+                ", senha='" + senha + '\'' +
+                ", email='" + email + '\'' +
+                ", telefone='" + telefone + '\'' +
+                '}';
     }
 }

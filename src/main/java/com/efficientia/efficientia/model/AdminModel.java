@@ -14,7 +14,10 @@ public class AdminModel implements Model{
         this.nome = nome;
     }
 
-    public AdminModel() {
+    public AdminModel(String email, String senha, String nome) {
+        this.email = email;
+        this.senha = senha;
+        this.nome = nome;
     }
 
     public void setEmail(String email) {
@@ -44,5 +47,15 @@ public class AdminModel implements Model{
 
     public String getNome() {
         return nome;
+    }
+
+    @Override
+    public String toString() {
+        return "AdminModel{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", senha='" + senha + '\'' +
+                ", nome='" + nome + '\'' +
+                '}';
     }
 }
