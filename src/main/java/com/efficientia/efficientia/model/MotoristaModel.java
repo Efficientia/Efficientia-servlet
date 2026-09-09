@@ -14,6 +14,15 @@ public class MotoristaModel extends UsuarioModel implements Model{
         super(id, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
+    public MotoristaModel(String nome,
+                          String assinatura,
+                          LocalDate dataNascimento,
+                          String senha,
+                          String email,
+                          String telefone) {
+        super(nome, assinatura, dataNascimento, senha, email, telefone);
+    }
+
     @Override
     public String toString() {
         return "MotoristaModel{" +
