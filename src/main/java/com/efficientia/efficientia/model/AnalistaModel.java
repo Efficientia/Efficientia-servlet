@@ -6,6 +6,17 @@ public class AnalistaModel extends UsuarioModel implements Model{
 
     private String codigo;
 
+    public AnalistaModel(String nome,
+                         String assinatura,
+                         LocalDate dataNascimento,
+                         String senha,
+                         String email,
+                         String telefone,
+                         String codigo) {
+        super(nome, assinatura, dataNascimento, senha, email, telefone);
+        this.codigo = codigo;
+    }
+
     public AnalistaModel(int id,
                          String nome,
                          String assinatura,
