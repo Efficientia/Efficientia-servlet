@@ -43,3 +43,4 @@ build/
 
 ### Main de teste ###
 src/test/java/Main.java
+src/main/java/Main.java
