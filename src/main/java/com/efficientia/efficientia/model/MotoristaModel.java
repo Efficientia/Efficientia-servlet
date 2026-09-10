@@ -2,8 +2,9 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class MotoristaModel extends UsuarioModel implements Model{
+public class MotoristaModel extends UsuarioModel implements Model {
 
+//Construtor com id do banco
     public MotoristaModel(int id,
                           String nome,
                           String assinatura,
@@ -14,6 +15,7 @@ public class MotoristaModel extends UsuarioModel implements Model{
         super(id, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
+//Construtor sem id padrão
     public MotoristaModel(String nome,
                           String assinatura,
                           LocalDate dataNascimento,

@@ -1,9 +1,9 @@
 package com.efficientia.efficientia.model;
 
-public class EnderecoModel implements Model{
+public class EnderecoModel implements Model {
     private int id;
     private String cep;
-    private String tipo; //Virar enum
+    private String tipo;
     private String numero;
     private String rua;
     private String cidade;
@@ -11,7 +11,9 @@ public class EnderecoModel implements Model{
     private String pais;
     private String complemento;
 
-    public EnderecoModel(int id, String cep,
+//Construtor com id do banco
+    public EnderecoModel(int id,
+                         String cep,
                          String tipo,
                          String numero,
                          String rua,
@@ -30,9 +32,59 @@ public class EnderecoModel implements Model{
         this.complemento = complemento;
     }
 
-    public EnderecoModel() {
+//Construtor sem id padrão
+    public EnderecoModel(String cep,
+                         String tipo,
+                         String numero,
+                         String rua,
+                         String cidade,
+                         String estado,
+                         String pais,
+                         String complemento) {
+        this.cep = cep;
+        this.tipo = tipo;
+        this.numero = numero;
+        this.rua = rua;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.pais = pais;
+        this.complemento = complemento;
     }
 
+//Setters sem id
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public void setRua(String rua) {
+        this.rua = rua;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+//Getters
     @Override
     public int getId() {
         return id;
@@ -70,14 +122,18 @@ public class EnderecoModel implements Model{
         return complemento;
     }
 
-    //Adicionar setter onde for necessario
-
-
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    @Override
+    public String toString() {
+        return "EnderecoModel{" +
+                "id=" + id +
+                ", cep='" + cep + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", numero='" + numero + '\'' +
+                ", rua='" + rua + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", estado='" + estado + '\'' +
+                ", pais='" + pais + '\'' +
+                ", complemento='" + complemento + '\'' +
+                '}';
     }
 }
