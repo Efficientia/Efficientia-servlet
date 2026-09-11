@@ -23,9 +23,59 @@ public class TrajetoModel implements Model {
     private String numeroCurral;
     private String nomeCurraleiro;
     private String nomeManobrista;
+    private String assinaturaCurraleiro;
+    private String assinaturaManobrista;
     private String assinaturaMotorista;
 
-//Construtor com id do banco
+//Construtor com id do banco (com todas as assinaturas)
+    public TrajetoModel(int id,
+                        MotoristaModel motoristaModel,
+                        CaminhaoModel caminhaoModel,
+                        String status,
+                        LocalDateTime dataHoraInicio,
+                        LocalDateTime dataHoraFim,
+                        Integer kmSaida,
+                        Integer kmChegada,
+                        String nomePecuarista,
+                        String numeroGTA,
+                        String numeroNotaFiscal,
+                        LocalDateTime horarioEmbarque,
+                        int qtdMacho,
+                        int qtdFemea,
+                        int qtdMarruco,
+                        LocalDateTime horarioDesembarque,
+                        String numeroCurral,
+                        String nomeCurraleiro,
+                        String nomeManobrista,
+                        String assinaturaCurraleiro,
+                        String assinaturaManobrista) {
+        this.id = id;
+        this.motoristaModel = motoristaModel;
+        this.caminhaoModel = caminhaoModel;
+        this.status = status;
+        this.dataHoraInicio = dataHoraInicio;
+        this.dataHoraFim = dataHoraFim;
+        this.kmSaida = kmSaida;
+        this.kmChegada = kmChegada;
+        this.nomePecuarista = nomePecuarista;
+        this.numeroGTA = numeroGTA;
+        this.numeroNotaFiscal = numeroNotaFiscal;
+        this.horarioEmbarque = horarioEmbarque;
+        this.qtdMacho = qtdMacho;
+        this.qtdFemea = qtdFemea;
+        this.qtdMarruco = qtdMarruco;
+        this.horarioDesembarque = horarioDesembarque;
+        this.numeroCurral = numeroCurral;
+        this.nomeCurraleiro = nomeCurraleiro;
+        this.nomeManobrista = nomeManobrista;
+        this.assinaturaCurraleiro = assinaturaCurraleiro;
+        this.assinaturaManobrista = assinaturaManobrista;
+        if (this.motoristaModel != null) {
+            this.assinaturaMotorista = this.motoristaModel.getAssinatura();
+        }
+    }
+
+//Construtor com id do banco (legado)
     public TrajetoModel(int id,
                         MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
@@ -69,7 +119,53 @@ public class TrajetoModel implements Model {
         }
     }
 
-//Construtor sem id padrão
+//Construtor sem id padrão (com todas as assinaturas)
+    public TrajetoModel(MotoristaModel motoristaModel,
+                        CaminhaoModel caminhaoModel,
+                        String status,
+                        LocalDateTime dataHoraInicio,
+                        LocalDateTime dataHoraFim,
+                        Integer kmSaida,
+                        Integer kmChegada,
+                        String nomePecuarista,
+                        String numeroGTA,
+                        String numeroNotaFiscal,
+                        LocalDateTime horarioEmbarque,
+                        int qtdMacho,
+                        int qtdFemea,
+                        int qtdMarruco,
+                        LocalDateTime horarioDesembarque,
+                        String numeroCurral,
+                        String nomeCurraleiro,
+                        String nomeManobrista,
+                        String assinaturaCurraleiro,
+                        String assinaturaManobrista) {
+        this.motoristaModel = motoristaModel;
+        this.caminhaoModel = caminhaoModel;
+        this.status = status;
+        this.dataHoraInicio = dataHoraInicio;
+        this.dataHoraFim = dataHoraFim;
+        this.kmSaida = kmSaida;
+        this.kmChegada = kmChegada;
+        this.nomePecuarista = nomePecuarista;
+        this.numeroGTA = numeroGTA;
+        this.numeroNotaFiscal = numeroNotaFiscal;
+        this.horarioEmbarque = horarioEmbarque;
+        this.qtdMacho = qtdMacho;
+        this.qtdFemea = qtdFemea;
+        this.qtdMarruco = qtdMarruco;
+        this.horarioDesembarque = horarioDesembarque;
+        this.numeroCurral = numeroCurral;
+        this.nomeCurraleiro = nomeCurraleiro;
+        this.nomeManobrista = nomeManobrista;
+        this.assinaturaCurraleiro = assinaturaCurraleiro;
+        this.assinaturaManobrista = assinaturaManobrista;
+        if (this.motoristaModel != null) {
+            this.assinaturaMotorista = this.motoristaModel.getAssinatura();
+        }
+    }
+
+//Construtor sem id padrão (legado)
     public TrajetoModel(MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
                         String status,
@@ -95,7 +191,6 @@ public class TrajetoModel implements Model {
         this.dataHoraFim = dataHoraFim;
         this.kmSaida = kmSaida;
         this.kmChegada = kmChegada;
-        this.nomePecuarista = nomePecuarista;
         this.numeroGTA = numeroGTA;
         this.numeroNotaFiscal = numeroNotaFiscal;
         this.horarioEmbarque = horarioEmbarque;
@@ -187,6 +282,14 @@ public class TrajetoModel implements Model {
         this.nomeManobrista = nomeManobrista;
     }
 
+    public void setAssinaturaCurraleiro(String assinaturaCurraleiro) {
+        this.assinaturaCurraleiro = assinaturaCurraleiro;
+    }
+
+    public void setAssinaturaManobrista(String assinaturaManobrista) {
+        this.assinaturaManobrista = assinaturaManobrista;
+    }
+
     public void setAssinaturaMotorista(String assinaturaMotorista) {
         this.assinaturaMotorista = assinaturaMotorista;
     }
@@ -269,6 +372,14 @@ public class TrajetoModel implements Model {
         return nomeManobrista;
     }
 
+    public String getAssinaturaCurraleiro() {
+        return assinaturaCurraleiro;
+    }
+
+    public String getAssinaturaManobrista() {
+        return assinaturaManobrista;
+    }
+
     public String getAssinaturaMotorista() {
         return assinaturaMotorista;
     }
@@ -295,6 +406,8 @@ public class TrajetoModel implements Model {
                 ", numeroCurral='" + numeroCurral + '\'' +
                 ", nomeCurraleiro='" + nomeCurraleiro + '\'' +
                 ", nomeManobrista='" + nomeManobrista + '\'' +
+                ", assinaturaCurraleiro='" + assinaturaCurraleiro + '\'' +
+                ", assinaturaManobrista='" + assinaturaManobrista + '\'' +
                 ", assinaturaMotorista='" + assinaturaMotorista + '\'' +
                 '}';
     }

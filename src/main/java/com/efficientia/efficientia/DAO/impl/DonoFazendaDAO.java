@@ -26,9 +26,7 @@ public class DonoFazendaDAO {
             ?,
             ?,
             ?,
-            ?,
             ?)
-
 """;
 
         try(Connection connection = ConnectionFactory.getConnection();

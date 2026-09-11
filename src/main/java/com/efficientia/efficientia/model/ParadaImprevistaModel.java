@@ -9,8 +9,24 @@ public class ParadaImprevistaModel implements Model {
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
     private String motivo;
+    private String observacao;
 
-//Construtor com id do banco
+//Construtor com id do banco (completo)
+    public ParadaImprevistaModel(int id,
+                                 TrajetoModel trajetoModel,
+                                 LocalDateTime dataHoraInicio,
+                                 LocalDateTime dataHoraFim,
+                                 String motivo,
+                                 String observacao) {
+        this.id = id;
+        this.trajetoModel = trajetoModel;
+        this.dataHoraInicio = dataHoraInicio;
+        this.dataHoraFim = dataHoraFim;
+        this.motivo = motivo;
+        this.observacao = observacao;
+    }
+
+//Construtor com id do banco (legado)
     public ParadaImprevistaModel(int id,
                                  TrajetoModel trajetoModel,
                                  LocalDateTime dataHoraInicio,
@@ -23,7 +39,20 @@ public class ParadaImprevistaModel implements Model {
         this.motivo = motivo;
     }
 
-//Construtor sem id padrão
+//Construtor sem id padrão (completo)
+    public ParadaImprevistaModel(TrajetoModel trajetoModel,
+                                 LocalDateTime dataHoraInicio,
+                                 LocalDateTime dataHoraFim,
+                                 String motivo,
+                                 String observacao) {
+        this.trajetoModel = trajetoModel;
+        this.dataHoraInicio = dataHoraInicio;
+        this.dataHoraFim = dataHoraFim;
+        this.motivo = motivo;
+        this.observacao = observacao;
+    }
+
+//Construtor sem id padrão (legado)
     public ParadaImprevistaModel(TrajetoModel trajetoModel,
                                  LocalDateTime dataHoraInicio,
                                  LocalDateTime dataHoraFim,
@@ -51,6 +80,10 @@ public class ParadaImprevistaModel implements Model {
         this.motivo = motivo;
     }
 
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
+
 //Getters
     @Override
     public int getId() {
@@ -73,6 +106,10 @@ public class ParadaImprevistaModel implements Model {
         return motivo;
     }
 
+    public String getObservacao() {
+        return observacao;
+    }
+
     @Override
     public String toString() {
         return "ParadaImprevistaModel{" +
@@ -81,6 +118,7 @@ public class ParadaImprevistaModel implements Model {
                 ", dataHoraInicio=" + dataHoraInicio +
                 ", dataHoraFim=" + dataHoraFim +
                 ", motivo='" + motivo + '\'' +
+                ", observacao='" + observacao + '\'' +
                 '}';
     }
 }
