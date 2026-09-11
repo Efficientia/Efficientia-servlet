@@ -1,34 +1,55 @@
 package com.efficientia.efficientia.model;
 
-public class InfoEmbarqueModel implements Model{
-    private int id; //PK
-    private TrajetoModel trajetoModel; //Trajeto da relação
-    private String nome;//Mudar para enum depois //Parte informações embarque do documento com o checklist
+public class InfoEmbarqueModel implements Model {
+    private int id;
+    private String nome;
+    private TrajetoModel trajetoModel;
 
-    public InfoEmbarqueModel(String nome,
-                             TrajetoModel trajetoModel,
-                             int id) {
+//Construtor com id do banco
+    public InfoEmbarqueModel(int id,
+                             String nome,
+                             TrajetoModel trajetoModel) {
+        this.id = id;
         this.nome = nome;
         this.trajetoModel = trajetoModel;
-        this.id = id;
     }
 
-    public InfoEmbarqueModel() {
+//Construtor sem id padrão
+    public InfoEmbarqueModel(String nome,
+                             TrajetoModel trajetoModel) {
+        this.nome = nome;
+        this.trajetoModel = trajetoModel;
     }
 
+//Setters sem id
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setTrajetoModel(TrajetoModel trajetoModel) {
+        this.trajetoModel = trajetoModel;
+    }
+
+//Getters
     @Override
     public int getId() {
         return id;
-    }
-
-    public TrajetoModel getTrajeto() {
-        return trajetoModel;
     }
 
     public String getNome() {
         return nome;
     }
 
+    public TrajetoModel getTrajeto() {
+        return trajetoModel;
+    }
 
-    //Não possui setters por nao ter nada mutável, mas dar uma olhada
+    @Override
+    public String toString() {
+        return "InfoEmbarqueModel{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", trajetoModel=" + trajetoModel +
+                '}';
+    }
 }

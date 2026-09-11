@@ -2,22 +2,23 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public abstract class UsuarioModel implements Model{
+public abstract class UsuarioModel implements Model {
     protected int id;
     protected String nome;
-    protected String assinatura; //Virar hash
+    protected String assinatura;
     protected LocalDate dataNascimento;
-    protected String senha; //Hash
+    protected String senha;
     protected String email;
     protected String telefone;
 
+//Construtor com id do banco
     public UsuarioModel(int id,
-                   String nome,
-                   String assinatura,
-                   LocalDate dataNascimento,
-                   String senha,
-                   String email,
-                   String telefone) {
+                        String nome,
+                        String assinatura,
+                        LocalDate dataNascimento,
+                        String senha,
+                        String email,
+                        String telefone) {
         this.id = id;
         this.nome = nome;
         this.assinatura = assinatura;
@@ -27,9 +28,47 @@ public abstract class UsuarioModel implements Model{
         this.telefone = telefone;
     }
 
-    public UsuarioModel() {
+//Construtor sem id padrão
+    public UsuarioModel(String nome,
+                        String assinatura,
+                        LocalDate dataNascimento,
+                        String senha,
+                        String email,
+                        String telefone) {
+        this.nome = nome;
+        this.assinatura = assinatura;
+        this.dataNascimento = dataNascimento;
+        this.senha = senha;
+        this.email = email;
+        this.telefone = telefone;
     }
 
+//Setters sem id
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setAssinatura(String assinatura) {
+        this.assinatura = assinatura;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+//Getters
     @Override
     public int getId() {
         return id;
@@ -59,23 +98,16 @@ public abstract class UsuarioModel implements Model{
         return telefone;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setAssinatura(String assinatura) {
-        this.assinatura = assinatura;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public String toString() {
+        return "UsuarioModel{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", assinatura='" + assinatura + '\'' +
+                ", dataNascimento=" + dataNascimento +
+                ", senha='" + senha + '\'' +
+                ", email='" + email + '\'' +
+                ", telefone='" + telefone + '\'' +
+                '}';
     }
 }

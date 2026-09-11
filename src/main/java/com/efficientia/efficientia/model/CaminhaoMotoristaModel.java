@@ -2,14 +2,29 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class CaminhaoMotoristaModel implements Model{
+public class CaminhaoMotoristaModel implements Model {
 
-    private int id; //Id código unico
-    private MotoristaModel motoristaModel; //Motorista da relação
-    private CaminhaoModel caminhaoModel; //Caminhão da relação
-    private LocalDate dataInicio; //Data de início da relação
-    private LocalDate dataFim; //Data do fim da relação
-    private boolean ativo; //Se a relação esta aiva
+    private int id;
+    private MotoristaModel motoristaModel;
+    private CaminhaoModel caminhaoModel;
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
+    private boolean ativo;
+
+//Construtor com id do banco
+    public CaminhaoMotoristaModel(int id,
+                                  MotoristaModel motoristaModel,
+                                  CaminhaoModel caminhaoModel,
+                                  LocalDate dataInicio,
+                                  LocalDate dataFim,
+                                  boolean ativo) {
+        this.id = id;
+        this.motoristaModel = motoristaModel;
+        this.caminhaoModel = caminhaoModel;
+        this.dataInicio = dataInicio;
+        this.dataFim = dataFim;
+        this.ativo = ativo;
+    }
 
     public CaminhaoMotoristaModel(int id,
                                   MotoristaModel motoristaModel,
@@ -23,29 +38,51 @@ public class CaminhaoMotoristaModel implements Model{
         this.ativo = ativo;
     }
 
-    public CaminhaoMotoristaModel() {
+//Construtor sem id padrão
+    public CaminhaoMotoristaModel(MotoristaModel motoristaModel,
+                                  CaminhaoModel caminhaoModel,
+                                  LocalDate dataInicio,
+                                  boolean ativo) {
+        this.motoristaModel = motoristaModel;
+        this.caminhaoModel = caminhaoModel;
+        this.dataInicio = dataInicio;
+        this.ativo = ativo;
     }
 
-    // getters e setters
+//Setters sem id
+    public void setMotoristaModel(MotoristaModel motoristaModel) {
+        this.motoristaModel = motoristaModel;
+    }
 
+    public void setCaminhaoModel(CaminhaoModel caminhaoModel) {
+        this.caminhaoModel = caminhaoModel;
+    }
+
+    public void setDataInicio(LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public void setDataFim(LocalDate dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+//Getters
     @Override
     public int getId() {
         return id;
     }
 
-    //id imutável
-
     public MotoristaModel getMotorista() {
         return motoristaModel;
     }
 
-    //O motorista da relação não pode mudar, caso o contrario a relação acaba
-
     public CaminhaoModel getCaminhao() {
         return caminhaoModel;
     }
-
-    //O caminhão da relação não pode mudar
 
     public LocalDate getDataInicio() {
         return dataInicio;
@@ -55,17 +92,19 @@ public class CaminhaoMotoristaModel implements Model{
         return dataFim;
     }
 
-    //A relação pode voltar a acontecer
-
     public boolean isAtivo() {
         return ativo;
     }
 
-    public void setDataFim(LocalDate dataFim) {
-        this.dataFim = dataFim;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
+    @Override
+    public String toString() {
+        return "CaminhaoMotoristaModel{" +
+                "id=" + id +
+                ", motoristaModel=" + motoristaModel +
+                ", caminhaoModel=" + caminhaoModel +
+                ", dataInicio=" + dataInicio +
+                ", dataFim=" + dataFim +
+                ", ativo=" + ativo +
+                '}';
     }
 }

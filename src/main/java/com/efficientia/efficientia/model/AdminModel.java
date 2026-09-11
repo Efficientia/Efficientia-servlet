@@ -6,17 +6,20 @@ public class AdminModel implements Model{
     private String email;
     private String senha;
     private String nome;
-
+//Construtor com id do banco
     public AdminModel(int id, String email, String senha, String nome) {
         this.id = id;
         this.email = email;
         this.senha = senha;
         this.nome = nome;
     }
-
-    public AdminModel() {
+//Construtor sem id padrão
+    public AdminModel(String email, String senha, String nome) {
+        this.email = email;
+        this.senha = senha;
+        this.nome = nome;
     }
-
+//Setters sem id
     public void setEmail(String email) {
         this.email = email;
     }
@@ -28,7 +31,7 @@ public class AdminModel implements Model{
     public void setNome(String nome) {
         this.nome = nome;
     }
-
+//Getters
     @Override
     public int getId() {
         return id;
@@ -44,5 +47,15 @@ public class AdminModel implements Model{
 
     public String getNome() {
         return nome;
+    }
+
+    @Override
+    public String toString() {
+        return "AdminModel{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", senha='" + senha + '\'' +
+                ", nome='" + nome + '\'' +
+                '}';
     }
 }

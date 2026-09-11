@@ -1,20 +1,22 @@
 package com.efficientia.efficientia.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-public class DonoFazendaModel implements Model{
+public class DonoFazendaModel implements Model {
     private int id;
     private String cpf;
-    private String assinatura; //vai virar hash
-    private LocalDateTime dataNascimento;
+    private String assinatura;
+    private LocalDate dataNascimento;
     private String nome;
-    private String senha; //vai virar hash
+    private String senha;
     private String email;
     private String telefone;
 
-    public DonoFazendaModel(int id, String cpf,
+//Construtor com id do banco
+    public DonoFazendaModel(int id,
+                            String cpf,
                             String assinatura,
-                            LocalDateTime dataNascimento,
+                            LocalDate dataNascimento,
                             String nome,
                             String senha,
                             String email,
@@ -28,18 +30,70 @@ public class DonoFazendaModel implements Model{
         this.email = email;
         this.telefone = telefone;
 
-        if(cpf.length() > 11){
+        if (cpf != null && cpf.length() > 11) {
             this.cpf = "nulo";
         }
 
-        if(telefone.length() > 11){
+        if (telefone != null && telefone.length() > 11) {
             this.telefone = "nulo";
         }
     }
 
-    public DonoFazendaModel() {
+//Construtor sem id padrão
+    public DonoFazendaModel(String cpf,
+                            String assinatura,
+                            LocalDate dataNascimento,
+                            String nome,
+                            String senha,
+                            String email,
+                            String telefone) {
+        this.cpf = cpf;
+        this.assinatura = assinatura;
+        this.dataNascimento = dataNascimento;
+        this.nome = nome;
+        this.senha = senha;
+        this.email = email;
+        this.telefone = telefone;
+
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
+
+        if (telefone != null && telefone.length() > 11) {
+            this.telefone = "nulo";
+        }
     }
 
+//Setters sem id
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public void setAssinatura(String assinatura) {
+        this.assinatura = assinatura;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+//Getters
     @Override
     public int getId() {
         return id;
@@ -53,7 +107,7 @@ public class DonoFazendaModel implements Model{
         return assinatura;
     }
 
-    public LocalDateTime getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
@@ -73,26 +127,17 @@ public class DonoFazendaModel implements Model{
         return telefone;
     }
 
-    //adicionar setter onde necessario
-
-
-    public void setAssinatura(String assinatura) {
-        this.assinatura = assinatura;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    @Override
+    public String toString() {
+        return "DonoFazendaModel{" +
+                "id=" + id +
+                ", cpf='" + cpf + '\'' +
+                ", assinatura='" + assinatura + '\'' +
+                ", dataNascimento=" + dataNascimento +
+                ", nome='" + nome + '\'' +
+                ", senha='" + senha + '\'' +
+                ", email='" + email + '\'' +
+                ", telefone='" + telefone + '\'' +
+                '}';
     }
 }

@@ -2,8 +2,9 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class MotoristaModel extends UsuarioModel implements Model{
+public class MotoristaModel extends UsuarioModel implements Model {
 
+//Construtor com id do banco
     public MotoristaModel(int id,
                           String nome,
                           String assinatura,
@@ -14,6 +15,26 @@ public class MotoristaModel extends UsuarioModel implements Model{
         super(id, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
-    public MotoristaModel() {
+//Construtor sem id padrão
+    public MotoristaModel(String nome,
+                          String assinatura,
+                          LocalDate dataNascimento,
+                          String senha,
+                          String email,
+                          String telefone) {
+        super(nome, assinatura, dataNascimento, senha, email, telefone);
+    }
+
+    @Override
+    public String toString() {
+        return "MotoristaModel{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", assinatura='" + assinatura + '\'' +
+                ", dataNascimento=" + dataNascimento +
+                ", senha='" + senha + '\'' +
+                ", email='" + email + '\'' +
+                ", telefone='" + telefone + '\'' +
+                '}';
     }
 }
