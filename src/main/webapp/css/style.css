@@ -1112,16 +1112,275 @@ p, a, span {
 }
 
 /* ==========================================================================
-   12. MEDIA QUERY - 1028PX
+   12. MEDIA QUERY - 961PX
    ========================================================================== */
 
-@media (max-width: 1028px) {
-    .conteudo-hero h1 {
-        font-size: 32px;
+@media (max-width: 961px) {
+    /* Seção Problema */
+    .cards-problema {
+        align-items: stretch;
+        gap: 12px;
+        padding: 0 10px;
+    }
+
+    .card-problema {
+        padding: 16px 18px;
+        gap: 12px;
+        min-height: 100px;
+    }
+
+    .card-problema img {
+        max-width: 38px;
+    }
+
+    .card-problema h3 {
+        font-size: 16px;
+    }
+
+    .card-problema p {
+        font-size: 13px;
+        line-height: 1.35;
+    }
+}
+
+/* ==========================================================================
+   13. MEDIA QUERY - 925PX
+   ========================================================================== */
+
+@media (max-width: 925px) {
+    /* Seção Solução */
+    .cards-solucao {
+        gap: 10px;
+    }
+
+    .card-solucao {
+        width: 235px;
+        max-width: 235px;
+    }
+
+    .imagem-card-solucao img {
+        width: 330px;
+    }
+
+    .conteudo-card-solucao {
+        width: 235px;
+        max-width: 235px;
+        margin-top: -36px;
+        padding: 10px 12px;
+        min-height: 95px;
+        gap: 10px;
+    }
+
+    .conteudo-card-solucao img {
+        max-height: 28px;
+        padding-left: 0;
+    }
+
+    .conteudo-texto-card-solucao h3,
+    .titulo-card-solucao {
+        font-size: 14px;
+        line-height: 1.2;
+    }
+
+    .conteudo-texto-card-solucao p {
+        font-size: 11.5px;
+        line-height: 1.3;
+    }
+
+    .seta-separadora {
+        width: 18px;
+        margin-bottom: 45px;
+    }
+}
+
+/* ==========================================================================
+   14. MEDIA QUERY - 768PX
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* Seção Hero */
+    .hero {
+        min-height: auto;
+        padding-top: 85px;
+        padding-bottom: 40px;
+    }
+
+    .conteudo-hero {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .hero-texto-botoes {
+        max-width: 300px;
+    }
+
+    .hero-imagem {
+        padding: 0;
+        min-width: auto;
+    }
+
+    #mockup-celular-hero {
+        max-width: 250px;
+    }
+
+    .hero-lista {
+        width: 100%;
+        max-width: 100%;
+        margin-top: 25px;
+    }
+
+    .lista-funcionalidades-hero {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .lista-funcionalidades-hero li {
+        flex: 1;
+        gap: 10px;
+    }
+
+    .lista-funcionalidades-hero li span {
+        font-size: 14px;
         line-height: 1.25;
     }
 
-    .conteudo-hero h1 .destaque {
-        white-space: nowrap;
+    .lista-funcionalidades-hero li img {
+        width: 44px;
+        height: 44px;
+        padding: 9px;
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    /* Seção Problema */
+    .mockup-desktop {
+        max-width: 580px;
+        transform: translateX(-28px);
+        margin: 20px auto 0 auto;
+    }
+
+    .cards-problema {
+        flex-direction: column;
+        align-items: center;
+        max-width: 560px;
+        margin: 30px auto 0 auto;
+        gap: 16px;
+        padding: 0 15px;
+    }
+
+    .card-problema {
+        width: 100%;
+        max-width: 100%;
+        height: 84px;
+        min-height: 84px;
+        padding: 14px 22px;
+        gap: 16px;
+    }
+
+    .card-problema img {
+        max-width: 40px;
+    }
+
+    .card-problema h3 {
+        font-size: 17px;
+    }
+
+    .card-problema p {
+        font-size: 13.5px;
+        line-height: 1.3;
+    }
+
+    /* Seção Impacto */
+    .conteudo-impacto img.img-impacto {
+        transform: translateY(15px);
+        margin-bottom: 20px;
+    }
+
+    /* Seção Próximo Passo */
+    .conteudo-proximo-passo {
+        padding: 60px 0 0 20px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .esquerda-proximo-passo {
+        max-width: 350px;
+    }
+
+    .texto-proximo-passo h2 {
+        font-size: 30px;
+        line-height: 1.2;
+    }
+
+    .texto-proximo-passo p {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .botoes-proximo-passo {
+        max-width: 100%;
+        margin-top: 20px;
+    }
+
+    .botoes-proximo-passo a {
+        font-size: 16px;
+        padding: 12px 18px;
+    }
+
+    #mockup-celular-proximo-passo {
+        display: none;
+    }
+
+    .imagens-proximo-passo {
+        justify-content: flex-end;
+        flex: 1;
+        margin-right: 0;
+    }
+
+    #dashboard-proximo-passo {
+        max-width: 370px;
+        width: 100%;
+        height: auto;
+        margin-right: 0;
+        display: block;
+    }
+
+    /* Rodapé */
+    .rodape {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px 5px 25px;
+        height: auto;
+        min-height: auto;
+        gap: 10px;
+    }
+
+    #logo-rodape {
+        max-height: 35px;
+    }
+
+    .links-rodape {
+        gap: 18px;
+    }
+
+    .links-rodape a {
+        font-size: 15px;
+    }
+
+    .rodape p {
+        order: 3;
+        width: 100%;
+        text-align: center;
+        margin-left: 0;
+        font-size: 13px;
+    }
+
+    .rodape p br {
+        display: none;
     }
 }
