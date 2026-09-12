@@ -129,55 +129,75 @@
         <h2 class="solucao-titulo">O processo continua o mesmo <br><span class="destaque">A burocracia, não</span></h2>
         <p class="solucao-texto">Um fluxo digital simples, com preenchimento guiado, dados padronizados e registros
             prontos para consulta.</p>
-        <div class="cards-solucao">
+        <div class="carousel-solucao-wrapper">
+            <button class="btn-carousel-solucao btn-prev" aria-label="Etapa anterior" type="button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 19l-7-7 7-7" stroke="#FFF8E1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
 
-            <div class="card-solucao">
-                <div class="imagem-card-solucao">
-                    <img src="assets/mockup_celular_etapa1.png"
-                         alt="mockup de celular mostrando a primeira etapa do processo digital">
+            <div class="cards-solucao">
+
+                <div class="card-solucao active" data-index="0">
+                    <div class="imagem-card-solucao">
+                        <img src="assets/mockup_celular_etapa1.png"
+                             alt="mockup de celular mostrando a primeira etapa do processo digital">
+                    </div>
+                    <div class="conteudo-card-solucao">
+                        <img src="assets/icone_arquivotxt.svg" alt="icone de arquivo de texto">
+                        <div class="conteudo-texto-card-solucao">
+                            <h3 class="titulo-card-solucao">Preenchimento guiado</h3>
+                            <p>Campos claros reduzem falhas no registro.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="conteudo-card-solucao">
-                    <img src="assets/icone_arquivotxt.svg" alt="icone de arquivo de texto">
-                    <div class="conteudo-texto-card-solucao">
-                        <h3 class="titulo-card-solucao">Preenchimento guiado</h3>
-                        <p>Campos claros reduzem falhas no registro.</p>
+
+                <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
+
+                <div class="card-solucao" data-index="1">
+                    <div class="imagem-card-solucao">
+                        <img src="assets/mockup_celular_etapa2.png"
+                             alt="mockup de celular mostrando a segunda etapa do processo digital">
+                    </div>
+                    <div class="conteudo-card-solucao">
+                        <img src="assets/icone_checklist.svg" alt="icone de checklist">
+                        <div class="conteudo-texto-card-solucao">
+                            <h3 class="titulo-card-solucao">Dados padronizados</h3>
+                            <p>Informações sempre no mesmo formato.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
+
+                <div class="card-solucao" data-index="2">
+                    <div class="imagem-card-solucao">
+                        <img src="assets/mockup_celular_etapa3.png"
+                             alt="mockup de celular mostrando a terceira etapa do processo digital">
+                    </div>
+                    <div class="conteudo-card-solucao">
+                        <img src="assets/icon_marcador.svg" alt="icone de marcador">
+                        <div class="conteudo-texto-card-solucao">
+                            <h3 class="titulo-card-solucao">Gestão conectada</h3>
+                            <p>Registros prontos para consulta da operação.</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
-
-
-            <div class="card-solucao">
-                <div class="imagem-card-solucao">
-                    <img src="assets/mockup_celular_etapa2.png"
-                         alt="mockup de celular mostrando a segunda etapa do processo digital">
-                </div>
-                <div class="conteudo-card-solucao">
-                    <img src="assets/icone_checklist.svg" alt="icone de checklist">
-                    <div class="conteudo-texto-card-solucao">
-                        <h3 class="titulo-card-solucao">Dados padronizados</h3>
-                        <p>Informações sempre no mesmo formato.</p>
-                    </div>
-                </div>
-            </div>
-
-            <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
-
-            <div class="card-solucao">
-                <div class="imagem-card-solucao">
-                    <img src="assets/mockup_celular_etapa3.png"
-                         alt="mockup de celular mostrando a terceira etapa do processo digital">
-                </div>
-                <div class="conteudo-card-solucao">
-                    <img src="assets/icon_marcador.svg" alt="icone de marcador">
-                    <div class="conteudo-texto-card-solucao">
-                        <h3 class="titulo-card-solucao">Gestão conectada</h3>
-                        <p>Registros prontos para consulta da operação.</p>
-                    </div>
-                </div>
-            </div>
+            <button class="btn-carousel-solucao btn-next" aria-label="Próxima etapa" type="button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5l7 7-7 7" stroke="#FFF8E1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         </div>
+
+        <div class="carousel-solucao-dots">
+            <button class="dot-solucao active" data-index="0" aria-label="Ir para etapa 1" type="button"></button>
+            <button class="dot-solucao" data-index="1" aria-label="Ir para etapa 2" type="button"></button>
+            <button class="dot-solucao" data-index="2" aria-label="Ir para etapa 3" type="button"></button>
+        </div>
+    </div>
 </section>
 
 <div class="linhas-organicas">
@@ -240,5 +260,6 @@
     <p>Projeto Interdisciplinar <br> Germinare TECH, 2026</p>
 </section>
 
+<script src="js/carousel-solucao.js" defer></script>
 </body>
 </html>

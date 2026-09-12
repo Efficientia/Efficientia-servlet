@@ -427,6 +427,22 @@ p, a, span {
     padding-top: 10px;
 }
 
+.carousel-solucao-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-carousel-solucao {
+    display: none;
+}
+
+.carousel-solucao-dots {
+    display: none;
+}
+
 .cards-solucao {
     display: flex;
     align-items: center;
@@ -1382,5 +1398,220 @@ p, a, span {
 
     .rodape p br {
         display: none;
+    }
+
+    /* Seção Solução - Carrossel Interativo */
+    .cards-solucao .seta-separadora {
+        display: none !important;
+    }
+
+    .carousel-solucao-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        max-width: 520px;
+        margin: 0 auto;
+        padding: 0 45px;
+    }
+
+    .btn-carousel-solucao {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(0, 21, 75, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s, box-shadow 0.3s, border-color 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-carousel-solucao:hover {
+        background: rgba(86, 216, 103, 0.35);
+        border-color: rgba(86, 216, 103, 0.6);
+        transform: translateY(-50%) scale(1.08);
+        box-shadow: 0 0 15px rgba(86, 216, 103, 0.4);
+    }
+
+    .btn-carousel-solucao:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+    .btn-carousel-solucao.btn-prev {
+        left: 0;
+    }
+
+    .btn-carousel-solucao.btn-next {
+        right: 0;
+    }
+
+    .cards-solucao {
+        position: relative;
+        width: 100%;
+        max-width: 410px;
+        min-height: 530px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transform: none !important;
+        overflow: hidden;
+        gap: 0;
+    }
+
+    .card-solucao {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 410px;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card-solucao.active {
+        display: flex;
+        position: relative;
+    }
+
+    /* Animações de Troca de Celular */
+    .card-solucao.slide-in-right {
+        display: flex;
+        animation: slideInRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .card-solucao.slide-out-left {
+        display: flex;
+        position: absolute;
+        animation: slideOutLeft 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        pointer-events: none;
+    }
+
+    .card-solucao.slide-in-left {
+        display: flex;
+        animation: slideInLeft 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .card-solucao.slide-out-right {
+        display: flex;
+        position: absolute;
+        animation: slideOutRight 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        pointer-events: none;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOutLeft {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+
+    .card-solucao .imagem-card-solucao {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .card-solucao .imagem-card-solucao img {
+        width: 395px;
+        max-width: none;
+        height: auto;
+        display: block;
+    }
+
+    .card-solucao .conteudo-card-solucao {
+        width: 280px;
+        max-width: 280px;
+        margin-top: -44px;
+        padding: 12px 16px;
+        min-height: 100px;
+    }
+
+    .card-solucao .conteudo-texto-card-solucao h3,
+    .card-solucao .titulo-card-solucao {
+        font-size: 16px;
+    }
+
+    .card-solucao .conteudo-texto-card-solucao p {
+        font-size: 13px;
+    }
+
+    /* Dots Indicadores */
+    .carousel-solucao-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 25px;
+        position: relative;
+        z-index: 5;
+    }
+
+    .dot-solucao {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 248, 225, 0.3);
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.35s ease;
+    }
+
+    .dot-solucao.active {
+        background: #56D867;
+        width: 28px;
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(86, 216, 103, 0.7);
     }
 }
