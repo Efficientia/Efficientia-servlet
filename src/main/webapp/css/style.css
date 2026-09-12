@@ -25,7 +25,7 @@ h1, h2, h3 {
 }
 
 h1, h2 {
-    font-size: 48px;
+    font-size: 42px;
     font-style: normal;
     line-height: normal;
 }
@@ -166,7 +166,10 @@ p, a, span {
 
 .hero {
     min-height: 100vh;
-    padding-top: 110px;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    padding-bottom: 40px;
     overflow: visible;
 }
 
@@ -189,12 +192,15 @@ p, a, span {
     align-items: center;
     justify-content: space-between;
     max-width: 1350px;
-    margin: 0 65px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 40px;
 }
 
 .hero-texto-botoes {
     width: 100%;
-    max-width: 440px;
+    max-width: 410px;
+    flex-shrink: 1;
 }
 
 .conteudo-hero h1 {
@@ -270,18 +276,21 @@ p, a, span {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0 25px;
+    min-width: 290px;
 }
 
 #mockup-celular-hero {
     width: 100%;
     max-width: 420px;
+    min-width: 280px;
     height: auto;
-    
 }
 
 .hero-lista {
     width: 100%;
-    max-width: 360px;
+    max-width: 330px;
+    flex-shrink: 1;
 }
 
 .lista-funcionalidades-hero {
@@ -631,21 +640,146 @@ p, a, span {
     text-align: right;
 }
 
-@media (max-width: 1100px){
+/* ==========================================================================
+   9. MEDIA QUERY - 1392PX
+   ========================================================================== */
+
+@media (max-width: 1392px) {
+    /* Seção Impacto */
+    .conteudo-impacto img {
+        transform: translateY(0px);
+        margin-bottom: 35px;
+    }
+}
+
+/* ==========================================================================
+   10. MEDIA QUERY - 1300PX
+   ========================================================================== */
+
+@media (max-width: 1300px) {
+    /* Seção Problema */
+    .cards-problema {
+        max-width: 100%;
+        margin-top: 35px;
+        gap: 16px;
+        transform: translateX(-32.5px);
+        justify-content: center;
+    }
+
+    .card-problema {
+        max-width: 380px;
+        padding: 22px 24px;
+        height: auto;
+        min-height: 115px;
+        gap: 16px;
+    }
+
+    .card-problema img {
+        max-width: 50px;
+    }
+
+    .card-problema h3 {
+        font-size: 20px;
+    }
+
+    .card-problema p {
+        font-size: 14.5px;
+        line-height: 1.35;
+    }
+
+    /* Seção Solução */
+    .cards-solucao {
+        transform: translateX(0);
+        gap: 25px;
+    }
+
+    .card-solucao {
+        width: 300px;
+        max-width: 300px;
+    }
+
+    .imagem-card-solucao {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .imagem-card-solucao img {
+        width: 420px;
+        max-width: none;
+        height: auto;
+        display: block;
+    }
+
+    .conteudo-card-solucao {
+        width: 300px;
+        max-width: 300px;
+        margin-top: -48px;
+    }
+
+    .seta-separadora {
+        width: 26px;
+        height: auto;
+        flex-shrink: 0;
+        margin-bottom: 40px;
+    }
+
+    /* Seção Impacto */
+    .img-impacto {
+        max-width: 1050px;
+        width: 100%;
+        height: auto;
+    }
+
+    .conteudo-impacto img.img-impacto {
+        transform: translateY(-30px);
+        margin: 0 auto;
+        display: block;
+        margin-bottom: -10px;
+    }
+
+    /* Rodapé */
+    .rodape {
+        padding: 15px 35px;
+        gap: 35px;
+    }
+
+    #logo-rodape {
+        max-height: 38px;
+    }
+
+    .links-rodape {
+        gap: 28px;
+    }
+
+    .links-rodape a {
+        font-size: 19px;
+    }
+
+    .rodape p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 1200px){
     .hero {
         min-height: 100vh;
-        padding-top: 85px;
-        padding-bottom: 65px;
+        padding-top: 75px;
+        padding-bottom: 35px;
     }
 
     .hero-texto-botoes {
-        max-width: 380px;
+        max-width: 290px;
     }
 
     .conteudo-hero h1 {
-        font-size: 36px;
+        font-size: 32px;
         line-height: 1.2;
         margin-bottom: 16px;
+    }
+
+    .conteudo-hero h1 .destaque {
+        white-space: nowrap;
     }
 
     #hero-texto {
@@ -655,8 +789,13 @@ p, a, span {
     }
 
     .botoes-hero {
-        max-width: 340px;
+        width: 100%;
+        max-width: 320px;
         gap: 12px;
+    }
+
+    .botoes-hero a {
+        width: 100%;
     }
 
     .botao-ativo, .botao-desativado {
@@ -715,7 +854,7 @@ p, a, span {
     }
     
     .conteudo-hero { 
-        margin: 0 30px;
+        padding: 0 30px;
         gap: 30px;
     }
 
@@ -755,6 +894,7 @@ p, a, span {
     }
 
     .cards-problema {
+        transform: none;
         max-width: 100%;
         margin-top: 30px;
         gap: 15px;
@@ -919,7 +1059,8 @@ p, a, span {
     }
 
     .botoes-proximo-passo {
-        max-width: 340px;
+        width: 100%;
+        max-width: 440px;
         margin-top: 25px;
         gap: 12px;
     }
@@ -971,20 +1112,16 @@ p, a, span {
 }
 
 /* ==========================================================================
-   10. MEDIA QUERY - 1000PX
+   12. MEDIA QUERY - 1028PX
    ========================================================================== */
 
-@media (max-width: 1000px) {
-    .hero {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        padding-top: 70px;
-        padding-bottom: 30px;
+@media (max-width: 1028px) {
+    .conteudo-hero h1 {
+        font-size: 32px;
+        line-height: 1.25;
     }
 
-    .conteudo-hero {
-        width: 100%;
-        margin: 0 30px;
+    .conteudo-hero h1 .destaque {
+        white-space: nowrap;
     }
 }
