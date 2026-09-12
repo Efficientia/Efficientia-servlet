@@ -4,6 +4,8 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 * {
@@ -11,9 +13,12 @@ html {
     padding: 0;
     box-sizing: border-box;
 }
-body{
+
+body {
     overflow-x: hidden;
+    max-width: 100%;
     width: 100%;
+    position: relative;
 }
 h1, h2, h3 {
     font-family: 'Manrope', sans-serif;
@@ -271,7 +276,7 @@ p, a, span {
     width: 100%;
     max-width: 420px;
     height: auto;
-    transform: scale(1.4) translateY(100px) translateX(40px);
+    
 }
 
 .hero-lista {
@@ -341,12 +346,11 @@ p, a, span {
 
 .mockup-desktop {
     width: 100%;
-    max-width: 850px;
+    max-width: 820px;
     height: auto;
     display: block;
-    margin: auto;
-    margin-top: 0;
-    transform: translateX(50px);
+    margin: 25px auto 0 auto;
+    transform: translateX(-40px);
 }
 
 .cards-problema {
@@ -356,7 +360,7 @@ p, a, span {
     gap: 20px;
     max-width: 1375px;
     margin: 0 auto;
-    margin-top: -190px;
+    margin-top: 40px;
 }
 
 .card-problema {
@@ -566,7 +570,6 @@ p, a, span {
     max-height: 750px;
     position: relative;
     z-index: 2;
-    transform: translateY(70px) translateX(100px);
 }
 
 #dashboard-proximo-passo {
@@ -626,4 +629,362 @@ p, a, span {
     line-height: normal;
     margin-left: auto;
     text-align: right;
+}
+
+@media (max-width: 1100px){
+    .hero {
+        min-height: 100vh;
+        padding-top: 85px;
+        padding-bottom: 65px;
+    }
+
+    .hero-texto-botoes {
+        max-width: 380px;
+    }
+
+    .conteudo-hero h1 {
+        font-size: 36px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
+
+    #hero-texto {
+        font-size: 18px;
+        line-height: 1.45;
+        margin-bottom: 25px;
+    }
+
+    .botoes-hero {
+        max-width: 340px;
+        gap: 12px;
+    }
+
+    .botao-ativo, .botao-desativado {
+        font-size: 18px;
+        padding: 13px 22px;
+    }
+
+    #mockup-celular-hero {
+        max-width: 310px;
+    }
+
+    .hero-lista {
+        max-width: 300px;
+    }
+
+    .lista-funcionalidades-hero {
+        gap: 22px;
+    }
+
+    .lista-funcionalidades-hero li span {
+        font-size: 17px;
+    }
+
+    .lista-funcionalidades-hero li img {
+        width: 52px;
+        height: 52px;
+        padding: 11px;
+    }
+
+    .menu {
+        width: 98%;
+        max-width: 98%;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 10px 40px;
+        height: 56px;
+        justify-content: flex-start;
+        gap: 35px;
+        border-radius: 20px;
+    }
+
+    #logo {
+        height: 34px;
+    }
+
+    .menu-links {
+        gap: 25px;
+    }
+
+    .link-menu {
+        font-size: 16px;
+        white-space: nowrap;
+        transform: translateY(1px);
+    }
+    
+    .conteudo-hero { 
+        margin: 0 30px;
+        gap: 30px;
+    }
+
+    /* Conteúdos e seções seguintes */
+    .conteudo-problema, .conteudo-solucao, .conteudo-impacto, .conteudo-proximo-passo {
+        margin-left: 0;
+        padding: 60px 30px;
+    }
+
+    .linhas-organicas {
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    /* Seção Problema */
+    .conteudo-problema {
+        padding: 85px 30px 60px 30px;
+    }
+
+    .problema-titulo {
+        font-size: 36px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
+
+    .problema-texto {
+        font-size: 18px;
+        line-height: 1.45;
+        margin-bottom: 25px;
+    }
+
+    .mockup-desktop {
+        max-width: 720px;
+        transform: translateX(-35px);
+        margin: 20px auto 0 auto;
+        display: block;
+    }
+
+    .cards-problema {
+        max-width: 100%;
+        margin-top: 30px;
+        gap: 15px;
+        padding: 0 10px;
+    }
+
+    .card-problema {
+        padding: 20px;
+        height: auto;
+        min-height: 110px;
+    }
+
+    .card-problema h3 {
+        font-size: 18px;
+    }
+
+    .card-problema p {
+        font-size: 14px;
+    }
+
+    .card-problema img {
+        max-width: 45px;
+    }
+
+    /* Seção Solução */
+    .conteudo-solucao {
+        padding: 85px 30px 60px 30px;
+    }
+
+    .solucao-titulo {
+        font-size: 36px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
+
+    .solucao-texto {
+        font-size: 18px;
+        line-height: 1.45;
+        margin-bottom: 35px;
+        padding-top: 0;
+    }
+
+    .cards-solucao {
+        transform: translateX(0);
+        gap: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-solucao {
+        width: 270px;
+        max-width: 270px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .imagem-card-solucao {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .imagem-card-solucao img {
+        width: 380px;
+        max-width: none;
+        height: auto;
+        display: block;
+    }
+
+    .conteudo-card-solucao {
+        width: 270px;
+        max-width: 270px;
+        margin-top: -42px;
+        padding: 12px 16px;
+        height: auto;
+        min-height: 105px;
+        gap: 14px;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .conteudo-card-solucao img {
+        padding-left: 5px;
+        max-height: 35px;
+        width: auto;
+    }
+
+    .conteudo-texto-card-solucao h3,
+    .titulo-card-solucao {
+        font-size: 16px;
+        line-height: 1.2;
+    }
+
+    .conteudo-texto-card-solucao p {
+        font-size: 12.5px;
+        line-height: 1.35;
+    }
+
+    .seta-separadora {
+        width: 22px;
+        height: auto;
+        flex-shrink: 0;
+        margin-bottom: 50px;
+    }
+
+    /* Seção Impacto */
+    .conteudo-impacto {
+        padding: 85px 30px 40px 30px;
+    }
+
+    .conteudo-impacto h2 {
+        font-size: 36px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
+
+    .impacto-texto {
+        font-size: 18px;
+        line-height: 1.45;
+        margin-bottom: 30px;
+    }
+
+    .conteudo-impacto img.img-impacto {
+        max-width: 950px;
+        width: 100%;
+        height: auto;
+        transform: translateY(-40px);
+        margin: 0 auto;
+        display: block;
+        margin-bottom: -20px;
+    }
+
+    /* Seção Próximo Passo */
+    .proximo-passo {
+        overflow: hidden;
+    }
+
+    .conteudo-proximo-passo {
+        padding: 85px 0 0 30px;
+        margin-left: 0;
+        gap: 20px;
+    }
+
+    .esquerda-proximo-passo {
+        max-width: 440px;
+    }
+
+    .texto-proximo-passo h2 {
+        font-size: 36px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
+
+    .texto-proximo-passo p {
+        font-size: 18px;
+        line-height: 1.45;
+        margin-top: 15px;
+    }
+
+    .botoes-proximo-passo {
+        max-width: 340px;
+        margin-top: 25px;
+        gap: 12px;
+    }
+
+    .botoes-proximo-passo a {
+        font-size: 18px;
+        padding: 13px 22px;
+    }
+
+    .imagens-proximo-passo {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-end;
+        flex: 1;
+        margin-right: 0;
+    }
+
+    #mockup-celular-proximo-passo {
+        max-height: 520px;
+        max-width: 260px;
+        height: auto;
+    }
+
+    #dashboard-proximo-passo {
+        max-width: 340px;
+        height: auto;
+        margin-right: -10px;
+    }
+
+    /* Rodapé */
+    .rodape {
+        padding: 15px 30px;
+        gap: 25px;
+        height: auto;
+        min-height: 80px;
+    }
+
+    .links-rodape {
+        gap: 20px;
+    }
+
+    .links-rodape a {
+        font-size: 16px;
+    }
+
+    .rodape p {
+        font-size: 13px;
+    }
+}
+
+/* ==========================================================================
+   10. MEDIA QUERY - 1000PX
+   ========================================================================== */
+
+@media (max-width: 1000px) {
+    .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding-top: 70px;
+        padding-bottom: 30px;
+    }
+
+    .conteudo-hero {
+        width: 100%;
+        margin: 0 30px;
+    }
 }
