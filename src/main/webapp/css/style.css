@@ -1422,9 +1422,25 @@ p, a, span {
     }
 
     /* Seção Impacto */
-    .conteudo-impacto img.img-impacto {
-        transform: translateY(15px);
+    .conteudo-impacto h2 {
+        font-size: 32px;
+        line-height: 1.2;
+        margin-bottom: 14px;
+    }
+
+    .impacto-texto {
+        font-size: 16px;
+        line-height: 1.35;
         margin-bottom: 20px;
+    }
+
+    .conteudo-impacto img.img-impacto {
+        width: 105%;
+        max-width: none;
+        margin-left: -2.5%;
+        display: block;
+        transform: translateY(15px);
+        margin-bottom: 25px;
     }
 
     /* Seção Próximo Passo */
@@ -1513,6 +1529,19 @@ p, a, span {
     }
 
     /* Seção Solução - Carrossel Interativo */
+    .solucao-titulo {
+        font-size: 32px;
+        line-height: 1.2;
+        margin-bottom: 14px;
+    }
+
+    .solucao-texto {
+        font-size: 16px;
+        line-height: 1.35;
+        margin-bottom: 25px;
+        padding-top: 0;
+    }
+
     .cards-solucao .seta-separadora {
         display: none !important;
     }
@@ -1523,9 +1552,9 @@ p, a, span {
         justify-content: center;
         position: relative;
         width: 100%;
-        max-width: 520px;
+        max-width: 480px;
         margin: 0 auto;
-        padding: 0 45px;
+        padding: 0 50px;
     }
 
     .btn-carousel-solucao {
@@ -1570,8 +1599,8 @@ p, a, span {
     .cards-solucao {
         position: relative;
         width: 100%;
-        max-width: 410px;
-        min-height: 530px;
+        max-width: 370px;
+        min-height: 510px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1589,7 +1618,7 @@ p, a, span {
         right: 0;
         margin: 0 auto;
         width: 100%;
-        max-width: 410px;
+        max-width: 380px;
         flex-direction: column;
         align-items: center;
     }
@@ -1675,27 +1704,33 @@ p, a, span {
     }
 
     .card-solucao .imagem-card-solucao img {
-        width: 395px;
+        width: 365px;
         max-width: none;
         height: auto;
         display: block;
     }
 
     .card-solucao .conteudo-card-solucao {
-        width: 280px;
-        max-width: 280px;
+        width: 255px;
+        max-width: 255px;
         margin-top: -44px;
         padding: 12px 16px;
-        min-height: 100px;
+        min-height: 85px;
+        gap: 12px;
+    }
+
+    .card-solucao .conteudo-card-solucao img {
+        max-height: 32px;
+        padding-left: 0;
     }
 
     .card-solucao .conteudo-texto-card-solucao h3,
     .card-solucao .titulo-card-solucao {
-        font-size: 16px;
+        font-size: 14.5px;
     }
 
     .card-solucao .conteudo-texto-card-solucao p {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     /* Dots Indicadores */
@@ -1872,6 +1907,116 @@ p, a, span {
     .card-problema p {
         font-size: 12.5px;
         line-height: 1.3;
+    }
+
+    /* Seção Solução - Padronizada com Hero e Problema */
+    .conteudo-solucao {
+        padding: 50px 20px 40px 20px;
+    }
+
+    #badge-solucao {
+        max-width: fit-content;
+        margin-bottom: 12px;
+    }
+
+    .solucao-titulo {
+        font-size: 24px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+    }
+
+    .solucao-texto {
+        font-size: 13.5px;
+        line-height: 1.35;
+        margin-bottom: 20px;
+        padding-top: 0;
+    }
+
+    .carousel-solucao-wrapper {
+        max-width: 470px;
+        padding: 0 44px;
+    }
+
+    .btn-carousel-solucao {
+        width: 38px;
+        height: 38px;
+    }
+
+    .btn-carousel-solucao.btn-prev {
+        left: 0;
+    }
+
+    .btn-carousel-solucao.btn-next {
+        right: 0;
+    }
+
+    .cards-solucao {
+        max-width: 375px;
+        min-height: 490px;
+    }
+
+    .card-solucao {
+        max-width: 375px;
+    }
+
+    .card-solucao .imagem-card-solucao img {
+        width: 360px;
+        max-width: none;
+        height: auto;
+        display: block;
+    }
+
+    .card-solucao .conteudo-card-solucao {
+        width: 250px;
+        max-width: 250px;
+        margin-top: -44px;
+        padding: 12px 16px;
+        min-height: 82px;
+        gap: 12px;
+    }
+
+    .card-solucao .conteudo-card-solucao img {
+        max-height: 30px;
+        padding-left: 0;
+    }
+
+    .card-solucao .conteudo-texto-card-solucao h3,
+    .card-solucao .titulo-card-solucao {
+        font-size: 14px;
+    }
+
+    .card-solucao .conteudo-texto-card-solucao p {
+        font-size: 11.5px;
+    }
+
+    .carousel-solucao-dots {
+        margin-top: 18px;
+    }
+
+    /* Seção Impacto - Padronizada com as demais seções */
+    .conteudo-impacto {
+        padding: 50px 20px 40px 20px;
+    }
+
+    .conteudo-impacto h2 {
+        font-size: 24px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+    }
+
+    .impacto-texto {
+        font-size: 13.5px;
+        line-height: 1.35;
+        margin-bottom: 18px;
+    }
+
+    .conteudo-impacto img.img-impacto {
+        width: 106%;
+        max-width: none;
+        margin-left: -3%;
+        display: block;
+        transform: translateY(10px);
+        margin-bottom: 25px;
     }
 }
 
