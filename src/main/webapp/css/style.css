@@ -1710,14 +1710,46 @@ p, a, span {
    ========================================================================== */
 
 @media (max-width: 659px) {
-    /* Ajuste da Hero para manter imagem ao lado do conteúdo */
+    /* Ajuste da Hero para manter imagem ao lado do conteúdo e tipografia proporcional */
     .conteudo-hero {
         padding: 0 20px;
         gap: 15px;
     }
 
     .hero-texto-botoes {
-        max-width: 280px;
+        width: fit-content;
+        max-width: 290px;
+    }
+
+    .conteudo-hero h1 {
+        font-size: 28px;
+        line-height: 1.2;
+        margin-bottom: 14px;
+    }
+
+    .conteudo-hero span {
+        text-underline-offset: 4px;
+        text-decoration-thickness: 3px;
+    }
+
+    #hero-texto {
+        font-size: 15px;
+        line-height: 1.35;
+        margin-bottom: 24px;
+    }
+
+    .botoes-hero {
+        width: 100%;
+        max-width: 100%;
+        gap: 12px;
+    }
+
+    .botao-ativo,
+    .botao-desativado {
+        display: flex;
+        width: 100%;
+        font-size: 16px;
+        padding: 13px 20px;
     }
 
     .hero-imagem {
@@ -1735,4 +1767,40 @@ p, a, span {
         height: auto;
     }
 }
+
+/* ==========================================================================
+   16. MEDIA QUERY - 636PX
+   ========================================================================== */
+
+@media (max-width: 636px) {
+    /* Rodapé Centralizado */
+    .rodape {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+        padding: 25px 20px 15px 20px;
+    }
+
+    #logo-rodape {
+        margin: 0 auto;
+        display: block;
+    }
+
+    .links-rodape {
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .rodape p {
+        text-align: center;
+        margin: 5px auto 0 auto;
+    }
+}
+
 
