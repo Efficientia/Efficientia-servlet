@@ -1372,6 +1372,18 @@ p, a, span {
     }
 
     /* Seção Problema */
+    .problema-titulo {
+        font-size: 32px;
+        line-height: 1.2;
+        margin-bottom: 14px;
+    }
+
+    .problema-texto {
+        font-size: 16px;
+        line-height: 1.35;
+        margin-bottom: 20px;
+    }
+
     .mockup-desktop {
         max-width: 580px;
         transform: translateX(-28px);
@@ -1801,6 +1813,65 @@ p, a, span {
         height: 36px;
         padding: 7px;
         border-radius: 10px;
+    }
+
+    /* Seção Problema - Padronizada com a Seção Hero */
+    .conteudo-problema {
+        padding: 50px 20px 40px 20px;
+    }
+
+    .badge {
+        max-width: fit-content;
+        margin-bottom: 12px;
+    }
+
+    .badge p {
+        font-size: 12px;
+        padding: 6px 16px;
+    }
+
+    .problema-titulo {
+        font-size: 24px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+    }
+
+    .problema-texto {
+        font-size: 13.5px;
+        line-height: 1.35;
+        margin-bottom: 18px;
+    }
+
+    .mockup-desktop {
+        max-width: 100%;
+        transform: none;
+        margin: 15px auto 0 auto;
+    }
+
+    .cards-problema {
+        padding: 0;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .card-problema {
+        height: auto;
+        min-height: auto;
+        padding: 14px 18px;
+        gap: 14px;
+    }
+
+    .card-problema img {
+        max-width: 36px;
+    }
+
+    .card-problema h3 {
+        font-size: 15px;
+    }
+
+    .card-problema p {
+        font-size: 12.5px;
+        line-height: 1.3;
     }
 }
 
