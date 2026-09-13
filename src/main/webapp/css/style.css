@@ -1322,11 +1322,12 @@ p, a, span {
 
     .hero-imagem {
         padding: 0;
-        min-width: auto;
+        min-width: 0;
     }
 
     #mockup-celular-hero {
         max-width: 250px;
+        min-width: 0;
     }
 
     .hero-lista {
@@ -1703,3 +1704,35 @@ p, a, span {
         box-shadow: 0 0 10px rgba(86, 216, 103, 0.7);
     }
 }
+
+/* ==========================================================================
+   15. MEDIA QUERY - 659PX
+   ========================================================================== */
+
+@media (max-width: 659px) {
+    /* Ajuste da Hero para manter imagem ao lado do conteúdo */
+    .conteudo-hero {
+        padding: 0 20px;
+        gap: 15px;
+    }
+
+    .hero-texto-botoes {
+        max-width: 280px;
+    }
+
+    .hero-imagem {
+        min-width: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #mockup-celular-hero {
+        max-width: 185px;
+        min-width: 0;
+        width: 100%;
+        height: auto;
+    }
+}
+
