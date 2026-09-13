@@ -10,8 +10,8 @@ public class TrajetoModel implements Model {
     private String status;
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
-    private Integer kmSaida;
-    private Integer kmChegada;
+    private int kmSaida;
+    private int kmChegada;
     private String nomePecuarista;
     private String numeroGTA;
     private String numeroNotaFiscal;
@@ -27,55 +27,7 @@ public class TrajetoModel implements Model {
     private String assinaturaManobrista;
     private String assinaturaMotorista;
 
-//Construtor com id do banco (com todas as assinaturas)
-    public TrajetoModel(int id,
-                        MotoristaModel motoristaModel,
-                        CaminhaoModel caminhaoModel,
-                        String status,
-                        LocalDateTime dataHoraInicio,
-                        LocalDateTime dataHoraFim,
-                        Integer kmSaida,
-                        Integer kmChegada,
-                        String nomePecuarista,
-                        String numeroGTA,
-                        String numeroNotaFiscal,
-                        LocalDateTime horarioEmbarque,
-                        int qtdMacho,
-                        int qtdFemea,
-                        int qtdMarruco,
-                        LocalDateTime horarioDesembarque,
-                        String numeroCurral,
-                        String nomeCurraleiro,
-                        String nomeManobrista,
-                        String assinaturaCurraleiro,
-                        String assinaturaManobrista) {
-        this.id = id;
-        this.motoristaModel = motoristaModel;
-        this.caminhaoModel = caminhaoModel;
-        this.status = status;
-        this.dataHoraInicio = dataHoraInicio;
-        this.dataHoraFim = dataHoraFim;
-        this.kmSaida = kmSaida;
-        this.kmChegada = kmChegada;
-        this.nomePecuarista = nomePecuarista;
-        this.numeroGTA = numeroGTA;
-        this.numeroNotaFiscal = numeroNotaFiscal;
-        this.horarioEmbarque = horarioEmbarque;
-        this.qtdMacho = qtdMacho;
-        this.qtdFemea = qtdFemea;
-        this.qtdMarruco = qtdMarruco;
-        this.horarioDesembarque = horarioDesembarque;
-        this.numeroCurral = numeroCurral;
-        this.nomeCurraleiro = nomeCurraleiro;
-        this.nomeManobrista = nomeManobrista;
-        this.assinaturaCurraleiro = assinaturaCurraleiro;
-        this.assinaturaManobrista = assinaturaManobrista;
-        if (this.motoristaModel != null) {
-            this.assinaturaMotorista = this.motoristaModel.getAssinatura();
-        }
-    }
-
-//Construtor com id do banco (legado)
+//Construtor com id do banco
     public TrajetoModel(int id,
                         MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
@@ -119,60 +71,14 @@ public class TrajetoModel implements Model {
         }
     }
 
-//Construtor sem id padrão (com todas as assinaturas)
+//Construtor sem id padrão
     public TrajetoModel(MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
                         String status,
                         LocalDateTime dataHoraInicio,
                         LocalDateTime dataHoraFim,
-                        Integer kmSaida,
-                        Integer kmChegada,
-                        String nomePecuarista,
-                        String numeroGTA,
-                        String numeroNotaFiscal,
-                        LocalDateTime horarioEmbarque,
-                        int qtdMacho,
-                        int qtdFemea,
-                        int qtdMarruco,
-                        LocalDateTime horarioDesembarque,
-                        String numeroCurral,
-                        String nomeCurraleiro,
-                        String nomeManobrista,
-                        String assinaturaCurraleiro,
-                        String assinaturaManobrista) {
-        this.motoristaModel = motoristaModel;
-        this.caminhaoModel = caminhaoModel;
-        this.status = status;
-        this.dataHoraInicio = dataHoraInicio;
-        this.dataHoraFim = dataHoraFim;
-        this.kmSaida = kmSaida;
-        this.kmChegada = kmChegada;
-        this.nomePecuarista = nomePecuarista;
-        this.numeroGTA = numeroGTA;
-        this.numeroNotaFiscal = numeroNotaFiscal;
-        this.horarioEmbarque = horarioEmbarque;
-        this.qtdMacho = qtdMacho;
-        this.qtdFemea = qtdFemea;
-        this.qtdMarruco = qtdMarruco;
-        this.horarioDesembarque = horarioDesembarque;
-        this.numeroCurral = numeroCurral;
-        this.nomeCurraleiro = nomeCurraleiro;
-        this.nomeManobrista = nomeManobrista;
-        this.assinaturaCurraleiro = assinaturaCurraleiro;
-        this.assinaturaManobrista = assinaturaManobrista;
-        if (this.motoristaModel != null) {
-            this.assinaturaMotorista = this.motoristaModel.getAssinatura();
-        }
-    }
-
-//Construtor sem id padrão (legado)
-    public TrajetoModel(MotoristaModel motoristaModel,
-                        CaminhaoModel caminhaoModel,
-                        String status,
-                        LocalDateTime dataHoraInicio,
-                        LocalDateTime dataHoraFim,
-                        Integer kmSaida,
-                        Integer kmChegada,
+                        int kmSaida,
+                        int kmChegada,
                         String nomePecuarista,
                         String numeroGTA,
                         String numeroNotaFiscal,
@@ -191,6 +97,7 @@ public class TrajetoModel implements Model {
         this.dataHoraFim = dataHoraFim;
         this.kmSaida = kmSaida;
         this.kmChegada = kmChegada;
+        this.nomePecuarista = nomePecuarista;
         this.numeroGTA = numeroGTA;
         this.numeroNotaFiscal = numeroNotaFiscal;
         this.horarioEmbarque = horarioEmbarque;
@@ -320,11 +227,11 @@ public class TrajetoModel implements Model {
         return dataHoraFim;
     }
 
-    public Integer getKmSaida() {
+    public int getKmSaida() {
         return kmSaida;
     }
 
-    public Integer getKmChegada() {
+    public int getKmChegada() {
         return kmChegada;
     }
 

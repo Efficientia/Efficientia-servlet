@@ -25,37 +25,7 @@ public class AnalistaModel extends UsuarioModel implements Model {
         }
     }
 
-//Construtor sem id do banco (mantendo sobrecarga legada sem CPF para retrocompatibilidade)
-    public AnalistaModel(int id,
-                         String nome,
-                         String assinatura,
-                         LocalDate dataNascimento,
-                         String senha,
-                         String email,
-                         String telefone,
-                         String codigo) {
-        super(id, nome, assinatura, dataNascimento, senha, email, telefone);
-        this.codigo = codigo;
-    }
-
-//Construtor sem id padrão com CPF
-    public AnalistaModel(String cpf,
-                         String nome,
-                         String assinatura,
-                         LocalDate dataNascimento,
-                         String senha,
-                         String email,
-                         String telefone,
-                         String codigo) {
-        super(nome, assinatura, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
-        this.codigo = codigo;
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
-    }
-
-//Construtor sem id padrão sem CPF (sobrecarga legada)
+//Construtor sem id do banco
     public AnalistaModel(String nome,
                          String assinatura,
                          LocalDate dataNascimento,

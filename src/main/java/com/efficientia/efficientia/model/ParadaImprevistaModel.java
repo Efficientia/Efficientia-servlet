@@ -11,7 +11,7 @@ public class ParadaImprevistaModel implements Model {
     private String motivo;
     private String observacao;
 
-//Construtor com id do banco (completo)
+//Construtor com id do banco
     public ParadaImprevistaModel(int id,
                                  TrajetoModel trajetoModel,
                                  LocalDateTime dataHoraInicio,
@@ -26,7 +26,7 @@ public class ParadaImprevistaModel implements Model {
         this.observacao = observacao;
     }
 
-//Construtor com id do banco (legado)
+//Construtor com id do banco
     public ParadaImprevistaModel(int id,
                                  TrajetoModel trajetoModel,
                                  LocalDateTime dataHoraInicio,
@@ -39,20 +39,7 @@ public class ParadaImprevistaModel implements Model {
         this.motivo = motivo;
     }
 
-//Construtor sem id padrão (completo)
-    public ParadaImprevistaModel(TrajetoModel trajetoModel,
-                                 LocalDateTime dataHoraInicio,
-                                 LocalDateTime dataHoraFim,
-                                 String motivo,
-                                 String observacao) {
-        this.trajetoModel = trajetoModel;
-        this.dataHoraInicio = dataHoraInicio;
-        this.dataHoraFim = dataHoraFim;
-        this.motivo = motivo;
-        this.observacao = observacao;
-    }
-
-//Construtor sem id padrão (legado)
+//Construtor sem id padrão
     public ParadaImprevistaModel(TrajetoModel trajetoModel,
                                  LocalDateTime dataHoraInicio,
                                  LocalDateTime dataHoraFim,
