@@ -140,14 +140,14 @@ public class DonoFazendaDAO {
 
     //delete
 
-    public boolean excluir(DonoFazendaModel donoFazendaModel) throws SQLException {
+    public boolean excluir(int id) throws SQLException {
         String sql = """
     DELETE FROM dono_fazenda WHERE id = ?
 """;
 
         try(Connection connection = ConnectionFactory.getConnection()){
             PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, donoFazendaModel.getId());
+            stmt.setInt(1, id);
             int linhasAfetadas = stmt.executeUpdate();
 
             return linhasAfetadas > 0;
