@@ -2373,6 +2373,16 @@ p, a, span {
     }
 }
 
+/* ==========================================================================
+   19. MEDIA QUERY - TELAS GRANDES (ACIMA DE 1500PX)
+   ========================================================================== */
 
-
-
+@media (min-width: 1500px) {
+    /* Seção Impacto - Centraliza a imagem no centro da tela */
+    .conteudo-impacto img.img-impacto {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        transform: translateY(-85px) translateX(-32.5px);
+    }
+}
