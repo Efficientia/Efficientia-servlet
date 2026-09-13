@@ -2377,7 +2377,7 @@ p, a, span {
    19. MEDIA QUERY - TELAS GRANDES (ACIMA DE 1500PX)
    ========================================================================== */
 
-@media (min-width: 1500px) {
+@media (min-width: 1400px) {
     /* Seção Impacto - Centraliza a imagem no centro da tela */
     .conteudo-impacto img.img-impacto {
         margin-left: auto;
