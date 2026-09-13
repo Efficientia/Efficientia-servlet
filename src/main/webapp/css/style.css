@@ -1456,13 +1456,13 @@ p, a, span {
     }
 
     .texto-proximo-passo h2 {
-        font-size: 30px;
+        font-size: 32px;
         line-height: 1.2;
     }
 
     .texto-proximo-passo p {
-        font-size: 15px;
-        line-height: 1.4;
+        font-size: 16px;
+        line-height: 1.35;
     }
 
     .botoes-proximo-passo {
@@ -2018,6 +2018,48 @@ p, a, span {
         transform: translateY(10px);
         margin-bottom: 25px;
     }
+
+    /* Seção Próximo Passo - Padronizada com as demais seções */
+    .conteudo-proximo-passo {
+        padding: 50px 0 50px 20px;
+        gap: 15px;
+    }
+
+    .esquerda-proximo-passo {
+        max-width: 275px;
+        gap: 12px;
+    }
+
+    #badge-proximo-passo {
+        max-width: fit-content;
+        margin-bottom: 0;
+    }
+
+    .texto-proximo-passo h2 {
+        font-size: 24px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+    }
+
+    .texto-proximo-passo p {
+        font-size: 12px;
+        line-height: 1.35;
+        margin-top: 0;
+    }
+
+    .botoes-proximo-passo {
+        margin-top: 15px;
+        gap: 10px;
+    }
+
+    .botoes-proximo-passo a {
+        font-size: 14.5px;
+        padding: 11px 18px;
+    }
+
+    #dashboard-proximo-passo {
+        max-width: 350px;
+    }
 }
 
 /* ==========================================================================
@@ -2054,5 +2096,256 @@ p, a, span {
         margin: 5px auto 0 auto;
     }
 }
+
+/* ==========================================================================
+   17. MEDIA QUERY - 480PX
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    /* Seção Hero - Layout com celular e bullet points lado a lado abaixo do texto */
+    .hero {
+        padding-top: 95px;
+        padding-bottom: 50px;
+    }
+
+    .conteudo-hero {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+        row-gap: 25px;
+        column-gap: 15px;
+    }
+
+    /* Topo: Texto e Botões em largura total centralizados */
+    .hero-texto-botoes {
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .conteudo-hero h1 {
+        font-size: 24px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    #hero-texto {
+        font-size: 13.5px;
+        line-height: 1.35;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+
+    .botoes-hero {
+        width: 100%;
+        max-width: 100%;
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .botao-ativo,
+    .botao-desativado {
+        width: 100%;
+        font-size: 14.5px;
+        padding: 12px 18px;
+        text-align: center;
+    }
+
+    /* Base: Celular na esquerda e Bullet Points na direita */
+    .hero-imagem {
+        flex: 1;
+        max-width: 180px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #mockup-celular-hero {
+        width: 100%;
+        max-width: 180px;
+        min-width: 0;
+        height: auto;
+    }
+
+    .hero-lista {
+        flex: 1;
+        max-width: 220px;
+        width: auto;
+        margin-top: 0;
+    }
+
+    .lista-funcionalidades-hero {
+        flex-direction: column;
+        gap: 14px;
+        justify-content: center;
+    }
+
+    .lista-funcionalidades-hero li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .lista-funcionalidades-hero li span {
+        font-size: 12px;
+        line-height: 1.25;
+    }
+
+    .lista-funcionalidades-hero li img {
+        width: 36px;
+        height: 36px;
+        padding: 7px;
+        border-radius: 10px;
+        flex-shrink: 0;
+    }
+
+    /* Seção Próximo Passo - Mais espaço vertical entre os conteúdos */
+    .conteudo-proximo-passo {
+        padding: 60px 0 65px 20px;
+        gap: 20px;
+    }
+
+    .esquerda-proximo-passo {
+        gap: 16px;
+    }
+
+    .texto-proximo-passo h2 {
+        margin-bottom: 16px;
+    }
+
+    .botoes-proximo-passo {
+        margin-top: 22px;
+        gap: 12px;
+    }
+}
+
+/* ==========================================================================
+   18. MEDIA QUERY - 390PX
+   ========================================================================== */
+
+@media (max-width: 390px) {
+    /* Seção Hero - Layout com celular e bullet points lado a lado abaixo do texto */
+    .hero {
+        padding-top: 90px;
+        padding-bottom: 45px;
+    }
+
+    .conteudo-hero {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 0 16px;
+        row-gap: 25px;
+        column-gap: 12px;
+    }
+
+    /* Topo: Texto e Botões em largura total centralizados */
+    .hero-texto-botoes {
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .conteudo-hero h1 {
+        font-size: 24px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    #hero-texto {
+        font-size: 13.5px;
+        line-height: 1.35;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+
+    .botoes-hero {
+        width: 100%;
+        max-width: 100%;
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .botao-ativo,
+    .botao-desativado {
+        width: 100%;
+        font-size: 14px;
+        padding: 11px 16px;
+        text-align: center;
+    }
+
+    /* Base: Celular na esquerda e Bullet Points na direita */
+    .hero-imagem {
+        flex: 1;
+        max-width: 160px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #mockup-celular-hero {
+        width: 100%;
+        max-width: 160px;
+        min-width: 0;
+        height: auto;
+    }
+
+    .hero-lista {
+        flex: 1;
+        max-width: 180px;
+        width: auto;
+        margin-top: 0;
+    }
+
+    .lista-funcionalidades-hero {
+        flex-direction: column;
+        gap: 14px;
+        justify-content: center;
+    }
+
+    .lista-funcionalidades-hero li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .lista-funcionalidades-hero li span {
+        font-size: 11.5px;
+        line-height: 1.25;
+    }
+
+    .lista-funcionalidades-hero li img {
+        width: 34px;
+        height: 34px;
+        padding: 6px;
+        border-radius: 9px;
+        flex-shrink: 0;
+    }
+}
+
+
 
 
