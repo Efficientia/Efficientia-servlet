@@ -1319,6 +1319,18 @@ p, a, span {
         max-width: 300px;
     }
 
+    .conteudo-hero h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        margin-bottom: 14px;
+    }
+
+    #hero-texto {
+        font-size: 16px;
+        line-height: 1.35;
+        margin-bottom: 22px;
+    }
+
     .hero-imagem {
         padding: 0;
         min-width: 0;
@@ -1338,24 +1350,24 @@ p, a, span {
     .lista-funcionalidades-hero {
         flex-direction: row;
         justify-content: space-between;
-        gap: 15px;
+        gap: 12px;
     }
 
     .lista-funcionalidades-hero li {
         flex: 1;
-        gap: 10px;
+        gap: 8px;
     }
 
     .lista-funcionalidades-hero li span {
-        font-size: 14px;
+        font-size: 13px;
         line-height: 1.25;
     }
 
     .lista-funcionalidades-hero li img {
-        width: 44px;
-        height: 44px;
-        padding: 9px;
-        border-radius: 12px;
+        width: 38px;
+        height: 38px;
+        padding: 8px;
+        border-radius: 10px;
         flex-shrink: 0;
     }
 
@@ -1717,13 +1729,13 @@ p, a, span {
 
     .hero-texto-botoes {
         width: fit-content;
-        max-width: 290px;
+        max-width: 255px;
     }
 
     .conteudo-hero h1 {
-        font-size: 28px;
+        font-size: 24px;
         line-height: 1.2;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
     }
 
     .conteudo-hero span {
@@ -1732,23 +1744,23 @@ p, a, span {
     }
 
     #hero-texto {
-        font-size: 15px;
+        font-size: 13.5px;
         line-height: 1.35;
-        margin-bottom: 24px;
+        margin-bottom: 18px;
     }
 
     .botoes-hero {
         width: 100%;
         max-width: 100%;
-        gap: 12px;
+        gap: 10px;
     }
 
     .botao-ativo,
     .botao-desativado {
         display: flex;
         width: 100%;
-        font-size: 16px;
-        padding: 13px 20px;
+        font-size: 14.5px;
+        padding: 11px 18px;
     }
 
     .hero-imagem {
@@ -1760,10 +1772,35 @@ p, a, span {
     }
 
     #mockup-celular-hero {
-        max-width: 185px;
+        max-width: 170px;
         min-width: 0;
         width: 100%;
         height: auto;
+    }
+
+    /* Bullet points proporcionais */
+    .hero-lista {
+        margin-top: 20px;
+    }
+
+    .lista-funcionalidades-hero {
+        gap: 10px;
+    }
+
+    .lista-funcionalidades-hero li {
+        gap: 8px;
+    }
+
+    .lista-funcionalidades-hero li span {
+        font-size: 12px;
+        line-height: 1.25;
+    }
+
+    .lista-funcionalidades-hero li img {
+        width: 36px;
+        height: 36px;
+        padding: 7px;
+        border-radius: 10px;
     }
 }
 
