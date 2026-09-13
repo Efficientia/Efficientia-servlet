@@ -5,6 +5,35 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Menu Hamburguer Mobile (<= 768px)
+    const menu = document.querySelector('.menu');
+    const btnMenu = document.querySelector('.btn-menu-hamburguer');
+    const menuLinks = document.querySelectorAll('.link-menu');
+
+    if (menu && btnMenu) {
+        btnMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = menu.classList.toggle('open');
+            btnMenu.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // Fecha o menu ao clicar em qualquer link
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.remove('open');
+                btnMenu.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // Fecha o menu ao clicar fora dele
+        document.addEventListener('click', (e) => {
+            if (!menu.contains(e.target)) {
+                menu.classList.remove('open');
+                btnMenu.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
     const wrapper = document.querySelector('.carousel-solucao-wrapper');
     if (!wrapper) return;
 

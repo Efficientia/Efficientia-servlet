@@ -132,6 +132,10 @@ p, a, span {
     border-radius: 25px;
 }
 
+.btn-menu-hamburguer {
+    display: none;
+}
+
 .menu-links {
     display: flex;
     align-items: center;
@@ -1214,6 +1218,90 @@ p, a, span {
    ========================================================================== */
 
 @media (max-width: 768px) {
+    /* Menu Hamburguer Mobile */
+    .menu {
+        position: fixed;
+        width: 94%;
+        max-width: 94%;
+        left: 3%;
+        margin-left: 0;
+        margin-top: 10px;
+        padding: 12px 20px;
+        height: auto;
+        min-height: 56px;
+        border-radius: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0;
+        z-index: 1000;
+        transition: border-radius 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #logo {
+        height: 32px;
+        width: auto;
+    }
+
+    .btn-menu-hamburguer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 8px;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-menu-hamburguer:active {
+        transform: scale(0.92);
+    }
+
+    .btn-menu-hamburguer img {
+        width: 26px;
+        height: 26px;
+        display: block;
+    }
+
+    .menu-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        padding-top: 15px;
+        padding-bottom: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        margin-top: 10px;
+    }
+
+    .menu.open .menu-links {
+        display: flex;
+        animation: menuDropdown 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes menuDropdown {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .link-menu {
+        font-size: 16px;
+        width: 100%;
+        text-align: center;
+        padding: 6px 0;
+        transform: none;
+    }
+
     /* Seção Hero */
     .hero {
         min-height: auto;
