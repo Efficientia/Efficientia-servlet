@@ -1,0 +1,221 @@
+================================================================================
+           GUIA PASSO A PASSO: COMO CRIAR CLASSES DAO (DATA ACCESS OBJECT)
+                          JAVA + JDBC + POSTGRESQL (MVC)
+================================================================================
+
+1. O QUE E UM DAO?
+--------------------------------------------------------------------------------
+DAO (Data Access Object) e um padrao de projeto que concentra todos os comandos
+SQL de uma determinada entidade/tabela. 
+
+- O MODEL (ex: FazendaModel, DonoFazendaModel): apenas guarda dados e regras.
+- O DAO (ex: FazendaDAO, DonoFazendaDAO): conversa diretamente com o banco de 
+  dados atraves de JDBC (INSERT, SELECT, UPDATE, DELETE).
+- A Conexao (ex: ConnectionFactory): entrega a conexao ativa para o DAO.
+
+
+2. ESTRUTURA BASICA DE UMA CLASSE DAO
+--------------------------------------------------------------------------------
+Pacote padrao no projeto:
+package com.efficientia.efficientia.DAO.impl;
+
+Imports essenciais necessarios:
+- java.sql.Connection;
+- java.sql.PreparedStatement;
+- java.sql.ResultSet;
+- java.sql.SQLException;
+- java.sql.Date;              (para conversao de datas com JDBC)
+- java.util.List;
+- java.util.ArrayList;
+- com.efficientia.efficientia.factory.ConnectionFactory;
+- Models necessarios da entidade e de suas relacoes.
+
+
+3. OS 5 METODOS FUNDAMENTAIS DO CRUD
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+METODO 1: INSERIR (CREATE)
+Assinatura: public boolean inserir(EntidadeModel model) throws SQLException
+--------------------------------------------------------------------------------
+Objetivo: Gravar um novo registro no banco de dados.
+
+Passo a Passo:
+1. Escreva o SQL com as colunas explicitas (NUNCA omita os nomes das colunas,
+   pois o banco pode ter ordenacao diferente ou ID auto-incremento):
+   String sql = """
+       INSERT INTO nome_tabela (coluna1, coluna2, id_fk)
+       VALUES (?, ?, ?);
+   """;
+
+2. Abra os recursos dentro do 'try-with-resources' para fechamento automatico:
+   try (Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+3. Preencha cada parametro ('?'):
+   - String: stmt.setString(indice, model.getNome());
+   - Inteiro primitivo: stmt.setInt(indice, model.getNumero());
+   - Data (LocalDate): stmt.setDate(indice, Date.valueOf(model.getData()));
+   - Objeto associado (FK): stmt.setInt(indice, model.getObjetoRelacionado().getId());
+
+4. Execute com executeUpdate() e valide se afetou mais de 0 linhas:
+   int linhasAfetadas = stmt.executeUpdate();
+   return linhasAfetadas > 0;
+
+5. Trate a SQLException imprimindo log claro e retornando false em caso de falha.
+
+
+--------------------------------------------------------------------------------
+METODO 2: BUSCAR POR ID (READ ESPECIFICO)
+Assinatura: public EntidadeModel buscar(int id) throws SQLException
+--------------------------------------------------------------------------------
+Objetivo: Retornar uma unica instancia correspondente a chave primaria.
+*Importante: este metodo e fundamental para resolver as chaves estrangeiras (FKs)
+ em outros DAOs!
+
+Passo a Passo:
+1. Escreva o SQL filtrando pelo ID:
+   String sql = "SELECT * FROM nome_tabela WHERE id = ?;";
+
+2. Prepare o comando e configure o ID:
+   stmt.setInt(1, id);
+
+3. Execute a consulta recebendo um ResultSet:
+   ResultSet rs = stmt.executeQuery();
+
+4. Use 'if (rs.next())' para verificar se o registro existe:
+   - Recupere as colunas primitivas com rs.getInt("coluna"), rs.getString("coluna"), etc.
+   - Para FKs: se esta tabela tem FK de outra entidade, chame o DAO da outra entidade:
+     OutroDAO outroDAO = new OutroDAO();
+     OutroModel outro = outroDAO.buscar(rs.getInt("id_outro"));
+   - Instancie o Model com seu construtor completo e retorne-o.
+
+5. Se nao encontrar (else), retorne null.
+
+
+--------------------------------------------------------------------------------
+METODO 3: LISTAR (READ GERAL)
+Assinatura: public List<EntidadeModel> listar() throws SQLException
+--------------------------------------------------------------------------------
+Objetivo: Retornar todos os registros da tabela em uma lista.
+
+Passo a Passo:
+1. Escreva o SQL com ordenacao:
+   String sql = "SELECT * FROM nome_tabela ORDER BY id;";
+
+2. Crie a lista vazia:
+   List<EntidadeModel> lista = new ArrayList<>();
+
+3. Instancie DAOs auxiliares FORA do laco de repeticao:
+   // Se precisar buscar donos ou enderecos, instancie antes do while:
+   OutroDAO outroDAO = new OutroDAO();
+
+4. Execute o executeQuery() e itere com 'while (rs.next())':
+   - A cada linha, monte os objetos dependentes chamando outroDAO.buscar(rs.getInt("id_outro")).
+   - Instancie o Model principal passando os objetos dependentes.
+   - Adicione o Model na lista: lista.add(model);
+
+5. Retorne a lista preenchida.
+
+
+--------------------------------------------------------------------------------
+METODO 4: ATUALIZAR (UPDATE)
+Assinatura: public boolean atualizar(EntidadeModel model, int id) throws SQLException
+--------------------------------------------------------------------------------
+Objetivo: Alterar dados de um registro existente.
+
+Passo a Passo:
+1. Escreva o SQL garantindo a clausula WHERE id = ?:
+   String sql = """
+       UPDATE nome_tabela
+       SET coluna1 = ?,
+           coluna2 = ?,
+           id_fk = ?
+       WHERE id = ?;
+   """;
+   (ATENCAO: Sem o WHERE id = ?, todas as linhas do banco seriam modificadas!)
+
+2. Preencha todos os campos do SET.
+3. No ultimo ponto de interrogacao, passe o 'id' do registro no WHERE:
+   stmt.setInt(ultimoIndice, id);
+
+4. Execute 'stmt.executeUpdate() > 0' e retorne o resultado.
+
+
+--------------------------------------------------------------------------------
+METODO 5: EXCLUIR (DELETE)
+Assinatura: public boolean excluir(int id) throws SQLException
+--------------------------------------------------------------------------------
+Objetivo: Remover um registro especifico.
+
+Passo a Passo:
+1. Escreva o SQL:
+   String sql = "DELETE FROM nome_tabela WHERE id = ?;";
+
+2. Preencha o id:
+   stmt.setInt(1, id);
+
+3. Execute:
+   return stmt.executeUpdate() > 0;
+
+
+================================================================================
+4. COMO RESOLVER CHAVES ESTRANGEIRAS (FKS) NO PADRAO POO
+================================================================================
+Problema:
+No banco relacional temos:
+  Tabela 'Fazenda': id (int), id_dono_fazenda (int), id_endereco (int), nome (varchar)
+
+No modelo POO temos:
+  class FazendaModel {
+      private int id;
+      private DonoFazendaModel donoFazendaModel;  // Objeto!
+      private EnderecoModel enderecoModel;        // Objeto!
+      private String nome;
+  }
+
+Como resolver no DAO:
+1. No metodo INSERIR:
+   O objeto FazendaModel possui os objetos DonoFazendaModel e EnderecoModel.
+   Para salvar no banco, pegamos o ID de cada objeto:
+   stmt.setInt(1, fazendaModel.getDonoFazendaModel().getId());
+   stmt.setInt(2, fazendaModel.getEnderecoModel().getId());
+
+2. No metodo LISTAR / BUSCAR:
+   O ResultSet do banco devolve inteiros: rs.getInt("id_dono_fazenda").
+   Usamos o DAO correspondente para recuperar o objeto antes de montar a Fazenda:
+   DonoFazendaModel dono = donoFazendaDAO.buscar(rs.getInt("id_dono_fazenda"));
+   EnderecoModel endereco = enderecoDAO.buscar(rs.getInt("id_endereco"));
+
+   FazendaModel fazenda = new FazendaModel(
+       rs.getInt("id"),
+       dono,
+       endereco,
+       rs.getString("nome")
+   );
+
+
+================================================================================
+5. CUIDADOS CRITICOS E PEGADINHAS COMUNS
+================================================================================
+[1] Cuidado com conversao de Datas:
+    - java.sql.Date NAO SUPORTA '.toInstant()'. Se chamar, lanca UnsupportedOperationException!
+    - Para converter de banco para Java (LocalDate):
+      Date dataBanco = rs.getDate("campo_data");
+      LocalDate data = dataBanco != null ? dataBanco.toLocalDate() : null;
+    - Para gravar de Java (LocalDate) para banco:
+      stmt.setDate(posicao, Date.valueOf(model.getData()));
+
+[2] Sempre declare as colunas no INSERT:
+    - ERRADO: INSERT INTO Fazenda VALUES (?, ?, ?);
+      (pode misturar colunas ou falhar por causa da coluna ID identity/serial)
+    - CERTO:  INSERT INTO Fazenda (id_dono_fazenda, id_endereco, nome) VALUES (?, ?, ?);
+
+[3] Use try-with-resources:
+    - Garante que a Conexao e o PreparedStatement serao fechados mesmo se ocorrer erro,
+      evitando esgotar o pool de conexoes do PostgreSQL.
+
+[4] Nao instancie DAOs dentro de loops:
+    - Coloque 'DonoFazendaDAO donoDAO = new DonoFazendaDAO();' fora do 'while(rs.next())'.
+      Assim voce evita criar centenas de objetos desnecessarios na memoria.
+================================================================================

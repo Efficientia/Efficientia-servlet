@@ -58,7 +58,7 @@ public class EnderecoDAO {
     //select
     public List<EnderecoModel> listar() throws SQLException {
         String sql = """
-                    SELECT * FROM endereco;
+                    SELECT * FROM endereco ORDER BY id;
                     """;
         List<EnderecoModel> enderecoModels = new ArrayList<>();
 
@@ -141,6 +141,41 @@ public class EnderecoDAO {
         }catch (SQLException e) {
             System.out.println("Erro ao excluir Endereco: " + e.getMessage());
             return false;
+        }
+    }
+
+    //Busca por id
+
+    public EnderecoModel buscar(int id) throws SQLException {
+        String sql = """
+                    SELECT * FROM endereco WHERE id = ?;
+        """;
+
+
+        try (Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+
+            if (rs.next()) {
+                return new EnderecoModel(
+                        rs.getInt("id"),
+                        rs.getString("cep"),
+                        rs.getString("tipo"),
+                        rs.getString("numero"),
+                        rs.getString("rua"),
+                        rs.getString("cidade"),
+                        rs.getString("estado"),
+                        rs.getString("pais"),
+                        rs.getString("complemento")
+                );
+            } else {
+                return null;
+            }
+        }catch (SQLException e) {
+            System.out.println("Erro ao buscar Endereco: " + e.getMessage());
+            return null;
         }
     }
 }

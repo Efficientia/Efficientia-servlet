@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
@@ -154,6 +155,41 @@ public class DonoFazendaDAO {
         }catch (SQLException e){
             System.out.println("Erro ao excluir donoFazenda: " + e.getMessage());
             return false;
+        }
+    }
+
+    //Busca por id
+
+    public DonoFazendaModel buscar(int id) throws SQLException {
+        String sql = """
+        SELECT * FROM dono_fazenda WHERE id = ?;
+        """;
+        try(Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql);){
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next()){
+                Date dataNascimento = rs.getDate("data_nascimento");
+                LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
+
+                DonoFazendaModel donoFazendaModel = new DonoFazendaModel(
+                        rs.getInt("id"),
+                        rs.getString("cpf"),
+                        rs.getString("assinatura"),
+                        nascimento,
+                        rs.getString("nome"),
+                        rs.getString("senha"),
+                        rs.getString("email"),
+                        rs.getString("telefone"));
+
+                return donoFazendaModel;
+            }
+            else{
+                return null;
+            }
+
+
         }
     }
 }

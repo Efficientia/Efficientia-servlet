@@ -1,6 +1,7 @@
 package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
+import com.efficientia.efficientia.model.DonoFazendaModel;
 import com.efficientia.efficientia.model.FazendaModel;
 
 import java.sql.Connection;
@@ -17,8 +18,8 @@ public class FazendaDAO {
     public boolean inserir(FazendaModel fazendaModel) throws SQLException {
 
         String sql = """
-               INSERT INTO Fazenda 
-               VALUES (?,?,?);
+               INSERT INTO Fazenda (id_dono_fazenda, id_endereco, nome)
+               VALUES (?, ?, ?);
                """;
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -41,10 +42,12 @@ public class FazendaDAO {
 
     public List<FazendaModel> listar() throws SQLException {
         String sql = """
-                   SELECT * FROM Fazenda
+                   SELECT * FROM Fazenda ORDER BY id;
         """;
 
         List<FazendaModel> fazendaModels = new ArrayList<>();
+        DonoFazendaDAO donoFazendaDAO = new DonoFazendaDAO();
+        EnderecoDAO enderecoDAO = new EnderecoDAO();
 
         try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)){
@@ -53,8 +56,8 @@ public class FazendaDAO {
             while(rs.next()){
                 FazendaModel fazendaModel = new FazendaModel(
                         rs.getInt("id"),
-                        rs.getInt("id_dono_fazenda"),
-                        rs.getInt("id_endereco"),
+                        donoFazendaDAO.buscar(rs.getInt("id_dono_fazenda")),
+                        enderecoDAO.buscar(rs.getInt("id_endereco")),
                         rs.getString("nome")
                 );
 
@@ -109,6 +112,37 @@ public class FazendaDAO {
         }catch(SQLException e){
             System.out.println("Erro ao excluir Fazenda: " + e.getMessage());
             return false;
+        }
+    }
+
+    //Busca por id
+
+    public FazendaModel buscar(int id) throws SQLException {
+        String sql = """
+                    SELECT * FROM Fazenda WHERE id = ?;
+        """;
+
+        DonoFazendaDAO donoFazendaDAO = new DonoFazendaDAO();
+        EnderecoDAO enderecoDAO = new EnderecoDAO();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new FazendaModel(
+                        rs.getInt("id"),
+                        donoFazendaDAO.buscar(rs.getInt("id_dono_fazenda")),
+                        enderecoDAO.buscar(rs.getInt("id_endereco")),
+                        rs.getString("nome")
+                );
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Fazenda: " + e.getMessage());
+            return null;
         }
     }
 
