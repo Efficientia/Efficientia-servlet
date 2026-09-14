@@ -1,0 +1,146 @@
+package com.efficientia.efficientia.DAO.impl;
+
+import com.efficientia.efficientia.factory.ConnectionFactory;
+import com.efficientia.efficientia.model.EnderecoModel;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EnderecoDAO {
+
+    //insert
+
+    public boolean inserir(EnderecoModel enderecoModel) throws SQLException {
+        String sql = """
+                INSERT INTO endereco (cep,
+                                      tipo,
+                                      numero,
+                                      rua,
+                                      cidade,
+                                      estado,
+                                      pais,
+                                      complemento)
+                VALUES (?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?);
+""";
+
+        try (Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql)){
+
+            stmt.setString(1, enderecoModel.getCep());
+            stmt.setString(2, enderecoModel.getTipo());
+            stmt.setString(3, enderecoModel.getNumero());
+            stmt.setString(4, enderecoModel.getRua());
+            stmt.setString(5, enderecoModel.getCidade());
+            stmt.setString(6, enderecoModel.getEstado());
+            stmt.setString(7, enderecoModel.getPais());
+            stmt.setString(8, enderecoModel.getComplemento());
+
+            int linhasAfetadas = stmt.executeUpdate();
+
+            return  linhasAfetadas > 0;
+        }catch (SQLException e) {
+            System.out.println("Erro ao inserir Endereco: " + e.getMessage());
+            return false;
+        }
+    }
+
+    //select
+    public List<EnderecoModel> listar() throws SQLException {
+        String sql = """
+                    SELECT * FROM endereco;
+                    """;
+        List<EnderecoModel> enderecoModels = new ArrayList<>();
+
+        try(Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql);){
+            ResultSet rs = stmt.executeQuery();
+
+
+
+            while(rs.next()){
+                EnderecoModel enderecoModel = new EnderecoModel(
+                        rs.getInt("id"),
+                        rs.getString("cep"),
+                        rs.getString("tipo"),
+                        rs.getString("numero"),
+                        rs.getString("rua"),
+                        rs.getString("cidade"),
+                        rs.getString("estado"),
+                        rs.getString("pais"),
+                        rs.getString("complemento"));
+                        enderecoModels.add(enderecoModel);
+            }
+        }catch (SQLException e) {
+            System.out.println("Erro ao listar Endereco: " + e.getMessage());
+        }
+        return enderecoModels;
+    }
+
+    //update
+
+    public boolean atualizar(EnderecoModel enderecoModel, int id) throws SQLException {
+        String sql = """
+                    UPDATE endereco SET
+                     cep = ?,
+                     tipo = ?,
+                     numero = ?,
+                     rua = ?,
+                     cidade = ?,
+                     estado = ?,
+                     pais = ?,
+                     complemento = ?
+                     WHERE id = ?;
+                             """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql)){
+
+           stmt.setString(1, enderecoModel.getCep());
+           stmt.setString(2, enderecoModel.getTipo());
+           stmt.setString(3, enderecoModel.getNumero());
+           stmt.setString(4, enderecoModel.getRua());
+           stmt.setString(5, enderecoModel.getCidade());
+           stmt.setString(6, enderecoModel.getEstado());
+           stmt.setString(7, enderecoModel.getPais());
+           stmt.setString(8, enderecoModel.getComplemento());
+           stmt.setInt(9, id);
+
+           int linhasAfetadas = stmt.executeUpdate();
+
+           return  linhasAfetadas > 0;
+        }catch (SQLException e) {
+            System.out.println("Erro ao atualizar Endereco: " + e.getMessage());
+            return false;
+        }
+    }
+
+    //delete
+
+    public boolean excluir(int id) throws SQLException {
+        String sql = """
+                    DELETE FROM endereco WHERE id = ?;
+        """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            int linhasAfetadas = stmt.executeUpdate();
+
+            return  linhasAfetadas > 0;
+        }catch (SQLException e) {
+            System.out.println("Erro ao excluir Endereco: " + e.getMessage());
+            return false;
+        }
+    }
+}
