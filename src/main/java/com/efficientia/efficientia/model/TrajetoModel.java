@@ -10,8 +10,8 @@ public class TrajetoModel implements Model {
     private String status;
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
-    private Integer kmSaida;
-    private Integer kmChegada;
+    private int kmSaida;
+    private int kmChegada;
     private String nomePecuarista;
     private String numeroGTA;
     private String numeroNotaFiscal;
@@ -23,6 +23,8 @@ public class TrajetoModel implements Model {
     private String numeroCurral;
     private String nomeCurraleiro;
     private String nomeManobrista;
+    private String assinaturaCurraleiro;
+    private String assinaturaManobrista;
     private String assinaturaMotorista;
 
 //Construtor com id do banco
@@ -75,8 +77,8 @@ public class TrajetoModel implements Model {
                         String status,
                         LocalDateTime dataHoraInicio,
                         LocalDateTime dataHoraFim,
-                        Integer kmSaida,
-                        Integer kmChegada,
+                        int kmSaida,
+                        int kmChegada,
                         String nomePecuarista,
                         String numeroGTA,
                         String numeroNotaFiscal,
@@ -187,6 +189,14 @@ public class TrajetoModel implements Model {
         this.nomeManobrista = nomeManobrista;
     }
 
+    public void setAssinaturaCurraleiro(String assinaturaCurraleiro) {
+        this.assinaturaCurraleiro = assinaturaCurraleiro;
+    }
+
+    public void setAssinaturaManobrista(String assinaturaManobrista) {
+        this.assinaturaManobrista = assinaturaManobrista;
+    }
+
     public void setAssinaturaMotorista(String assinaturaMotorista) {
         this.assinaturaMotorista = assinaturaMotorista;
     }
@@ -217,11 +227,11 @@ public class TrajetoModel implements Model {
         return dataHoraFim;
     }
 
-    public Integer getKmSaida() {
+    public int getKmSaida() {
         return kmSaida;
     }
 
-    public Integer getKmChegada() {
+    public int getKmChegada() {
         return kmChegada;
     }
 
@@ -269,6 +279,14 @@ public class TrajetoModel implements Model {
         return nomeManobrista;
     }
 
+    public String getAssinaturaCurraleiro() {
+        return assinaturaCurraleiro;
+    }
+
+    public String getAssinaturaManobrista() {
+        return assinaturaManobrista;
+    }
+
     public String getAssinaturaMotorista() {
         return assinaturaMotorista;
     }
@@ -295,6 +313,8 @@ public class TrajetoModel implements Model {
                 ", numeroCurral='" + numeroCurral + '\'' +
                 ", nomeCurraleiro='" + nomeCurraleiro + '\'' +
                 ", nomeManobrista='" + nomeManobrista + '\'' +
+                ", assinaturaCurraleiro='" + assinaturaCurraleiro + '\'' +
+                ", assinaturaManobrista='" + assinaturaManobrista + '\'' +
                 ", assinaturaMotorista='" + assinaturaMotorista + '\'' +
                 '}';
     }
