@@ -15,7 +15,7 @@ public class FazendaDAO {
 
     //insert
 
-    public boolean inserir(FazendaModel fazendaModel) throws SQLException {
+    public boolean inserir(FazendaModel fazendaModel){
 
         String sql = """
                INSERT INTO Fazenda (id_dono_fazenda, id_endereco, nome)
@@ -40,7 +40,7 @@ public class FazendaDAO {
 
     //select
 
-    public List<FazendaModel> listar() throws SQLException {
+    public List<FazendaModel> listar(){
         String sql = """
                    SELECT * FROM Fazenda ORDER BY id;
         """;
@@ -64,6 +64,8 @@ public class FazendaDAO {
                 fazendaModels.add(fazendaModel);
             }
 
+        }catch (SQLException e){
+            System.out.println("Erro ao listar Fazenda: " + e.getMessage());
         }
 
         return fazendaModels;
@@ -71,7 +73,7 @@ public class FazendaDAO {
 
     //update
 
-    public boolean atualizar(FazendaModel fazendaModel, int id) throws SQLException {
+    public boolean atualizar(FazendaModel fazendaModel, int id){
         String sql = """
                    UPDATE fazenda
                    SET 
@@ -98,7 +100,7 @@ public class FazendaDAO {
 
     //delete
 
-    public boolean excluir(int id) throws SQLException {
+    public boolean excluir(int id){
         String sql = """
                    DELETE FROM Fazenda
                    WHERE id = ?;
@@ -117,7 +119,7 @@ public class FazendaDAO {
 
     //Busca por id
 
-    public FazendaModel buscar(int id) throws SQLException {
+    public FazendaModel buscar(int id){
         String sql = """
                     SELECT * FROM Fazenda WHERE id = ?;
         """;

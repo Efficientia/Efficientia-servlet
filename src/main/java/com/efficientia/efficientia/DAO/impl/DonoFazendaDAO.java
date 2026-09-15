@@ -18,7 +18,7 @@ public class DonoFazendaDAO {
 
     //insert
 
-    public boolean inserir(DonoFazendaModel donoFazendaModel) throws SQLException {
+    public boolean inserir(DonoFazendaModel donoFazendaModel){
         String sql = """
     INSERT INTO dono_fazenda (cpf,
                           assinatura,
@@ -58,7 +58,7 @@ public class DonoFazendaDAO {
 
     //select
 
-    public List<DonoFazendaModel> listar() throws SQLException {
+    public List<DonoFazendaModel> listar(){
         String sql = """
     SELECT * FROM dono_fazenda
     ORDER BY id;
@@ -98,7 +98,7 @@ public class DonoFazendaDAO {
 
     //update
 
-    public boolean atualizar(DonoFazendaModel donoFazendaModel, int id) throws SQLException {
+    public boolean atualizar(DonoFazendaModel donoFazendaModel, int id){
         String sql = """
         UPDATE dono_fazenda
         SET cpf = ?,
@@ -141,7 +141,7 @@ public class DonoFazendaDAO {
 
     //delete
 
-    public boolean excluir(int id) throws SQLException {
+    public boolean excluir(int id){
         String sql = """
     DELETE FROM dono_fazenda WHERE id = ?
 """;
@@ -160,7 +160,7 @@ public class DonoFazendaDAO {
 
     //Busca por id
 
-    public DonoFazendaModel buscar(int id) throws SQLException {
+    public DonoFazendaModel buscar(int id){
         String sql = """
         SELECT * FROM dono_fazenda WHERE id = ?;
         """;
@@ -190,6 +190,9 @@ public class DonoFazendaDAO {
             }
 
 
+        }catch (SQLException e){
+            System.out.println("Erro ao buscar donoFazenda: " + e.getMessage());
+            return null;
         }
     }
 }

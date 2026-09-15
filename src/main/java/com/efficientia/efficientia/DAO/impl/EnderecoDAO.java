@@ -14,7 +14,7 @@ public class EnderecoDAO {
 
     //insert
 
-    public boolean inserir(EnderecoModel enderecoModel) throws SQLException {
+    public boolean inserir(EnderecoModel enderecoModel){
         String sql = """
                 INSERT INTO endereco (cep,
                                       tipo,
@@ -89,7 +89,7 @@ public class EnderecoDAO {
 
     //update
 
-    public boolean atualizar(EnderecoModel enderecoModel, int id) throws SQLException {
+    public boolean atualizar(EnderecoModel enderecoModel, int id){
         String sql = """
                     UPDATE endereco SET
                      cep = ?,
@@ -127,7 +127,7 @@ public class EnderecoDAO {
 
     //delete
 
-    public boolean excluir(int id) throws SQLException {
+    public boolean excluir(int id){
         String sql = """
                     DELETE FROM endereco WHERE id = ?;
         """;
@@ -146,7 +146,7 @@ public class EnderecoDAO {
 
     //Busca por id
 
-    public EnderecoModel buscar(int id) throws SQLException {
+    public EnderecoModel buscar(int id){
         String sql = """
                     SELECT * FROM endereco WHERE id = ?;
         """;
