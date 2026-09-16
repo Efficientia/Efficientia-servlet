@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efficientia - Área Restrita</title>
+    <title>Efficientia - Cadastro</title>
     <link rel="stylesheet" href="css/area-restrita.css">
 </head>
 <body>
@@ -15,26 +15,28 @@
     </div>
     
     <div class="menu-login">
-        <h1 class="titulo-login">Entrar</h1>
-        <form action="/login" method="post">
+        <h1 class="titulo-login">Cadastrar</h1>
+        <form action="/cadastro" method="post">
+
+            <div class="grupo-input">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" placeholder="Nome" required>
+            </div>
+
 
             <div class="grupo-input">
                 <label for="email">E-mail</label>
                 <input type="email" id="email" name="email" placeholder="Digite seu email" required>
             </div>
-
+            
             <div class="grupo-input">
                 <label for="senha">Senha</label>
                 <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
             </div>
             
-            <div class="esqueceu-senha">
-                <a href="esqueci-senha.html">Esqueci minha senha</a>
-            </div>
+            <p class="link-cadastro">Já possui uma conta?<a href="area-restrita.html">Faça login</a></p>
             
-            <p class="link-cadastro">Não possui uma conta?<a href="cadastro.html">Crie uma</a></p>
-            
-            <button type="submit">Entrar</button>
+            <button type="submit">Cadastrar</button>
 
         </form>
     </div>
