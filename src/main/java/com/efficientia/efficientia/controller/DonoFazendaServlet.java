@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name= "DonoFzendaServlet", value = "/donoFazenda")
+@WebServlet(name= "DonoFazendaServlet", value = "/donoFazenda")
 
 public class DonoFazendaServlet extends HttpServlet {
 
@@ -26,13 +26,16 @@ public class DonoFazendaServlet extends HttpServlet {
     @Override
     protected void doGet(
             HttpServletRequest req,
-            HttpServletResponse resp) throws ServletException, IOException{
+            HttpServletResponse resp)
+    throws ServletException, IOException{
 
         List<DonoFazendaModel> donoFazendaModels = dao.listar();
 
         req.setAttribute("donoFazendaModels", donoFazendaModels);
 
-        req.getRequestDispatcher("");
+        req.getRequestDispatcher(
+                "/WEB-INF/views/donoFazenda.jsp"
+        ).forward(req, resp);
 
     }
 }

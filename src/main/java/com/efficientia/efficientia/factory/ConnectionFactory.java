@@ -7,6 +7,14 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 public class ConnectionFactory {
 
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            System.err.println("Driver PostgreSQL não encontrado: " + e.getMessage());
+        }
+    }
+
     public static Connection getConnection() throws SQLException{
 
         Dotenv dotenv = Dotenv.load();
