@@ -1,0 +1,168 @@
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+    position: relative;
+}
+h1, h2, h3 {
+    font-family: 'Manrope', sans-serif;
+}
+
+h1, h2 {
+    font-size: 42px;
+    font-style: normal;
+    line-height: normal;
+}
+
+p, a, span {
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.destaque {
+    color: #56D867;
+}
+
+.logo-efficientia {
+    max-width: 320px;
+    width: 80%;
+    height: auto;
+}
+
+.conteudo {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.lateral-esquerda {
+    background: linear-gradient(191deg, rgba(33, 78, 143, 0.85) 0%, rgba(0, 32, 96, 0.85) 50.27%, rgba(33, 78, 143, 0.85) 104.73%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3vh 2vh;
+}
+
+.direita {
+    background: linear-gradient(56deg, #0F51AE 62.45%, #56D867 102.78%);
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+    padding: 3vh 2vh;
+}
+
+.direita .titulo-login {
+    color: #001d89;
+    margin-bottom: 2vh;
+    font-size: 48px;
+    text-align: center;
+    font-weight: 900;
+}
+
+.direita form {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.grupo-input label {
+    color: #001d89;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+.grupo-input input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba();
+    outline: none;
+    font-size: 15px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a1a;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+}
+
+.grupo-input input:focus {
+    border-color: #56D867;
+    box-shadow: 0 0 0 3px rgba(86, 216, 103, 0.3);
+}
+
+.esqueceu-senha {
+    text-align: right;
+}
+
+.esqueceu-senha a,
+.link-cadastro a {
+    color: #001d89;
+    text-decoration: underline;
+    font-size: 14px;
+    transition: opacity 0.2s;
+}
+
+.link-cadastro {
+    color: #001d89;
+    font-size: 14px;
+    text-align: center;
+}
+
+.link-cadastro a {
+    margin-left: 6px;
+    font-weight: 600;
+}
+
+.direita  button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    margin-top: 0.5rem;
+    background-color: #56D867;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.direita button[type="submit"]:hover {
+    background-color: #27B83A;
+    transform: translateY(-1px);
+}
+
+.menu-login{
+    background: #FFFFFF;
+    min-width: 100vh;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border-radius: 4vh;
+    min-height: 80vh;
+
+}
