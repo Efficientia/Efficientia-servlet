@@ -9,6 +9,24 @@ public class AnalistaModel extends UsuarioModel implements Model {
 
 //Construtor com id do banco
     public AnalistaModel(int id,
+                         EmpresaModel empresaModel,
+                         String cpf,
+                         String nome,
+                         String assinatura,
+                         LocalDate dataNascimento,
+                         String senha,
+                         String email,
+                         String telefone,
+                         String codigo) {
+        super(id, empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
+        this.cpf = cpf;
+        this.codigo = codigo;
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
+    }
+
+    public AnalistaModel(int id,
                          String cpf,
                          String nome,
                          String assinatura,
@@ -26,6 +44,23 @@ public class AnalistaModel extends UsuarioModel implements Model {
     }
 
 //Construtor sem id do banco
+    public AnalistaModel(EmpresaModel empresaModel,
+                         String cpf,
+                         String nome,
+                         String assinatura,
+                         LocalDate dataNascimento,
+                         String senha,
+                         String email,
+                         String telefone,
+                         String codigo) {
+        super(empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
+        this.cpf = cpf;
+        this.codigo = codigo;
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
+    }
+
     public AnalistaModel(String nome,
                          String assinatura,
                          LocalDate dataNascimento,
@@ -59,6 +94,7 @@ public class AnalistaModel extends UsuarioModel implements Model {
     public String toString() {
         return "AnalistaModel{" +
                 "id=" + id +
+                ", empresaModel=" + empresaModel +
                 ", cpf='" + cpf + '\'' +
                 ", nome='" + nome + '\'' +
                 ", assinatura='" + assinatura + '\'' +
