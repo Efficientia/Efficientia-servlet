@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public abstract class UsuarioModel implements Model {
     protected int id;
+    protected EmpresaModel empresaModel;
     protected String nome;
     protected String assinatura;
     protected LocalDate dataNascimento;
@@ -13,6 +14,7 @@ public abstract class UsuarioModel implements Model {
 
 //Construtor com id do banco
     public UsuarioModel(int id,
+                        EmpresaModel empresaModel,
                         String nome,
                         String assinatura,
                         LocalDate dataNascimento,
@@ -20,6 +22,7 @@ public abstract class UsuarioModel implements Model {
                         String email,
                         String telefone) {
         this.id = id;
+        this.empresaModel = empresaModel;
         this.nome = nome;
         this.assinatura = assinatura;
         this.dataNascimento = dataNascimento;
@@ -28,22 +31,47 @@ public abstract class UsuarioModel implements Model {
         this.telefone = telefone;
     }
 
+    public UsuarioModel(int id,
+                        String nome,
+                        String assinatura,
+                        LocalDate dataNascimento,
+                        String senha,
+                        String email,
+                        String telefone) {
+        this(id, null, nome, assinatura, dataNascimento, senha, email, telefone);
+    }
+
 //Construtor sem id padrão
+    public UsuarioModel(EmpresaModel empresaModel,
+                        String nome,
+                        String assinatura,
+                        LocalDate dataNascimento,
+                        String senha,
+                        String email,
+                        String telefone) {
+        this.empresaModel = empresaModel;
+        this.nome = nome;
+        this.assinatura = assinatura;
+        this.dataNascimento = dataNascimento;
+        this.senha = senha;
+        this.email = email;
+        this.telefone = telefone;
+    }
+
     public UsuarioModel(String nome,
                         String assinatura,
                         LocalDate dataNascimento,
                         String senha,
                         String email,
                         String telefone) {
-        this.nome = nome;
-        this.assinatura = assinatura;
-        this.dataNascimento = dataNascimento;
-        this.senha = senha;
-        this.email = email;
-        this.telefone = telefone;
+        this(null, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
 //Setters sem id
+    public void setEmpresaModel(EmpresaModel empresaModel) {
+        this.empresaModel = empresaModel;
+    }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -74,6 +102,14 @@ public abstract class UsuarioModel implements Model {
         return id;
     }
 
+    public EmpresaModel getEmpresaModel() {
+        return empresaModel;
+    }
+
+    public EmpresaModel getEmpresa() {
+        return empresaModel;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -102,6 +138,7 @@ public abstract class UsuarioModel implements Model {
     public String toString() {
         return "UsuarioModel{" +
                 "id=" + id +
+                ", empresaModel=" + empresaModel +
                 ", nome='" + nome + '\'' +
                 ", assinatura='" + assinatura + '\'' +
                 ", dataNascimento=" + dataNascimento +
