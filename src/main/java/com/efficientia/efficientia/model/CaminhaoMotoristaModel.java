@@ -2,8 +2,12 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
+/**
+ * Modelo associativo entre Caminhão e Motorista (com histórico de vigência).
+ */
 public class CaminhaoMotoristaModel implements Model {
 
+    // ==================== ATRIBUTOS ====================
     private int id;
     private MotoristaModel motoristaModel;
     private CaminhaoModel caminhaoModel;
@@ -11,7 +15,9 @@ public class CaminhaoMotoristaModel implements Model {
     private LocalDate dataFim;
     private boolean ativo;
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id e data de fim (banco)
     public CaminhaoMotoristaModel(int id,
                                   MotoristaModel motoristaModel,
                                   CaminhaoModel caminhaoModel,
@@ -26,6 +32,7 @@ public class CaminhaoMotoristaModel implements Model {
         this.ativo = ativo;
     }
 
+    // Construtor com id sem data de fim (alocação em andamento)
     public CaminhaoMotoristaModel(int id,
                                   MotoristaModel motoristaModel,
                                   CaminhaoModel caminhaoModel,
@@ -38,7 +45,7 @@ public class CaminhaoMotoristaModel implements Model {
         this.ativo = ativo;
     }
 
-//Construtor sem id padrão
+    // Construtor sem id (nova alocação)
     public CaminhaoMotoristaModel(MotoristaModel motoristaModel,
                                   CaminhaoModel caminhaoModel,
                                   LocalDate dataInicio,
@@ -49,52 +56,66 @@ public class CaminhaoMotoristaModel implements Model {
         this.ativo = ativo;
     }
 
-//Setters sem id
-    public void setMotoristaModel(MotoristaModel motoristaModel) {
-        this.motoristaModel = motoristaModel;
-    }
+    // ==================== GETTERS E SETTERS ====================
 
-    public void setCaminhaoModel(CaminhaoModel caminhaoModel) {
-        this.caminhaoModel = caminhaoModel;
-    }
-
-    public void setDataInicio(LocalDate dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
-    public void setDataFim(LocalDate dataFim) {
-        this.dataFim = dataFim;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
-    }
-
-//Getters
     @Override
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public MotoristaModel getMotorista() {
         return motoristaModel;
     }
 
+    public MotoristaModel getMotoristaModel() {
+        return motoristaModel;
+    }
+
+    public void setMotoristaModel(MotoristaModel motoristaModel) {
+        this.motoristaModel = motoristaModel;
+    }
+
     public CaminhaoModel getCaminhao() {
         return caminhaoModel;
+    }
+
+    public CaminhaoModel getCaminhaoModel() {
+        return caminhaoModel;
+    }
+
+    public void setCaminhaoModel(CaminhaoModel caminhaoModel) {
+        this.caminhaoModel = caminhaoModel;
     }
 
     public LocalDate getDataInicio() {
         return dataInicio;
     }
 
+    public void setDataInicio(LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
     public LocalDate getDataFim() {
         return dataFim;
+    }
+
+    public void setDataFim(LocalDate dataFim) {
+        this.dataFim = dataFim;
     }
 
     public boolean isAtivo() {
         return ativo;
     }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {
