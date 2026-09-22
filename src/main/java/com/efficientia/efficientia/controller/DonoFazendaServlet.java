@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
+import java.time.LocalDate;
 
 @WebServlet(name= "DonoFazendaServlet", value = "/donoFazenda")
 
@@ -37,5 +37,51 @@ public class DonoFazendaServlet extends HttpServlet {
                 "/WEB-INF/views/donoFazenda.jsp"
         ).forward(req, resp);
 
+    }
+
+    @Override
+    protected void doPost(
+            HttpServletRequest req,
+            HttpServletResponse resp
+    ) throws IOException{
+
+        req.setCharacterEncoding("UTF-8");
+
+        String cpf = req.getParameter("cpf");
+
+        String assinatura = req.getParameter("assinatura");
+
+        String dataNascimentoTexto = req.getParameter("dataNascimento");
+
+        LocalDate dataNascimento = null;
+
+        if (dataNascimentoTexto != null && !dataNascimentoTexto.isBlank()) {
+            try {
+                dataNascimento = LocalDate.parse(dataNascimentoTexto);
+            } catch (Exception e) {
+                System.out.println("Erro ao converter data de nascimento: " + e.getMessage());
+            }
+        }
+
+        String nome = req.getParameter("nome");
+
+        String senha = req.getParameter("senha");
+
+        String email = req.getParameter("email");
+
+        String telefone = req.getParameter("telefone");
+
+        DonoFazendaModel donoFazendaModel = new DonoFazendaModel(cpf,
+                assinatura,
+                dataNascimento,
+                nome,
+                senha,
+                email,
+                telefone);
+
+        dao.inserir(donoFazendaModel);
+
+        resp.sendRedirect(
+                req.getContextPath() + "/donoFazenda");
     }
 }
