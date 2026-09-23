@@ -1,8 +1,8 @@
 package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
-import com.efficientia.efficientia.model.DonoFazendaModel;
-import com.efficientia.efficientia.model.FazendaModel;
+import com.efficientia.efficientia.model.PecuaristaModel;
+import com.efficientia.efficientia.model.PropriedadeModel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,42 +11,42 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FazendaDAO {
+public class PropriedadeDAO {
 
     //insert
 
-    public boolean inserir(FazendaModel fazendaModel){
+    public boolean inserir(PropriedadeModel propriedadeModel){
 
         String sql = """
-               INSERT INTO Fazenda (id_dono_fazenda, id_endereco, nome)
+               INSERT INTO propriedade (id_pecuarista, id_endereco, nome)
                VALUES (?, ?, ?);
                """;
 
         try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)){
 
-            stmt.setInt(1, fazendaModel.getDonoFazendaModel().getId());
-            stmt.setInt(2, fazendaModel.getEnderecoModel().getId());
-            stmt.setString(3, fazendaModel.getNome());
+            stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());
+            stmt.setInt(2, propriedadeModel.getEnderecoModel().getId());
+            stmt.setString(3, propriedadeModel.getNome());
 
             int linhasAfetadas = stmt.executeUpdate();
 
             return linhasAfetadas > 0;
         }catch(SQLException e){
-            System.out.println("Erro ao inserir Fazenda: " + e.getMessage());
+            System.out.println("Erro ao inserir Propriedade: " + e.getMessage());
             return false;
         }
     }
 
     //select
 
-    public List<FazendaModel> listar(){
+    public List<PropriedadeModel> listar(){
         String sql = """
-                   SELECT * FROM Fazenda ORDER BY id;
+                   SELECT * FROM propriedade ORDER BY id;
         """;
 
-        List<FazendaModel> fazendaModels = new ArrayList<>();
-        DonoFazendaDAO donoFazendaDAO = new DonoFazendaDAO();
+        List<PropriedadeModel> propriedadeModels = new ArrayList<>();
+        PecuaristaDAO pecuaristaDAO = new PecuaristaDAO();
         EnderecoDAO enderecoDAO = new EnderecoDAO();
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -54,30 +54,30 @@ public class FazendaDAO {
             ResultSet rs = stmt.executeQuery();
 
             while(rs.next()){
-                FazendaModel fazendaModel = new FazendaModel(
+                PropriedadeModel propriedadeModel = new PropriedadeModel(
                         rs.getInt("id"),
-                        donoFazendaDAO.buscar(rs.getInt("id_dono_fazenda")),
+                        pecuaristaDAO.buscar(rs.getInt("id_pecuarista")),
                         enderecoDAO.buscar(rs.getInt("id_endereco")),
                         rs.getString("nome")
                 );
 
-                fazendaModels.add(fazendaModel);
+                propriedadeModels.add(propriedadeModel);
             }
 
         }catch (SQLException e){
-            System.out.println("Erro ao listar Fazenda: " + e.getMessage());
+            System.out.println("Erro ao listar Propriedade: " + e.getMessage());
         }
 
-        return fazendaModels;
+        return propriedadeModels;
     }
 
     //update
 
-    public boolean atualizar(FazendaModel fazendaModel, int id){
+    public boolean atualizar(PropriedadeModel propriedadeModel, int id){
         String sql = """
-                   UPDATE fazenda
+                   UPDATE propriedade
                    SET 
-                   id_dono_fazenda = ?,
+                   id_pecuarista = ?,
                    id_endereco = ?,
                    nome = ?
                    WHERE id = ?;
@@ -85,15 +85,15 @@ public class FazendaDAO {
 
         try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)){
-            stmt.setInt(1, fazendaModel.getDonoFazendaModel().getId());
-            stmt.setInt(2, fazendaModel.getEnderecoModel().getId());
-            stmt.setString(3, fazendaModel.getNome());
+            stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());
+            stmt.setInt(2, propriedadeModel.getEnderecoModel().getId());
+            stmt.setString(3, propriedadeModel.getNome());
             stmt.setInt(4, id);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         }catch(SQLException e){
-            System.out.println("Erro ao atualizar Fazenda: " + e.getMessage());
+            System.out.println("Erro ao atualizar Propriedade: " + e.getMessage());
             return false;
         }
     }
@@ -102,7 +102,7 @@ public class FazendaDAO {
 
     public boolean excluir(int id){
         String sql = """
-                   DELETE FROM Fazenda
+                   DELETE FROM propriedade
                    WHERE id = ?;
         """;
 
@@ -112,19 +112,19 @@ public class FazendaDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         }catch(SQLException e){
-            System.out.println("Erro ao excluir Fazenda: " + e.getMessage());
+            System.out.println("Erro ao excluir Propriedade: " + e.getMessage());
             return false;
         }
     }
 
     //Busca por id
 
-    public FazendaModel buscar(int id){
+    public PropriedadeModel buscar(int id){
         String sql = """
-                    SELECT * FROM Fazenda WHERE id = ?;
+                    SELECT * FROM propriedade WHERE id = ?;
         """;
 
-        DonoFazendaDAO donoFazendaDAO = new DonoFazendaDAO();
+        PecuaristaDAO pecuaristaDAO = new PecuaristaDAO();
         EnderecoDAO enderecoDAO = new EnderecoDAO();
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -133,9 +133,9 @@ public class FazendaDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new FazendaModel(
+                return new PropriedadeModel(
                         rs.getInt("id"),
-                        donoFazendaDAO.buscar(rs.getInt("id_dono_fazenda")),
+                        pecuaristaDAO.buscar(rs.getInt("id_pecuarista")),
                         enderecoDAO.buscar(rs.getInt("id_endereco")),
                         rs.getString("nome")
                 );
@@ -143,7 +143,7 @@ public class FazendaDAO {
                 return null;
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar Fazenda: " + e.getMessage());
+            System.out.println("Erro ao buscar Propriedade: " + e.getMessage());
             return null;
         }
     }

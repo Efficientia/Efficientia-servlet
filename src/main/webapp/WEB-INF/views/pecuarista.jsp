@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.efficientia.efficientia.model.DonoFazendaModel" %>
+<%@ page import="com.efficientia.efficientia.model.PecuaristaModel" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 
 <!DOCTYPE html>
@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento - Dono de Fazenda | Efficientia</title>
+    <title>Gerenciamento - Pecuarista | Efficientia</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -576,11 +576,11 @@
 <body>
 
 <%
-    Object objeto = request.getAttribute("donoFazendaModels");
-    List<DonoFazendaModel> lista = null;
+    Object objeto = request.getAttribute("pecuaristaModels");
+    List<PecuaristaModel> lista = null;
     if (objeto instanceof List<?>) {
         @SuppressWarnings("unchecked")
-        List<DonoFazendaModel> castedList = (List<DonoFazendaModel>) objeto;
+        List<PecuaristaModel> castedList = (List<PecuaristaModel>) objeto;
         lista = castedList;
     }
     int total = (lista != null) ? lista.size() : 0;
@@ -592,7 +592,7 @@
     <header class="header">
         <div class="header-title-box">
             <h1>Efficientia <span>| Gestão Rural</span></h1>
-            <p>Módulo de Gerenciamento de Donos de Fazenda</p>
+            <p>Módulo de Gerenciamento de Pecuaristas</p>
         </div>
         <a href="${pageContext.request.contextPath}/" class="btn-voltar">
             &larr; Página Principal
@@ -605,13 +605,13 @@
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            Cadastrar Novo Dono
+            Cadastrar Novo Pecuarista
         </button>
         <button type="button" id="tabBtnExcluir" class="tab-button tab-danger" onclick="switchTab('excluir')">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            Excluir Dono
+            Excluir Pecuarista
         </button>
     </div>
 
@@ -622,12 +622,12 @@
         <!-- ============================================== -->
         <div id="tabCadastrar" class="tab-content active">
             <div class="card-header">
-                <h2 class="title-green">Cadastrar Novo Dono de Fazenda</h2>
-                <p>Preencha os dados abaixo para cadastrar um novo proprietário no sistema.</p>
+                <h2 class="title-green">Cadastrar Novo Pecuarista</h2>
+                <p>Preencha os dados abaixo para cadastrar um novo pecuarista no sistema.</p>
             </div>
 
-            <form action="${pageContext.request.contextPath}/donoFazenda" method="post" id="formDonoFazenda">
-                <!-- Ação oculta padrão (slide 99) -->
+            <form action="${pageContext.request.contextPath}/pecuarista" method="post" id="formPecuarista">
+                <!-- Ação oculta padrão -->
                 <input type="hidden" name="acao" value="cadastrar">
 
                 <div class="form-grid">
@@ -655,7 +655,7 @@
                     <!-- E-mail -->
                     <div class="form-group">
                         <label for="email">E-mail *</label>
-                        <input type="email" id="email" name="email" placeholder="roberto@fazenda.com" required>
+                        <input type="email" id="email" name="email" placeholder="roberto@propriedade.com" required>
                     </div>
 
                     <!-- Telefone -->
@@ -685,38 +685,38 @@
 
                 <div class="form-actions">
                     <button type="reset" class="btn btn-secondary">Limpar Formulário</button>
-                    <button type="submit" class="btn btn-primary">Cadastrar Dono de Fazenda</button>
+                    <button type="submit" class="btn btn-primary">Cadastrar Pecuarista</button>
                 </div>
             </form>
         </div>
 
         <!-- ============================================== -->
-        <!-- ABA 2: EXCLUSÃO DE DONO DE FAZENDA -->
+        <!-- ABA 2: EXCLUSÃO DE PECUARISTA -->
         <!-- ============================================== -->
         <div id="tabExcluir" class="tab-content">
             <div class="card-header">
-                <h2 class="title-red">Excluir Dono de Fazenda</h2>
-                <p>Selecione um proprietário cadastrado ou informe o ID para realizar a exclusão.</p>
+                <h2 class="title-red">Excluir Pecuarista</h2>
+                <p>Selecione um pecuarista cadastrado ou informe o ID para realizar a exclusão.</p>
             </div>
 
             <c:choose>
-                <c:when test="${empty donoFazendaModels}">
+                <c:when test="${empty pecuaristaModels}">
                     <div class="empty-state">
-                        <p>Não há proprietários cadastrados disponíveis para exclusão.</p>
+                        <p>Não há pecuaristas cadastrados disponíveis para exclusão.</p>
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <form id="formAbaExcluir" action="${pageContext.request.contextPath}/donoFazenda" method="post" onsubmit="return handleAbaExcluirSubmit(event)">
+                    <form id="formAbaExcluir" action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleAbaExcluirSubmit(event)">
                         <input type="hidden" name="acao" value="excluir">
 
                         <div class="form-grid">
                             <div class="form-group form-group-full">
-                                <label for="selectExcluirDono">Selecione o Dono de Fazenda para Excluir *</label>
-                                <select id="selectExcluirDono" name="id" class="danger-input" required>
-                                    <option value="" disabled selected>Escolha um proprietário...</option>
-                                    <c:forEach var="dono" items="${donoFazendaModels}">
-                                        <option value="${dono.id}" data-nome="${dono.nome}">
-                                            ID #${dono.id} - ${dono.nome} (CPF: ${dono.cpf})
+                                <label for="selectExcluirPecuarista">Selecione o Pecuarista para Excluir *</label>
+                                <select id="selectExcluirPecuarista" name="id" class="danger-input" required>
+                                    <option value="" disabled selected>Escolha um pecuarista...</option>
+                                    <c:forEach var="pecuarista" items="${pecuaristaModels}">
+                                        <option value="${pecuarista.id}" data-nome="${pecuarista.nome}">
+                                            ID #${pecuarista.id} - ${pecuarista.nome} (CPF: ${pecuarista.cpf})
                                         </option>
                                     </c:forEach>
                                 </select>
@@ -729,7 +729,7 @@
                                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
-                                Excluir Dono de Fazenda
+                                Excluir Pecuarista
                             </button>
                         </div>
                     </form>
@@ -742,18 +742,18 @@
     <!-- LISTA DE CADASTROS COM AÇÕES -->
     <!-- ============================================== -->
     <div class="list-section-header">
-        <h2>Donos de Fazenda Cadastrados</h2>
-        <span class="badge-count">${not empty donoFazendaModels ? donoFazendaModels.size() : 0} registros</span>
+        <h2>Pecuaristas Cadastrados</h2>
+        <span class="badge-count">${not empty pecuaristaModels ? pecuaristaModels.size() : 0} registros</span>
     </div>
 
     <div class="table-responsive">
         <c:choose>
-            <c:when test="${empty donoFazendaModels}">
+            <c:when test="${empty pecuaristaModels}">
                 <div class="empty-state">
                     <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    <p>Nenhum dono de fazenda cadastrado até o momento.</p>
+                    <p>Nenhum pecuarista cadastrado até o momento.</p>
                 </div>
             </c:when>
             <c:otherwise>
@@ -771,29 +771,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="dono" items="${donoFazendaModels}">
+                        <c:forEach var="pecuarista" items="${pecuaristaModels}">
                             <tr>
-                                <td><strong>#<c:out value="${dono.id}" /></strong></td>
-                                <td><c:out value="${dono.nome}" default="-" /></td>
-                                <td><c:out value="${dono.cpf}" default="-" /></td>
-                                <td><c:out value="${dono.email}" default="-" /></td>
-                                <td><c:out value="${dono.telefone}" default="-" /></td>
-                                <td><c:out value="${dono.dataNascimento}" default="-" /></td>
+                                <td><strong>#<c:out value="${pecuarista.id}" /></strong></td>
+                                <td><c:out value="${pecuarista.nome}" default="-" /></td>
+                                <td><c:out value="${pecuarista.cpf}" default="-" /></td>
+                                <td><c:out value="${pecuarista.email}" default="-" /></td>
+                                <td><c:out value="${pecuarista.telefone}" default="-" /></td>
+                                <td><c:out value="${pecuarista.dataNascimento}" default="-" /></td>
                                 <td>
-                                    <span class="text-code"><c:out value="${dono.assinatura}" default="-" /></span>
+                                    <span class="text-code"><c:out value="${pecuarista.assinatura}" default="-" /></span>
                                 </td>
                                 <td style="text-align: center;">
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                                        <a href="${pageContext.request.contextPath}/donoFazenda?acao=editar&id=${dono.id}" class="btn-sm-edit">
+                                        <a href="${pageContext.request.contextPath}/pecuarista?acao=editar&id=${pecuarista.id}" class="btn-sm-edit">
                                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                             Editar
                                         </a>
-                                        <form action="${pageContext.request.contextPath}/donoFazenda" method="post" style="display: inline-block; margin: 0;">
+                                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" style="display: inline-block; margin: 0;">
                                             <input type="hidden" name="acao" value="excluir">
-                                            <input type="hidden" name="id" value="${dono.id}">
-                                            <button type="submit" class="btn-sm-danger" onclick="return confirm('Deseja excluir este dono de fazenda?')">
+                                            <input type="hidden" name="id" value="${pecuarista.id}">
+                                            <button type="submit" class="btn-sm-danger" onclick="return confirm('Deseja excluir este pecuarista?')">
                                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
@@ -826,7 +826,7 @@
         <p class="modal-desc">Esta ação não poderá ser desfeita no banco de dados.</p>
         <div id="modalDetalhe" class="modal-detail"></div>
 
-        <form id="formConfirmModal" action="${pageContext.request.contextPath}/donoFazenda" method="post">
+        <form id="formConfirmModal" action="${pageContext.request.contextPath}/pecuarista" method="post">
             <input type="hidden" name="acao" value="excluir">
             <input type="hidden" id="modalInputId" name="id" value="">
 
@@ -880,7 +880,7 @@
     // Submissão da Aba Excluir com confirmação
     function handleAbaExcluirSubmit(event) {
         event.preventDefault();
-        const select = document.getElementById('selectExcluirDono');
+        const select = document.getElementById('selectExcluirPecuarista');
         const id = select.value;
         if (!id) return false;
 

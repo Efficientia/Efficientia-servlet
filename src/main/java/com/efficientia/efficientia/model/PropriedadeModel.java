@@ -1,35 +1,35 @@
 package com.efficientia.efficientia.model;
 
-public class FazendaModel implements Model {
+public class PropriedadeModel implements Model {
 
     private int id;
-    private DonoFazendaModel donoFazendaModel;
+    private PecuaristaModel pecuaristaModel;
     private EnderecoModel enderecoModel;
     private String nome;
 
     // Construtor com id do banco
-    public FazendaModel(int id,
-                        DonoFazendaModel donoFazendaModel,
-                        EnderecoModel enderecoModel,
-                        String nome) {
+    public PropriedadeModel(int id,
+                            PecuaristaModel pecuaristaModel,
+                            EnderecoModel enderecoModel,
+                            String nome) {
         this.id = id;
-        this.donoFazendaModel = donoFazendaModel;
+        this.pecuaristaModel = pecuaristaModel;
         this.enderecoModel = enderecoModel;
         this.nome = nome;
     }
 
     // Construtor sem id padrão
-    public FazendaModel(DonoFazendaModel donoFazendaModel,
-                        EnderecoModel enderecoModel,
-                        String nome) {
-        this.donoFazendaModel = donoFazendaModel;
+    public PropriedadeModel(PecuaristaModel pecuaristaModel,
+                            EnderecoModel enderecoModel,
+                            String nome) {
+        this.pecuaristaModel = pecuaristaModel;
         this.enderecoModel = enderecoModel;
         this.nome = nome;
     }
 
     // Setters
-    public void setDonoFazendaModel(DonoFazendaModel donoFazendaModel) {
-        this.donoFazendaModel = donoFazendaModel;
+    public void setPecuaristaModel(PecuaristaModel pecuaristaModel) {
+        this.pecuaristaModel = pecuaristaModel;
     }
 
     public void setEnderecoModel(EnderecoModel enderecoModel) {
@@ -46,8 +46,8 @@ public class FazendaModel implements Model {
         return id;
     }
 
-    public DonoFazendaModel getDonoFazendaModel() {
-        return donoFazendaModel;
+    public PecuaristaModel getPecuaristaModel() {
+        return pecuaristaModel;
     }
 
     public EnderecoModel getEnderecoModel() {
@@ -60,9 +60,9 @@ public class FazendaModel implements Model {
 
     @Override
     public String toString() {
-        return "FazendaModel{" +
+        return "PropriedadeModel{" +
                 "id=" + id +
-                ", donoFazendaModel=" + donoFazendaModel +
+                ", pecuaristaModel=" + pecuaristaModel +
                 ", enderecoModel=" + enderecoModel +
                 ", nome='" + nome + '\'' +
                 '}';

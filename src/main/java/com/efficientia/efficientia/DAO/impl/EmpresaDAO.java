@@ -1,7 +1,6 @@
 package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
-import com.efficientia.efficientia.model.DonoFazendaModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 
 import java.sql.Connection;
@@ -30,7 +29,7 @@ public class EmpresaDAO {
 
             return linhasAfetadas > 0;
         }catch(SQLException e){
-            System.out.println("Erro ao inserir donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao inserir empresaModel: " + e.getMessage());
             return false;
         }
     }
@@ -55,7 +54,7 @@ public class EmpresaDAO {
                 empresas.add(empresaModel);
             }
         }catch(SQLException e){
-            System.out.println("Erro ao listar donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao listar empresaModel: " + e.getMessage());
         }
         return empresas;
     }
@@ -79,7 +78,7 @@ public class EmpresaDAO {
 
             return linhasAfetadas > 0;
         } catch (SQLException e) {
-            System.out.println("Erro ao atualizar donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao atualizar empresaModel: " + e.getMessage());
             return false;
         }
     }
@@ -97,7 +96,7 @@ public class EmpresaDAO {
             return linhasAfetadas > 0;
 
         }catch(SQLException e){
-            System.out.println("Erro ao excluir donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao excluir empresaModel: " + e.getMessage());
             return false;
         }
     }
