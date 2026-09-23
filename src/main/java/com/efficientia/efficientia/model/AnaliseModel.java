@@ -2,8 +2,12 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Modelo para Análise de Trajeto realizada por um Analista.
+ */
 public class AnaliseModel implements Model {
 
+    // ==================== ATRIBUTOS ====================
     private int id;
     private AnalistaModel analistaModel;
     private TrajetoModel trajetoModel;
@@ -11,7 +15,9 @@ public class AnaliseModel implements Model {
     private String statusAnalise;
     private String observacao;
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id (banco)
     public AnaliseModel(int id, AnalistaModel analistaModel,
                         TrajetoModel trajetoModel,
                         LocalDateTime dataAnalise,
@@ -25,7 +31,7 @@ public class AnaliseModel implements Model {
         this.observacao = observacao;
     }
 
-//Construtor sem id padrão
+    // Construtor sem id (novo cadastro)
     public AnaliseModel(AnalistaModel analistaModel,
                         TrajetoModel trajetoModel,
                         LocalDateTime dataAnalise,
@@ -38,52 +44,66 @@ public class AnaliseModel implements Model {
         this.observacao = observacao;
     }
 
-//Setters sem id
-    public void setAnalistaModel(AnalistaModel analistaModel) {
-        this.analistaModel = analistaModel;
-    }
+    // ==================== GETTERS E SETTERS ====================
 
-    public void setTrajetoModel(TrajetoModel trajetoModel) {
-        this.trajetoModel = trajetoModel;
-    }
-
-    public void setDataAnalise(LocalDateTime dataAnalise) {
-        this.dataAnalise = dataAnalise;
-    }
-
-    public void setStatusAnalise(String statusAnalise) {
-        this.statusAnalise = statusAnalise;
-    }
-
-    public void setObservacao(String observacao) {
-        this.observacao = observacao;
-    }
-
-//Getters
     @Override
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public AnalistaModel getAnalista() {
         return analistaModel;
     }
 
+    public AnalistaModel getAnalistaModel() {
+        return analistaModel;
+    }
+
+    public void setAnalistaModel(AnalistaModel analistaModel) {
+        this.analistaModel = analistaModel;
+    }
+
     public TrajetoModel getTrajeto() {
         return trajetoModel;
+    }
+
+    public TrajetoModel getTrajetoModel() {
+        return trajetoModel;
+    }
+
+    public void setTrajetoModel(TrajetoModel trajetoModel) {
+        this.trajetoModel = trajetoModel;
     }
 
     public LocalDateTime getDataAnalise() {
         return dataAnalise;
     }
 
+    public void setDataAnalise(LocalDateTime dataAnalise) {
+        this.dataAnalise = dataAnalise;
+    }
+
     public String getStatusAnalise() {
         return statusAnalise;
+    }
+
+    public void setStatusAnalise(String statusAnalise) {
+        this.statusAnalise = statusAnalise;
     }
 
     public String getObservacao() {
         return observacao;
     }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {
