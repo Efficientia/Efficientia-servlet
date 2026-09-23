@@ -1,8 +1,6 @@
 package com.efficientia.efficientia.DAO.impl;
-
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.AnalistaModel;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -10,13 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 @SuppressWarnings({"SqlResolve", "SqlNoDataSourceInspection"})
 public class AnalistaDAO {
-
     //insert
-    public void insertAnalista(AnalistaModel analistaModel) throws SQLException {
-        if (analistaModel == null) return;
+    public boolean inserir(AnalistaModel analistaModel) {
+        if (analistaModel == null) return false;
 
         String sql = """
                 INSERT INTO analista(
@@ -42,34 +38,30 @@ public class AnalistaDAO {
             stmt.setString(7, analistaModel.getTelefone());
             stmt.setString(8, analistaModel.getCodigo());
 
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao inserir Analista: " + e.getMessage());
+            return false;
         }
     }
-
     //delete
-    public void deleteAnalista(AnalistaModel analistaModel) throws SQLException {
-        if (analistaModel != null) {
-            deleteAnalista(analistaModel.getId());
-        }
-    }
-
-    public void deleteAnalista(int id) throws SQLException {
+    public boolean excluir(int id) {
         String sql = """
                 DELETE FROM analista WHERE id = ?;
                 """;
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao excluir Analista: " + e.getMessage());
+            return false;
         }
     }
-
     //select
-    public List<AnalistaModel> listar() throws SQLException {
+    public List<AnalistaModel> listar() {
         String sql = """
                 SELECT * FROM analista ORDER BY id;
                 """;
@@ -93,13 +85,13 @@ public class AnalistaDAO {
                 listaAnalista.add(analistaModel);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao listar Analista: " + e.getMessage());
         }
         return listaAnalista;
     }
 
     // Buscar por ID
-    public AnalistaModel buscarPorId(int id) throws SQLException {
+    public AnalistaModel buscar(int id) {
         String sql = """
                 SELECT * FROM analista WHERE id = ?;
                 """;
@@ -123,18 +115,13 @@ public class AnalistaDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao buscar Analista: " + e.getMessage());
         }
         return null;
     }
-
-    public AnalistaModel buscar(int id) throws SQLException {
-        return buscarPorId(id);
-    }
-
     //update
-    public void updateAnalista(AnalistaModel analistaModel) throws SQLException {
-        if (analistaModel == null) return;
+    public boolean atualizar(AnalistaModel analistaModel) {
+        if (analistaModel == null) return false;
 
         String sql = """
                 UPDATE analista SET
@@ -150,7 +137,6 @@ public class AnalistaDAO {
                 """;
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-
             stmt.setString(1, analistaModel.getCpf());
             stmt.setString(2, analistaModel.getNome());
             stmt.setString(3, analistaModel.getAssinatura());
@@ -160,10 +146,11 @@ public class AnalistaDAO {
             stmt.setString(7, analistaModel.getTelefone());
             stmt.setString(8, analistaModel.getCodigo());
             stmt.setInt(9, analistaModel.getId());
-
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao atualizar Analista: " + e.getMessage());
+            return false;
         }
     }
 }
