@@ -22,8 +22,7 @@ public class EmpresaDAO {
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
-            stmt.setString(1, empresa.getNome());
-            stmt.setString(2, empresa.getCnpj());
+            preencherStatement(stmt, empresa);
 
             int linhasAfetadas = stmt.executeUpdate();
 
@@ -70,8 +69,7 @@ public class EmpresaDAO {
         try (Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
-            stmt.setString(1, empresa.getNome());
-            stmt.setString(2, empresa.getNome());
+            preencherStatement(stmt, empresa);
             stmt.setInt(3, id);
 
             int linhasAfetadas = stmt.executeUpdate();
@@ -99,5 +97,11 @@ public class EmpresaDAO {
             System.out.println("Erro ao excluir empresaModel: " + e.getMessage());
             return false;
         }
+    }
+
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, EmpresaModel empresa) throws SQLException {
+        stmt.setString(1, empresa.getNome());
+        stmt.setString(2, empresa.getCnpj());
     }
 }

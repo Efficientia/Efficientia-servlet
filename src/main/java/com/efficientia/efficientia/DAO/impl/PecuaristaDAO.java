@@ -37,13 +37,7 @@ public class PecuaristaDAO {
         try(Connection connection = ConnectionFactory.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)){
 
-            stmt.setString(1, pecuaristaModel.getCpf());
-            stmt.setString(2, pecuaristaModel.getAssinatura());
-            stmt.setDate(3, java.sql.Date.valueOf(pecuaristaModel.getDataNascimento()));
-            stmt.setString(4, pecuaristaModel.getNome());
-            stmt.setString(5, pecuaristaModel.getSenha());
-            stmt.setString(6, pecuaristaModel.getEmail());
-            stmt.setString(7, pecuaristaModel.getTelefone());
+            preencherStatement(stmt, pecuaristaModel);
 
             int linhasAfetadas = stmt.executeUpdate();
 
@@ -111,21 +105,7 @@ public class PecuaristaDAO {
 
         try(Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql);){
-            stmt.setString(1, pecuaristaModel.getCpf());
-            stmt.setString(2, pecuaristaModel.getAssinatura());
-
-            if (pecuaristaModel.getDataNascimento() != null){
-                stmt.setDate(3,
-                        Date.valueOf(pecuaristaModel.getDataNascimento()));
-            }
-            else{
-                stmt.setDate(3, null);
-            }
-
-            stmt.setString(4, pecuaristaModel.getNome());
-            stmt.setString(5, pecuaristaModel.getSenha());
-            stmt.setString(6, pecuaristaModel.getEmail());
-            stmt.setString(7, pecuaristaModel.getTelefone());
+            preencherStatement(stmt, pecuaristaModel);
             stmt.setInt(8, id);
 
             int linhasAfetadas = stmt.executeUpdate();
@@ -192,5 +172,22 @@ public class PecuaristaDAO {
             System.out.println("Erro ao buscar pecuarista: " + e.getMessage());
             return null;
         }
+    }
+
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, PecuaristaModel pecuaristaModel) throws SQLException {
+        stmt.setString(1, pecuaristaModel.getCpf());
+        stmt.setString(2, pecuaristaModel.getAssinatura());
+
+        if (pecuaristaModel.getDataNascimento() != null) {
+            stmt.setDate(3, Date.valueOf(pecuaristaModel.getDataNascimento()));
+        } else {
+            stmt.setDate(3, null);
+        }
+
+        stmt.setString(4, pecuaristaModel.getNome());
+        stmt.setString(5, pecuaristaModel.getSenha());
+        stmt.setString(6, pecuaristaModel.getEmail());
+        stmt.setString(7, pecuaristaModel.getTelefone());
     }
 }

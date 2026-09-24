@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +26,7 @@ public class PropriedadeDAO {
         try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)){
 
-            stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());
-            stmt.setInt(2, propriedadeModel.getEnderecoModel().getId());
-            stmt.setString(3, propriedadeModel.getNome());
+            preencherStatement(stmt, propriedadeModel);
 
             int linhasAfetadas = stmt.executeUpdate();
 
@@ -85,9 +84,7 @@ public class PropriedadeDAO {
 
         try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)){
-            stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());
-            stmt.setInt(2, propriedadeModel.getEnderecoModel().getId());
-            stmt.setString(3, propriedadeModel.getNome());
+            preencherStatement(stmt, propriedadeModel);
             stmt.setInt(4, id);
 
             int linhasAfetadas = stmt.executeUpdate();
@@ -148,4 +145,20 @@ public class PropriedadeDAO {
         }
     }
 
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, PropriedadeModel propriedadeModel) throws SQLException {
+        if (propriedadeModel.getPecuaristaModel() != null) {
+            stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());
+        } else {
+            stmt.setNull(1, Types.INTEGER);
+        }
+
+        if (propriedadeModel.getEnderecoModel() != null) {
+            stmt.setInt(2, propriedadeModel.getEnderecoModel().getId());
+        } else {
+            stmt.setNull(2, Types.INTEGER);
+        }
+
+        stmt.setString(3, propriedadeModel.getNome());
+    }
 }
