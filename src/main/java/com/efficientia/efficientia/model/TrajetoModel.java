@@ -2,8 +2,12 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Modelo para Trajeto / Viagem (controle de transporte de gado e desembarque).
+ */
 public class TrajetoModel implements Model {
 
+    // ==================== ATRIBUTOS ====================
     private int id;
     private MotoristaModel motoristaModel;
     private CaminhaoModel caminhaoModel;
@@ -27,7 +31,9 @@ public class TrajetoModel implements Model {
     private String assinaturaManobrista;
     private String assinaturaMotorista;
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id (banco)
     public TrajetoModel(int id,
                         MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
@@ -71,7 +77,7 @@ public class TrajetoModel implements Model {
         }
     }
 
-//Construtor sem id padrão
+    // Construtor sem id (novo cadastro)
     public TrajetoModel(MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
                         StatusTrajeto status,
@@ -113,7 +119,7 @@ public class TrajetoModel implements Model {
         }
     }
 
-//Setters sem id
+    // ==================== GETTERS E SETTERS ====================
     public void setMotoristaModel(MotoristaModel motoristaModel) {
         this.motoristaModel = motoristaModel;
         if (motoristaModel != null) {
@@ -294,6 +300,8 @@ public class TrajetoModel implements Model {
     public String getAssinaturaMotorista() {
         return assinaturaMotorista;
     }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {

@@ -1,6 +1,11 @@
 package com.efficientia.efficientia.model;
 
+/**
+ * Modelo para Endereço.
+ */
 public class EnderecoModel implements Model {
+
+    // ==================== ATRIBUTOS ====================
     private int id;
     private String cep;
     private String tipo;
@@ -11,7 +16,9 @@ public class EnderecoModel implements Model {
     private String pais;
     private String complemento;
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id (banco)
     public EnderecoModel(int id,
                          String cep,
                          String tipo,
@@ -32,7 +39,7 @@ public class EnderecoModel implements Model {
         this.complemento = complemento;
     }
 
-//Construtor sem id padrão
+    // Construtor sem id (novo cadastro)
     public EnderecoModel(String cep,
                          String tipo,
                          String numero,
@@ -51,76 +58,82 @@ public class EnderecoModel implements Model {
         this.complemento = complemento;
     }
 
-//Setters sem id
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
+    // ==================== GETTERS E SETTERS ====================
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
-    public void setRua(String rua) {
-        this.rua = rua;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
-    }
-
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
-    }
-
-//Getters
     @Override
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCep() {
         return cep;
     }
 
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
     public String getTipo() {
         return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public String getNumero() {
         return numero;
     }
 
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
     public String getRua() {
         return rua;
+    }
+
+    public void setRua(String rua) {
+        this.rua = rua;
     }
 
     public String getCidade() {
         return cidade;
     }
 
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
     public String getEstado() {
         return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public String getPais() {
         return pais;
     }
 
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
     public String getComplemento() {
         return complemento;
     }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {

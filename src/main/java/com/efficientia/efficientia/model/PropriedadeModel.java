@@ -1,13 +1,19 @@
 package com.efficientia.efficientia.model;
 
+/**
+ * Modelo para Propriedade (propriedade rural / fazenda).
+ */
 public class PropriedadeModel implements Model {
 
+    // ==================== ATRIBUTOS ====================
     private int id;
     private PecuaristaModel pecuaristaModel;
     private EnderecoModel enderecoModel;
     private String nome;
 
-    // Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id (banco)
     public PropriedadeModel(int id,
                             PecuaristaModel pecuaristaModel,
                             EnderecoModel enderecoModel,
@@ -18,7 +24,7 @@ public class PropriedadeModel implements Model {
         this.nome = nome;
     }
 
-    // Construtor sem id padrão
+    // Construtor sem id (novo cadastro)
     public PropriedadeModel(PecuaristaModel pecuaristaModel,
                             EnderecoModel enderecoModel,
                             String nome) {
@@ -27,36 +33,42 @@ public class PropriedadeModel implements Model {
         this.nome = nome;
     }
 
-    // Setters
-    public void setPecuaristaModel(PecuaristaModel pecuaristaModel) {
-        this.pecuaristaModel = pecuaristaModel;
-    }
+    // ==================== GETTERS E SETTERS ====================
 
-    public void setEnderecoModel(EnderecoModel enderecoModel) {
-        this.enderecoModel = enderecoModel;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    // Getters
     @Override
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public PecuaristaModel getPecuaristaModel() {
         return pecuaristaModel;
     }
 
+    public void setPecuaristaModel(PecuaristaModel pecuaristaModel) {
+        this.pecuaristaModel = pecuaristaModel;
+    }
+
     public EnderecoModel getEnderecoModel() {
         return enderecoModel;
+    }
+
+    public void setEnderecoModel(EnderecoModel enderecoModel) {
+        this.enderecoModel = enderecoModel;
     }
 
     public String getNome() {
         return nome;
     }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {

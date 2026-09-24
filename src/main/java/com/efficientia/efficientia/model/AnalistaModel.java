@@ -2,12 +2,18 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
+/**
+ * Modelo para Analista (especialização de UsuarioModel).
+ */
 public class AnalistaModel extends UsuarioModel implements Model {
 
+    // ==================== ATRIBUTOS ====================
     private String cpf;
     private String codigo;
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor completo com id e empresa (leitura do banco)
     public AnalistaModel(int id,
                          EmpresaModel empresaModel,
                          String cpf,
@@ -21,11 +27,13 @@ public class AnalistaModel extends UsuarioModel implements Model {
         super(id, empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
         this.cpf = cpf;
         this.codigo = codigo;
+
         if (cpf != null && cpf.length() > 11) {
             this.cpf = "nulo";
         }
     }
 
+    // Construtor com id sem empresa
     public AnalistaModel(int id,
                          String cpf,
                          String nome,
@@ -38,12 +46,13 @@ public class AnalistaModel extends UsuarioModel implements Model {
         super(id, nome, assinatura, dataNascimento, senha, email, telefone);
         this.cpf = cpf;
         this.codigo = codigo;
+
         if (cpf != null && cpf.length() > 11) {
             this.cpf = "nulo";
         }
     }
 
-//Construtor sem id do banco
+    // Construtor sem id com empresa (novo cadastro)
     public AnalistaModel(EmpresaModel empresaModel,
                          String cpf,
                          String nome,
@@ -56,11 +65,13 @@ public class AnalistaModel extends UsuarioModel implements Model {
         super(empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
         this.cpf = cpf;
         this.codigo = codigo;
+
         if (cpf != null && cpf.length() > 11) {
             this.cpf = "nulo";
         }
     }
 
+    // Construtor sem id sem empresa (novo cadastro avulso)
     public AnalistaModel(String nome,
                          String assinatura,
                          LocalDate dataNascimento,
@@ -72,23 +83,25 @@ public class AnalistaModel extends UsuarioModel implements Model {
         this.codigo = codigo;
     }
 
-//Setters sem id
+    // ==================== GETTERS E SETTERS ====================
+
+    public String getCpf() {
+        return cpf;
+    }
+
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getCodigo() {
+        return codigo;
     }
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
-//Getters
-    public String getCpf() {
-        return cpf;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {
