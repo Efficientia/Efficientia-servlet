@@ -131,3 +131,4 @@ public class AnaliseDAO {
         }
     }
 }
+// acho que precisa de um DAO de trajeto para o Analise (ligação analista<->trajeto) para funcionar ;-;
