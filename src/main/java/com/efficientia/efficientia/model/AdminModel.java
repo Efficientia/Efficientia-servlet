@@ -1,53 +1,69 @@
 package com.efficientia.efficientia.model;
 
-public class AdminModel implements Model{
+/**
+ * Modelo para o Administrador do sistema.
+ */
+public class AdminModel implements Model {
 
+    // ==================== ATRIBUTOS ====================
     private int id;
     private String email;
     private String senha;
     private String nome;
-//Construtor com id do banco
+
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id (banco)
     public AdminModel(int id, String email, String senha, String nome) {
         this.id = id;
         this.email = email;
         this.senha = senha;
         this.nome = nome;
     }
-//Construtor sem id padrão
+
+    // Construtor sem id (novo cadastro)
     public AdminModel(String email, String senha, String nome) {
         this.email = email;
         this.senha = senha;
         this.nome = nome;
     }
-//Setters sem id
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
+    // ==================== GETTERS E SETTERS ====================
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-//Getters
     @Override
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getSenha() {
         return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public String getNome() {
         return nome;
     }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {

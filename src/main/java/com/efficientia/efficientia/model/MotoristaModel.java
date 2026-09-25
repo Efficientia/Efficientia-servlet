@@ -2,9 +2,14 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
+/**
+ * Modelo para Motorista (especialização de UsuarioModel).
+ */
 public class MotoristaModel extends UsuarioModel implements Model {
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor completo com id e empresa (leitura do banco)
     public MotoristaModel(int id,
                           EmpresaModel empresaModel,
                           String nome,
@@ -16,6 +21,7 @@ public class MotoristaModel extends UsuarioModel implements Model {
         super(id, empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
+    // Construtor com id sem empresa
     public MotoristaModel(int id,
                           String nome,
                           String assinatura,
@@ -26,7 +32,7 @@ public class MotoristaModel extends UsuarioModel implements Model {
         super(id, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
-//Construtor sem id padrão
+    // Construtor sem id com empresa (novo cadastro)
     public MotoristaModel(EmpresaModel empresaModel,
                           String nome,
                           String assinatura,
@@ -37,6 +43,7 @@ public class MotoristaModel extends UsuarioModel implements Model {
         super(empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
+    // Construtor sem id sem empresa (novo cadastro avulso)
     public MotoristaModel(String nome,
                           String assinatura,
                           LocalDate dataNascimento,
@@ -45,6 +52,8 @@ public class MotoristaModel extends UsuarioModel implements Model {
                           String telefone) {
         super(nome, assinatura, dataNascimento, senha, email, telefone);
     }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {

@@ -2,17 +2,21 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Modelo para Trajeto / Viagem (controle de transporte de gado e desembarque).
+ */
 public class TrajetoModel implements Model {
 
+    // ==================== ATRIBUTOS ====================
     private int id;
     private MotoristaModel motoristaModel;
     private CaminhaoModel caminhaoModel;
-    private String status;
+    private StatusTrajeto status;
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
     private int kmSaida;
     private int kmChegada;
-    private String nomePecuarista;
+    private PecuaristaModel pecuarista;
     private String numeroGTA;
     private String numeroNotaFiscal;
     private LocalDateTime horarioEmbarque;
@@ -27,16 +31,18 @@ public class TrajetoModel implements Model {
     private String assinaturaManobrista;
     private String assinaturaMotorista;
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id (banco)
     public TrajetoModel(int id,
                         MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
-                        String status,
+                        StatusTrajeto status,
                         LocalDateTime dataHoraInicio,
                         LocalDateTime dataHoraFim,
                         Integer kmSaida,
                         Integer kmChegada,
-                        String nomePecuarista,
+                        PecuaristaModel pecuarista,
                         String numeroGTA,
                         String numeroNotaFiscal,
                         LocalDateTime horarioEmbarque,
@@ -55,7 +61,7 @@ public class TrajetoModel implements Model {
         this.dataHoraFim = dataHoraFim;
         this.kmSaida = kmSaida;
         this.kmChegada = kmChegada;
-        this.nomePecuarista = nomePecuarista;
+        this.pecuarista = pecuarista;
         this.numeroGTA = numeroGTA;
         this.numeroNotaFiscal = numeroNotaFiscal;
         this.horarioEmbarque = horarioEmbarque;
@@ -71,15 +77,15 @@ public class TrajetoModel implements Model {
         }
     }
 
-//Construtor sem id padrão
+    // Construtor sem id (novo cadastro)
     public TrajetoModel(MotoristaModel motoristaModel,
                         CaminhaoModel caminhaoModel,
-                        String status,
+                        StatusTrajeto status,
                         LocalDateTime dataHoraInicio,
                         LocalDateTime dataHoraFim,
                         int kmSaida,
                         int kmChegada,
-                        String nomePecuarista,
+                        PecuaristaModel pecuarista,
                         String numeroGTA,
                         String numeroNotaFiscal,
                         LocalDateTime horarioEmbarque,
@@ -97,7 +103,7 @@ public class TrajetoModel implements Model {
         this.dataHoraFim = dataHoraFim;
         this.kmSaida = kmSaida;
         this.kmChegada = kmChegada;
-        this.nomePecuarista = nomePecuarista;
+        this.pecuarista = pecuarista;
         this.numeroGTA = numeroGTA;
         this.numeroNotaFiscal = numeroNotaFiscal;
         this.horarioEmbarque = horarioEmbarque;
@@ -113,7 +119,7 @@ public class TrajetoModel implements Model {
         }
     }
 
-//Setters sem id
+    // ==================== GETTERS E SETTERS ====================
     public void setMotoristaModel(MotoristaModel motoristaModel) {
         this.motoristaModel = motoristaModel;
         if (motoristaModel != null) {
@@ -125,7 +131,7 @@ public class TrajetoModel implements Model {
         this.caminhaoModel = caminhaoModel;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusTrajeto status) {
         this.status = status;
     }
 
@@ -145,8 +151,12 @@ public class TrajetoModel implements Model {
         this.kmChegada = kmChegada;
     }
 
-    public void setNomePecuarista(String nomePecuarista) {
-        this.nomePecuarista = nomePecuarista;
+    public void setNomePecuarista(PecuaristaModel nomePecuarista) {
+        this.pecuarista = nomePecuarista;
+    }
+
+    public void setPecuarista(PecuaristaModel pecuarista) {
+        this.pecuarista = pecuarista;
     }
 
     public void setNumeroGTA(String numeroGTA) {
@@ -215,7 +225,7 @@ public class TrajetoModel implements Model {
         return caminhaoModel;
     }
 
-    public String getStatus() {
+    public StatusTrajeto getStatus() {
         return status;
     }
 
@@ -235,8 +245,8 @@ public class TrajetoModel implements Model {
         return kmChegada;
     }
 
-    public String getNomePecuarista() {
-        return nomePecuarista;
+    public PecuaristaModel getPecuarista() {
+        return pecuarista;
     }
 
     public String getNumeroGTA() {
@@ -291,6 +301,8 @@ public class TrajetoModel implements Model {
         return assinaturaMotorista;
     }
 
+    // ==================== TO STRING ====================
+
     @Override
     public String toString() {
         return "TrajetoModel{" +
@@ -302,7 +314,7 @@ public class TrajetoModel implements Model {
                 ", dataHoraFim=" + dataHoraFim +
                 ", kmSaida=" + kmSaida +
                 ", kmChegada=" + kmChegada +
-                ", nomePecuarista='" + nomePecuarista + '\'' +
+                ", nomePecuarista='" + pecuarista + '\'' +
                 ", numeroGTA='" + numeroGTA + '\'' +
                 ", numeroNotaFiscal='" + numeroNotaFiscal + '\'' +
                 ", horarioEmbarque=" + horarioEmbarque +

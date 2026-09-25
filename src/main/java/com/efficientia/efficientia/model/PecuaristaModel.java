@@ -2,7 +2,12 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
-public class DonoFazendaModel implements Model {
+/**
+ * Modelo para o pecuarista (proprietário rural / dono de fazenda).
+ */
+public class PecuaristaModel implements Model {
+
+    // ==================== ATRIBUTOS ====================
     private int id;
     private String cpf;
     private String assinatura;
@@ -12,15 +17,17 @@ public class DonoFazendaModel implements Model {
     private String email;
     private String telefone;
 
-//Construtor com id do banco
-    public DonoFazendaModel(int id,
-                            String cpf,
-                            String assinatura,
-                            LocalDate dataNascimento,
-                            String nome,
-                            String senha,
-                            String email,
-                            String telefone) {
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor com id (banco)
+    public PecuaristaModel(int id,
+                           String cpf,
+                           String assinatura,
+                           LocalDate dataNascimento,
+                           String nome,
+                           String senha,
+                           String email,
+                           String telefone) {
         this.id = id;
         this.cpf = cpf;
         this.assinatura = assinatura;
@@ -39,14 +46,14 @@ public class DonoFazendaModel implements Model {
         }
     }
 
-//Construtor sem id padrão
-    public DonoFazendaModel(String cpf,
-                            String assinatura,
-                            LocalDate dataNascimento,
-                            String nome,
-                            String senha,
-                            String email,
-                            String telefone) {
+    // Construtor sem id (novo cadastro)
+    public PecuaristaModel(String cpf,
+                           String assinatura,
+                           LocalDate dataNascimento,
+                           String nome,
+                           String senha,
+                           String email,
+                           String telefone) {
         this.cpf = cpf;
         this.assinatura = assinatura;
         this.dataNascimento = dataNascimento;
@@ -64,72 +71,78 @@ public class DonoFazendaModel implements Model {
         }
     }
 
-//Setters sem id
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+    // ==================== GETTERS E SETTERS ====================
 
-    public void setAssinatura(String assinatura) {
-        this.assinatura = assinatura;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-//Getters
     @Override
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCpf() {
         return cpf;
     }
 
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
     public String getAssinatura() {
         return assinatura;
+    }
+
+    public void setAssinatura(String assinatura) {
+        this.assinatura = assinatura;
     }
 
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
     public String getNome() {
         return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getSenha() {
         return senha;
     }
 
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getTelefone() {
         return telefone;
     }
 
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    // ==================== TO STRING ====================
+
     @Override
     public String toString() {
-        return "DonoFazendaModel{" +
+        return "PecuaristaModel{" +
                 "id=" + id +
                 ", cpf='" + cpf + '\'' +
                 ", assinatura='" + assinatura + '\'' +

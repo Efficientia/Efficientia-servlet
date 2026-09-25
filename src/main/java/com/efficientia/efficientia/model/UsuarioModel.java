@@ -2,7 +2,12 @@ package com.efficientia.efficientia.model;
 
 import java.time.LocalDate;
 
+/**
+ * Modelo base para os usuários do sistema (DonoFazenda, Motorista, Analista, Admin).
+ */
 public abstract class UsuarioModel implements Model {
+
+    // ==================== ATRIBUTOS ====================
     protected int id;
     protected EmpresaModel empresaModel;
     protected String nome;
@@ -12,7 +17,9 @@ public abstract class UsuarioModel implements Model {
     protected String email;
     protected String telefone;
 
-//Construtor com id do banco
+    // ==================== CONSTRUTORES ====================
+
+    // Construtor completo com id e empresa (leitura do banco)
     public UsuarioModel(int id,
                         EmpresaModel empresaModel,
                         String nome,
@@ -31,6 +38,7 @@ public abstract class UsuarioModel implements Model {
         this.telefone = telefone;
     }
 
+    // Construtor com id sem empresa
     public UsuarioModel(int id,
                         String nome,
                         String assinatura,
@@ -41,7 +49,7 @@ public abstract class UsuarioModel implements Model {
         this(id, null, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
-//Construtor sem id padrão
+    // Construtor sem id com empresa (novo cadastro)
     public UsuarioModel(EmpresaModel empresaModel,
                         String nome,
                         String assinatura,
@@ -58,6 +66,7 @@ public abstract class UsuarioModel implements Model {
         this.telefone = telefone;
     }
 
+    // Construtor sem id sem empresa (novo cadastro básico)
     public UsuarioModel(String nome,
                         String assinatura,
                         LocalDate dataNascimento,
@@ -67,43 +76,23 @@ public abstract class UsuarioModel implements Model {
         this(null, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
-//Setters sem id
-    public void setEmpresaModel(EmpresaModel empresaModel) {
-        this.empresaModel = empresaModel;
-    }
+    // ==================== GETTERS E SETTERS ====================
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setAssinatura(String assinatura) {
-        this.assinatura = assinatura;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-//Getters
     @Override
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public EmpresaModel getEmpresaModel() {
         return empresaModel;
+    }
+
+    public void setEmpresaModel(EmpresaModel empresaModel) {
+        this.empresaModel = empresaModel;
     }
 
     public EmpresaModel getEmpresa() {
@@ -114,25 +103,51 @@ public abstract class UsuarioModel implements Model {
         return nome;
     }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
     public String getAssinatura() {
         return assinatura;
+    }
+
+    public void setAssinatura(String assinatura) {
+        this.assinatura = assinatura;
     }
 
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
     public String getSenha() {
         return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getTelefone() {
         return telefone;
     }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    // ==================== TO STRING ====================
 
     @Override
     public String toString() {
