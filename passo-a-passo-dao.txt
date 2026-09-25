@@ -8,8 +8,8 @@
 DAO (Data Access Object) e um padrao de projeto que concentra todos os comandos
 SQL de uma determinada entidade/tabela. 
 
-- O MODEL (ex: FazendaModel, DonoFazendaModel): apenas guarda dados e regras.
-- O DAO (ex: FazendaDAO, DonoFazendaDAO): conversa diretamente com o banco de 
+- O MODEL (ex: PropriedadeModel, PecuaristaModel): apenas guarda dados e regras.
+- O DAO (ex: PropriedadeDAO, PecuaristaDAO): conversa diretamente com o banco de 
   dados atraves de JDBC (INSERT, SELECT, UPDATE, DELETE).
 - A Conexao (ex: ConnectionFactory): entrega a conexao ativa para o DAO.
 
@@ -164,32 +164,32 @@ Passo a Passo:
 ================================================================================
 Problema:
 No banco relacional temos:
-  Tabela 'Fazenda': id (int), id_dono_fazenda (int), id_endereco (int), nome (varchar)
+  Tabela 'propriedade': id (int), id_pecuarista (int), id_endereco (int), nome (varchar)
 
 No modelo POO temos:
-  class FazendaModel {
+  class PropriedadeModel {
       private int id;
-      private DonoFazendaModel donoFazendaModel;  // Objeto!
-      private EnderecoModel enderecoModel;        // Objeto!
+      private PecuaristaModel pecuaristaModel;  // Objeto!
+      private EnderecoModel enderecoModel;      // Objeto!
       private String nome;
   }
 
 Como resolver no DAO:
 1. No metodo INSERIR:
-   O objeto FazendaModel possui os objetos DonoFazendaModel e EnderecoModel.
+   O objeto PropriedadeModel possui os objetos PecuaristaModel e EnderecoModel.
    Para salvar no banco, pegamos o ID de cada objeto:
-   stmt.setInt(1, fazendaModel.getDonoFazendaModel().getId());
-   stmt.setInt(2, fazendaModel.getEnderecoModel().getId());
+   stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());
+   stmt.setInt(2, propriedadeModel.getEnderecoModel().getId());
 
 2. No metodo LISTAR / BUSCAR:
-   O ResultSet do banco devolve inteiros: rs.getInt("id_dono_fazenda").
-   Usamos o DAO correspondente para recuperar o objeto antes de montar a Fazenda:
-   DonoFazendaModel dono = donoFazendaDAO.buscar(rs.getInt("id_dono_fazenda"));
+   O ResultSet do banco devolve inteiros: rs.getInt("id_pecuarista").
+   Usamos o DAO correspondente para recuperar o objeto antes de montar a Propriedade:
+   PecuaristaModel pecuarista = pecuaristaDAO.buscar(rs.getInt("id_pecuarista"));
    EnderecoModel endereco = enderecoDAO.buscar(rs.getInt("id_endereco"));
 
-   FazendaModel fazenda = new FazendaModel(
+   PropriedadeModel propriedade = new PropriedadeModel(
        rs.getInt("id"),
-       dono,
+       pecuarista,
        endereco,
        rs.getString("nome")
    );
@@ -207,15 +207,16 @@ Como resolver no DAO:
       stmt.setDate(posicao, Date.valueOf(model.getData()));
 
 [2] Sempre declare as colunas no INSERT:
-    - ERRADO: INSERT INTO Fazenda VALUES (?, ?, ?);
+    - ERRADO: INSERT INTO propriedade VALUES (?, ?, ?);
       (pode misturar colunas ou falhar por causa da coluna ID identity/serial)
-    - CERTO:  INSERT INTO Fazenda (id_dono_fazenda, id_endereco, nome) VALUES (?, ?, ?);
+    - CERTO:  INSERT INTO propriedade (id_pecuarista, id_endereco, nome) VALUES (?, ?, ?);
 
 [3] Use try-with-resources:
     - Garante que a Conexao e o PreparedStatement serao fechados mesmo se ocorrer erro,
       evitando esgotar o pool de conexoes do PostgreSQL.
 
 [4] Nao instancie DAOs dentro de loops:
-    - Coloque 'DonoFazendaDAO donoDAO = new DonoFazendaDAO();' fora do 'while(rs.next())'.
+    - Coloque 'PecuaristaDAO pecuaristaDAO = new PecuaristaDAO();' fora do 'while(rs.next())'.
       Assim voce evita criar centenas de objetos desnecessarios na memoria.
 ================================================================================
+

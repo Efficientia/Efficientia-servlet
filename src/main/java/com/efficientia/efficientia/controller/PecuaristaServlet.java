@@ -1,7 +1,7 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.model.DonoFazendaModel;
-import com.efficientia.efficientia.DAO.impl.DonoFazendaDAO;
+import com.efficientia.efficientia.model.PecuaristaModel;
+import com.efficientia.efficientia.DAO.impl.PecuaristaDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,15 +12,15 @@ import java.io.IOException;
 import java.util.List;
 import java.time.LocalDate;
 
-@WebServlet(name= "DonoFazendaServlet", value = "/donoFazenda")
+@WebServlet(name= "PecuaristaServlet", value = "/pecuarista")
 
-public class DonoFazendaServlet extends HttpServlet {
+public class PecuaristaServlet extends HttpServlet {
 
-    private DonoFazendaDAO dao = new DonoFazendaDAO();
+    private PecuaristaDAO dao = new PecuaristaDAO();
 
     @Override
     public void init(){
-        dao = new DonoFazendaDAO();
+        dao = new PecuaristaDAO();
     }
 
     @Override
@@ -34,10 +34,10 @@ public class DonoFazendaServlet extends HttpServlet {
         if ("editar".equals(acao)) {
             int id = Integer.parseInt(req.getParameter("id"));
 
-            DonoFazendaModel donoFazendaModel = dao.buscar(id);
+            PecuaristaModel pecuaristaModel = dao.buscar(id);
 
-            req.setAttribute("donoFazendaModel", donoFazendaModel);
-            req.setAttribute("dono", donoFazendaModel);
+            req.setAttribute("pecuaristaModel", pecuaristaModel);
+            req.setAttribute("pecuarista", pecuaristaModel);
 
             req.getRequestDispatcher(
                     "/WEB-INF/views/editar.jsp"
@@ -46,12 +46,12 @@ public class DonoFazendaServlet extends HttpServlet {
             return;
         }
 
-        List<DonoFazendaModel> donoFazendaModels = dao.listar();
+        List<PecuaristaModel> pecuaristaModels = dao.listar();
 
-        req.setAttribute("donoFazendaModels", donoFazendaModels);
+        req.setAttribute("pecuaristaModels", pecuaristaModels);
 
         req.getRequestDispatcher(
-                "/WEB-INF/views/donoFazenda.jsp"
+                "/WEB-INF/views/pecuarista.jsp"
         ).forward(req, resp);
     }
 
@@ -71,10 +71,10 @@ public class DonoFazendaServlet extends HttpServlet {
                 int id = Integer.parseInt(req.getParameter("id"));
                 dao.excluir(id);
             } catch (Exception e) {
-                System.out.println("Erro ao excluir donoFazenda: " + e.getMessage());
+                System.out.println("Erro ao excluir pecuarista: " + e.getMessage());
             }
 
-            resp.sendRedirect(req.getContextPath() + "/donoFazenda");
+            resp.sendRedirect(req.getContextPath() + "/pecuarista");
             return;
         }
 
@@ -100,7 +100,7 @@ public class DonoFazendaServlet extends HttpServlet {
             String email = req.getParameter("email");
             String telefone = req.getParameter("telefone");
 
-            DonoFazendaModel donoFazendaModel = new DonoFazendaModel(
+            PecuaristaModel pecuaristaModel = new PecuaristaModel(
                     id,
                     cpf,
                     assinatura,
@@ -111,9 +111,9 @@ public class DonoFazendaServlet extends HttpServlet {
                     telefone
             );
 
-            dao.atualizar(donoFazendaModel, id);
+            dao.atualizar(pecuaristaModel, id);
 
-            resp.sendRedirect(req.getContextPath() + "/donoFazenda");
+            resp.sendRedirect(req.getContextPath() + "/pecuarista");
             return;
         }
 
@@ -136,7 +136,7 @@ public class DonoFazendaServlet extends HttpServlet {
         String email = req.getParameter("email");
         String telefone = req.getParameter("telefone");
 
-        DonoFazendaModel novoDono = new DonoFazendaModel(
+        PecuaristaModel novoPecuarista = new PecuaristaModel(
                 cpf,
                 assinatura,
                 dataNascimento,
@@ -146,8 +146,8 @@ public class DonoFazendaServlet extends HttpServlet {
                 telefone
         );
 
-        dao.inserir(novoDono);
+        dao.inserir(novoPecuarista);
 
-        resp.sendRedirect(req.getContextPath() + "/donoFazenda");
+        resp.sendRedirect(req.getContextPath() + "/pecuarista");
     }
 }

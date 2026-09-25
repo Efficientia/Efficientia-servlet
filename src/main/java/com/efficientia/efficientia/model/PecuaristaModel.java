@@ -3,9 +3,9 @@ package com.efficientia.efficientia.model;
 import java.time.LocalDate;
 
 /**
- * Modelo para o proprietário rural (dono de fazenda).
+ * Modelo para o pecuarista (proprietário rural / dono de fazenda).
  */
-public class DonoFazendaModel implements Model {
+public class PecuaristaModel implements Model {
 
     // ==================== ATRIBUTOS ====================
     private int id;
@@ -20,14 +20,14 @@ public class DonoFazendaModel implements Model {
     // ==================== CONSTRUTORES ====================
 
     // Construtor com id (banco)
-    public DonoFazendaModel(int id,
-                            String cpf,
-                            String assinatura,
-                            LocalDate dataNascimento,
-                            String nome,
-                            String senha,
-                            String email,
-                            String telefone) {
+    public PecuaristaModel(int id,
+                           String cpf,
+                           String assinatura,
+                           LocalDate dataNascimento,
+                           String nome,
+                           String senha,
+                           String email,
+                           String telefone) {
         this.id = id;
         this.cpf = cpf;
         this.assinatura = assinatura;
@@ -47,13 +47,13 @@ public class DonoFazendaModel implements Model {
     }
 
     // Construtor sem id (novo cadastro)
-    public DonoFazendaModel(String cpf,
-                            String assinatura,
-                            LocalDate dataNascimento,
-                            String nome,
-                            String senha,
-                            String email,
-                            String telefone) {
+    public PecuaristaModel(String cpf,
+                           String assinatura,
+                           LocalDate dataNascimento,
+                           String nome,
+                           String senha,
+                           String email,
+                           String telefone) {
         this.cpf = cpf;
         this.assinatura = assinatura;
         this.dataNascimento = dataNascimento;
@@ -142,7 +142,7 @@ public class DonoFazendaModel implements Model {
 
     @Override
     public String toString() {
-        return "DonoFazendaModel{" +
+        return "PecuaristaModel{" +
                 "id=" + id +
                 ", cpf='" + cpf + '\'' +
                 ", assinatura='" + assinatura + '\'' +

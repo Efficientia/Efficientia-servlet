@@ -1,26 +1,24 @@
 package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
-import com.efficientia.efficientia.model.DonoFazendaModel;
+import com.efficientia.efficientia.model.PecuaristaModel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
-import java.sql.Types;
 
-public class DonoFazendaDAO {
+public class PecuaristaDAO {
 
     //insert
 
-    public boolean inserir(DonoFazendaModel donoFazendaModel){
+    public boolean inserir(PecuaristaModel pecuaristaModel){
         String sql = """
-    INSERT INTO dono_fazenda (cpf,
+    INSERT INTO pecuarista (cpf,
                           assinatura,
                           data_nascimento,
                           nome,
@@ -39,32 +37,26 @@ public class DonoFazendaDAO {
         try(Connection connection = ConnectionFactory.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)){
 
-            stmt.setString(1, donoFazendaModel.getCpf());
-            stmt.setString(2, donoFazendaModel.getAssinatura());
-            stmt.setDate(3, java.sql.Date.valueOf(donoFazendaModel.getDataNascimento()));
-            stmt.setString(4, donoFazendaModel.getNome());
-            stmt.setString(5, donoFazendaModel.getSenha());
-            stmt.setString(6, donoFazendaModel.getEmail());
-            stmt.setString(7, donoFazendaModel.getTelefone());
+            preencherStatement(stmt, pecuaristaModel);
 
             int linhasAfetadas = stmt.executeUpdate();
 
             return linhasAfetadas > 0;
         }catch (SQLException e){
-            System.out.println("Erro ao inserir donoFazenda: " + e.getMessage());
+            System.out.println("Erro ao inserir pecuarista: " + e.getMessage());
             return false;
         }
     }
 
     //select
 
-    public List<DonoFazendaModel> listar(){
+    public List<PecuaristaModel> listar(){
         String sql = """
-    SELECT * FROM dono_fazenda
+    SELECT * FROM pecuarista
     ORDER BY id;
                 """;
 
-        List<DonoFazendaModel> listaDonoFazenda = new ArrayList<>();
+        List<PecuaristaModel> listaPecuarista = new ArrayList<>();
 
         try(Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql);
@@ -73,7 +65,7 @@ public class DonoFazendaDAO {
 
                 Date dataNascimento = rs.getDate("data_nascimento");
 
-                DonoFazendaModel donoFazendaModel = new DonoFazendaModel(
+                PecuaristaModel pecuaristaModel = new PecuaristaModel(
                         rs.getInt("id"),
                         rs.getString("cpf"),
                         rs.getString("assinatura"),
@@ -85,22 +77,22 @@ public class DonoFazendaDAO {
                         rs.getString("email"),
                         rs.getString("telefone")
                 );
-                listaDonoFazenda.add(donoFazendaModel);
+                listaPecuarista.add(pecuaristaModel);
 
             }
         }catch (SQLException e){
-            System.out.println("Erro ao listar DonoFazenda: " + e.getMessage());
+            System.out.println("Erro ao listar Pecuarista: " + e.getMessage());
         }
 
-        return listaDonoFazenda;
+        return listaPecuarista;
 
     }
 
     //update
 
-    public boolean atualizar(DonoFazendaModel donoFazendaModel, int id){
+    public boolean atualizar(PecuaristaModel pecuaristaModel, int id){
         String sql = """
-        UPDATE dono_fazenda
+        UPDATE pecuarista
         SET cpf = ?,
         assinatura = ?,
         data_nascimento = ?,
@@ -113,28 +105,14 @@ public class DonoFazendaDAO {
 
         try(Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql);){
-            stmt.setString(1, donoFazendaModel.getCpf());
-            stmt.setString(2, donoFazendaModel.getAssinatura());
-
-            if (donoFazendaModel.getDataNascimento() != null){
-                stmt.setDate(3,
-                        Date.valueOf(donoFazendaModel.getDataNascimento()));
-            }
-            else{
-                stmt.setDate(3, null);
-            }
-
-            stmt.setString(4, donoFazendaModel.getNome());
-            stmt.setString(5, donoFazendaModel.getSenha());
-            stmt.setString(6, donoFazendaModel.getEmail());
-            stmt.setString(7, donoFazendaModel.getTelefone());
+            preencherStatement(stmt, pecuaristaModel);
             stmt.setInt(8, id);
 
             int linhasAfetadas = stmt.executeUpdate();
 
             return linhasAfetadas > 0;
         }catch (SQLException e){
-            System.out.println("Erro ao atualizar donoFazenda: " + e.getMessage());
+            System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
             return false;
         }
     }
@@ -143,7 +121,7 @@ public class DonoFazendaDAO {
 
     public boolean excluir(int id){
         String sql = """
-    DELETE FROM dono_fazenda WHERE id = ?
+    DELETE FROM pecuarista WHERE id = ?
 """;
 
         try(Connection connection = ConnectionFactory.getConnection()){
@@ -153,16 +131,16 @@ public class DonoFazendaDAO {
 
             return linhasAfetadas > 0;
         }catch (SQLException e){
-            System.out.println("Erro ao excluir donoFazenda: " + e.getMessage());
+            System.out.println("Erro ao excluir pecuarista: " + e.getMessage());
             return false;
         }
     }
 
     //Busca por id
 
-    public DonoFazendaModel buscar(int id){
+    public PecuaristaModel buscar(int id){
         String sql = """
-        SELECT * FROM dono_fazenda WHERE id = ?;
+        SELECT * FROM pecuarista WHERE id = ?;
         """;
         try(Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql);){
@@ -173,7 +151,7 @@ public class DonoFazendaDAO {
                 Date dataNascimento = rs.getDate("data_nascimento");
                 LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
 
-                DonoFazendaModel donoFazendaModel = new DonoFazendaModel(
+                PecuaristaModel pecuaristaModel = new PecuaristaModel(
                         rs.getInt("id"),
                         rs.getString("cpf"),
                         rs.getString("assinatura"),
@@ -183,7 +161,7 @@ public class DonoFazendaDAO {
                         rs.getString("email"),
                         rs.getString("telefone"));
 
-                return donoFazendaModel;
+                return pecuaristaModel;
             }
             else{
                 return null;
@@ -191,8 +169,25 @@ public class DonoFazendaDAO {
 
 
         }catch (SQLException e){
-            System.out.println("Erro ao buscar donoFazenda: " + e.getMessage());
+            System.out.println("Erro ao buscar pecuarista: " + e.getMessage());
             return null;
         }
+    }
+
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, PecuaristaModel pecuaristaModel) throws SQLException {
+        stmt.setString(1, pecuaristaModel.getCpf());
+        stmt.setString(2, pecuaristaModel.getAssinatura());
+
+        if (pecuaristaModel.getDataNascimento() != null) {
+            stmt.setDate(3, Date.valueOf(pecuaristaModel.getDataNascimento()));
+        } else {
+            stmt.setDate(3, null);
+        }
+
+        stmt.setString(4, pecuaristaModel.getNome());
+        stmt.setString(5, pecuaristaModel.getSenha());
+        stmt.setString(6, pecuaristaModel.getEmail());
+        stmt.setString(7, pecuaristaModel.getTelefone());
     }
 }

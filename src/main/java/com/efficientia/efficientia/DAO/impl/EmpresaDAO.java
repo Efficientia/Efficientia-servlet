@@ -1,7 +1,6 @@
 package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
-import com.efficientia.efficientia.model.DonoFazendaModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 
 import java.sql.Connection;
@@ -23,14 +22,13 @@ public class EmpresaDAO {
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
-            stmt.setString(1, empresa.getNome());
-            stmt.setString(2, empresa.getCnpj());
+            preencherStatement(stmt, empresa);
 
             int linhasAfetadas = stmt.executeUpdate();
 
             return linhasAfetadas > 0;
         }catch(SQLException e){
-            System.out.println("Erro ao inserir donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao inserir empresaModel: " + e.getMessage());
             return false;
         }
     }
@@ -55,7 +53,7 @@ public class EmpresaDAO {
                 empresas.add(empresaModel);
             }
         }catch(SQLException e){
-            System.out.println("Erro ao listar donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao listar empresaModel: " + e.getMessage());
         }
         return empresas;
     }
@@ -71,15 +69,14 @@ public class EmpresaDAO {
         try (Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
-            stmt.setString(1, empresa.getNome());
-            stmt.setString(2, empresa.getNome());
+            preencherStatement(stmt, empresa);
             stmt.setInt(3, id);
 
             int linhasAfetadas = stmt.executeUpdate();
 
             return linhasAfetadas > 0;
         } catch (SQLException e) {
-            System.out.println("Erro ao atualizar donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao atualizar empresaModel: " + e.getMessage());
             return false;
         }
     }
@@ -97,8 +94,14 @@ public class EmpresaDAO {
             return linhasAfetadas > 0;
 
         }catch(SQLException e){
-            System.out.println("Erro ao excluir donoFazendaModel: " + e.getMessage());
+            System.out.println("Erro ao excluir empresaModel: " + e.getMessage());
             return false;
         }
+    }
+
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, EmpresaModel empresa) throws SQLException {
+        stmt.setString(1, empresa.getNome());
+        stmt.setString(2, empresa.getCnpj());
     }
 }

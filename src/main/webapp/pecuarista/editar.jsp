@@ -1,13 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ page import="com.efficientia.efficientia.model.DonoFazendaModel" %>
+<%@ page import="com.efficientia.efficientia.model.PecuaristaModel" %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Dono de Fazenda | Efficientia</title>
+    <title>Editar Pecuarista | Efficientia</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,27 +104,27 @@
             color: var(--primary-green);
         }
 
-        /* Card */
+        /* Card de Edição */
         .card {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 2rem;
+            padding: 2.25rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         }
 
         .card-header {
-            margin-bottom: 1.75rem;
+            margin-bottom: 2rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.25rem;
         }
 
         .card-header h2 {
             font-family: 'Manrope', sans-serif;
-            font-size: 1.35rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--text-main);
             display: flex;
@@ -149,9 +149,10 @@
             border-radius: 9999px;
             font-size: 0.85rem;
             font-weight: 600;
+            font-family: monospace;
         }
 
-        /* Form Grid */
+        /* Grid do Formulário */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -183,6 +184,7 @@
         }
 
         input[type="text"],
+        input[type="number"],
         input[type="email"],
         input[type="tel"],
         input[type="date"],
@@ -268,17 +270,21 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
             .form-group-full {
                 grid-column: span 1;
             }
+
             .header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
             }
+
             .form-actions {
                 flex-direction: column-reverse;
             }
+
             .btn {
                 width: 100%;
             }
@@ -292,39 +298,39 @@
     <header class="header">
         <div class="header-title-box">
             <h1>Efficientia <span>| Gestão Rural</span></h1>
-            <p>Edição de Cadastro de Dono de Fazenda</p>
+            <p>Edição de Cadastro de Pecuarista</p>
         </div>
-        <a href="${pageContext.request.contextPath}/donoFazenda" class="btn-voltar">
+        <a href="${pageContext.request.contextPath}/pecuarista" class="btn-voltar">
             &larr; Voltar para a Lista
         </a>
     </header>
 
     <div class="card">
         <c:choose>
-            <c:when test="${empty donoFazendaModel}">
+            <c:when test="${empty pecuaristaModel}">
                 <div class="empty-card">
-                    <p>Proprietário não encontrado ou ID inválido.</p>
-                    <a href="${pageContext.request.contextPath}/donoFazenda" class="btn btn-secondary">
-                        Voltar para Donos de Fazenda
+                    <p>Pecuarista não encontrado ou ID inválido.</p>
+                    <a href="${pageContext.request.contextPath}/pecuarista" class="btn btn-secondary">
+                        Voltar para Pecuaristas
                     </a>
                 </div>
             </c:when>
             <c:otherwise>
                 <div class="card-header">
-                    <h2>Editar Dono de Fazenda</h2>
-                    <span class="badge-id">ID #${donoFazendaModel.id}</span>
+                    <h2>Editar Pecuarista</h2>
+                    <span class="badge-id">ID #${pecuaristaModel.id}</span>
                 </div>
 
-                <form action="${pageContext.request.contextPath}/donoFazenda" method="post" id="formEditarDono">
-                    <!-- Ação e ID ocultos para o doPost (slide 110) -->
+                <form action="${pageContext.request.contextPath}/pecuarista" method="post" id="formEditarPecuarista">
+                    <!-- Ação e ID ocultos para o doPost -->
                     <input type="hidden" name="acao" value="atualizar">
-                    <input type="hidden" name="id" value="${donoFazendaModel.id}">
+                    <input type="hidden" name="id" value="${pecuaristaModel.id}">
 
                     <div class="form-grid">
                         <!-- Nome -->
                         <div class="form-group form-group-full">
                             <label for="nome">Nome Completo *</label>
-                            <input type="text" id="nome" name="nome" value="<c:out value='${donoFazendaModel.nome}' />" placeholder="Ex: Roberto Carlos de Oliveira" required>
+                            <input type="text" id="nome" name="nome" value="<c:out value='${pecuaristaModel.nome}' />" placeholder="Ex: Roberto Carlos de Oliveira" required>
                         </div>
 
                         <!-- CPF -->
@@ -333,19 +339,19 @@
                                 CPF *
                                 <span class="helper-text">11 dígitos (apenas números)</span>
                             </label>
-                            <input type="text" id="cpf" name="cpf" maxlength="11" value="<c:out value='${donoFazendaModel.cpf}' />" pattern="[0-9]{11}" required title="O CPF deve conter exatamente 11 números">
+                            <input type="text" id="cpf" name="cpf" maxlength="11" value="<c:out value='${pecuaristaModel.cpf}' />" pattern="[0-9]{11}" required title="O CPF deve conter exatamente 11 números">
                         </div>
 
                         <!-- Data de Nascimento -->
                         <div class="form-group">
                             <label for="dataNascimento">Data de Nascimento *</label>
-                            <input type="date" id="dataNascimento" name="dataNascimento" value="${donoFazendaModel.dataNascimento}" required>
+                            <input type="date" id="dataNascimento" name="dataNascimento" value="${pecuaristaModel.dataNascimento}" required>
                         </div>
 
                         <!-- E-mail -->
                         <div class="form-group">
                             <label for="email">E-mail *</label>
-                            <input type="email" id="email" name="email" value="<c:out value='${donoFazendaModel.email}' />" placeholder="roberto@fazenda.com" required>
+                            <input type="email" id="email" name="email" value="<c:out value='${pecuaristaModel.email}' />" placeholder="roberto@propriedade.com" required>
                         </div>
 
                         <!-- Telefone -->
@@ -354,7 +360,7 @@
                                 Telefone / Celular
                                 <span class="helper-text">Até 11 dígitos com DDD</span>
                             </label>
-                            <input type="tel" id="telefone" name="telefone" maxlength="11" value="<c:out value='${donoFazendaModel.telefone}' />" pattern="[0-9]{10,11}" title="Digite o DDD e o número (10 ou 11 dígitos numéricos)">
+                            <input type="tel" id="telefone" name="telefone" maxlength="11" value="<c:out value='${pecuaristaModel.telefone}' />" pattern="[0-9]{10,11}" title="Digite o DDD e o número (10 ou 11 dígitos numéricos)">
                         </div>
 
                         <!-- Assinatura -->
@@ -363,18 +369,18 @@
                                 Assinatura *
                                 <span class="helper-text">Texto normal (futuro hash)</span>
                             </label>
-                            <input type="text" id="assinatura" name="assinatura" value="<c:out value='${donoFazendaModel.assinatura}' />" placeholder="Digite a assinatura" required>
+                            <input type="text" id="assinatura" name="assinatura" value="<c:out value='${pecuaristaModel.assinatura}' />" placeholder="Digite a assinatura" required>
                         </div>
 
                         <!-- Senha -->
                         <div class="form-group">
                             <label for="senha">Senha de Acesso *</label>
-                            <input type="password" id="senha" name="senha" value="<c:out value='${donoFazendaModel.senha}' />" placeholder="Digite uma nova senha ou mantenha a atual" required>
+                            <input type="password" id="senha" name="senha" value="<c:out value='${pecuaristaModel.senha}' />" placeholder="Digite uma nova senha ou mantenha a atual" required>
                         </div>
                     </div>
 
                     <div class="form-actions">
-                        <a href="${pageContext.request.contextPath}/donoFazenda" class="btn btn-secondary">Cancelar</a>
+                        <a href="${pageContext.request.contextPath}/pecuarista" class="btn btn-secondary">Cancelar</a>
                         <button type="submit" class="btn btn-primary">
                             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />

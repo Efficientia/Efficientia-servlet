@@ -37,14 +37,7 @@ public class EnderecoDAO {
         try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)){
 
-            stmt.setString(1, enderecoModel.getCep());
-            stmt.setString(2, enderecoModel.getTipo());
-            stmt.setString(3, enderecoModel.getNumero());
-            stmt.setString(4, enderecoModel.getRua());
-            stmt.setString(5, enderecoModel.getCidade());
-            stmt.setString(6, enderecoModel.getEstado());
-            stmt.setString(7, enderecoModel.getPais());
-            stmt.setString(8, enderecoModel.getComplemento());
+            preencherStatement(stmt, enderecoModel);
 
             int linhasAfetadas = stmt.executeUpdate();
 
@@ -106,14 +99,7 @@ public class EnderecoDAO {
         try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)){
 
-           stmt.setString(1, enderecoModel.getCep());
-           stmt.setString(2, enderecoModel.getTipo());
-           stmt.setString(3, enderecoModel.getNumero());
-           stmt.setString(4, enderecoModel.getRua());
-           stmt.setString(5, enderecoModel.getCidade());
-           stmt.setString(6, enderecoModel.getEstado());
-           stmt.setString(7, enderecoModel.getPais());
-           stmt.setString(8, enderecoModel.getComplemento());
+           preencherStatement(stmt, enderecoModel);
            stmt.setInt(9, id);
 
            int linhasAfetadas = stmt.executeUpdate();
@@ -177,5 +163,17 @@ public class EnderecoDAO {
             System.out.println("Erro ao buscar Endereco: " + e.getMessage());
             return null;
         }
+    }
+
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, EnderecoModel endereco) throws SQLException {
+        stmt.setString(1, endereco.getCep());
+        stmt.setString(2, endereco.getTipo());
+        stmt.setString(3, endereco.getNumero());
+        stmt.setString(4, endereco.getRua());
+        stmt.setString(5, endereco.getCidade());
+        stmt.setString(6, endereco.getEstado());
+        stmt.setString(7, endereco.getPais());
+        stmt.setString(8, endereco.getComplemento());
     }
 }
