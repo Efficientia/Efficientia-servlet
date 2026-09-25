@@ -38,21 +38,6 @@ public class AnalistaDAO {
             return false;
         }
     }
-    //delete
-    public boolean excluir(int id) {
-        String sql = """
-                DELETE FROM analista WHERE id = ?;
-                """;
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir Analista: " + e.getMessage());
-            return false;
-        }
-    }
     //select
     public List<AnalistaModel> listar() {
         String sql = """
@@ -82,7 +67,48 @@ public class AnalistaDAO {
         }
         return listaAnalista;
     }
+    //update
+    public boolean atualizar(AnalistaModel analistaModel, int id) {
+        if (analistaModel == null) return false;
 
+        String sql = """
+                UPDATE analista SET
+                    cpf = ?,
+                    nome = ?,
+                    assinatura = ?,
+                    data_nascimento = ?,
+                    senha = ?,
+                    email = ?,
+                    telefone = ?,
+                    codigo = ?
+                WHERE id = ?;
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            preencherStatement(stmt, analistaModel);
+            stmt.setInt(9, id);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar Analista: " + e.getMessage());
+            return false;
+        }
+    }
+    //delete
+    public boolean excluir(int id) {
+        String sql = """
+                DELETE FROM analista WHERE id = ?;
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao excluir Analista: " + e.getMessage());
+            return false;
+        }
+    }
     // Buscar por ID
     public AnalistaModel buscar(int id) {
         String sql = """
@@ -111,33 +137,6 @@ public class AnalistaDAO {
             System.out.println("Erro ao buscar Analista: " + e.getMessage());
         }
         return null;
-    }
-    //update
-    public boolean atualizar(AnalistaModel analistaModel, int id) {
-        if (analistaModel == null) return false;
-
-        String sql = """
-                UPDATE analista SET
-                    cpf = ?,
-                    nome = ?,
-                    assinatura = ?,
-                    data_nascimento = ?,
-                    senha = ?,
-                    email = ?,
-                    telefone = ?,
-                    codigo = ?
-                WHERE id = ?;
-                """;
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            preencherStatement(stmt, analistaModel);
-            stmt.setInt(9, id);
-            int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
-        } catch (SQLException e) {
-            System.out.println("Erro ao atualizar Analista: " + e.getMessage());
-            return false;
-        }
     }
 
     // Mapeamento do PreparedStatement

@@ -29,21 +29,6 @@ public class AdminDAO {
             return false;
         }
     }
-    //delete
-    public boolean excluir(int id) {
-        String sql = """
-                DELETE FROM admin WHERE id = ?;
-                """;
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir Admin: " + e.getMessage());
-            return false;
-        }
-    }
     //select
     public List<AdminModel> listar() {
         String sql = """
@@ -67,6 +52,42 @@ public class AdminDAO {
         }
         return listaAdmin;
     }
+    //update
+    public boolean atualizar(AdminModel adminModel, int id) {
+        if (adminModel == null) return false;
+        String sql = """
+                UPDATE admin SET
+                    email = ?,
+                    senha = ?,
+                    nome = ?
+                WHERE id = ?;
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            preencherStatement(stmt, adminModel);
+            stmt.setInt(4, id);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar Admin: " + e.getMessage());
+            return false;
+        }
+    }
+    //delete
+    public boolean excluir(int id) {
+        String sql = """
+                DELETE FROM admin WHERE id = ?;
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao excluir Admin: " + e.getMessage());
+            return false;
+        }
+    }
     // Buscar por ID
     public AdminModel buscar(int id) {
         String sql = """
@@ -89,27 +110,6 @@ public class AdminDAO {
             System.out.println("Erro ao buscar Admin: " + e.getMessage());
         }
         return null;
-    }
-    //update
-    public boolean atualizar(AdminModel adminModel, int id) {
-        if (adminModel == null) return false;
-        String sql = """
-                UPDATE admin SET
-                    email = ?,
-                    senha = ?,
-                    nome = ?
-                WHERE id = ?;
-                """;
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            preencherStatement(stmt, adminModel);
-            stmt.setInt(4, id);
-            int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
-        } catch (SQLException e) {
-            System.out.println("Erro ao atualizar Admin: " + e.getMessage());
-            return false;
-        }
     }
 
     // Mapeamento do PreparedStatement
