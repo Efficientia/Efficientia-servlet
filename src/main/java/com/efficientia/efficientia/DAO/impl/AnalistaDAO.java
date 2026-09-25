@@ -29,14 +29,7 @@ public class AnalistaDAO {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, analistaModel.getCpf());
-            stmt.setString(2, analistaModel.getNome());
-            stmt.setString(3, analistaModel.getAssinatura());
-            stmt.setDate(4, analistaModel.getDataNascimento() != null ? Date.valueOf(analistaModel.getDataNascimento()) : null);
-            stmt.setString(5, analistaModel.getSenha());
-            stmt.setString(6, analistaModel.getEmail());
-            stmt.setString(7, analistaModel.getTelefone());
-            stmt.setString(8, analistaModel.getCodigo());
+            preencherStatement(stmt, analistaModel);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -120,7 +113,7 @@ public class AnalistaDAO {
         return null;
     }
     //update
-    public boolean atualizar(AnalistaModel analistaModel) {
+    public boolean atualizar(AnalistaModel analistaModel, int id) {
         if (analistaModel == null) return false;
 
         String sql = """
@@ -137,20 +130,25 @@ public class AnalistaDAO {
                 """;
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, analistaModel.getCpf());
-            stmt.setString(2, analistaModel.getNome());
-            stmt.setString(3, analistaModel.getAssinatura());
-            stmt.setDate(4, analistaModel.getDataNascimento() != null ? Date.valueOf(analistaModel.getDataNascimento()) : null);
-            stmt.setString(5, analistaModel.getSenha());
-            stmt.setString(6, analistaModel.getEmail());
-            stmt.setString(7, analistaModel.getTelefone());
-            stmt.setString(8, analistaModel.getCodigo());
-            stmt.setInt(9, analistaModel.getId());
+            preencherStatement(stmt, analistaModel);
+            stmt.setInt(9, id);
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar Analista: " + e.getMessage());
             return false;
         }
+    }
+
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, AnalistaModel analistaModel) throws SQLException {
+        stmt.setString(1, analistaModel.getCpf());
+        stmt.setString(2, analistaModel.getNome());
+        stmt.setString(3, analistaModel.getAssinatura());
+        stmt.setDate(4, analistaModel.getDataNascimento() != null ? Date.valueOf(analistaModel.getDataNascimento()) : null);
+        stmt.setString(5, analistaModel.getSenha());
+        stmt.setString(6, analistaModel.getEmail());
+        stmt.setString(7, analistaModel.getTelefone());
+        stmt.setString(8, analistaModel.getCodigo());
     }
 }

@@ -21,9 +21,7 @@ public class AdminDAO {
                 """;
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, adminModel.getEmail());
-            stmt.setString(2, adminModel.getSenha());
-            stmt.setString(3, adminModel.getNome());
+            preencherStatement(stmt, adminModel);
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
@@ -93,7 +91,7 @@ public class AdminDAO {
         return null;
     }
     //update
-    public boolean atualizar(AdminModel adminModel) {
+    public boolean atualizar(AdminModel adminModel, int id) {
         if (adminModel == null) return false;
         String sql = """
                 UPDATE admin SET
@@ -104,15 +102,20 @@ public class AdminDAO {
                 """;
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, adminModel.getEmail());
-            stmt.setString(2, adminModel.getSenha());
-            stmt.setString(3, adminModel.getNome());
-            stmt.setInt(4, adminModel.getId());
+            preencherStatement(stmt, adminModel);
+            stmt.setInt(4, id);
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar Admin: " + e.getMessage());
             return false;
         }
+    }
+
+    // Mapeamento do PreparedStatement
+    private void preencherStatement(PreparedStatement stmt, AdminModel adminModel) throws SQLException {
+        stmt.setString(1, adminModel.getEmail());
+        stmt.setString(2, adminModel.getSenha());
+        stmt.setString(3, adminModel.getNome());
     }
 }
