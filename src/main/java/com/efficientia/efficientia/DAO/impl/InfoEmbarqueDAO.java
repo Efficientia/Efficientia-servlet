@@ -9,55 +9,40 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrajetoDAO {
+public class InfoEmbarqueDAO {
 
     // Inserir
-    public boolean inserir(TrajetoModel trajeto) {
+    public boolean inserir(InfoEmbarqueModel infoEmbarque) {
         String sql = """
-                INSERT INTO trajeto (
-                    id_motorista,
-                    id_caminhao,
-                    id_pecuarista,
-                    status,
-                    data_hora_inicio,
-                    data_hora_fim,
-                    km_saida,
-                    km_chegada,
-                    numero_gta,
-                    numero_nota_fiscal,
-                    horario_embarque,
-                    qtd_macho,
-                    qtd_femea,
-                    qtd_marruco,
-                    horario_desembarque,
-                    numero_curral,
-                    nome_curraleiro,
-                    nome_manobrista,
-                    assinatura_curraleiro,
-                    assinatura_manobrista,
-                    assinatura_motorista
+                INSERT INTO info_embarque (
+                    nome,
+                    id_trajeto
                 ) VALUES (
-                    ?, ?, ?, ?::status_trajeto, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    ?, ?
                 );
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            preencherStatement(stmt, trajeto);
+            preencherStatement(stmt, infoEmbarque);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
-            System.out.println("Erro ao inserir trajeto: " + e.getMessage());
+            System.out.println("Erro ao inserir InfoEmbarque: " + e.getMessage());
             return false;
         }
     }
 
     // Listar
-    public List<TrajetoModel> listar() {
+    public List<InfoEmbarqueModel> listar() {
         String sql = """
                 SELECT
+                    -- InfoEmbarque
+                    i.id AS info_embarque_id,
+                    i.nome AS info_embarque_nome,
+
                     -- Trajeto
                     t.id AS trajeto_id,
                     t.status,
@@ -110,15 +95,16 @@ public class TrajetoDAO {
                     p.email AS pecuarista_email,
                     p.telefone AS pecuarista_telefone
 
-                FROM trajeto t
+                FROM info_embarque i
+                JOIN trajeto t ON t.id = i.id_trajeto
                 JOIN motorista m ON m.id = t.id_motorista
                 JOIN caminhao c ON c.id = t.id_caminhao
                 JOIN empresa e ON e.id = m.id_empresa
                 JOIN pecuarista p ON p.id = t.id_pecuarista
-                ORDER BY t.id;
+                ORDER BY i.id;
                 """;
 
-        List<TrajetoModel> trajetos = new ArrayList<>();
+        List<InfoEmbarqueModel> infoEmbarques = new ArrayList<>();
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql);
@@ -205,19 +191,29 @@ public class TrajetoDAO {
                 trajeto.setAssinaturaManobrista(rs.getString("assinatura_manobrista"));
                 trajeto.setAssinaturaMotorista(rs.getString("assinatura_motorista"));
 
-                trajetos.add(trajeto);
+                InfoEmbarqueModel infoEmbarque = new InfoEmbarqueModel(
+                        rs.getInt("info_embarque_id"),
+                        rs.getString("info_embarque_nome"),
+                        trajeto
+                );
+
+                infoEmbarques.add(infoEmbarque);
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao listar trajeto: " + e.getMessage());
+            System.out.println("Erro ao listar InfoEmbarque: " + e.getMessage());
         }
 
-        return trajetos;
+        return infoEmbarques;
     }
 
     // Buscar por ID
-    public TrajetoModel buscar(int id) {
+    public InfoEmbarqueModel buscar(int id) {
         String sql = """
                 SELECT
+                    -- InfoEmbarque
+                    i.id AS info_embarque_id,
+                    i.nome AS info_embarque_nome,
+
                     -- Trajeto
                     t.id AS trajeto_id,
                     t.status,
@@ -270,12 +266,13 @@ public class TrajetoDAO {
                     p.email AS pecuarista_email,
                     p.telefone AS pecuarista_telefone
 
-                FROM trajeto t
+                FROM info_embarque i
+                JOIN trajeto t ON t.id = i.id_trajeto
                 JOIN motorista m ON m.id = t.id_motorista
                 JOIN caminhao c ON c.id = t.id_caminhao
                 JOIN empresa e ON e.id = m.id_empresa
                 JOIN pecuarista p ON p.id = t.id_pecuarista
-                WHERE t.id = ?;
+                WHERE i.id = ?;
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -365,54 +362,39 @@ public class TrajetoDAO {
                     trajeto.setAssinaturaManobrista(rs.getString("assinatura_manobrista"));
                     trajeto.setAssinaturaMotorista(rs.getString("assinatura_motorista"));
 
-                    return trajeto;
+                    return new InfoEmbarqueModel(
+                            rs.getInt("info_embarque_id"),
+                            rs.getString("info_embarque_nome"),
+                            trajeto
+                    );
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar trajeto: " + e.getMessage());
+            System.out.println("Erro ao buscar InfoEmbarque: " + e.getMessage());
         }
 
         return null;
     }
 
     // Atualizar
-    public boolean atualizar(TrajetoModel trajeto, int id) {
+    public boolean atualizar(InfoEmbarqueModel infoEmbarque, int id) {
         String sql = """
-                UPDATE trajeto
-                SET id_motorista = ?,
-                    id_caminhao = ?,
-                    id_pecuarista = ?,
-                    status = ?::status_trajeto,
-                    data_hora_inicio = ?,
-                    data_hora_fim = ?,
-                    km_saida = ?,
-                    km_chegada = ?,
-                    numero_gta = ?,
-                    numero_nota_fiscal = ?,
-                    horario_embarque = ?,
-                    qtd_macho = ?,
-                    qtd_femea = ?,
-                    qtd_marruco = ?,
-                    horario_desembarque = ?,
-                    numero_curral = ?,
-                    nome_curraleiro = ?,
-                    nome_manobrista = ?,
-                    assinatura_curraleiro = ?,
-                    assinatura_manobrista = ?,
-                    assinatura_motorista = ?
+                UPDATE info_embarque
+                SET nome = ?,
+                    id_trajeto = ?
                 WHERE id = ?;
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            preencherStatement(stmt, trajeto);
-            stmt.setInt(22, id);
+            preencherStatement(stmt, infoEmbarque);
+            stmt.setInt(3, id);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
-            System.out.println("Erro ao atualizar trajeto: " + e.getMessage());
+            System.out.println("Erro ao atualizar InfoEmbarque: " + e.getMessage());
             return false;
         }
     }
@@ -421,7 +403,7 @@ public class TrajetoDAO {
     public boolean excluir(int id) {
         String sql = """
                 DELETE
-                FROM trajeto
+                FROM info_embarque
                 WHERE id = ?;
                 """;
 
@@ -432,48 +414,19 @@ public class TrajetoDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
-            System.out.println("Erro ao excluir trajeto: " + e.getMessage());
+            System.out.println("Erro ao excluir InfoEmbarque: " + e.getMessage());
             return false;
         }
     }
 
     // Mapeamento do PreparedStatement
-    private void preencherStatement(PreparedStatement stmt, TrajetoModel trajeto) throws SQLException {
-        if (trajeto.getMotoristaModel() != null) {
-            stmt.setInt(1, trajeto.getMotoristaModel().getId());
-        } else {
-            stmt.setNull(1, Types.INTEGER);
-        }
+    private void preencherStatement(PreparedStatement stmt, InfoEmbarqueModel infoEmbarque) throws SQLException {
+        stmt.setString(1, infoEmbarque.getNome());
 
-        if (trajeto.getCaminhaoModel() != null) {
-            stmt.setInt(2, trajeto.getCaminhaoModel().getId());
+        if (infoEmbarque.getTrajeto() != null) {
+            stmt.setInt(2, infoEmbarque.getTrajeto().getId());
         } else {
             stmt.setNull(2, Types.INTEGER);
         }
-
-        if (trajeto.getPecuarista() != null) {
-            stmt.setInt(3, trajeto.getPecuarista().getId());
-        } else {
-            stmt.setNull(3, Types.INTEGER);
-        }
-
-        stmt.setString(4, trajeto.getStatus() != null ? trajeto.getStatus().name() : null);
-        stmt.setObject(5, trajeto.getDataHoraInicio());
-        stmt.setObject(6, trajeto.getDataHoraFim());
-        stmt.setInt(7, trajeto.getKmSaida());
-        stmt.setInt(8, trajeto.getKmChegada());
-        stmt.setString(9, trajeto.getNumeroGTA());
-        stmt.setString(10, trajeto.getNumeroNotaFiscal());
-        stmt.setObject(11, trajeto.getHorarioEmbarque());
-        stmt.setInt(12, trajeto.getQtdMacho());
-        stmt.setInt(13, trajeto.getQtdFemea());
-        stmt.setInt(14, trajeto.getQtdMarruco());
-        stmt.setObject(15, trajeto.getHorarioDesembarque());
-        stmt.setString(16, trajeto.getNumeroCurral());
-        stmt.setString(17, trajeto.getNomeCurraleiro());
-        stmt.setString(18, trajeto.getNomeManobrista());
-        stmt.setString(19, trajeto.getAssinaturaCurraleiro());
-        stmt.setString(20, trajeto.getAssinaturaManobrista());
-        stmt.setString(21, trajeto.getAssinaturaMotorista());
     }
 }
