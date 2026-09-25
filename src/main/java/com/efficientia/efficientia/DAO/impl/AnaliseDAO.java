@@ -52,57 +52,57 @@ public class AnaliseDAO {
         }
     }
     //select
-    public List<AnaliseModel> listar() {
-        String sql = """
-                SELECT * FROM analise ORDER BY id;
-                """;
-        List<AnaliseModel> listaAnalise = new ArrayList<>();
-        AnalistaDAO analistaDAO = new AnalistaDAO();
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                Timestamp dataAnaliseTimestamp = rs.getTimestamp("data_analise");
-                AnaliseModel analiseModel = new AnaliseModel(
-                        rs.getInt("id"),
-                        analistaDAO.buscar(rs.getInt("id_analista")),
-                        dataAnaliseTimestamp != null ? dataAnaliseTimestamp.toLocalDateTime() : null,
-                        rs.getString("status_analise"),
-                        rs.getString("observacao")
-                );
-                listaAnalise.add(analiseModel);
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar Analise: " + e.getMessage());
-        }
-        return listaAnalise;
-    }
+//    public List<AnaliseModel> listar() {
+//        String sql = """
+//                SELECT * FROM analise ORDER BY id;
+//                """;
+//        List<AnaliseModel> listaAnalise = new ArrayList<>();
+//        AnalistaDAO analistaDAO = new AnalistaDAO();
+//        try (Connection connection = ConnectionFactory.getConnection();
+//             PreparedStatement stmt = connection.prepareStatement(sql);
+//             ResultSet rs = stmt.executeQuery()) {
+//            while (rs.next()) {
+//                Timestamp dataAnaliseTimestamp = rs.getTimestamp("data_analise");
+//                AnaliseModel analiseModel = new AnaliseModel(
+//                        rs.getInt("id"),
+//                        analistaDAO.buscar(rs.getInt("id_analista")),
+//                        dataAnaliseTimestamp != null ? dataAnaliseTimestamp.toLocalDateTime() : null,
+//                        rs.getString("status_analise"),
+//                        rs.getString("observacao")
+//                );
+//                listaAnalise.add(analiseModel);
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Erro ao listar Analise: " + e.getMessage());
+//        }
+//        return listaAnalise;
+//    }
     // Buscar por ID
-    public AnaliseModel buscar(int id) {
-        String sql = """
-                SELECT * FROM analise WHERE id = ?;
-                """;
-        AnalistaDAO analistaDAO = new AnalistaDAO();
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    Timestamp dataAnaliseTimestamp = rs.getTimestamp("data_analise");
-                    return new AnaliseModel(
-                            rs.getInt("id"),
-                            analistaDAO.buscar(rs.getInt("id_analista")),
-                            dataAnaliseTimestamp != null ? dataAnaliseTimestamp.toLocalDateTime() : null,
-                            rs.getString("status_analise"),
-                            rs.getString("observacao")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao buscar Analise: " + e.getMessage());
-        }
-        return null;
-    }
+//    public AnaliseModel buscar(int id) {
+//        String sql = """
+//                SELECT * FROM analise WHERE id = ?;
+//                """;
+//        AnalistaDAO analistaDAO = new AnalistaDAO();
+//        try (Connection connection = ConnectionFactory.getConnection();
+//             PreparedStatement stmt = connection.prepareStatement(sql)) {
+//            stmt.setInt(1, id);
+//            try (ResultSet rs = stmt.executeQuery()) {
+//                if (rs.next()) {
+//                    Timestamp dataAnaliseTimestamp = rs.getTimestamp("data_analise");
+//                    return new AnaliseModel(
+//                            rs.getInt("id"),
+//                            analistaDAO.buscar(rs.getInt("id_analista")),
+//                            dataAnaliseTimestamp != null ? dataAnaliseTimestamp.toLocalDateTime() : null,
+//                            rs.getString("status_analise"),
+//                            rs.getString("observacao")
+//                    );
+//                }
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Erro ao buscar Analise: " + e.getMessage());
+//        }
+//        return null;
+//    }
     //update
     public boolean atualizar(AnaliseModel analiseModel) {
         if (analiseModel == null) return false;
