@@ -48,3 +48,7 @@ src/main/java/Main.java
 ## Banco de dados ##
 Efficientia.sql
 EfficientiaDER.pdf
+
+## Jsp de teste ##
+src/main/webapp/teste.jsp
+src/main/webapp/css/teste.css
