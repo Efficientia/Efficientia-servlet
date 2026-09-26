@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efficientia - Área Restrita</title>
+    <link rel="stylesheet" href="../css/area-restrita.css">
+</head>
+<body>
+    <div class="conteudo">
+        <div class="lateral-esquerda">
+            <img class="logo-efficientia" src="../assets/logo_efficientia.png" alt="Logo Efficientia">
+        </div>
+        
+        <div class="direita">
+            <div class="menu-login">
+                <form action="/alterar-senha" method="post"> <!-- mudar esse /alterar - senha para o caminho certo-->
+                    <h1 class="titulo-login">Alterar senha</h1>
+
+                    <div class="grupo-input">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Digite seu email" required>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" name="senha" placeholder="Digite sua nova senha" required>
+                    </div>
+                                
+                    <p class="link-cadastro">Já possui uma conta?<a href="area-restrita.html">Faça login</a></p>
+                    
+                    <button type="submit">Entrar</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
