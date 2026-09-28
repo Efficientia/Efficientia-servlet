@@ -4,171 +4,154 @@ import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.PecuaristaModel;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 
 public class PecuaristaDAO {
 
-    //insert
-
-    public boolean inserir(PecuaristaModel pecuaristaModel){
+    // Inserir
+    public boolean inserir(PecuaristaModel pecuaristaModel) {
         String sql = """
-    INSERT INTO pecuarista (cpf,
-                          assinatura,
-                          data_nascimento,
-                          nome,
-                          senha,
-                          email,
-                          telefone)
-    VALUES (?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?)
-""";
+                INSERT INTO pecuarista (cpf,
+                                      assinatura,
+                                      data_nascimento,
+                                      nome,
+                                      senha,
+                                      email,
+                                      telefone)
+                VALUES (?, ?, ?, ?, ?, ?, ?);
+                """;
 
-        try(Connection connection = ConnectionFactory.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)){
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             preencherStatement(stmt, pecuaristaModel);
 
             int linhasAfetadas = stmt.executeUpdate();
-
             return linhasAfetadas > 0;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Erro ao inserir pecuarista: " + e.getMessage());
             return false;
         }
     }
 
-    //select
-
-    public List<PecuaristaModel> listar(){
+    // Listar
+    public List<PecuaristaModel> listar() {
         String sql = """
-    SELECT * FROM pecuarista
-    ORDER BY id;
+                SELECT * FROM pecuarista
+                ORDER BY id;
                 """;
 
         List<PecuaristaModel> listaPecuarista = new ArrayList<>();
 
-        try(Connection connection = ConnectionFactory.getConnection();
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery()){
-            while(rs.next()){
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
+            while (rs.next()) {
                 Date dataNascimento = rs.getDate("data_nascimento");
 
                 PecuaristaModel pecuaristaModel = new PecuaristaModel(
                         rs.getInt("id"),
                         rs.getString("cpf"),
                         rs.getString("assinatura"),
-                        dataNascimento != null
-                            ? dataNascimento.toLocalDate()
-                        : null,
+                        dataNascimento != null ? dataNascimento.toLocalDate() : null,
                         rs.getString("nome"),
                         rs.getString("senha"),
                         rs.getString("email"),
                         rs.getString("telefone")
                 );
                 listaPecuarista.add(pecuaristaModel);
-
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Erro ao listar Pecuarista: " + e.getMessage());
         }
 
         return listaPecuarista;
-
     }
 
-    //update
-
-    public boolean atualizar(PecuaristaModel pecuaristaModel, int id){
+    // Atualizar
+    public boolean atualizar(PecuaristaModel pecuaristaModel, int id) {
         String sql = """
-        UPDATE pecuarista
-        SET cpf = ?,
-        assinatura = ?,
-        data_nascimento = ?,
-        nome = ?,
-        senha = ?,
-        email = ?,
-        telefone = ?
-        WHERE id = ?;
-        """;
+                UPDATE pecuarista
+                SET cpf = ?,
+                    assinatura = ?,
+                    data_nascimento = ?,
+                    nome = ?,
+                    senha = ?,
+                    email = ?,
+                    telefone = ?
+                WHERE id = ?;
+                """;
 
-        try(Connection connection = ConnectionFactory.getConnection();
-        PreparedStatement stmt = connection.prepareStatement(sql);){
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
             preencherStatement(stmt, pecuaristaModel);
             stmt.setInt(8, id);
 
             int linhasAfetadas = stmt.executeUpdate();
-
             return linhasAfetadas > 0;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
             return false;
         }
     }
 
-    //delete
-
-    public boolean excluir(int id){
+    // Excluir
+    public boolean excluir(int id) {
         String sql = """
-    DELETE FROM pecuarista WHERE id = ?
-""";
+                DELETE FROM pecuarista WHERE id = ?;
+                """;
 
-        try(Connection connection = ConnectionFactory.getConnection()){
-            PreparedStatement stmt = connection.prepareStatement(sql);
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
             int linhasAfetadas = stmt.executeUpdate();
-
             return linhasAfetadas > 0;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Erro ao excluir pecuarista: " + e.getMessage());
             return false;
         }
     }
 
-    //Busca por id
-
-    public PecuaristaModel buscar(int id){
+    // Buscar por ID
+    public PecuaristaModel buscar(int id) {
         String sql = """
-        SELECT * FROM pecuarista WHERE id = ?;
-        """;
-        try(Connection connection = ConnectionFactory.getConnection();
-        PreparedStatement stmt = connection.prepareStatement(sql);){
+                SELECT * FROM pecuarista WHERE id = ?;
+                """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
 
-            if(rs.next()){
-                Date dataNascimento = rs.getDate("data_nascimento");
-                LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Date dataNascimento = rs.getDate("data_nascimento");
+                    LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
 
-                PecuaristaModel pecuaristaModel = new PecuaristaModel(
-                        rs.getInt("id"),
-                        rs.getString("cpf"),
-                        rs.getString("assinatura"),
-                        nascimento,
-                        rs.getString("nome"),
-                        rs.getString("senha"),
-                        rs.getString("email"),
-                        rs.getString("telefone"));
-
-                return pecuaristaModel;
+                    return new PecuaristaModel(
+                            rs.getInt("id"),
+                            rs.getString("cpf"),
+                            rs.getString("assinatura"),
+                            nascimento,
+                            rs.getString("nome"),
+                            rs.getString("senha"),
+                            rs.getString("email"),
+                            rs.getString("telefone")
+                    );
+                } else {
+                    return null;
+                }
             }
-            else{
-                return null;
-            }
-
-
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Erro ao buscar pecuarista: " + e.getMessage());
             return null;
         }

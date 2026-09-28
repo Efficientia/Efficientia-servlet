@@ -12,14 +12,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @WebServlet(name = "MotoristaServlet", value = "/motorista")
 public class MotoristaServlet extends HttpServlet {
 
-    private MotoristaDAO dao;
-    private EmpresaDAO empresaDAO;
+    private MotoristaDAO dao = new MotoristaDAO();
+    private EmpresaDAO empresaDAO = new EmpresaDAO();
 
     @Override
     public void init() {
@@ -32,34 +31,34 @@ public class MotoristaServlet extends HttpServlet {
             HttpServletRequest req,
             HttpServletResponse resp
     ) throws ServletException, IOException {
+
         String acao = req.getParameter("acao");
 
         if ("editar".equals(acao)) {
             try {
-                int id = Integer.parseInt(req.getParameter("id"));
+                int id = parseInt(req.getParameter("id"), 0);
                 MotoristaModel motoristaModel = dao.buscar(id);
 
-                if (motoristaModel == null) {
-                    resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                            "Motorista não encontrado.");
+                if (motoristaModel != null) {
+                    req.setAttribute("motoristaModel", motoristaModel);
+                    req.setAttribute("motorista", motoristaModel);
+                    req.setAttribute("empresaModels", empresaDAO.listar());
+                    req.getRequestDispatcher(
+                            "/WEB-INF/views/editar-motorista.jsp"
+                    ).forward(req, resp);
                     return;
                 }
-
-                req.setAttribute("motoristaModel", motoristaModel);
-                req.setAttribute("empresaModels", empresaDAO.listar());
-                req.getRequestDispatcher(
-                        "/WEB-INF/views/editar-motorista.jsp"
-                ).forward(req, resp);
-            } catch (NumberFormatException e) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "ID do motorista inválido.");
+            } catch (Exception e) {
+                System.out.println("Erro ao buscar motorista para edição: " + e.getMessage());
             }
-            return;
         }
 
         List<MotoristaModel> motoristaModels = dao.listar();
+
         req.setAttribute("motoristaModels", motoristaModels);
+        req.setAttribute("motoristas", motoristaModels);
         req.setAttribute("empresaModels", empresaDAO.listar());
+
         req.getRequestDispatcher(
                 "/WEB-INF/views/motorista.jsp"
         ).forward(req, resp);
@@ -70,78 +69,131 @@ public class MotoristaServlet extends HttpServlet {
             HttpServletRequest req,
             HttpServletResponse resp
     ) throws IOException {
+
         req.setCharacterEncoding("UTF-8");
+
         String acao = req.getParameter("acao");
 
-        try {
-            // Exclusão
-            if ("excluir".equals(acao)) {
-                int id = Integer.parseInt(req.getParameter("id"));
-                if (!dao.excluir(id)) {
-                    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                            "Não foi possível excluir o motorista.");
-                    return;
-                }
-                resp.sendRedirect(req.getContextPath() + "/motorista");
-                return;
+        // Exclusão
+        if ("excluir".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                dao.excluir(id);
+            } catch (Exception e) {
+                System.out.println("Erro ao excluir motorista: " + e.getMessage());
             }
 
-            // Empresa vinculada ao motorista
-            String idEmpresaTexto = req.getParameter("idEmpresa");
-            EmpresaModel empresaModel = null;
-            if (idEmpresaTexto != null && !idEmpresaTexto.isBlank()) {
-                int idEmpresa = Integer.parseInt(idEmpresaTexto);
+            resp.sendRedirect(req.getContextPath() + "/motorista");
+            return;
+        }
+
+        // Atualização
+        if ("atualizar".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+
+                EmpresaModel empresaModel = buscarEmpresa(req);
+                String nome = obterParametro(req, "nome");
+                String assinatura = obterParametro(req, "assinatura");
+                LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
+                String senha = obterParametro(req, "senha");
+                String email = obterParametro(req, "email");
+                String telefone = obterParametro(req, "telefone");
+
+                MotoristaModel motoristaModel = new MotoristaModel(
+                        id,
+                        empresaModel,
+                        nome,
+                        assinatura,
+                        dataNascimento,
+                        senha,
+                        email,
+                        telefone
+                );
+
+                dao.atualizar(motoristaModel, id);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar motorista: " + e.getMessage());
+            }
+
+            resp.sendRedirect(req.getContextPath() + "/motorista");
+            return;
+        }
+
+        // Cadastro
+        EmpresaModel empresaModel = buscarEmpresa(req);
+        String nome = obterParametro(req, "nome");
+        String assinatura = obterParametro(req, "assinatura");
+        LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
+        String senha = obterParametro(req, "senha");
+        String email = obterParametro(req, "email");
+        String telefone = obterParametro(req, "telefone");
+
+        MotoristaModel novoMotorista = new MotoristaModel(
+                empresaModel,
+                nome,
+                assinatura,
+                dataNascimento,
+                senha,
+                email,
+                telefone
+        );
+
+        dao.inserir(novoMotorista);
+
+        resp.sendRedirect(req.getContextPath() + "/motorista");
+    }
+
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    private EmpresaModel buscarEmpresa(HttpServletRequest req) {
+        String idTexto = obterParametro(req, "idEmpresa", "id_empresa");
+        if (idTexto != null && !idTexto.isBlank()) {
+            try {
+                int idEmpresa = Integer.parseInt(idTexto.trim());
                 for (EmpresaModel empresa : empresaDAO.listar()) {
                     if (empresa.getId() == idEmpresa) {
-                        empresaModel = empresa;
-                        break;
+                        return empresa;
                     }
                 }
-                if (empresaModel == null) {
-                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                            "Empresa não encontrada.");
-                    return;
-                }
+            } catch (Exception e) {
+                System.out.println("Erro ao buscar empresa do motorista: " + e.getMessage());
             }
+        }
+        return null;
+    }
 
-            // Dados usados no cadastro e na atualização
-            String nome = req.getParameter("nome");
-            String assinatura = req.getParameter("assinatura");
-            String dataNascimentoTexto = req.getParameter("dataNascimento");
-            LocalDate dataNascimento = null;
-            if (dataNascimentoTexto != null && !dataNascimentoTexto.isBlank()) {
-                dataNascimento = LocalDate.parse(dataNascimentoTexto);
+    private String obterParametro(HttpServletRequest req, String... nomes) {
+        for (String nome : nomes) {
+            String valor = req.getParameter(nome);
+            if (valor != null && !valor.isBlank()) {
+                return valor;
             }
-            String senha = req.getParameter("senha");
-            String email = req.getParameter("email");
-            String telefone = req.getParameter("telefone");
+        }
+        return null;
+    }
 
-            MotoristaModel motoristaModel = new MotoristaModel(
-                    empresaModel, nome, assinatura, dataNascimento,
-                    senha, email, telefone
-            );
+    private LocalDate parseLocalDate(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(texto.trim());
+        } catch (Exception e) {
+            System.out.println("Erro ao converter data (" + texto + "): " + e.getMessage());
+            return null;
+        }
+    }
 
-            boolean sucesso;
-            if ("atualizar".equals(acao)) {
-                int id = Integer.parseInt(req.getParameter("id"));
-                motoristaModel.setId(id);
-                sucesso = dao.atualizar(motoristaModel, id);
-            } else {
-                sucesso = dao.inserir(motoristaModel);
-            }
-
-            if (!sucesso) {
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Não foi possível salvar o motorista.");
-                return;
-            }
-            resp.sendRedirect(req.getContextPath() + "/motorista");
-        } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "ID do motorista ou da empresa inválido.");
-        } catch (DateTimeParseException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "Data de nascimento inválida.");
+    private int parseInt(String texto, int padrao) {
+        if (texto == null || texto.isBlank()) {
+            return padrao;
+        }
+        try {
+            return Integer.parseInt(texto.trim());
+        } catch (Exception e) {
+            System.out.println("Erro ao converter número (" + texto + "): " + e.getMessage());
+            return padrao;
         }
     }
 }
