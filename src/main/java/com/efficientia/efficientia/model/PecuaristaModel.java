@@ -3,23 +3,54 @@ package com.efficientia.efficientia.model;
 import java.time.LocalDate;
 
 /**
- * Modelo para o pecuarista (proprietário rural / dono de fazenda).
+ * Modelo representativo do Pecuarista (proprietário rural / produtor de gado).
+ *
+ * Representa o produtor rural responsável pelas fazendas de origem do gado transportado,
+ * atuando como cliente/parceiro da cadeia logística e emissor das documentações de embarque.
  */
 public class PecuaristaModel implements Model {
 
     // ==================== ATRIBUTOS ====================
+
+    /** Identificador único do pecuarista (chave primária no banco de dados). */
     private int id;
+
+    /** Cadastro de Pessoa Física (CPF) do pecuarista. */
     private String cpf;
+
+    /** Assinatura digitalizada ou rubrica do pecuarista para validação de embarques. */
     private String assinatura;
+
+    /** Data de nascimento do pecuarista. */
     private LocalDate dataNascimento;
+
+    /** Nome completo do pecuarista ou produtor rural. */
     private String nome;
+
+    /** Senha de acesso ao portal/sistema. */
     private String senha;
+
+    /** Endereço de e-mail para contato e login. */
     private String email;
+
+    /** Número de telefone ou celular para contato comercial e operacional. */
     private String telefone;
 
     // ==================== CONSTRUTORES ====================
 
-    // Construtor com id (banco)
+    /**
+     * Construtor completo com ID.
+     * Utilizado na recuperação e hidratação dos dados do pecuarista a partir do banco de dados.
+     *
+     * @param id             identificador único gerado pelo banco
+     * @param cpf            número do CPF (máximo de 11 dígitos)
+     * @param assinatura     assinatura digitalizada ou identificador de rubrica
+     * @param dataNascimento data de nascimento
+     * @param nome           nome completo do pecuarista
+     * @param senha          senha de acesso ao sistema
+     * @param email          endereço de e-mail
+     * @param telefone       número de telefone de contato (máximo de 11 dígitos)
+     */
     public PecuaristaModel(int id,
                            String cpf,
                            String assinatura,
@@ -37,16 +68,29 @@ public class PecuaristaModel implements Model {
         this.email = email;
         this.telefone = telefone;
 
+        // Normalização defensiva: anula CPF caso exceda o limite de 11 caracteres
         if (cpf != null && cpf.length() > 11) {
             this.cpf = "nulo";
         }
 
+        // Normalização defensiva: anula telefone caso exceda o limite de 11 caracteres
         if (telefone != null && telefone.length() > 11) {
             this.telefone = "nulo";
         }
     }
 
-    // Construtor sem id (novo cadastro)
+    /**
+     * Construtor sem ID.
+     * Utilizado na criação de um novo pecuarista antes da persistência no banco de dados.
+     *
+     * @param cpf            número do CPF (máximo de 11 dígitos)
+     * @param assinatura     assinatura digitalizada ou identificador de rubrica
+     * @param dataNascimento data de nascimento
+     * @param nome           nome completo do pecuarista
+     * @param senha          senha de acesso ao sistema
+     * @param email          endereço de e-mail
+     * @param telefone       número de telefone de contato (máximo de 11 dígitos)
+     */
     public PecuaristaModel(String cpf,
                            String assinatura,
                            LocalDate dataNascimento,
@@ -62,10 +106,12 @@ public class PecuaristaModel implements Model {
         this.email = email;
         this.telefone = telefone;
 
+        // Normalização defensiva: anula CPF caso exceda o limite de 11 caracteres
         if (cpf != null && cpf.length() > 11) {
             this.cpf = "nulo";
         }
 
+        // Normalização defensiva: anula telefone caso exceda o limite de 11 caracteres
         if (telefone != null && telefone.length() > 11) {
             this.telefone = "nulo";
         }
@@ -73,73 +119,141 @@ public class PecuaristaModel implements Model {
 
     // ==================== GETTERS E SETTERS ====================
 
+    /**
+     * Obtém o identificador único do pecuarista.
+     * @return ID numérico
+     */
     @Override
     public int getId() {
         return id;
     }
 
+    /**
+     * Define o identificador único do pecuarista.
+     * @param id ID numérico
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Obtém o CPF do pecuarista.
+     * @return número do CPF
+     */
     public String getCpf() {
         return cpf;
     }
 
+    /**
+     * Define o CPF do pecuarista.
+     * @param cpf novo número de CPF
+     */
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 
+    /**
+     * Obtém a assinatura digitalizada do pecuarista.
+     * @return representação da assinatura ou rubrica
+     */
     public String getAssinatura() {
         return assinatura;
     }
 
+    /**
+     * Define a assinatura digitalizada do pecuarista.
+     * @param assinatura nova assinatura ou rubrica
+     */
     public void setAssinatura(String assinatura) {
         this.assinatura = assinatura;
     }
 
+    /**
+     * Obtém a data de nascimento do pecuarista.
+     * @return data de nascimento
+     */
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
+    /**
+     * Define a data de nascimento do pecuarista.
+     * @param dataNascimento nova data de nascimento
+     */
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
+    /**
+     * Obtém o nome completo do pecuarista.
+     * @return nome do pecuarista
+     */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * Define o nome completo do pecuarista.
+     * @param nome novo nome
+     */
     public void setNome(String nome) {
         this.nome = nome;
     }
 
+    /**
+     * Obtém a senha de acesso ao sistema.
+     * @return senha do pecuarista
+     */
     public String getSenha() {
         return senha;
     }
 
+    /**
+     * Define a senha de acesso ao sistema.
+     * @param senha nova senha
+     */
     public void setSenha(String senha) {
         this.senha = senha;
     }
 
+    /**
+     * Obtém o endereço de e-mail do pecuarista.
+     * @return e-mail cadastrado
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Define o endereço de e-mail do pecuarista.
+     * @param email novo e-mail
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Obtém o telefone de contato.
+     * @return número de telefone
+     */
     public String getTelefone() {
         return telefone;
     }
 
+    /**
+     * Define o telefone de contato.
+     * @param telefone novo número de telefone
+     */
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
     // ==================== TO STRING ====================
 
+    /**
+     * Retorna a representação textual dos dados do pecuarista.
+     * @return string formatada contendo os atributos do pecuarista
+     */
     @Override
     public String toString() {
         return "PecuaristaModel{" +

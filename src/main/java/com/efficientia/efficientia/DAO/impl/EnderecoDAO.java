@@ -10,9 +10,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para a entidade Endereço.
+ *
+ * Gerencia a persistência de endereços residenciais, corporativos e de propriedades rurais
+ * na tabela 'endereco' do banco de dados relacional PostgreSQL, utilizando JDBC e ConnectionFactory.
+ */
 public class EnderecoDAO {
 
-    // Inserir
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere um novo endereço no banco de dados.
+     *
+     * @param enderecoModel objeto contendo todos os dados do logradouro e localização
+     * @return true se a inserção for realizada com êxito, false em caso de falha
+     */
     public boolean inserir(EnderecoModel enderecoModel) {
         String sql = """
                 INSERT INTO endereco (cep,
@@ -39,7 +52,11 @@ public class EnderecoDAO {
         }
     }
 
-    // Listar
+    /**
+     * Retorna a listagem completa de todos os endereços gravados na base.
+     *
+     * @return lista de objetos EnderecoModel ordenada crescentemente por ID
+     */
     public List<EnderecoModel> listar() {
         String sql = """
                 SELECT * FROM endereco ORDER BY id;
@@ -70,7 +87,13 @@ public class EnderecoDAO {
         return enderecoModels;
     }
 
-    // Atualizar
+    /**
+     * Atualiza as informações de um endereço cadastrado a partir de seu ID.
+     *
+     * @param enderecoModel objeto com os novos dados de localização
+     * @param id            identificador numérico do endereço a ser atualizado
+     * @return true se o registro foi atualizado com sucesso, false caso contrário
+     */
     public boolean atualizar(EnderecoModel enderecoModel, int id) {
         String sql = """
                 UPDATE endereco SET
@@ -99,7 +122,12 @@ public class EnderecoDAO {
         }
     }
 
-    // Excluir
+    /**
+     * Remove um endereço do banco de dados pelo seu ID.
+     *
+     * @param id identificador único do endereço a ser excluído
+     * @return true se o registro foi removido com sucesso, false caso ocorra erro
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE FROM endereco WHERE id = ?;
@@ -117,7 +145,12 @@ public class EnderecoDAO {
         }
     }
 
-    // Buscar por ID
+    /**
+     * Localiza um endereço individual com base em seu ID.
+     *
+     * @param id identificador único do endereço pesquisado
+     * @return objeto EnderecoModel preenchido ou null se não for encontrado
+     */
     public EnderecoModel buscar(int id) {
         String sql = """
                 SELECT * FROM endereco WHERE id = ?;
@@ -151,7 +184,15 @@ public class EnderecoDAO {
         }
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Preenche os parâmetros do PreparedStatement com os atributos de EnderecoModel.
+     *
+     * @param stmt     PreparedStatement associado à query SQL
+     * @param endereco modelo com os dados a serem vinculados
+     * @throws SQLException em caso de erro na vinculação dos parâmetros
+     */
     private void preencherStatement(PreparedStatement stmt, EnderecoModel endereco) throws SQLException {
         stmt.setString(1, endereco.getCep());
         stmt.setString(2, endereco.getTipo());

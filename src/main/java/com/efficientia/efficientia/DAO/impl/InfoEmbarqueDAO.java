@@ -1,17 +1,43 @@
 package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
-import com.efficientia.efficientia.model.*;
+import com.efficientia.efficientia.model.CaminhaoModel;
+import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.model.InfoEmbarqueModel;
+import com.efficientia.efficientia.model.MotoristaModel;
+import com.efficientia.efficientia.model.PecuaristaModel;
+import com.efficientia.efficientia.model.StatusTrajeto;
+import com.efficientia.efficientia.model.TrajetoModel;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para a entidade Informações de Embarque.
+ *
+ * Gerencia a persistência de registros documentais e dados adicionais de embarque
+ * na tabela 'info_embarque', realizando junções com as tabelas de trajeto,
+ * motorista, caminhão, empresa e pecuarista para hidratação completa dos objetos.
+ */
 public class InfoEmbarqueDAO {
 
-    // Inserir
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere um novo registro de informação de embarque associado a um trajeto.
+     *
+     * @param infoEmbarque objeto InfoEmbarqueModel a ser cadastrado
+     * @return true se a inserção for realizada com êxito, false em caso de falha
+     */
     public boolean inserir(InfoEmbarqueModel infoEmbarque) {
         String sql = """
                 INSERT INTO info_embarque (
@@ -35,7 +61,11 @@ public class InfoEmbarqueDAO {
         }
     }
 
-    // Listar
+    /**
+     * Lista todos os registros de informações de embarque, reconstituindo o trajeto completo e seus agentes via JOIN.
+     *
+     * @return lista de objetos InfoEmbarqueModel ordenados por ID
+     */
     public List<InfoEmbarqueModel> listar() {
         String sql = """
                 SELECT
@@ -206,7 +236,12 @@ public class InfoEmbarqueDAO {
         return infoEmbarques;
     }
 
-    // Buscar por ID
+    /**
+     * Localiza uma informação de embarque por ID, montando a árvore de objetos do trajeto relacionado.
+     *
+     * @param id identificador único da informação de embarque
+     * @return objeto InfoEmbarqueModel populado ou null caso não encontrado
+     */
     public InfoEmbarqueModel buscar(int id) {
         String sql = """
                 SELECT
@@ -376,7 +411,13 @@ public class InfoEmbarqueDAO {
         return null;
     }
 
-    // Atualizar
+    /**
+     * Atualiza os dados de uma informação de embarque existente.
+     *
+     * @param infoEmbarque objeto com os novos valores para o registro
+     * @param id           identificador único do registro a ser atualizado
+     * @return true se o registro foi atualizado, false em caso de falha
+     */
     public boolean atualizar(InfoEmbarqueModel infoEmbarque, int id) {
         String sql = """
                 UPDATE info_embarque
@@ -399,7 +440,12 @@ public class InfoEmbarqueDAO {
         }
     }
 
-    // Excluir
+    /**
+     * Exclui uma informação de embarque do banco de dados pelo seu ID.
+     *
+     * @param id identificador único do registro a ser removido
+     * @return true se a exclusão for efetuada com sucesso, false caso contrário
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE
@@ -419,7 +465,15 @@ public class InfoEmbarqueDAO {
         }
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Preenche os parâmetros do PreparedStatement vinculando o ID do trajeto ou nulo.
+     *
+     * @param stmt         PreparedStatement a ser preenchido
+     * @param infoEmbarque modelo contendo os dados do registro
+     * @throws SQLException em caso de erro no mapeamento JDBC
+     */
     private void preencherStatement(PreparedStatement stmt, InfoEmbarqueModel infoEmbarque) throws SQLException {
         stmt.setString(1, infoEmbarque.getNome());
 

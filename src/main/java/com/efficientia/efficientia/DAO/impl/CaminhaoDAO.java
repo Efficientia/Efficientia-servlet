@@ -10,9 +10,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para a entidade Caminhão.
+ *
+ * Responsável por encapsular as operações de persistência e manipulação
+ * de dados da tabela 'caminhao' no PostgreSQL, gerenciando conexões
+ * via ConnectionFactory e garantindo fechamento de recursos com try-with-resources.
+ */
 public class CaminhaoDAO {
 
-    // Inserir
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere um novo registro de caminhão no banco de dados.
+     *
+     * @param caminhaoModel objeto contendo os dados do caminhão a ser inserido
+     * @return true se o registro foi inserido com sucesso, false caso ocorra falha
+     */
     public boolean inserir(CaminhaoModel caminhaoModel) {
         String sql = """
                 INSERT INTO caminhao (
@@ -37,7 +51,11 @@ public class CaminhaoDAO {
         }
     }
 
-    // Listar
+    /**
+     * Recupera todos os caminhões cadastrados no banco de dados, ordenados por ID.
+     *
+     * @return lista contendo os caminhões encontrados ou lista vazia em caso de falha/ausência
+     */
     public List<CaminhaoModel> listar() {
         String sql = """
                 SELECT * FROM caminhao ORDER BY id;
@@ -67,7 +85,13 @@ public class CaminhaoDAO {
         return caminhaoModels;
     }
 
-    // Atualizar
+    /**
+     * Atualiza os dados de um caminhão existente a partir do seu identificador.
+     *
+     * @param caminhaoModel objeto com os novos dados a serem gravados
+     * @param id            identificador único do caminhão a ser atualizado
+     * @return true se a alteração foi realizada com sucesso, false caso contrário
+     */
     public boolean atualizar(CaminhaoModel caminhaoModel, int id) {
         String sql = """
                 UPDATE caminhao
@@ -92,7 +116,12 @@ public class CaminhaoDAO {
         }
     }
 
-    // Excluir
+    /**
+     * Exclui um registro de caminhão da base de dados com base no ID fornecido.
+     *
+     * @param id identificador único do caminhão a ser excluído
+     * @return true se o registro foi removido com sucesso, false caso contrário
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE FROM caminhao WHERE id = ?;
@@ -112,7 +141,12 @@ public class CaminhaoDAO {
         }
     }
 
-    // Buscar por ID
+    /**
+     * Localiza e retorna um caminhão específico a partir de seu identificador único.
+     *
+     * @param id identificador único do caminhão buscado
+     * @return objeto CaminhaoModel correspondente ou null se não for encontrado
+     */
     public CaminhaoModel buscar(int id) {
         String sql = """
                 SELECT * FROM caminhao WHERE id = ?;
@@ -141,7 +175,15 @@ public class CaminhaoDAO {
         return null;
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Mapeia os dados do modelo nos parâmetros posicionais do PreparedStatement.
+     *
+     * @param stmt           statement preparado para receber os parâmetros
+     * @param caminhaoModel  objeto com os dados a serem vinculados
+     * @throws SQLException se ocorrer falha ao atribuir os valores no JDBC
+     */
     private void preencherStatement(
             PreparedStatement stmt,
             CaminhaoModel caminhaoModel
