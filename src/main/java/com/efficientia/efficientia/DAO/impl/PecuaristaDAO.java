@@ -12,9 +12,22 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para a entidade Pecuarista.
+ *
+ * Responsável pelas operações de persistência e consulta dos pecuaristas
+ * (produtores rurais) na tabela 'pecuarista' do banco de dados relacional PostgreSQL.
+ */
 public class PecuaristaDAO {
 
-    // Inserir
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere um novo pecuarista no banco de dados.
+     *
+     * @param pecuaristaModel objeto PecuaristaModel com os dados cadastrais
+     * @return true se o pecuarista foi inserido com êxito, false caso ocorra falha
+     */
     public boolean inserir(PecuaristaModel pecuaristaModel) {
         String sql = """
                 INSERT INTO pecuarista (cpf,
@@ -40,7 +53,11 @@ public class PecuaristaDAO {
         }
     }
 
-    // Listar
+    /**
+     * Lista todos os pecuaristas registrados no banco de dados, ordenados por ID.
+     *
+     * @return lista contendo os pecuaristas encontrados ou lista vazia em caso de ausência/erro
+     */
     public List<PecuaristaModel> listar() {
         String sql = """
                 SELECT * FROM pecuarista
@@ -75,7 +92,13 @@ public class PecuaristaDAO {
         return listaPecuarista;
     }
 
-    // Atualizar
+    /**
+     * Atualiza os dados de um pecuarista previamente cadastrado.
+     *
+     * @param pecuaristaModel objeto com os novos valores para atualização
+     * @param id              identificador único do pecuarista a ser atualizado
+     * @return true se o registro foi atualizado com sucesso, false caso contrário
+     */
     public boolean atualizar(PecuaristaModel pecuaristaModel, int id) {
         String sql = """
                 UPDATE pecuarista
@@ -103,7 +126,12 @@ public class PecuaristaDAO {
         }
     }
 
-    // Excluir
+    /**
+     * Remove um pecuarista da base de dados com base no ID informado.
+     *
+     * @param id identificador único do pecuarista a ser excluído
+     * @return true se o registro foi removido com êxito, false caso contrário
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE FROM pecuarista WHERE id = ?;
@@ -121,7 +149,12 @@ public class PecuaristaDAO {
         }
     }
 
-    // Buscar por ID
+    /**
+     * Localiza um pecuarista a partir do seu identificador único.
+     *
+     * @param id identificador único do pecuarista
+     * @return objeto PecuaristaModel correspondente ou null se não for localizado
+     */
     public PecuaristaModel buscar(int id) {
         String sql = """
                 SELECT * FROM pecuarista WHERE id = ?;
@@ -157,7 +190,15 @@ public class PecuaristaDAO {
         }
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Atribui os campos de PecuaristaModel aos parâmetros indexados do PreparedStatement.
+     *
+     * @param stmt            PreparedStatement pronto para recepção dos parâmetros
+     * @param pecuaristaModel modelo com os dados cadastrais
+     * @throws SQLException se houver erro durante a associação dos tipos JDBC
+     */
     private void preencherStatement(PreparedStatement stmt, PecuaristaModel pecuaristaModel) throws SQLException {
         stmt.setString(1, pecuaristaModel.getCpf());
         stmt.setString(2, pecuaristaModel.getAssinatura());

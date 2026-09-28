@@ -5,14 +5,33 @@ import com.efficientia.efficientia.model.EnderecoModel;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.model.PropriedadeModel;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para a entidade Propriedade Rural.
+ *
+ * Centraliza as operações de persistência e recuperação da tabela 'propriedade',
+ * realizando junções (JOIN) com as tabelas 'pecuarista' e 'endereco' para
+ * reconstituir o grafo de objetos da propriedade rural e seus vínculos.
+ */
 public class PropriedadeDAO {
 
-    // Inserir
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere uma nova propriedade rural vinculada a um pecuarista e a um endereço.
+     *
+     * @param propriedadeModel objeto contendo os dados da propriedade e referências das entidades vinculadas
+     * @return true se a propriedade for gravada com sucesso, false em caso de erro
+     */
     public boolean inserir(PropriedadeModel propriedadeModel) {
         String sql = """
                 INSERT INTO propriedade (id_pecuarista, id_endereco, nome)
@@ -32,7 +51,11 @@ public class PropriedadeDAO {
         }
     }
 
-    // Listar
+    /**
+     * Recupera todas as propriedades cadastradas, montando os objetos associados de Pecuarista e Endereço.
+     *
+     * @return lista contendo as propriedades rurais completas ordenadas por ID
+     */
     public List<PropriedadeModel> listar() {
         String sql = """
                 SELECT
@@ -115,7 +138,12 @@ public class PropriedadeDAO {
         return propriedades;
     }
 
-    // Buscar por ID
+    /**
+     * Localiza uma propriedade pelo ID, reconstituindo o pecuarista e o endereço correspondentes via JOIN.
+     *
+     * @param id identificador único da propriedade
+     * @return objeto PropriedadeModel completamente hidratado ou null se não for encontrada
+     */
     public PropriedadeModel buscar(int id) {
         String sql = """
                 SELECT
@@ -197,7 +225,13 @@ public class PropriedadeDAO {
         return null;
     }
 
-    // Atualizar
+    /**
+     * Atualiza as informações e vínculos de uma propriedade rural existente.
+     *
+     * @param propriedadeModel objeto com os novos dados e chaves estrangeiras
+     * @param id               identificador único da propriedade a ser atualizada
+     * @return true se a atualização foi efetuada com sucesso, false caso contrário
+     */
     public boolean atualizar(PropriedadeModel propriedadeModel, int id) {
         String sql = """
                 UPDATE propriedade
@@ -221,7 +255,12 @@ public class PropriedadeDAO {
         }
     }
 
-    // Excluir
+    /**
+     * Remove um registro de propriedade rural da base de dados.
+     *
+     * @param id identificador único da propriedade a ser removida
+     * @return true se o registro foi deletado, false caso ocorra falha
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE FROM propriedade
@@ -240,7 +279,15 @@ public class PropriedadeDAO {
         }
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Preenche os parâmetros do PreparedStatement tratando referências nulas de objetos compostos.
+     *
+     * @param stmt             PreparedStatement pronto para recepção dos parâmetros
+     * @param propriedadeModel modelo contendo os dados da propriedade
+     * @throws SQLException se ocorrer erro na associação de tipos
+     */
     private void preencherStatement(PreparedStatement stmt, PropriedadeModel propriedadeModel) throws SQLException {
         if (propriedadeModel.getPecuaristaModel() != null) {
             stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());

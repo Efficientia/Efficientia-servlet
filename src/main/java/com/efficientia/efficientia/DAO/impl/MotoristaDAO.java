@@ -13,9 +13,23 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para a entidade Motorista.
+ *
+ * Gerencia a persistência de condutores de veículos na tabela 'motorista',
+ * incluindo o relacionamento opcional (LEFT JOIN) com a tabela 'empresa'
+ * para carregar e associar os dados da transportadora parceira.
+ */
 public class MotoristaDAO {
 
-    // Inserir
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere um novo motorista na base de dados.
+     *
+     * @param motoristaModel objeto contendo os atributos do motorista
+     * @return true se a inclusão for bem-sucedida, false em caso de erro
+     */
     public boolean inserir(MotoristaModel motoristaModel) {
         String sql = """
                 INSERT INTO motorista (
@@ -44,7 +58,11 @@ public class MotoristaDAO {
         }
     }
 
-    // Listar
+    /**
+     * Lista todos os motoristas cadastrados, trazendo também os dados da empresa associada via LEFT JOIN.
+     *
+     * @return lista com os motoristas ordenados crescentemente por ID
+     */
     public List<MotoristaModel> listar() {
         String sql = """
                 SELECT m.*,
@@ -99,7 +117,13 @@ public class MotoristaDAO {
         return motoristaModels;
     }
 
-    // Atualizar
+    /**
+     * Atualiza os dados de um motorista existente a partir do seu ID.
+     *
+     * @param motoristaModel objeto com as alterações desejadas
+     * @param id             identificador único do motorista a ser modificado
+     * @return true se o registro foi atualizado, false em caso de falha
+     */
     public boolean atualizar(MotoristaModel motoristaModel, int id) {
         String sql = """
                 UPDATE motorista
@@ -128,7 +152,12 @@ public class MotoristaDAO {
         }
     }
 
-    // Excluir
+    /**
+     * Exclui um motorista cadastrado a partir de seu ID.
+     *
+     * @param id identificador único do motorista a ser removido
+     * @return true se a exclusão for efetuada, false caso contrário
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE FROM motorista WHERE id = ?;
@@ -148,7 +177,12 @@ public class MotoristaDAO {
         }
     }
 
-    // Buscar por ID
+    /**
+     * Localiza um motorista específico pelo ID, carregando os dados da empresa vinculada via LEFT JOIN.
+     *
+     * @param id identificador único do motorista
+     * @return objeto MotoristaModel completo ou null se não encontrado
+     */
     public MotoristaModel buscar(int id) {
         String sql = """
                 SELECT m.*,
@@ -202,7 +236,15 @@ public class MotoristaDAO {
         return null;
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Preenche os parâmetros do PreparedStatement tratando valores nulos para chave estrangeira e data.
+     *
+     * @param stmt           statement preparado para receber os parâmetros JDBC
+     * @param motoristaModel modelo contendo os dados a serem vinculados
+     * @throws SQLException em caso de falha no mapeamento de tipos
+     */
     private void preencherStatement(
             PreparedStatement stmt,
             MotoristaModel motoristaModel

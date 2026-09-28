@@ -1,17 +1,43 @@
 package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
-import com.efficientia.efficientia.model.*;
+import com.efficientia.efficientia.model.CaminhaoModel;
+import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.model.MotoristaModel;
+import com.efficientia.efficientia.model.ParadaImprevistaModel;
+import com.efficientia.efficientia.model.PecuaristaModel;
+import com.efficientia.efficientia.model.StatusTrajeto;
+import com.efficientia.efficientia.model.TrajetoModel;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) para a entidade Parada Imprevista.
+ *
+ * Gerencia o registro e consulta de ocorrências e interrupções durante viagens pecuárias
+ * na tabela 'parada_imprevista', reconstituindo todo o grafo relacional associado
+ * (trajeto, motorista, caminhão, empresa e pecuarista).
+ */
 public class ParadaImprevistaDAO {
 
-    // Inserir
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere uma nova parada imprevista vinculada a um trajeto.
+     *
+     * @param parada objeto ParadaImprevistaModel contendo horários, motivo e observações
+     * @return true se a inserção for realizada com êxito, false caso contrário
+     */
     public boolean inserir(ParadaImprevistaModel parada) {
         String sql = """
                 INSERT INTO parada_imprevista (
@@ -38,7 +64,11 @@ public class ParadaImprevistaDAO {
         }
     }
 
-    // Listar
+    /**
+     * Lista todas as paradas imprevistas registradas no sistema, com hidratação completa das entidades vinculadas.
+     *
+     * @return lista de paradas imprevistas ordenadas pelo ID da ocorrência
+     */
     public List<ParadaImprevistaModel> listar() {
         String sql = """
                 SELECT
@@ -117,102 +147,7 @@ public class ParadaImprevistaDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Date dataNascMotorista = rs.getDate("motorista_data_nascimento");
-                LocalDate nascimentoMotorista = dataNascMotorista != null ? dataNascMotorista.toLocalDate() : null;
-
-                MotoristaModel motorista = new MotoristaModel(
-                        rs.getInt("motorista_id"),
-                        new EmpresaModel(
-                                rs.getInt("empresa_id"),
-                                rs.getString("empresa_nome"),
-                                rs.getString("empresa_cnpj")
-                        ),
-                        rs.getString("motorista_nome"),
-                        rs.getString("motorista_assinatura"),
-                        nascimentoMotorista,
-                        rs.getString("motorista_senha"),
-                        rs.getString("motorista_email"),
-                        rs.getString("motorista_telefone")
-                );
-
-                CaminhaoModel caminhao = new CaminhaoModel(
-                        rs.getInt("caminhao_id"),
-                        rs.getString("placa_cavalo"),
-                        rs.getString("placa_carreta"),
-                        rs.getInt("capacidade_maxima")
-                );
-
-                Date dataNascPecuarista = rs.getDate("pecuarista_data_nascimento");
-                LocalDate nascimentoPecuarista = dataNascPecuarista != null ? dataNascPecuarista.toLocalDate() : null;
-
-                PecuaristaModel pecuarista = new PecuaristaModel(
-                        rs.getInt("pecuarista_id"),
-                        rs.getString("pecuarista_cpf"),
-                        rs.getString("pecuarista_assinatura"),
-                        nascimentoPecuarista,
-                        rs.getString("pecuarista_nome"),
-                        rs.getString("pecuarista_senha"),
-                        rs.getString("pecuarista_email"),
-                        rs.getString("pecuarista_telefone")
-                );
-
-                String statusStr = rs.getString("status");
-                StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
-
-                Timestamp tsTrajetoInicio = rs.getTimestamp("trajeto_data_hora_inicio");
-                LocalDateTime trajetoDataHoraInicio = tsTrajetoInicio != null ? tsTrajetoInicio.toLocalDateTime() : null;
-
-                Timestamp tsTrajetoFim = rs.getTimestamp("trajeto_data_hora_fim");
-                LocalDateTime trajetoDataHoraFim = tsTrajetoFim != null ? tsTrajetoFim.toLocalDateTime() : null;
-
-                Timestamp tsEmbarque = rs.getTimestamp("horario_embarque");
-                LocalDateTime horarioEmbarque = tsEmbarque != null ? tsEmbarque.toLocalDateTime() : null;
-
-                Timestamp tsDesembarque = rs.getTimestamp("horario_desembarque");
-                LocalDateTime horarioDesembarque = tsDesembarque != null ? tsDesembarque.toLocalDateTime() : null;
-
-                TrajetoModel trajeto = new TrajetoModel(
-                        rs.getInt("trajeto_id"),
-                        motorista,
-                        caminhao,
-                        status,
-                        trajetoDataHoraInicio,
-                        trajetoDataHoraFim,
-                        rs.getInt("km_saida"),
-                        rs.getInt("km_chegada"),
-                        pecuarista,
-                        rs.getString("numero_gta"),
-                        rs.getString("numero_nota_fiscal"),
-                        horarioEmbarque,
-                        rs.getInt("qtd_macho"),
-                        rs.getInt("qtd_femea"),
-                        rs.getInt("qtd_marruco"),
-                        horarioDesembarque,
-                        rs.getString("numero_curral"),
-                        rs.getString("nome_curraleiro"),
-                        rs.getString("nome_manobrista")
-                );
-
-                trajeto.setAssinaturaCurraleiro(rs.getString("assinatura_curraleiro"));
-                trajeto.setAssinaturaManobrista(rs.getString("assinatura_manobrista"));
-                trajeto.setAssinaturaMotorista(rs.getString("assinatura_motorista"));
-
-                Timestamp tsParadaInicio = rs.getTimestamp("parada_data_hora_inicio");
-                LocalDateTime paradaDataHoraInicio = tsParadaInicio != null ? tsParadaInicio.toLocalDateTime() : null;
-
-                Timestamp tsParadaFim = rs.getTimestamp("parada_data_hora_fim");
-                LocalDateTime paradaDataHoraFim = tsParadaFim != null ? tsParadaFim.toLocalDateTime() : null;
-
-                ParadaImprevistaModel parada = new ParadaImprevistaModel(
-                        rs.getInt("parada_id"),
-                        trajeto,
-                        paradaDataHoraInicio,
-                        paradaDataHoraFim,
-                        rs.getString("parada_motivo"),
-                        rs.getString("parada_observacao")
-                );
-
-                paradas.add(parada);
+                paradas.add(mapearResultSet(rs));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar parada imprevista: " + e.getMessage());
@@ -221,7 +156,12 @@ public class ParadaImprevistaDAO {
         return paradas;
     }
 
-    // Buscar por ID
+    /**
+     * Localiza uma parada imprevista por ID, carregando os objetos completos das entidades vinculadas.
+     *
+     * @param id identificador único da ocorrência de parada
+     * @return objeto ParadaImprevistaModel preenchido ou null se não localizado
+     */
     public ParadaImprevistaModel buscar(int id) {
         String sql = """
                 SELECT
@@ -300,100 +240,7 @@ public class ParadaImprevistaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Date dataNascMotorista = rs.getDate("motorista_data_nascimento");
-                    LocalDate nascimentoMotorista = dataNascMotorista != null ? dataNascMotorista.toLocalDate() : null;
-
-                    MotoristaModel motorista = new MotoristaModel(
-                            rs.getInt("motorista_id"),
-                            new EmpresaModel(
-                                    rs.getInt("empresa_id"),
-                                    rs.getString("empresa_nome"),
-                                    rs.getString("empresa_cnpj")
-                            ),
-                            rs.getString("motorista_nome"),
-                            rs.getString("motorista_assinatura"),
-                            nascimentoMotorista,
-                            rs.getString("motorista_senha"),
-                            rs.getString("motorista_email"),
-                            rs.getString("motorista_telefone")
-                    );
-
-                    CaminhaoModel caminhao = new CaminhaoModel(
-                            rs.getInt("caminhao_id"),
-                            rs.getString("placa_cavalo"),
-                            rs.getString("placa_carreta"),
-                            rs.getInt("capacidade_maxima")
-                    );
-
-                    Date dataNascPecuarista = rs.getDate("pecuarista_data_nascimento");
-                    LocalDate nascimentoPecuarista = dataNascPecuarista != null ? dataNascPecuarista.toLocalDate() : null;
-
-                    PecuaristaModel pecuarista = new PecuaristaModel(
-                            rs.getInt("pecuarista_id"),
-                            rs.getString("pecuarista_cpf"),
-                            rs.getString("pecuarista_assinatura"),
-                            nascimentoPecuarista,
-                            rs.getString("pecuarista_nome"),
-                            rs.getString("pecuarista_senha"),
-                            rs.getString("pecuarista_email"),
-                            rs.getString("pecuarista_telefone")
-                    );
-
-                    String statusStr = rs.getString("status");
-                    StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
-
-                    Timestamp tsTrajetoInicio = rs.getTimestamp("trajeto_data_hora_inicio");
-                    LocalDateTime trajetoDataHoraInicio = tsTrajetoInicio != null ? tsTrajetoInicio.toLocalDateTime() : null;
-
-                    Timestamp tsTrajetoFim = rs.getTimestamp("trajeto_data_hora_fim");
-                    LocalDateTime trajetoDataHoraFim = tsTrajetoFim != null ? tsTrajetoFim.toLocalDateTime() : null;
-
-                    Timestamp tsEmbarque = rs.getTimestamp("horario_embarque");
-                    LocalDateTime horarioEmbarque = tsEmbarque != null ? tsEmbarque.toLocalDateTime() : null;
-
-                    Timestamp tsDesembarque = rs.getTimestamp("horario_desembarque");
-                    LocalDateTime horarioDesembarque = tsDesembarque != null ? tsDesembarque.toLocalDateTime() : null;
-
-                    TrajetoModel trajeto = new TrajetoModel(
-                            rs.getInt("trajeto_id"),
-                            motorista,
-                            caminhao,
-                            status,
-                            trajetoDataHoraInicio,
-                            trajetoDataHoraFim,
-                            rs.getInt("km_saida"),
-                            rs.getInt("km_chegada"),
-                            pecuarista,
-                            rs.getString("numero_gta"),
-                            rs.getString("numero_nota_fiscal"),
-                            horarioEmbarque,
-                            rs.getInt("qtd_macho"),
-                            rs.getInt("qtd_femea"),
-                            rs.getInt("qtd_marruco"),
-                            horarioDesembarque,
-                            rs.getString("numero_curral"),
-                            rs.getString("nome_curraleiro"),
-                            rs.getString("nome_manobrista")
-                    );
-
-                    trajeto.setAssinaturaCurraleiro(rs.getString("assinatura_curraleiro"));
-                    trajeto.setAssinaturaManobrista(rs.getString("assinatura_manobrista"));
-                    trajeto.setAssinaturaMotorista(rs.getString("assinatura_motorista"));
-
-                    Timestamp tsParadaInicio = rs.getTimestamp("parada_data_hora_inicio");
-                    LocalDateTime paradaDataHoraInicio = tsParadaInicio != null ? tsParadaInicio.toLocalDateTime() : null;
-
-                    Timestamp tsParadaFim = rs.getTimestamp("parada_data_hora_fim");
-                    LocalDateTime paradaDataHoraFim = tsParadaFim != null ? tsParadaFim.toLocalDateTime() : null;
-
-                    return new ParadaImprevistaModel(
-                            rs.getInt("parada_id"),
-                            trajeto,
-                            paradaDataHoraInicio,
-                            paradaDataHoraFim,
-                            rs.getString("parada_motivo"),
-                            rs.getString("parada_observacao")
-                    );
+                    return mapearResultSet(rs);
                 }
             }
         } catch (SQLException e) {
@@ -403,7 +250,12 @@ public class ParadaImprevistaDAO {
         return null;
     }
 
-    // Listar por Trajeto
+    /**
+     * Recupera todas as paradas imprevistas que ocorreram em um trajeto específico.
+     *
+     * @param idTrajeto identificador único do trajeto a ser filtrado
+     * @return lista de paradas imprevistas ocorridas no trajeto informado
+     */
     public List<ParadaImprevistaModel> listarPorTrajeto(int idTrajeto) {
         String sql = """
                 SELECT
@@ -473,7 +325,7 @@ public class ParadaImprevistaDAO {
                 JOIN empresa e ON e.id = m.id_empresa
                 JOIN pecuarista pec ON pec.id = t.id_pecuarista
                 WHERE p.id_trajeto = ?
-                ORDER BY p.id;
+                ORDER BY p.data_hora_inicio;
                 """;
 
         List<ParadaImprevistaModel> paradas = new ArrayList<>();
@@ -485,102 +337,7 @@ public class ParadaImprevistaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Date dataNascMotorista = rs.getDate("motorista_data_nascimento");
-                    LocalDate nascimentoMotorista = dataNascMotorista != null ? dataNascMotorista.toLocalDate() : null;
-
-                    MotoristaModel motorista = new MotoristaModel(
-                            rs.getInt("motorista_id"),
-                            new EmpresaModel(
-                                    rs.getInt("empresa_id"),
-                                    rs.getString("empresa_nome"),
-                                    rs.getString("empresa_cnpj")
-                            ),
-                            rs.getString("motorista_nome"),
-                            rs.getString("motorista_assinatura"),
-                            nascimentoMotorista,
-                            rs.getString("motorista_senha"),
-                            rs.getString("motorista_email"),
-                            rs.getString("motorista_telefone")
-                    );
-
-                    CaminhaoModel caminhao = new CaminhaoModel(
-                            rs.getInt("caminhao_id"),
-                            rs.getString("placa_cavalo"),
-                            rs.getString("placa_carreta"),
-                            rs.getInt("capacidade_maxima")
-                    );
-
-                    Date dataNascPecuarista = rs.getDate("pecuarista_data_nascimento");
-                    LocalDate nascimentoPecuarista = dataNascPecuarista != null ? dataNascPecuarista.toLocalDate() : null;
-
-                    PecuaristaModel pecuarista = new PecuaristaModel(
-                            rs.getInt("pecuarista_id"),
-                            rs.getString("pecuarista_cpf"),
-                            rs.getString("pecuarista_assinatura"),
-                            nascimentoPecuarista,
-                            rs.getString("pecuarista_nome"),
-                            rs.getString("pecuarista_senha"),
-                            rs.getString("pecuarista_email"),
-                            rs.getString("pecuarista_telefone")
-                    );
-
-                    String statusStr = rs.getString("status");
-                    StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
-
-                    Timestamp tsTrajetoInicio = rs.getTimestamp("trajeto_data_hora_inicio");
-                    LocalDateTime trajetoDataHoraInicio = tsTrajetoInicio != null ? tsTrajetoInicio.toLocalDateTime() : null;
-
-                    Timestamp tsTrajetoFim = rs.getTimestamp("trajeto_data_hora_fim");
-                    LocalDateTime trajetoDataHoraFim = tsTrajetoFim != null ? tsTrajetoFim.toLocalDateTime() : null;
-
-                    Timestamp tsEmbarque = rs.getTimestamp("horario_embarque");
-                    LocalDateTime horarioEmbarque = tsEmbarque != null ? tsEmbarque.toLocalDateTime() : null;
-
-                    Timestamp tsDesembarque = rs.getTimestamp("horario_desembarque");
-                    LocalDateTime horarioDesembarque = tsDesembarque != null ? tsDesembarque.toLocalDateTime() : null;
-
-                    TrajetoModel trajeto = new TrajetoModel(
-                            rs.getInt("trajeto_id"),
-                            motorista,
-                            caminhao,
-                            status,
-                            trajetoDataHoraInicio,
-                            trajetoDataHoraFim,
-                            rs.getInt("km_saida"),
-                            rs.getInt("km_chegada"),
-                            pecuarista,
-                            rs.getString("numero_gta"),
-                            rs.getString("numero_nota_fiscal"),
-                            horarioEmbarque,
-                            rs.getInt("qtd_macho"),
-                            rs.getInt("qtd_femea"),
-                            rs.getInt("qtd_marruco"),
-                            horarioDesembarque,
-                            rs.getString("numero_curral"),
-                            rs.getString("nome_curraleiro"),
-                            rs.getString("nome_manobrista")
-                    );
-
-                    trajeto.setAssinaturaCurraleiro(rs.getString("assinatura_curraleiro"));
-                    trajeto.setAssinaturaManobrista(rs.getString("assinatura_manobrista"));
-                    trajeto.setAssinaturaMotorista(rs.getString("assinatura_motorista"));
-
-                    Timestamp tsParadaInicio = rs.getTimestamp("parada_data_hora_inicio");
-                    LocalDateTime paradaDataHoraInicio = tsParadaInicio != null ? tsParadaInicio.toLocalDateTime() : null;
-
-                    Timestamp tsParadaFim = rs.getTimestamp("parada_data_hora_fim");
-                    LocalDateTime paradaDataHoraFim = tsParadaFim != null ? tsParadaFim.toLocalDateTime() : null;
-
-                    ParadaImprevistaModel parada = new ParadaImprevistaModel(
-                            rs.getInt("parada_id"),
-                            trajeto,
-                            paradaDataHoraInicio,
-                            paradaDataHoraFim,
-                            rs.getString("parada_motivo"),
-                            rs.getString("parada_observacao")
-                    );
-
-                    paradas.add(parada);
+                    paradas.add(mapearResultSet(rs));
                 }
             }
         } catch (SQLException e) {
@@ -590,7 +347,13 @@ public class ParadaImprevistaDAO {
         return paradas;
     }
 
-    // Atualizar
+    /**
+     * Atualiza os dados de uma ocorrência de parada imprevista previamente registrada.
+     *
+     * @param parada objeto contendo os novos dados atualizados
+     * @param id     identificador único da ocorrência a ser atualizada
+     * @return true se o registro foi atualizado com sucesso, false em caso de falha
+     */
     public boolean atualizar(ParadaImprevistaModel parada, int id) {
         String sql = """
                 UPDATE parada_imprevista
@@ -616,7 +379,12 @@ public class ParadaImprevistaDAO {
         }
     }
 
-    // Excluir
+    /**
+     * Exclui um registro de parada imprevista do banco de dados pelo seu ID.
+     *
+     * @param id identificador único da ocorrência
+     * @return true se a remoção foi realizada com sucesso, false caso ocorra falha
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE
@@ -636,7 +404,119 @@ public class ParadaImprevistaDAO {
         }
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Converte uma linha corrente do ResultSet em um objeto ParadaImprevistaModel completamente instanciado.
+     *
+     * @param rs ResultSet posicionado na linha desejada
+     * @return objeto ParadaImprevistaModel totalmente preenchido
+     * @throws SQLException se houver falha na leitura dos campos JDBC
+     */
+    private ParadaImprevistaModel mapearResultSet(ResultSet rs) throws SQLException {
+        Date dataNascMotorista = rs.getDate("motorista_data_nascimento");
+        LocalDate nascimentoMotorista = dataNascMotorista != null ? dataNascMotorista.toLocalDate() : null;
+
+        MotoristaModel motorista = new MotoristaModel(
+                rs.getInt("motorista_id"),
+                new EmpresaModel(
+                        rs.getInt("empresa_id"),
+                        rs.getString("empresa_nome"),
+                        rs.getString("empresa_cnpj")
+                ),
+                rs.getString("motorista_nome"),
+                rs.getString("motorista_assinatura"),
+                nascimentoMotorista,
+                rs.getString("motorista_senha"),
+                rs.getString("motorista_email"),
+                rs.getString("motorista_telefone")
+        );
+
+        CaminhaoModel caminhao = new CaminhaoModel(
+                rs.getInt("caminhao_id"),
+                rs.getString("placa_cavalo"),
+                rs.getString("placa_carreta"),
+                rs.getInt("capacidade_maxima")
+        );
+
+        Date dataNascPecuarista = rs.getDate("pecuarista_data_nascimento");
+        LocalDate nascimentoPecuarista = dataNascPecuarista != null ? dataNascPecuarista.toLocalDate() : null;
+
+        PecuaristaModel pecuarista = new PecuaristaModel(
+                rs.getInt("pecuarista_id"),
+                rs.getString("pecuarista_cpf"),
+                rs.getString("pecuarista_assinatura"),
+                nascimentoPecuarista,
+                rs.getString("pecuarista_nome"),
+                rs.getString("pecuarista_senha"),
+                rs.getString("pecuarista_email"),
+                rs.getString("pecuarista_telefone")
+        );
+
+        String statusStr = rs.getString("status");
+        StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+
+        Timestamp tsTrajetoInicio = rs.getTimestamp("trajeto_data_hora_inicio");
+        LocalDateTime trajetoDataHoraInicio = tsTrajetoInicio != null ? tsTrajetoInicio.toLocalDateTime() : null;
+
+        Timestamp tsTrajetoFim = rs.getTimestamp("trajeto_data_hora_fim");
+        LocalDateTime trajetoDataHoraFim = tsTrajetoFim != null ? tsTrajetoFim.toLocalDateTime() : null;
+
+        Timestamp tsEmbarque = rs.getTimestamp("horario_embarque");
+        LocalDateTime horarioEmbarque = tsEmbarque != null ? tsEmbarque.toLocalDateTime() : null;
+
+        Timestamp tsDesembarque = rs.getTimestamp("horario_desembarque");
+        LocalDateTime horarioDesembarque = tsDesembarque != null ? tsDesembarque.toLocalDateTime() : null;
+
+        TrajetoModel trajeto = new TrajetoModel(
+                rs.getInt("trajeto_id"),
+                motorista,
+                caminhao,
+                status,
+                trajetoDataHoraInicio,
+                trajetoDataHoraFim,
+                rs.getInt("km_saida"),
+                rs.getInt("km_chegada"),
+                pecuarista,
+                rs.getString("numero_gta"),
+                rs.getString("numero_nota_fiscal"),
+                horarioEmbarque,
+                rs.getInt("qtd_macho"),
+                rs.getInt("qtd_femea"),
+                rs.getInt("qtd_marruco"),
+                horarioDesembarque,
+                rs.getString("numero_curral"),
+                rs.getString("nome_curraleiro"),
+                rs.getString("nome_manobrista")
+        );
+
+        trajeto.setAssinaturaCurraleiro(rs.getString("assinatura_curraleiro"));
+        trajeto.setAssinaturaManobrista(rs.getString("assinatura_manobrista"));
+        trajeto.setAssinaturaMotorista(rs.getString("assinatura_motorista"));
+
+        Timestamp tsParadaInicio = rs.getTimestamp("parada_data_hora_inicio");
+        LocalDateTime paradaDataHoraInicio = tsParadaInicio != null ? tsParadaInicio.toLocalDateTime() : null;
+
+        Timestamp tsParadaFim = rs.getTimestamp("parada_data_hora_fim");
+        LocalDateTime paradaDataHoraFim = tsParadaFim != null ? tsParadaFim.toLocalDateTime() : null;
+
+        return new ParadaImprevistaModel(
+                rs.getInt("parada_id"),
+                trajeto,
+                paradaDataHoraInicio,
+                paradaDataHoraFim,
+                rs.getString("parada_motivo"),
+                rs.getString("parada_observacao")
+        );
+    }
+
+    /**
+     * Preenche os parâmetros do PreparedStatement vinculando o ID do trajeto e os atributos de data e motivo.
+     *
+     * @param stmt   PreparedStatement a ser parametrizado
+     * @param parada modelo da parada imprevista
+     * @throws SQLException em caso de falha no mapeamento de tipos JDBC
+     */
     private void preencherStatement(PreparedStatement stmt, ParadaImprevistaModel parada) throws SQLException {
         if (parada.getTrajeto() != null) {
             stmt.setInt(1, parada.getTrajeto().getId());
