@@ -26,32 +26,32 @@ public class CaminhaoServlet extends HttpServlet {
             HttpServletRequest req,
             HttpServletResponse resp
     ) throws ServletException, IOException {
+
         String acao = req.getParameter("acao");
 
         if ("editar".equals(acao)) {
             try {
-                int id = Integer.parseInt(req.getParameter("id"));
+                int id = parseInt(req.getParameter("id"), 0);
                 CaminhaoModel caminhaoModel = dao.buscar(id);
 
-                if (caminhaoModel == null) {
-                    resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                            "Caminhão não encontrado.");
+                if (caminhaoModel != null) {
+                    req.setAttribute("caminhaoModel", caminhaoModel);
+                    req.setAttribute("caminhao", caminhaoModel);
+                    req.getRequestDispatcher(
+                            "/WEB-INF/views/editar-caminhao.jsp"
+                    ).forward(req, resp);
                     return;
                 }
-
-                req.setAttribute("caminhaoModel", caminhaoModel);
-                req.getRequestDispatcher(
-                        "/WEB-INF/views/editar-caminhao.jsp"
-                ).forward(req, resp);
-            } catch (NumberFormatException e) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "ID do caminhão inválido.");
+            } catch (Exception e) {
+                System.out.println("Erro ao buscar caminhão para edição: " + e.getMessage());
             }
-            return;
         }
 
         List<CaminhaoModel> caminhaoModels = dao.listar();
+
         req.setAttribute("caminhaoModels", caminhaoModels);
+        req.setAttribute("caminhoes", caminhaoModels);
+
         req.getRequestDispatcher(
                 "/WEB-INF/views/caminhao.jsp"
         ).forward(req, resp);
@@ -62,50 +62,75 @@ public class CaminhaoServlet extends HttpServlet {
             HttpServletRequest req,
             HttpServletResponse resp
     ) throws IOException {
+
         req.setCharacterEncoding("UTF-8");
+
         String acao = req.getParameter("acao");
 
-        try {
-            // Exclusão
-            if ("excluir".equals(acao)) {
-                int id = Integer.parseInt(req.getParameter("id"));
-                if (!dao.excluir(id)) {
-                    resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                            "Não foi possível excluir o caminhão.");
-                    return;
-                }
-                resp.sendRedirect(req.getContextPath() + "/caminhao");
-                return;
+        // Exclusão
+        if ("excluir".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                dao.excluir(id);
+            } catch (Exception e) {
+                System.out.println("Erro ao excluir caminhão: " + e.getMessage());
             }
 
-            // Dados usados no cadastro e na atualização
-            String placaCavalo = req.getParameter("placaCavalo");
-            String placaCarreta = req.getParameter("placaCarreta");
-            int capacidadeMaxima = Integer.parseInt(
-                    req.getParameter("capacidadeMaxima")
-            );
-            CaminhaoModel caminhaoModel = new CaminhaoModel(
-                    placaCavalo, placaCarreta, capacidadeMaxima
-            );
-
-            boolean sucesso;
-            if ("atualizar".equals(acao)) {
-                int id = Integer.parseInt(req.getParameter("id"));
-                caminhaoModel.setId(id);
-                sucesso = dao.atualizar(caminhaoModel, id);
-            } else {
-                sucesso = dao.inserir(caminhaoModel);
-            }
-
-            if (!sucesso) {
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Não foi possível salvar o caminhão.");
-                return;
-            }
             resp.sendRedirect(req.getContextPath() + "/caminhao");
-        } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "ID e capacidade máxima devem ser números inteiros.");
+            return;
+        }
+
+        // Atualização
+        if ("atualizar".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+
+                String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
+                String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
+                int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
+
+                CaminhaoModel caminhaoModel = new CaminhaoModel(id, placaCavalo, placaCarreta, capacidadeMaxima);
+                dao.atualizar(caminhaoModel, id);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar caminhão: " + e.getMessage());
+            }
+
+            resp.sendRedirect(req.getContextPath() + "/caminhao");
+            return;
+        }
+
+        // Cadastro
+        String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
+        String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
+        int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
+
+        CaminhaoModel novoCaminhao = new CaminhaoModel(placaCavalo, placaCarreta, capacidadeMaxima);
+        dao.inserir(novoCaminhao);
+
+        resp.sendRedirect(req.getContextPath() + "/caminhao");
+    }
+
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    private String obterParametro(HttpServletRequest req, String... nomes) {
+        for (String nome : nomes) {
+            String valor = req.getParameter(nome);
+            if (valor != null && !valor.isBlank()) {
+                return valor;
+            }
+        }
+        return null;
+    }
+
+    private int parseInt(String texto, int padrao) {
+        if (texto == null || texto.isBlank()) {
+            return padrao;
+        }
+        try {
+            return Integer.parseInt(texto.trim());
+        } catch (Exception e) {
+            System.out.println("Erro ao converter número (" + texto + "): " + e.getMessage());
+            return padrao;
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.DAO.impl.PecuaristaDAO;
+import com.efficientia.efficientia.model.PecuaristaModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,46 +9,49 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 
-@WebServlet(name= "PecuaristaServlet", value = "/pecuarista")
-
+@WebServlet(name = "PecuaristaServlet", value = "/pecuarista")
 public class PecuaristaServlet extends HttpServlet {
 
     private PecuaristaDAO dao = new PecuaristaDAO();
 
     @Override
-    public void init(){
+    public void init() {
         dao = new PecuaristaDAO();
     }
 
     @Override
     protected void doGet(
             HttpServletRequest req,
-            HttpServletResponse resp)
-    throws ServletException, IOException {
+            HttpServletResponse resp
+    ) throws ServletException, IOException {
 
         String acao = req.getParameter("acao");
 
         if ("editar".equals(acao)) {
-            int id = Integer.parseInt(req.getParameter("id"));
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                PecuaristaModel pecuaristaModel = dao.buscar(id);
 
-            PecuaristaModel pecuaristaModel = dao.buscar(id);
-
-            req.setAttribute("pecuaristaModel", pecuaristaModel);
-            req.setAttribute("pecuarista", pecuaristaModel);
-
-            req.getRequestDispatcher(
-                    "/WEB-INF/views/editar.jsp"
-            ).forward(req, resp);
-
-            return;
+                if (pecuaristaModel != null) {
+                    req.setAttribute("pecuaristaModel", pecuaristaModel);
+                    req.setAttribute("pecuarista", pecuaristaModel);
+                    req.getRequestDispatcher(
+                            "/WEB-INF/views/editar.jsp"
+                    ).forward(req, resp);
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.println("Erro ao buscar pecuarista para edição: " + e.getMessage());
+            }
         }
 
         List<PecuaristaModel> pecuaristaModels = dao.listar();
 
         req.setAttribute("pecuaristaModels", pecuaristaModels);
+        req.setAttribute("pecuaristas", pecuaristaModels);
 
         req.getRequestDispatcher(
                 "/WEB-INF/views/pecuarista.jsp"
@@ -65,10 +68,10 @@ public class PecuaristaServlet extends HttpServlet {
 
         String acao = req.getParameter("acao");
 
-        //Exclusão
+        // Exclusão
         if ("excluir".equals(acao)) {
             try {
-                int id = Integer.parseInt(req.getParameter("id"));
+                int id = parseInt(req.getParameter("id"), 0);
                 dao.excluir(id);
             } catch (Exception e) {
                 System.out.println("Erro ao excluir pecuarista: " + e.getMessage());
@@ -78,63 +81,47 @@ public class PecuaristaServlet extends HttpServlet {
             return;
         }
 
-        //Atualização
+        // Atualização
         if ("atualizar".equals(acao)) {
-            int id = Integer.parseInt(req.getParameter("id"));
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
 
-            String cpf = req.getParameter("cpf");
-            String assinatura = req.getParameter("assinatura");
-            String dataNascimentoTexto = req.getParameter("dataNascimento");
+                String cpf = obterParametro(req, "cpf");
+                String assinatura = obterParametro(req, "assinatura");
+                LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
+                String nome = obterParametro(req, "nome");
+                String senha = obterParametro(req, "senha");
+                String email = obterParametro(req, "email");
+                String telefone = obterParametro(req, "telefone");
 
-            LocalDate dataNascimento = null;
-            if (dataNascimentoTexto != null && !dataNascimentoTexto.isBlank()) {
-                try {
-                    dataNascimento = LocalDate.parse(dataNascimentoTexto);
-                } catch (Exception e) {
-                    System.out.println("Erro ao converter data de nascimento: " + e.getMessage());
-                }
+                PecuaristaModel pecuaristaModel = new PecuaristaModel(
+                        id,
+                        cpf,
+                        assinatura,
+                        dataNascimento,
+                        nome,
+                        senha,
+                        email,
+                        telefone
+                );
+
+                dao.atualizar(pecuaristaModel, id);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
             }
-
-            String nome = req.getParameter("nome");
-            String senha = req.getParameter("senha");
-            String email = req.getParameter("email");
-            String telefone = req.getParameter("telefone");
-
-            PecuaristaModel pecuaristaModel = new PecuaristaModel(
-                    id,
-                    cpf,
-                    assinatura,
-                    dataNascimento,
-                    nome,
-                    senha,
-                    email,
-                    telefone
-            );
-
-            dao.atualizar(pecuaristaModel, id);
 
             resp.sendRedirect(req.getContextPath() + "/pecuarista");
             return;
         }
 
-        //Cadastro
-        String cpf = req.getParameter("cpf");
-        String assinatura = req.getParameter("assinatura");
-        String dataNascimentoTexto = req.getParameter("dataNascimento");
-
-        LocalDate dataNascimento = null;
-        if (dataNascimentoTexto != null && !dataNascimentoTexto.isBlank()) {
-            try {
-                dataNascimento = LocalDate.parse(dataNascimentoTexto);
-            } catch (Exception e) {
-                System.out.println("Erro ao converter data de nascimento: " + e.getMessage());
-            }
-        }
-
-        String nome = req.getParameter("nome");
-        String senha = req.getParameter("senha");
-        String email = req.getParameter("email");
-        String telefone = req.getParameter("telefone");
+        // Cadastro
+        String cpf = obterParametro(req, "cpf");
+        String assinatura = obterParametro(req, "assinatura");
+        LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
+        String nome = obterParametro(req, "nome");
+        String senha = obterParametro(req, "senha");
+        String email = obterParametro(req, "email");
+        String telefone = obterParametro(req, "telefone");
 
         PecuaristaModel novoPecuarista = new PecuaristaModel(
                 cpf,
@@ -149,5 +136,41 @@ public class PecuaristaServlet extends HttpServlet {
         dao.inserir(novoPecuarista);
 
         resp.sendRedirect(req.getContextPath() + "/pecuarista");
+    }
+
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    private String obterParametro(HttpServletRequest req, String... nomes) {
+        for (String nome : nomes) {
+            String valor = req.getParameter(nome);
+            if (valor != null && !valor.isBlank()) {
+                return valor;
+            }
+        }
+        return null;
+    }
+
+    private LocalDate parseLocalDate(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(texto.trim());
+        } catch (Exception e) {
+            System.out.println("Erro ao converter data (" + texto + "): " + e.getMessage());
+            return null;
+        }
+    }
+
+    private int parseInt(String texto, int padrao) {
+        if (texto == null || texto.isBlank()) {
+            return padrao;
+        }
+        try {
+            return Integer.parseInt(texto.trim());
+        } catch (Exception e) {
+            System.out.println("Erro ao converter número (" + texto + "): " + e.getMessage());
+            return padrao;
+        }
     }
 }
