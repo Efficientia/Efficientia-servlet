@@ -1,222 +1,599 @@
 ================================================================================
            GUIA PASSO A PASSO: COMO CRIAR CLASSES DAO (DATA ACCESS OBJECT)
-                          JAVA + JDBC + POSTGRESQL (MVC)
+             JAVA 17+ + JDBC + POSTGRESQL (PADRÃO BASEADO EM TrajetoDAO)
 ================================================================================
 
-1. O QUE E UM DAO?
+1. O QUE É UM DAO?
 --------------------------------------------------------------------------------
-DAO (Data Access Object) e um padrao de projeto que concentra todos os comandos
-SQL de uma determinada entidade/tabela. 
+DAO (Data Access Object) é o padrão de projeto arquitetural que centraliza e
+encapsula todas as operações de persistência e comandos SQL de uma entidade:
 
-- O MODEL (ex: PropriedadeModel, PecuaristaModel): apenas guarda dados e regras.
-- O DAO (ex: PropriedadeDAO, PecuaristaDAO): conversa diretamente com o banco de 
-  dados atraves de JDBC (INSERT, SELECT, UPDATE, DELETE).
-- A Conexao (ex: ConnectionFactory): entrega a conexao ativa para o DAO.
+- MODEL (ex: TrajetoModel, ParadaImprevistaModel):
+  Representa as entidades de negócio em POO (atributos, construtores, getters/setters).
+- DAO (ex: TrajetoDAO, ParadaImprevistaDAO):
+  Executa diretamente as operações no banco de dados via JDBC (INSERT, SELECT, UPDATE, DELETE).
+- Conexão (ConnectionFactory):
+  Fornece a conexão ativa com o banco PostgreSQL.
 
 
-2. ESTRUTURA BASICA DE UMA CLASSE DAO
+2. ESTRUTURA GERAL E BOAS PRÁTICAS (PADRÃO TrajetoDAO)
 --------------------------------------------------------------------------------
-Pacote padrao no projeto:
-package com.efficientia.efficientia.DAO.impl;
+No padrão estabelecido em TrajetoDAO, a classe segue as seguintes regras de ouro:
 
-Imports essenciais necessarios:
-- java.sql.Connection;
-- java.sql.PreparedStatement;
-- java.sql.ResultSet;
-- java.sql.SQLException;
-- java.sql.Date;              (para conversao de datas com JDBC)
-- java.util.List;
-- java.util.ArrayList;
-- com.efficientia.efficientia.factory.ConnectionFactory;
-- Models necessarios da entidade e de suas relacoes.
+1. Pacote padrão:
+   package com.efficientia.efficientia.DAO.impl;
+
+2. Imports essenciais:
+   import com.efficientia.efficientia.factory.ConnectionFactory;
+   import com.efficientia.efficientia.model.*;
+   import java.sql.*;
+   import java.time.LocalDate;
+   import java.time.LocalDateTime;
+   import java.util.ArrayList;
+   import java.util.List;
+
+3. Tratamento de Exceções:
+   - Os métodos NÃO propagam 'throws SQLException'.
+   - Usam 'try-with-resources' para garantir o fechamento seguro de Connection,
+     PreparedStatement e ResultSet.
+   - Em caso de falha, capturam SQLException, imprimem o erro no console de forma clara
+     e retornam valores seguros (false para boolean, null para objetos, lista vazia para listas).
+
+4. Consultas SQL legíveis com Text Blocks ("""):
+   - Todas as queries SQL são declaradas com blocos de texto multilinha ("""),
+     mantendo indentação organizada e comentários descritivos por bloco.
+
+5. Método auxiliar 'preencherStatement':
+   - Centraliza o preenchimento de parâmetros para evitar código duplicado
+     entre os métodos 'inserir' e 'atualizar'.
 
 
-3. OS 5 METODOS FUNDAMENTAIS DO CRUD
+================================================================================
+3. GESTÃO E FECHAMENTO DE CONEXÕES: POR QUE E COMO FECHAR?
+================================================================================
+
+[A] PRECISA FECHAR A CONEXÃO COM O BANCO DE DADOS?
 --------------------------------------------------------------------------------
+SIM! É OBRIGATÓRIO fechar conexões, statements e result sets em JDBC.
 
+Por que é indispensável:
+1. Esgotamento do Pool (Connection Leak):
+   Cada chamada a ConnectionFactory.getConnection() abre um socket de rede TCP
+   com o PostgreSQL. Servidores (como o PostgreSQL na nuvem e o PgBouncer) têm um
+   limite estrito de conexões simultâneas (geralmente entre 10 e 100 conexões).
+   Se você não fechar a conexão, ela continuará aberta até o timeout do servidor.
+   Poucas requisições já serão suficientes para travar o sistema com o erro:
+   "FATAL: remaining connection slots are reserved for non-replication superuser connections".
+
+2. Liberação de Recursos no Servidor e na JVM:
+   Conexões abertas prendem memória RAM, threads no PostgreSQL, transações ativas e
+   travas (locks) de tabelas. Statements e ResultSets abertos também retêm cursores
+   no banco de dados.
+
+
+[B] COMO FECHAR DE FORMA MODERNA E SEGURA: TRY-WITH-RESOURCES
 --------------------------------------------------------------------------------
-METODO 1: INSERIR (CREATE)
-Assinatura: public boolean inserir(EntidadeModel model) throws SQLException
---------------------------------------------------------------------------------
-Objetivo: Gravar um novo registro no banco de dados.
+No Java 7+, NUNCA precisamos chamar connection.close() manualmente em blocos 'finally'.
+Em vez disso, utilizamos o 'try-with-resources':
 
-Passo a Passo:
-1. Escreva o SQL com as colunas explicitas (NUNCA omita os nomes das colunas,
-   pois o banco pode ter ordenacao diferente ou ID auto-incremento):
-   String sql = """
-       INSERT INTO nome_tabela (coluna1, coluna2, id_fk)
-       VALUES (?, ?, ?);
-   """;
+Qualquer classe que implemente 'java.lang.AutoCloseable' (como Connection,
+PreparedStatement e ResultSet) declarada dentro dos parênteses do try(...) será
+FECHADA AUTOMATICAMENTE pela JVM assim que a execução sair do bloco try, mesmo que:
+- Ocorra uma exceção (SQLException).
+- O método retorne antes (return true / return false).
+- A ordem de fechamento é garantida e reversa à abertura (ResultSet -> PreparedStatement -> Connection).
 
-2. Abra os recursos dentro do 'try-with-resources' para fechamento automatico:
+Exemplos práticos de uso correto:
+
+1. Para comandos INSERT, UPDATE e DELETE:
    try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-3. Preencha cada parametro ('?'):
-   - String: stmt.setString(indice, model.getNome());
-   - Inteiro primitivo: stmt.setInt(indice, model.getNumero());
-   - Data (LocalDate): stmt.setDate(indice, Date.valueOf(model.getData()));
-   - Objeto associado (FK): stmt.setInt(indice, model.getObjetoRelacionado().getId());
+       preencherStatement(stmt, model);
+       return stmt.executeUpdate() > 0;
+   } // <-- Aqui 'stmt' e 'connection' são fechados automaticamente pela JVM!
 
-4. Execute com executeUpdate() e valide se afetou mais de 0 linhas:
-   int linhasAfetadas = stmt.executeUpdate();
-   return linhasAfetadas > 0;
+2. Para comando SELECT com iteração (listar):
+   try (Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery()) {
 
-5. Trate a SQLException imprimindo log claro e retornando false em caso de falha.
+       while (rs.next()) {
+           // mapeia os objetos...
+       }
+   } // <-- Aqui 'rs', 'stmt' e 'connection' são fechados automaticamente!
 
+3. Para comando SELECT com parâmetros (buscar por ID):
+   try (Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+       stmt.setInt(1, id);
+
+       try (ResultSet rs = stmt.executeQuery()) {
+           if (rs.next()) {
+               return model;
+           }
+       } // <-- 'rs' fechado automaticamente aqui
+   } // <-- 'stmt' e 'connection' fechados automaticamente aqui
+
+
+4. O MÉTODO AUXILIAR: preencherStatement
+--------------------------------------------------------------------------------
+Objetivo: Mapear os atributos do Model para os parâmetros '?' do PreparedStatement.
+É compartilhado por inserir() e atualizar().
+
+Exemplo (baseado em TrajetoDAO):
+--------------------------------------------------------------------------------
+private void preencherStatement(PreparedStatement stmt, TrajetoModel trajeto) throws SQLException {
+    // 1. Chaves Estrangeiras (FKs): Tratar se o objeto associado pode ser nulo
+    if (trajeto.getMotoristaModel() != null) {
+        stmt.setInt(1, trajeto.getMotoristaModel().getId());
+    } else {
+        stmt.setNull(1, Types.INTEGER);
+    }
+
+    if (trajeto.getCaminhaoModel() != null) {
+        stmt.setInt(2, trajeto.getCaminhaoModel().getId());
+    } else {
+        stmt.setNull(2, Types.INTEGER);
+    }
+
+    if (trajeto.getPecuarista() != null) {
+        stmt.setInt(3, trajeto.getPecuarista().getId());
+    } else {
+        stmt.setNull(3, Types.INTEGER);
+    }
+
+    // 2. ENUMs do PostgreSQL: Passar o name() da constante (com cast no SQL)
+    stmt.setString(4, trajeto.getStatus() != null ? trajeto.getStatus().name() : null);
+
+    // 3. Datas e Horários (LocalDateTime / LocalDate): usar setObject()
+    stmt.setObject(5, trajeto.getDataHoraInicio());
+    stmt.setObject(6, trajeto.getDataHoraFim());
+
+    // 4. Tipos primitivos e Strings
+    stmt.setInt(7, trajeto.getKmSaida());
+    stmt.setInt(8, trajeto.getKmChegada());
+    stmt.setString(9, trajeto.getNumeroGTA());
+    stmt.setString(10, trajeto.getNumeroNotaFiscal());
+    stmt.setObject(11, trajeto.getHorarioEmbarque());
+    stmt.setInt(12, trajeto.getQtdMacho());
+    stmt.setInt(13, trajeto.getQtdFemea());
+    stmt.setInt(14, trajeto.getQtdMarruco());
+    stmt.setObject(15, trajeto.getHorarioDesembarque());
+    stmt.setString(16, trajeto.getNumeroCurral());
+    stmt.setString(17, trajeto.getNomeCurraleiro());
+    stmt.setString(18, trajeto.getNomeManobrista());
+    stmt.setString(19, trajeto.getAssinaturaCurraleiro());
+    stmt.setString(20, trajeto.getAssinaturaManobrista());
+    stmt.setString(21, trajeto.getAssinaturaMotorista());
+}
+
+
+5. OS 5 MÉTODOS DO CRUD PASSO A PASSO
+--------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
-METODO 2: BUSCAR POR ID (READ ESPECIFICO)
-Assinatura: public EntidadeModel buscar(int id) throws SQLException
+MÉTODO 1: INSERIR (CREATE)
+Assinatura: public boolean inserir(EntidadeModel model)
 --------------------------------------------------------------------------------
-Objetivo: Retornar uma unica instancia correspondente a chave primaria.
-*Importante: este metodo e fundamental para resolver as chaves estrangeiras (FKs)
- em outros DAOs!
-
 Passo a Passo:
-1. Escreva o SQL filtrando pelo ID:
-   String sql = "SELECT * FROM nome_tabela WHERE id = ?;";
+1. Defina o comando INSERT com os nomes explícitos de todas as colunas.
+   Para colunas com tipo customizado do Postgres (ENUM), use casting (?::nome_enum).
+2. Abra Connection e PreparedStatement com try-with-resources.
+3. Chame preencherStatement(stmt, model).
+4. Execute stmt.executeUpdate() e retorne linhasAfetadas > 0.
+5. Capture SQLException imprimindo log de erro e retorne false.
 
-2. Prepare o comando e configure o ID:
-   stmt.setInt(1, id);
+Código de referência:
+public boolean inserir(TrajetoModel trajeto) {
+    String sql = """
+            INSERT INTO trajeto (
+                id_motorista,
+                id_caminhao,
+                id_pecuarista,
+                status,
+                data_hora_inicio,
+                data_hora_fim,
+                km_saida,
+                km_chegada,
+                numero_gta,
+                numero_nota_fiscal,
+                horario_embarque,
+                qtd_macho,
+                qtd_femea,
+                qtd_marruco,
+                horario_desembarque,
+                numero_curral,
+                nome_curraleiro,
+                nome_manobrista,
+                assinatura_curraleiro,
+                assinatura_manobrista,
+                assinatura_motorista
+            ) VALUES (
+                ?, ?, ?, ?::status_trajeto, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            );
+            """;
 
-3. Execute a consulta recebendo um ResultSet:
-   ResultSet rs = stmt.executeQuery();
+    try (Connection connection = ConnectionFactory.getConnection();
+         PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-4. Use 'if (rs.next())' para verificar se o registro existe:
-   - Recupere as colunas primitivas com rs.getInt("coluna"), rs.getString("coluna"), etc.
-   - Para FKs: se esta tabela tem FK de outra entidade, chame o DAO da outra entidade:
-     OutroDAO outroDAO = new OutroDAO();
-     OutroModel outro = outroDAO.buscar(rs.getInt("id_outro"));
-   - Instancie o Model com seu construtor completo e retorne-o.
+        preencherStatement(stmt, trajeto);
 
-5. Se nao encontrar (else), retorne null.
+        int linhasAfetadas = stmt.executeUpdate();
+        return linhasAfetadas > 0;
+    } catch (SQLException e) {
+        System.out.println("Erro ao inserir trajeto: " + e.getMessage());
+        return false;
+    }
+}
 
 
 --------------------------------------------------------------------------------
-METODO 3: LISTAR (READ GERAL)
-Assinatura: public List<EntidadeModel> listar() throws SQLException
+MÉTODO 2: LISTAR (READ GERAL COM JOINS)
+Assinatura: public List<EntidadeModel> listar()
 --------------------------------------------------------------------------------
-Objetivo: Retornar todos os registros da tabela em uma lista.
-
 Passo a Passo:
-1. Escreva o SQL com ordenacao:
-   String sql = "SELECT * FROM nome_tabela ORDER BY id;";
+1. Escreva a query SELECT trazendo os dados da tabela principal e de TODAS as tabelas
+   relacionadas utilizando JOINs.
+2. IMPORTANTE: Use aliases (AS) para diferenciar colunas com mesmo nome entre as tabelas
+   (ex: t.id AS trajeto_id, m.id AS motorista_id, m.nome AS motorista_nome, etc.).
+3. Declare Connection, PreparedStatement e ResultSet todos dentro do try-with-resources.
+4. Itere com while (rs.next()).
+5. Extraia os dados de cada entidade relacionada e instancie seus Models:
+   - Date para LocalDate: rs.getDate("...") != null ? rs.getDate("...").toLocalDate() : null
+   - Timestamp para LocalDateTime: rs.getTimestamp("...") != null ? rs.getTimestamp("...").toLocalDateTime() : null
+   - ENUM: rs.getString("status") != null ? StatusTrajeto.valueOf(rs.getString("status")) : null
+6. Instancie o Model principal passando os objetos aninhados e adicione à lista.
+7. Retorne a lista preenchida.
 
-2. Crie a lista vazia:
-   List<EntidadeModel> lista = new ArrayList<>();
+Código de referência:
+public List<TrajetoModel> listar() {
+    String sql = """
+            SELECT
+                -- Trajeto
+                t.id AS trajeto_id,
+                t.status,
+                t.data_hora_inicio,
+                t.data_hora_fim,
+                t.km_saida,
+                t.km_chegada,
+                t.numero_gta,
+                t.numero_nota_fiscal,
+                t.horario_embarque,
+                t.qtd_macho,
+                t.qtd_femea,
+                t.qtd_marruco,
+                t.horario_desembarque,
+                t.numero_curral,
+                t.nome_curraleiro,
+                t.nome_manobrista,
+                t.assinatura_curraleiro,
+                t.assinatura_manobrista,
+                t.assinatura_motorista,
 
-3. Instancie DAOs auxiliares FORA do laco de repeticao:
-   // Se precisar buscar donos ou enderecos, instancie antes do while:
-   OutroDAO outroDAO = new OutroDAO();
+                -- Motorista
+                m.id AS motorista_id,
+                m.id_empresa,
+                m.assinatura AS motorista_assinatura,
+                m.nome AS motorista_nome,
+                m.data_nascimento AS motorista_data_nascimento,
+                m.senha AS motorista_senha,
+                m.email AS motorista_email,
+                m.telefone AS motorista_telefone,
 
-4. Execute o executeQuery() e itere com 'while (rs.next())':
-   - A cada linha, monte os objetos dependentes chamando outroDAO.buscar(rs.getInt("id_outro")).
-   - Instancie o Model principal passando os objetos dependentes.
-   - Adicione o Model na lista: lista.add(model);
+                -- Caminhão
+                c.id AS caminhao_id,
+                c.capacidade_maxima,
+                c.placa_carreta,
+                c.placa_cavalo,
 
-5. Retorne a lista preenchida.
+                -- Empresa
+                e.id AS empresa_id,
+                e.nome AS empresa_nome,
+                e.cnpj AS empresa_cnpj,
+
+                -- Pecuarista
+                p.id AS pecuarista_id,
+                p.cpf AS pecuarista_cpf,
+                p.assinatura AS pecuarista_assinatura,
+                p.data_nascimento AS pecuarista_data_nascimento,
+                p.nome AS pecuarista_nome,
+                p.senha AS pecuarista_senha,
+                p.email AS pecuarista_email,
+                p.telefone AS pecuarista_telefone
+
+            FROM trajeto t
+            JOIN motorista m ON m.id = t.id_motorista
+            JOIN caminhao c ON c.id = t.id_caminhao
+            JOIN empresa e ON e.id = m.id_empresa
+            JOIN pecuarista p ON p.id = t.id_pecuarista
+            ORDER BY t.id;
+            """;
+
+    List<TrajetoModel> trajetos = new ArrayList<>();
+
+    try (Connection connection = ConnectionFactory.getConnection();
+         PreparedStatement stmt = connection.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Date dataNascMotorista = rs.getDate("motorista_data_nascimento");
+            LocalDate nascimentoMotorista = dataNascMotorista != null ? dataNascMotorista.toLocalDate() : null;
+
+            MotoristaModel motorista = new MotoristaModel(
+                    rs.getInt("motorista_id"),
+                    new EmpresaModel(
+                            rs.getInt("empresa_id"),
+                            rs.getString("empresa_nome"),
+                            rs.getString("empresa_cnpj")
+                    ),
+                    rs.getString("motorista_nome"),
+                    rs.getString("motorista_assinatura"),
+                    nascimentoMotorista,
+                    rs.getString("motorista_senha"),
+                    rs.getString("motorista_email"),
+                    rs.getString("motorista_telefone")
+            );
+
+            CaminhaoModel caminhao = new CaminhaoModel(
+                    rs.getInt("caminhao_id"),
+                    rs.getString("placa_cavalo"),
+                    rs.getString("placa_carreta"),
+                    rs.getInt("capacidade_maxima")
+            );
+
+            Date dataNascPecuarista = rs.getDate("pecuarista_data_nascimento");
+            LocalDate nascimentoPecuarista = dataNascPecuarista != null ? dataNascPecuarista.toLocalDate() : null;
+
+            PecuaristaModel pecuarista = new PecuaristaModel(
+                    rs.getInt("pecuarista_id"),
+                    rs.getString("pecuarista_cpf"),
+                    rs.getString("pecuarista_assinatura"),
+                    nascimentoPecuarista,
+                    rs.getString("pecuarista_nome"),
+                    rs.getString("pecuarista_senha"),
+                    rs.getString("pecuarista_email"),
+                    rs.getString("pecuarista_telefone")
+            );
+
+            String statusStr = rs.getString("status");
+            StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+
+            Timestamp tsInicio = rs.getTimestamp("data_hora_inicio");
+            LocalDateTime dataHoraInicio = tsInicio != null ? tsInicio.toLocalDateTime() : null;
+
+            Timestamp tsFim = rs.getTimestamp("data_hora_fim");
+            LocalDateTime dataHoraFim = tsFim != null ? tsFim.toLocalDateTime() : null;
+
+            Timestamp tsEmbarque = rs.getTimestamp("horario_embarque");
+            LocalDateTime horarioEmbarque = tsEmbarque != null ? tsEmbarque.toLocalDateTime() : null;
+
+            Timestamp tsDesembarque = rs.getTimestamp("horario_desembarque");
+            LocalDateTime horarioDesembarque = tsDesembarque != null ? tsDesembarque.toLocalDateTime() : null;
+
+            TrajetoModel trajeto = new TrajetoModel(
+                    rs.getInt("trajeto_id"),
+                    motorista,
+                    caminhao,
+                    status,
+                    dataHoraInicio,
+                    dataHoraFim,
+                    rs.getInt("km_saida"),
+                    rs.getInt("km_chegada"),
+                    pecuarista,
+                    rs.getString("numero_gta"),
+                    rs.getString("numero_nota_fiscal"),
+                    horarioEmbarque,
+                    rs.getInt("qtd_macho"),
+                    rs.getInt("qtd_femea"),
+                    rs.getInt("qtd_marruco"),
+                    horarioDesembarque,
+                    rs.getString("numero_curral"),
+                    rs.getString("nome_curraleiro"),
+                    rs.getString("nome_manobrista")
+            );
+
+            trajeto.setAssinaturaCurraleiro(rs.getString("assinatura_curraleiro"));
+            trajeto.setAssinaturaManobrista(rs.getString("assinatura_manobrista"));
+            trajeto.setAssinaturaMotorista(rs.getString("assinatura_motorista"));
+
+            trajetos.add(trajeto);
+        }
+    } catch (SQLException e) {
+        System.out.println("Erro ao listar trajeto: " + e.getMessage());
+    }
+
+    return trajetos;
+}
 
 
 --------------------------------------------------------------------------------
-METODO 4: ATUALIZAR (UPDATE)
-Assinatura: public boolean atualizar(EntidadeModel model, int id) throws SQLException
+MÉTODO 3: BUSCAR POR ID (READ ESPECÍFICO)
+Assinatura: public EntidadeModel buscar(int id)
 --------------------------------------------------------------------------------
-Objetivo: Alterar dados de um registro existente.
-
 Passo a Passo:
-1. Escreva o SQL garantindo a clausula WHERE id = ?:
-   String sql = """
-       UPDATE nome_tabela
-       SET coluna1 = ?,
-           coluna2 = ?,
-           id_fk = ?
-       WHERE id = ?;
-   """;
-   (ATENCAO: Sem o WHERE id = ?, todas as linhas do banco seriam modificadas!)
+1. Utilize a mesma estrutura com JOINs do listar(), adicionando WHERE t.id = ?.
+2. Defina o ID no PreparedStatement: stmt.setInt(1, id);
+3. Abra ResultSet no try-with-resources interno:
+   try (ResultSet rs = stmt.executeQuery()) {
+       if (rs.next()) {
+           // Mapeia e retorna o Model
+       }
+   }
+4. Se não encontrar o registro, retorne null.
+5. Capture SQLException e retorne null.
 
-2. Preencha todos os campos do SET.
-3. No ultimo ponto de interrogacao, passe o 'id' do registro no WHERE:
-   stmt.setInt(ultimoIndice, id);
+Código de referência:
+public TrajetoModel buscar(int id) {
+    String sql = """
+            SELECT
+                -- (mesmas colunas e aliases do listar)
+                ...
+            FROM trajeto t
+            JOIN motorista m ON m.id = t.id_motorista
+            JOIN caminhao c ON c.id = t.id_caminhao
+            JOIN empresa e ON e.id = m.id_empresa
+            JOIN pecuarista p ON p.id = t.id_pecuarista
+            WHERE t.id = ?;
+            """;
 
-4. Execute 'stmt.executeUpdate() > 0' e retorne o resultado.
+    try (Connection connection = ConnectionFactory.getConnection();
+         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+        stmt.setInt(1, id);
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                // Monta o objeto completo e retorna
+                return trajeto;
+            }
+        }
+    } catch (SQLException e) {
+        System.out.println("Erro ao buscar trajeto: " + e.getMessage());
+    }
+
+    return null;
+}
 
 
 --------------------------------------------------------------------------------
-METODO 5: EXCLUIR (DELETE)
-Assinatura: public boolean excluir(int id) throws SQLException
+MÉTODO 4: ATUALIZAR (UPDATE)
+Assinatura: public boolean atualizar(EntidadeModel model, int id)
 --------------------------------------------------------------------------------
-Objetivo: Remover um registro especifico.
-
 Passo a Passo:
-1. Escreva o SQL:
-   String sql = "DELETE FROM nome_tabela WHERE id = ?;";
+1. Monte o SQL UPDATE especificando as colunas no SET e filtrando por WHERE id = ?.
+2. Use preencherStatement(stmt, model) para preencher as colunas do SET.
+3. Defina o parâmetro do WHERE id no índice final com stmt.setInt(ultimoIndice, id).
+4. Execute stmt.executeUpdate() e retorne linhasAfetadas > 0.
+5. Capture SQLException e retorne false.
 
-2. Preencha o id:
-   stmt.setInt(1, id);
+Código de referência:
+public boolean atualizar(TrajetoModel trajeto, int id) {
+    String sql = """
+            UPDATE trajeto
+            SET id_motorista = ?,
+                id_caminhao = ?,
+                id_pecuarista = ?,
+                status = ?::status_trajeto,
+                data_hora_inicio = ?,
+                data_hora_fim = ?,
+                km_saida = ?,
+                km_chegada = ?,
+                numero_gta = ?,
+                numero_nota_fiscal = ?,
+                horario_embarque = ?,
+                qtd_macho = ?,
+                qtd_femea = ?,
+                qtd_marruco = ?,
+                horario_desembarque = ?,
+                numero_curral = ?,
+                nome_curraleiro = ?,
+                nome_manobrista = ?,
+                assinatura_curraleiro = ?,
+                assinatura_manobrista = ?,
+                assinatura_motorista = ?
+            WHERE id = ?;
+            """;
 
-3. Execute:
-   return stmt.executeUpdate() > 0;
+    try (Connection connection = ConnectionFactory.getConnection();
+         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+        preencherStatement(stmt, trajeto);
+        stmt.setInt(22, id); // Índice correspondente ao WHERE id = ?
+
+        int linhasAfetadas = stmt.executeUpdate();
+        return linhasAfetadas > 0;
+    } catch (SQLException e) {
+        System.out.println("Erro ao atualizar trajeto: " + e.getMessage());
+        return false;
+    }
+}
+
+
+--------------------------------------------------------------------------------
+MÉTODO 5: EXCLUIR (DELETE)
+Assinatura: public boolean excluir(int id)
+--------------------------------------------------------------------------------
+Passo a Passo:
+1. Monte o SQL DELETE FROM nome_tabela WHERE id = ?;
+2. Configure o parâmetro com stmt.setInt(1, id).
+3. Execute stmt.executeUpdate() e retorne linhasAfetadas > 0.
+4. Capture SQLException e retorne false.
+
+Código de referência:
+public boolean excluir(int id) {
+    String sql = """
+            DELETE
+            FROM trajeto
+            WHERE id = ?;
+            """;
+
+    try (Connection connection = ConnectionFactory.getConnection();
+         PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+        stmt.setInt(1, id);
+        int linhasAfetadas = stmt.executeUpdate();
+        return linhasAfetadas > 0;
+    } catch (SQLException e) {
+        System.out.println("Erro ao excluir trajeto: " + e.getMessage());
+        return false;
+    }
+}
 
 
 ================================================================================
-4. COMO RESOLVER CHAVES ESTRANGEIRAS (FKS) NO PADRAO POO
+6. RESOLUÇÃO DE CHAVES ESTRANGEIRAS (FKS): SQL JOINS VS N+1 QUERIES
 ================================================================================
-Problema:
-No banco relacional temos:
-  Tabela 'propriedade': id (int), id_pecuarista (int), id_endereco (int), nome (varchar)
+No padrão moderno de TrajetoDAO, NÃO chamamos outros DAOs dentro do loop (o que
+causaria dezenas de conexões e consultas desnecessárias no padrão N+1).
 
-No modelo POO temos:
-  class PropriedadeModel {
-      private int id;
-      private PecuaristaModel pecuaristaModel;  // Objeto!
-      private EnderecoModel enderecoModel;      // Objeto!
-      private String nome;
-  }
-
-Como resolver no DAO:
-1. No metodo INSERIR:
-   O objeto PropriedadeModel possui os objetos PecuaristaModel e EnderecoModel.
-   Para salvar no banco, pegamos o ID de cada objeto:
-   stmt.setInt(1, propriedadeModel.getPecuaristaModel().getId());
-   stmt.setInt(2, propriedadeModel.getEnderecoModel().getId());
-
-2. No metodo LISTAR / BUSCAR:
-   O ResultSet do banco devolve inteiros: rs.getInt("id_pecuarista").
-   Usamos o DAO correspondente para recuperar o objeto antes de montar a Propriedade:
-   PecuaristaModel pecuarista = pecuaristaDAO.buscar(rs.getInt("id_pecuarista"));
-   EnderecoModel endereco = enderecoDAO.buscar(rs.getInt("id_endereco"));
-
-   PropriedadeModel propriedade = new PropriedadeModel(
-       rs.getInt("id"),
-       pecuarista,
-       endereco,
-       rs.getString("nome")
-   );
+Em vez disso:
+1. Realizamos SQL JOINs entre as tabelas diretamente na query do listar/buscar.
+2. Usamos ALIASES explícitos em cada coluna para não haver sobreposição de nomes
+   (ex: m.nome AS motorista_nome, e.nome AS empresa_nome, etc.).
+3. No while (rs.next()), instanciamos os objetos dependentes a partir das colunas
+   apelidadas do ResultSet e compomos o objeto principal.
+4. Benefícios:
+   - Desempenho muito superior (uma única viagem de ida e volta ao banco).
+   - Não sobrecarrega o pool de conexões com conexões aninhadas.
+   - Dados consistentes no mesmo snapshot da transação.
+   - Código desacoplado de instâncias externas de outros DAOs.
 
 
 ================================================================================
-5. CUIDADOS CRITICOS E PEGADINHAS COMUNS
+7. CONVERSÕES ESSENCIAIS: DATAS, TIMESTAMPS E ENUMS
 ================================================================================
-[1] Cuidado com conversao de Datas:
-    - java.sql.Date NAO SUPORTA '.toInstant()'. Se chamar, lanca UnsupportedOperationException!
-    - Para converter de banco para Java (LocalDate):
-      Date dataBanco = rs.getDate("campo_data");
-      LocalDate data = dataBanco != null ? dataBanco.toLocalDate() : null;
-    - Para gravar de Java (LocalDate) para banco:
-      stmt.setDate(posicao, Date.valueOf(model.getData()));
+[1] Datas (LocalDate <-> java.sql.Date):
+    - Banco -> Java (SELECT):
+      Date dataSql = rs.getDate("campo_data");
+      LocalDate data = dataSql != null ? dataSql.toLocalDate() : null;
 
-[2] Sempre declare as colunas no INSERT:
-    - ERRADO: INSERT INTO propriedade VALUES (?, ?, ?);
-      (pode misturar colunas ou falhar por causa da coluna ID identity/serial)
-    - CERTO:  INSERT INTO propriedade (id_pecuarista, id_endereco, nome) VALUES (?, ?, ?);
+    - Java -> Banco (PreparedStatement):
+      stmt.setDate(indice, model.getData() != null ? Date.valueOf(model.getData()) : null);
 
-[3] Use try-with-resources:
-    - Garante que a Conexao e o PreparedStatement serao fechados mesmo se ocorrer erro,
-      evitando esgotar o pool de conexoes do PostgreSQL.
+[2] Data/Hora (LocalDateTime <-> java.sql.Timestamp):
+    - Banco -> Java (SELECT):
+      Timestamp ts = rs.getTimestamp("campo_timestamp");
+      LocalDateTime dataHora = ts != null ? ts.toLocalDateTime() : null;
 
-[4] Nao instancie DAOs dentro de loops:
-    - Coloque 'PecuaristaDAO pecuaristaDAO = new PecuaristaDAO();' fora do 'while(rs.next())'.
-      Assim voce evita criar centenas de objetos desnecessarios na memoria.
+    - Java -> Banco (PreparedStatement):
+      stmt.setObject(indice, model.getDataHora()); // Suportado nativamente pelo JDBC 4.2+
+
+[3] Enums do PostgreSQL:
+    - No SQL de INSERT/UPDATE, use casting explícito para o ENUM do PostgreSQL:
+      VALUES (?, ?::status_trajeto, ...)
+    - No PreparedStatement:
+      stmt.setString(indice, model.getStatus() != null ? model.getStatus().name() : null);
+    - No ResultSet:
+      String statusStr = rs.getString("status");
+      StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+
+[4] Null Safety em Chaves Estrangeiras:
+    - Sempre verifique se o objeto associado não é nulo antes de chamar .getId():
+      if (model.getObjetoRelacionado() != null) {
+          stmt.setInt(indice, model.getObjetoRelacionado().getId());
+      } else {
+          stmt.setNull(indice, Types.INTEGER);
+      }
 ================================================================================
-

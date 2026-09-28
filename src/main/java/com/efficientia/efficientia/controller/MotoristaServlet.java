@@ -1,7 +1,9 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.PecuaristaDAO;
-import com.efficientia.efficientia.model.PecuaristaModel;
+import com.efficientia.efficientia.DAO.impl.EmpresaDAO;
+import com.efficientia.efficientia.DAO.impl.MotoristaDAO;
+import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.model.MotoristaModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,14 +14,16 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-@WebServlet(name = "PecuaristaServlet", value = "/pecuarista")
-public class PecuaristaServlet extends HttpServlet {
+@WebServlet(name = "MotoristaServlet", value = "/motorista")
+public class MotoristaServlet extends HttpServlet {
 
-    private PecuaristaDAO dao = new PecuaristaDAO();
+    private MotoristaDAO dao = new MotoristaDAO();
+    private EmpresaDAO empresaDAO = new EmpresaDAO();
 
     @Override
     public void init() {
-        dao = new PecuaristaDAO();
+        dao = new MotoristaDAO();
+        empresaDAO = new EmpresaDAO();
     }
 
     @Override
@@ -33,28 +37,30 @@ public class PecuaristaServlet extends HttpServlet {
         if ("editar".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-                PecuaristaModel pecuaristaModel = dao.buscar(id);
+                MotoristaModel motoristaModel = dao.buscar(id);
 
-                if (pecuaristaModel != null) {
-                    req.setAttribute("pecuaristaModel", pecuaristaModel);
-                    req.setAttribute("pecuarista", pecuaristaModel);
+                if (motoristaModel != null) {
+                    req.setAttribute("motoristaModel", motoristaModel);
+                    req.setAttribute("motorista", motoristaModel);
+                    req.setAttribute("empresaModels", empresaDAO.listar());
                     req.getRequestDispatcher(
-                            "/WEB-INF/views/editar.jsp"
+                            "/WEB-INF/views/editar-motorista.jsp"
                     ).forward(req, resp);
                     return;
                 }
             } catch (Exception e) {
-                System.out.println("Erro ao buscar pecuarista para edição: " + e.getMessage());
+                System.out.println("Erro ao buscar motorista para edição: " + e.getMessage());
             }
         }
 
-        List<PecuaristaModel> pecuaristaModels = dao.listar();
+        List<MotoristaModel> motoristaModels = dao.listar();
 
-        req.setAttribute("pecuaristaModels", pecuaristaModels);
-        req.setAttribute("pecuaristas", pecuaristaModels);
+        req.setAttribute("motoristaModels", motoristaModels);
+        req.setAttribute("motoristas", motoristaModels);
+        req.setAttribute("empresaModels", empresaDAO.listar());
 
         req.getRequestDispatcher(
-                "/WEB-INF/views/pecuarista.jsp"
+                "/WEB-INF/views/motorista.jsp"
         ).forward(req, resp);
     }
 
@@ -74,10 +80,10 @@ public class PecuaristaServlet extends HttpServlet {
                 int id = parseInt(req.getParameter("id"), 0);
                 dao.excluir(id);
             } catch (Exception e) {
-                System.out.println("Erro ao excluir pecuarista: " + e.getMessage());
+                System.out.println("Erro ao excluir motorista: " + e.getMessage());
             }
 
-            resp.sendRedirect(req.getContextPath() + "/pecuarista");
+            resp.sendRedirect(req.getContextPath() + "/motorista");
             return;
         }
 
@@ -86,59 +92,76 @@ public class PecuaristaServlet extends HttpServlet {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
 
-                String cpf = obterParametro(req, "cpf");
+                EmpresaModel empresaModel = buscarEmpresa(req);
+                String nome = obterParametro(req, "nome");
                 String assinatura = obterParametro(req, "assinatura");
                 LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
-                String nome = obterParametro(req, "nome");
                 String senha = obterParametro(req, "senha");
                 String email = obterParametro(req, "email");
                 String telefone = obterParametro(req, "telefone");
 
-                PecuaristaModel pecuaristaModel = new PecuaristaModel(
+                MotoristaModel motoristaModel = new MotoristaModel(
                         id,
-                        cpf,
+                        empresaModel,
+                        nome,
                         assinatura,
                         dataNascimento,
-                        nome,
                         senha,
                         email,
                         telefone
                 );
 
-                dao.atualizar(pecuaristaModel, id);
+                dao.atualizar(motoristaModel, id);
             } catch (Exception e) {
-                System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
+                System.out.println("Erro ao atualizar motorista: " + e.getMessage());
             }
 
-            resp.sendRedirect(req.getContextPath() + "/pecuarista");
+            resp.sendRedirect(req.getContextPath() + "/motorista");
             return;
         }
 
         // Cadastro
-        String cpf = obterParametro(req, "cpf");
+        EmpresaModel empresaModel = buscarEmpresa(req);
+        String nome = obterParametro(req, "nome");
         String assinatura = obterParametro(req, "assinatura");
         LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
-        String nome = obterParametro(req, "nome");
         String senha = obterParametro(req, "senha");
         String email = obterParametro(req, "email");
         String telefone = obterParametro(req, "telefone");
 
-        PecuaristaModel novoPecuarista = new PecuaristaModel(
-                cpf,
+        MotoristaModel novoMotorista = new MotoristaModel(
+                empresaModel,
+                nome,
                 assinatura,
                 dataNascimento,
-                nome,
                 senha,
                 email,
                 telefone
         );
 
-        dao.inserir(novoPecuarista);
+        dao.inserir(novoMotorista);
 
-        resp.sendRedirect(req.getContextPath() + "/pecuarista");
+        resp.sendRedirect(req.getContextPath() + "/motorista");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
+
+    private EmpresaModel buscarEmpresa(HttpServletRequest req) {
+        String idTexto = obterParametro(req, "idEmpresa", "id_empresa");
+        if (idTexto != null && !idTexto.isBlank()) {
+            try {
+                int idEmpresa = Integer.parseInt(idTexto.trim());
+                for (EmpresaModel empresa : empresaDAO.listar()) {
+                    if (empresa.getId() == idEmpresa) {
+                        return empresa;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Erro ao buscar empresa do motorista: " + e.getMessage());
+            }
+        }
+        return null;
+    }
 
     private String obterParametro(HttpServletRequest req, String... nomes) {
         for (String nome : nomes) {
