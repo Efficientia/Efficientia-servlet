@@ -17,8 +17,8 @@ import java.util.List;
 @WebServlet(name = "MotoristaServlet", value = "/motorista")
 public class MotoristaServlet extends HttpServlet {
 
-    private MotoristaDAO dao = new MotoristaDAO();
-    private EmpresaDAO empresaDAO = new EmpresaDAO();
+    private MotoristaDAO dao;
+    private EmpresaDAO empresaDAO;
 
     @Override
     public void init() {

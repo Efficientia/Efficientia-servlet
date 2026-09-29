@@ -22,10 +22,10 @@ import java.util.List;
 @WebServlet(name = "TrajetoServlet", value = "/trajeto")
 public class TrajetoServlet extends HttpServlet {
 
-    private TrajetoDAO dao = new TrajetoDAO();
-    private MotoristaDAO motoristaDAO = new MotoristaDAO();
-    private CaminhaoDAO caminhaoDAO = new CaminhaoDAO();
-    private PecuaristaDAO pecuaristaDAO = new PecuaristaDAO();
+    private TrajetoDAO dao;
+    private MotoristaDAO motoristaDAO;
+    private CaminhaoDAO caminhaoDAO;
+    private PecuaristaDAO pecuaristaDAO;
 
     @Override
     public void init() {
