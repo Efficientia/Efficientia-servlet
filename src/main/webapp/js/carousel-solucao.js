@@ -5,7 +5,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Menu Hamburguer Mobile (<= 768px)
+    // Menu Hamburguer Mobile (<= 860px)
     const menu = document.querySelector('.menu');
     const btnMenu = document.querySelector('.btn-menu-hamburguer');
     const menuLinks = document.querySelectorAll('.link-menu');
@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
     let isAnimating = false;
     const animationDuration = 400; // ms
+    const mobileCarouselQuery = window.matchMedia('(max-width: 860px)');
 
     // Garante que o primeiro card esteja ativo inicialmente
     function initCarousel() {
@@ -74,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isAnimating || nextIndex === currentIndex) return;
 
         // Só executa o carrossel se a tela estiver em modo mobile/tablet (<= 860px)
-        if (window.innerWidth > 860) return;
+        if (!mobileCarouselQuery.matches) return;
 
         isAnimating = true;
 
@@ -169,8 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Reset ao redimensionar a janela
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 860) {
+    mobileCarouselQuery.addEventListener('change', (event) => {
+        if (!event.matches) {
             // Em desktop, restaura a visibilidade normal de todos os cards
             cards.forEach(c => {
                 c.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-left', 'slide-out-right');
