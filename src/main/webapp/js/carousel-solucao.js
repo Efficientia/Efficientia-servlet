@@ -1,6 +1,6 @@
 /**
  * Carrossel Interativo da Seção Solução - Efficientia
- * Controla a exibição de 1 celular por vez em telas menores (<= 768px)
+ * Controla a exibição de 1 celular por vez em telas menores (<= 860px)
  * com animação de slide direcional, setas de navegação, loop infinito e dots.
  */
 
@@ -73,8 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function goToSlide(nextIndex, direction = 'next') {
         if (isAnimating || nextIndex === currentIndex) return;
 
-        // Só executa o carrossel se a tela estiver em modo mobile/tablet (<= 768px)
-        if (window.innerWidth > 768) return;
+        // Só executa o carrossel se a tela estiver em modo mobile/tablet (<= 860px)
+        if (window.innerWidth > 860) return;
 
         isAnimating = true;
 
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset ao redimensionar a janela
     window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
+        if (window.innerWidth > 860) {
             // Em desktop, restaura a visibilidade normal de todos os cards
             cards.forEach(c => {
                 c.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-left', 'slide-out-right');
