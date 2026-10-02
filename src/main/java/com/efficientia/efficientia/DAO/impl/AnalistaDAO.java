@@ -1,6 +1,8 @@
 package com.efficientia.efficientia.DAO.impl;
+
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.AnalistaModel;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -8,9 +10,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Data Access Object (DAO) para a entidade Analista.
+ *
+ * Centraliza as operações de persistência e acesso à tabela 'analista'
+ * no banco de dados relacional PostgreSQL, gerenciando a abertura e fechamento
+ * seguro de recursos através de ConnectionFactory e blocos try-with-resources.
+ */
 @SuppressWarnings({"SqlResolve", "SqlNoDataSourceInspection"})
 public class AnalistaDAO {
-    //insert
+
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere um novo analista no banco de dados.
+     *
+     * @param analistaModel objeto AnalistaModel contendo os dados cadastrais do analista
+     * @return true se o registro foi inserido com êxito, false caso ocorra falha ou o modelo seja nulo
+     */
     public boolean inserir(AnalistaModel analistaModel) {
         if (analistaModel == null) return false;
 
@@ -38,7 +56,12 @@ public class AnalistaDAO {
             return false;
         }
     }
-    //select
+
+    /**
+     * Recupera todos os analistas cadastrados no banco de dados, ordenados por ID.
+     *
+     * @return lista contendo os analistas encontrados ou lista vazia em caso de falha/ausência de registros
+     */
     public List<AnalistaModel> listar() {
         String sql = """
                 SELECT * FROM analista ORDER BY id;
@@ -67,7 +90,14 @@ public class AnalistaDAO {
         }
         return listaAnalista;
     }
-    //update
+
+    /**
+     * Atualiza os dados de um analista existente com base em seu ID.
+     *
+     * @param analistaModel objeto contendo os novos dados do analista
+     * @param id            identificador numérico do analista a ser modificado
+     * @return true se o registro foi atualizado com sucesso, false caso ocorra falha ou o modelo seja nulo
+     */
     public boolean atualizar(AnalistaModel analistaModel, int id) {
         if (analistaModel == null) return false;
 
@@ -94,7 +124,13 @@ public class AnalistaDAO {
             return false;
         }
     }
-    //delete
+
+    /**
+     * Remove um registro de analista do banco de dados pelo seu ID.
+     *
+     * @param id identificador único do analista a ser excluído
+     * @return true se a exclusão for efetuada com sucesso, false caso contrário
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE FROM analista WHERE id = ?;
@@ -109,7 +145,13 @@ public class AnalistaDAO {
             return false;
         }
     }
-    // Buscar por ID
+
+    /**
+     * Localiza um analista pelo seu identificador único.
+     *
+     * @param id identificador único do analista
+     * @return objeto AnalistaModel se encontrado, ou null caso contrário
+     */
     public AnalistaModel buscar(int id) {
         String sql = """
                 SELECT * FROM analista WHERE id = ?;
@@ -139,7 +181,15 @@ public class AnalistaDAO {
         return null;
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Mapeia os atributos do modelo AnalistaModel para os parâmetros do PreparedStatement.
+     *
+     * @param stmt          PreparedStatement configurado com a query SQL
+     * @param analistaModel objeto contendo os dados do analista
+     * @throws SQLException se ocorrer erro durante a parametrização
+     */
     private void preencherStatement(PreparedStatement stmt, AnalistaModel analistaModel) throws SQLException {
         stmt.setString(1, analistaModel.getCpf());
         stmt.setString(2, analistaModel.getNome());

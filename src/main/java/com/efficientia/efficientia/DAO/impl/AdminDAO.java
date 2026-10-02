@@ -1,15 +1,33 @@
 package com.efficientia.efficientia.DAO.impl;
+
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.AdminModel;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Data Access Object (DAO) para a entidade Administrador.
+ *
+ * Responsável por gerenciar as operações de persistência e consulta dos
+ * administradores do sistema na tabela 'admin' do banco de dados relacional PostgreSQL,
+ * utilizando ConnectionFactory e blocos try-with-resources.
+ */
 @SuppressWarnings({"SqlResolve", "SqlNoDataSourceInspection"})
 public class AdminDAO {
-    //insert
+
+    // ==================== OPERAÇÕES CRUD ====================
+
+    /**
+     * Insere um novo administrador no banco de dados.
+     *
+     * @param adminModel objeto AdminModel contendo os dados do administrador a ser cadastrado
+     * @return true se o registro foi inserido com sucesso, false caso ocorra falha ou o modelo seja nulo
+     */
     public boolean inserir(AdminModel adminModel) {
         if (adminModel == null) return false;
         String sql = """
@@ -29,7 +47,12 @@ public class AdminDAO {
             return false;
         }
     }
-    //select
+
+    /**
+     * Recupera todos os administradores cadastrados no banco de dados, ordenados por ID.
+     *
+     * @return lista contendo os administradores encontrados ou lista vazia em caso de falha/ausência de registros
+     */
     public List<AdminModel> listar() {
         String sql = """
                 SELECT * FROM admin ORDER BY id;
@@ -52,7 +75,14 @@ public class AdminDAO {
         }
         return listaAdmin;
     }
-    //update
+
+    /**
+     * Atualiza os dados de um administrador existente com base em seu ID.
+     *
+     * @param adminModel objeto contendo os novos dados do administrador
+     * @param id         identificador numérico do administrador a ser modificado
+     * @return true se o registro foi atualizado com sucesso, false caso ocorra falha ou o modelo seja nulo
+     */
     public boolean atualizar(AdminModel adminModel, int id) {
         if (adminModel == null) return false;
         String sql = """
@@ -73,7 +103,13 @@ public class AdminDAO {
             return false;
         }
     }
-    //delete
+
+    /**
+     * Remove um registro de administrador do banco de dados pelo seu ID.
+     *
+     * @param id identificador único do administrador a ser excluído
+     * @return true se a exclusão for efetuada com sucesso, false caso contrário
+     */
     public boolean excluir(int id) {
         String sql = """
                 DELETE FROM admin WHERE id = ?;
@@ -88,7 +124,13 @@ public class AdminDAO {
             return false;
         }
     }
-    // Buscar por ID
+
+    /**
+     * Localiza um administrador pelo seu identificador único.
+     *
+     * @param id identificador único do administrador
+     * @return objeto AdminModel se encontrado, ou null caso contrário
+     */
     public AdminModel buscar(int id) {
         String sql = """
                 SELECT * FROM admin WHERE id = ?;
@@ -112,7 +154,15 @@ public class AdminDAO {
         return null;
     }
 
-    // Mapeamento do PreparedStatement
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Mapeia os atributos do modelo AdminModel para os parâmetros do PreparedStatement.
+     *
+     * @param stmt       PreparedStatement configurado com a query SQL
+     * @param adminModel objeto contendo os dados do administrador
+     * @throws SQLException se ocorrer erro durante a parametrização
+     */
     private void preencherStatement(PreparedStatement stmt, AdminModel adminModel) throws SQLException {
         stmt.setString(1, adminModel.getEmail());
         stmt.setString(2, adminModel.getSenha());
