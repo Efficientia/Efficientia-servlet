@@ -191,14 +191,6 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="pec-assinatura">
-                                Assinatura *
-                                <span class="helper-text">Identificador / chave</span>
-                            </label>
-                            <input type="text" id="pec-assinatura" name="assinatura" placeholder="Digite a assinatura" required>
-                        </div>
-
-                        <div class="form-group">
                             <label for="pec-senha">Senha de Acesso *</label>
                             <input type="password" id="pec-senha" name="senha" placeholder="Crie uma senha de acesso" required>
                         </div>
@@ -386,14 +378,6 @@
                                 <span class="helper-text">Até 11 dígitos com DDD</span>
                             </label>
                             <input type="tel" id="mot-telefone" name="telefone" maxlength="11" placeholder="Ex: 11987654321" pattern="[0-9]{10,11}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="mot-assinatura">
-                                Assinatura *
-                                <span class="helper-text">Identificador de assinatura</span>
-                            </label>
-                            <input type="text" id="mot-assinatura" name="assinatura" placeholder="Digite a assinatura" required>
                         </div>
 
                         <div class="form-group form-group-full">
@@ -1320,8 +1304,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="editPec-assinatura">Assinatura *</label>
-                    <input type="text" id="editPec-assinatura" name="assinatura" required>
+                    <label for="editPec-assinatura">Assinatura <span class="helper-text">(vinda do banco de dados)</span></label>
+                    <input type="text" id="editPec-assinatura" name="assinatura" readonly style="opacity: 0.75; cursor: not-allowed;">
                 </div>
 
                 <div class="form-group">
@@ -1388,8 +1372,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="editMot-assinatura">Assinatura *</label>
-                    <input type="text" id="editMot-assinatura" name="assinatura" required>
+                    <label for="editMot-assinatura">Assinatura <span class="helper-text">(vinda do banco de dados)</span></label>
+                    <input type="text" id="editMot-assinatura" name="assinatura" readonly style="opacity: 0.75; cursor: not-allowed;">
                 </div>
 
                 <div class="form-group form-group-full">

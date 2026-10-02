@@ -94,7 +94,6 @@ public class MotoristaServlet extends HttpServlet {
 
                 EmpresaModel empresaModel = buscarEmpresa(req);
                 String nome = obterParametro(req, "nome");
-                String assinatura = obterParametro(req, "assinatura");
                 LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
                 String senha = obterParametro(req, "senha");
                 String email = obterParametro(req, "email");
@@ -104,7 +103,6 @@ public class MotoristaServlet extends HttpServlet {
                         id,
                         empresaModel,
                         nome,
-                        assinatura,
                         dataNascimento,
                         senha,
                         email,
@@ -123,7 +121,6 @@ public class MotoristaServlet extends HttpServlet {
         // Cadastro
         EmpresaModel empresaModel = buscarEmpresa(req);
         String nome = obterParametro(req, "nome");
-        String assinatura = obterParametro(req, "assinatura");
         LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
         String senha = obterParametro(req, "senha");
         String email = obterParametro(req, "email");
@@ -132,7 +129,6 @@ public class MotoristaServlet extends HttpServlet {
         MotoristaModel novoMotorista = new MotoristaModel(
                 empresaModel,
                 nome,
-                assinatura,
                 dataNascimento,
                 senha,
                 email,

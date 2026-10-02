@@ -80,8 +80,29 @@ public class PecuaristaModel implements Model {
     }
 
     /**
-     * Construtor sem ID.
-     * Utilizado na criação de um novo pecuarista antes da persistência no banco de dados.
+     * Construtor completo com ID (sem assinatura).
+     * Utilizado na atualização/edição de dados cadastrais pelo site.
+     *
+     * @param id             identificador único gerado pelo banco
+     * @param cpf            número do CPF (máximo de 11 dígitos)
+     * @param dataNascimento data de nascimento
+     * @param nome           nome completo do pecuarista
+     * @param senha          senha de acesso ao sistema
+     * @param email          endereço de e-mail
+     * @param telefone       número de telefone de contato (máximo de 11 dígitos)
+     */
+    public PecuaristaModel(int id,
+                           String cpf,
+                           LocalDate dataNascimento,
+                           String nome,
+                           String senha,
+                           String email,
+                           String telefone) {
+        this(id, cpf, null, dataNascimento, nome, senha, email, telefone);
+    }
+
+    /**
+     * Construtor sem ID (com assinatura).
      *
      * @param cpf            número do CPF (máximo de 11 dígitos)
      * @param assinatura     assinatura digitalizada ou identificador de rubrica
@@ -115,6 +136,26 @@ public class PecuaristaModel implements Model {
         if (telefone != null && telefone.length() > 11) {
             this.telefone = "nulo";
         }
+    }
+
+    /**
+     * Construtor sem ID (sem assinatura).
+     * Utilizado no cadastro de um novo pecuarista pelo site (onde o site não cadastra assinatura).
+     *
+     * @param cpf            número do CPF (máximo de 11 dígitos)
+     * @param dataNascimento data de nascimento
+     * @param nome           nome completo do pecuarista
+     * @param senha          senha de acesso ao sistema
+     * @param email          endereço de e-mail
+     * @param telefone       número de telefone de contato (máximo de 11 dígitos)
+     */
+    public PecuaristaModel(String cpf,
+                           LocalDate dataNascimento,
+                           String nome,
+                           String senha,
+                           String email,
+                           String telefone) {
+        this(cpf, null, dataNascimento, nome, senha, email, telefone);
     }
 
     // ==================== GETTERS E SETTERS ====================

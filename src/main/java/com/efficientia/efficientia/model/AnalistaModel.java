@@ -123,9 +123,10 @@ public class AnalistaModel extends UsuarioModel implements Model {
     }
 
     /**
-     * Construtor sem ID e sem vínculo com Empresa.
+     * Construtor sem ID e sem vínculo com Empresa (com assinatura).
      * Utilizado no cadastro inicial de um analista avulso.
      *
+     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
      * @param nome           nome completo do analista
      * @param assinatura     assinatura digitalizada ou rubrica
      * @param dataNascimento data de nascimento
@@ -134,7 +135,8 @@ public class AnalistaModel extends UsuarioModel implements Model {
      * @param telefone       número de telefone
      * @param codigo         código de registro funcional
      */
-    public AnalistaModel(String nome,
+    public AnalistaModel(String cpf,
+                         String nome,
                          String assinatura,
                          LocalDate dataNascimento,
                          String senha,
@@ -142,7 +144,131 @@ public class AnalistaModel extends UsuarioModel implements Model {
                          String telefone,
                          String codigo) {
         super(nome, assinatura, dataNascimento, senha, email, telefone);
+        this.cpf = cpf;
         this.codigo = codigo;
+
+        // Normalização defensiva: anula CPF caso exceda o limite de 11 dígitos
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
+    }
+
+    /**
+     * Construtor completo com ID e vínculo com Empresa (sem assinatura).
+     * Utilizado na edição/atualização via formulário do site.
+     *
+     * @param id             identificador único do analista
+     * @param empresaModel   empresa à qual o analista está associado
+     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
+     * @param nome           nome completo do analista
+     * @param dataNascimento data de nascimento
+     * @param senha          senha de acesso ao sistema
+     * @param email          e-mail institucional ou para contato
+     * @param telefone       número de telefone para contato
+     * @param codigo         código de registro profissional / funcional
+     */
+    public AnalistaModel(int id,
+                         EmpresaModel empresaModel,
+                         String cpf,
+                         String nome,
+                         LocalDate dataNascimento,
+                         String senha,
+                         String email,
+                         String telefone,
+                         String codigo) {
+        super(id, empresaModel, nome, null, dataNascimento, senha, email, telefone);
+        this.cpf = cpf;
+        this.codigo = codigo;
+
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
+    }
+
+    /**
+     * Construtor com ID e sem vínculo com Empresa (sem assinatura).
+     *
+     * @param id             identificador único do analista
+     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
+     * @param nome           nome completo do analista
+     * @param dataNascimento data de nascimento
+     * @param senha          senha de acesso ao sistema
+     * @param email          e-mail institucional ou para contato
+     * @param telefone       número de telefone para contato
+     * @param codigo         código de registro funcional
+     */
+    public AnalistaModel(int id,
+                         String cpf,
+                         String nome,
+                         LocalDate dataNascimento,
+                         String senha,
+                         String email,
+                         String telefone,
+                         String codigo) {
+        super(id, nome, null, dataNascimento, senha, email, telefone);
+        this.cpf = cpf;
+        this.codigo = codigo;
+
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
+    }
+
+    /**
+     * Construtor sem ID e com vínculo com Empresa (sem assinatura).
+     * Utilizado no cadastro de um novo analista pelo site (onde o site não cadastra assinatura).
+     *
+     * @param empresaModel   empresa à qual o analista será vinculado
+     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
+     * @param nome           nome completo do analista
+     * @param dataNascimento data de nascimento
+     * @param senha          senha de acesso ao sistema
+     * @param email          e-mail para login
+     * @param telefone       número de telefone
+     * @param codigo         código de registro funcional
+     */
+    public AnalistaModel(EmpresaModel empresaModel,
+                         String cpf,
+                         String nome,
+                         LocalDate dataNascimento,
+                         String senha,
+                         String email,
+                         String telefone,
+                         String codigo) {
+        super(empresaModel, nome, null, dataNascimento, senha, email, telefone);
+        this.cpf = cpf;
+        this.codigo = codigo;
+
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
+    }
+
+    /**
+     * Construtor sem ID e sem vínculo com Empresa (sem assinatura).
+     *
+     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
+     * @param nome           nome completo do analista
+     * @param dataNascimento data de nascimento
+     * @param senha          senha de acesso ao sistema
+     * @param email          e-mail para login
+     * @param telefone       número de telefone
+     * @param codigo         código de registro funcional
+     */
+    public AnalistaModel(String cpf,
+                         String nome,
+                         LocalDate dataNascimento,
+                         String senha,
+                         String email,
+                         String telefone,
+                         String codigo) {
+        super(nome, null, dataNascimento, senha, email, telefone);
+        this.cpf = cpf;
+        this.codigo = codigo;
+
+        if (cpf != null && cpf.length() > 11) {
+            this.cpf = "nulo";
+        }
     }
 
     // ==================== GETTERS E SETTERS ====================

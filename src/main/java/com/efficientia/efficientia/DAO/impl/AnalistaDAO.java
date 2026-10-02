@@ -36,13 +36,12 @@ public class AnalistaDAO {
                 INSERT INTO analista(
                     cpf,
                     nome,
-                    assinatura,
                     data_nascimento,
                     senha,
                     email,
                     telefone,
                     codigo
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+                ) VALUES (?, ?, ?, ?, ?, ?, ?);
                 """;
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -105,7 +104,6 @@ public class AnalistaDAO {
                 UPDATE analista SET
                     cpf = ?,
                     nome = ?,
-                    assinatura = ?,
                     data_nascimento = ?,
                     senha = ?,
                     email = ?,
@@ -116,7 +114,7 @@ public class AnalistaDAO {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
             preencherStatement(stmt, analistaModel);
-            stmt.setInt(9, id);
+            stmt.setInt(8, id);
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
@@ -193,11 +191,10 @@ public class AnalistaDAO {
     private void preencherStatement(PreparedStatement stmt, AnalistaModel analistaModel) throws SQLException {
         stmt.setString(1, analistaModel.getCpf());
         stmt.setString(2, analistaModel.getNome());
-        stmt.setString(3, analistaModel.getAssinatura());
-        stmt.setDate(4, analistaModel.getDataNascimento() != null ? Date.valueOf(analistaModel.getDataNascimento()) : null);
-        stmt.setString(5, analistaModel.getSenha());
-        stmt.setString(6, analistaModel.getEmail());
-        stmt.setString(7, analistaModel.getTelefone());
-        stmt.setString(8, analistaModel.getCodigo());
+        stmt.setDate(3, analistaModel.getDataNascimento() != null ? Date.valueOf(analistaModel.getDataNascimento()) : null);
+        stmt.setString(4, analistaModel.getSenha());
+        stmt.setString(5, analistaModel.getEmail());
+        stmt.setString(6, analistaModel.getTelefone());
+        stmt.setString(7, analistaModel.getCodigo());
     }
 }

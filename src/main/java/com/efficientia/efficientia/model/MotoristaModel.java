@@ -14,13 +14,13 @@ public class MotoristaModel extends UsuarioModel implements Model {
     // ==================== CONSTRUTORES ====================
 
     /**
-     * Construtor completo com ID e vínculo com Empresa.
-     * Utilizado na leitura e instanciação de dados vindos do banco de dados.
+     * Construtor completo com ID, vínculo de Empresa e assinatura.
+     * Utilizado na leitura e recuperação de registros diretamente do banco de dados.
      *
      * @param id             identificador único do motorista
      * @param empresaModel   empresa/transportadora à qual o motorista está vinculado
      * @param nome           nome completo do motorista
-     * @param assinatura     assinatura digitalizada ou identificador de rubrica
+     * @param assinatura     assinatura digitalizada ou identificador de rubrica vindo do banco
      * @param dataNascimento data de nascimento do motorista
      * @param senha          senha de autenticação no aplicativo/sistema
      * @param email          e-mail para login e contato
@@ -38,12 +38,12 @@ public class MotoristaModel extends UsuarioModel implements Model {
     }
 
     /**
-     * Construtor com ID e sem vínculo com Empresa.
-     * Utilizado para carregar motoristas autônomos ou registros sem transportadora definida.
+     * Construtor com ID e assinatura, sem vínculo de Empresa.
+     * Utilizado na leitura de motoristas autônomos vindos do banco de dados.
      *
      * @param id             identificador único do motorista
      * @param nome           nome completo do motorista
-     * @param assinatura     assinatura digitalizada ou identificador de rubrica
+     * @param assinatura     assinatura digitalizada vinda do banco
      * @param dataNascimento data de nascimento do motorista
      * @param senha          senha de autenticação no sistema
      * @param email          e-mail para contato
@@ -60,12 +60,52 @@ public class MotoristaModel extends UsuarioModel implements Model {
     }
 
     /**
+     * Construtor completo com ID e vínculo com Empresa (sem assinatura).
+     * Utilizado na edição/atualização via formulário do site.
+     *
+     * @param id             identificador único do motorista
+     * @param empresaModel   empresa/transportadora à qual o motorista está vinculado
+     * @param nome           nome completo do motorista
+     * @param dataNascimento data de nascimento do motorista
+     * @param senha          senha de autenticação no aplicativo/sistema
+     * @param email          e-mail para login e contato
+     * @param telefone       número de telefone celular do motorista
+     */
+    public MotoristaModel(int id,
+                          EmpresaModel empresaModel,
+                          String nome,
+                          LocalDate dataNascimento,
+                          String senha,
+                          String email,
+                          String telefone) {
+        super(id, empresaModel, nome, null, dataNascimento, senha, email, telefone);
+    }
+
+    /**
+     * Construtor com ID e sem vínculo com Empresa (sem assinatura).
+     *
+     * @param id             identificador único do motorista
+     * @param nome           nome completo do motorista
+     * @param dataNascimento data de nascimento do motorista
+     * @param senha          senha de autenticação no sistema
+     * @param email          e-mail para contato
+     * @param telefone       número de telefone celular
+     */
+    public MotoristaModel(int id,
+                          String nome,
+                          LocalDate dataNascimento,
+                          String senha,
+                          String email,
+                          String telefone) {
+        super(id, nome, null, dataNascimento, senha, email, telefone);
+    }
+
+    /**
      * Construtor sem ID e com vínculo com Empresa.
-     * Utilizado no cadastro de novos motoristas vinculados a uma transportadora antes da persistência.
+     * Utilizado no cadastro de novos motoristas pelo site (onde o site não cadastra assinatura).
      *
      * @param empresaModel   empresa/transportadora à qual o motorista pertence
      * @param nome           nome completo do motorista
-     * @param assinatura     assinatura digitalizada ou identificador de rubrica
      * @param dataNascimento data de nascimento do motorista
      * @param senha          senha de autenticação no sistema
      * @param email          e-mail para login
@@ -73,32 +113,29 @@ public class MotoristaModel extends UsuarioModel implements Model {
      */
     public MotoristaModel(EmpresaModel empresaModel,
                           String nome,
-                          String assinatura,
                           LocalDate dataNascimento,
                           String senha,
                           String email,
                           String telefone) {
-        super(empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
+        super(empresaModel, nome, null, dataNascimento, senha, email, telefone);
     }
 
     /**
      * Construtor sem ID e sem vínculo com Empresa.
-     * Utilizado no cadastro de motoristas autônomos antes da persistência.
+     * Utilizado no cadastro de novos motoristas autônomos pelo site.
      *
      * @param nome           nome completo do motorista
-     * @param assinatura     assinatura digitalizada ou identificador de rubrica
      * @param dataNascimento data de nascimento do motorista
      * @param senha          senha de autenticação no sistema
      * @param email          e-mail para login
      * @param telefone       número de telefone celular
      */
     public MotoristaModel(String nome,
-                          String assinatura,
                           LocalDate dataNascimento,
                           String senha,
                           String email,
                           String telefone) {
-        super(nome, assinatura, dataNascimento, senha, email, telefone);
+        super(nome, null, dataNascimento, senha, email, telefone);
     }
 
     // ==================== TO STRING ====================

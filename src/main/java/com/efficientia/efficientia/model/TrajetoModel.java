@@ -148,11 +148,6 @@ public class TrajetoModel implements Model {
         this.numeroCurral = numeroCurral;
         this.nomeCurraleiro = nomeCurraleiro;
         this.nomeManobrista = nomeManobrista;
-
-        // Herda a assinatura cadastrada do motorista caso o objeto esteja presente
-        if (this.motoristaModel != null) {
-            this.assinaturaMotorista = this.motoristaModel.getAssinatura();
-        }
     }
 
     /**
@@ -214,11 +209,6 @@ public class TrajetoModel implements Model {
         this.numeroCurral = numeroCurral;
         this.nomeCurraleiro = nomeCurraleiro;
         this.nomeManobrista = nomeManobrista;
-
-        // Herda a assinatura cadastrada do motorista caso o objeto esteja presente
-        if (this.motoristaModel != null) {
-            this.assinaturaMotorista = this.motoristaModel.getAssinatura();
-        }
     }
 
     // ==================== GETTERS E SETTERS ====================
@@ -249,14 +239,11 @@ public class TrajetoModel implements Model {
     }
 
     /**
-     * Define o motorista do trajeto e sincroniza sua assinatura cadastrada.
+     * Define o motorista do trajeto.
      * @param motoristaModel motorista condutor
      */
     public void setMotoristaModel(MotoristaModel motoristaModel) {
         this.motoristaModel = motoristaModel;
-        if (motoristaModel != null) {
-            this.assinaturaMotorista = motoristaModel.getAssinatura();
-        }
     }
 
     /**

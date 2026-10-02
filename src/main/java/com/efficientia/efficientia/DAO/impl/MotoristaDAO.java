@@ -34,14 +34,13 @@ public class MotoristaDAO {
         String sql = """
                 INSERT INTO motorista (
                     id_empresa,
-                    assinatura,
                     nome,
                     data_nascimento,
                     senha,
                     email,
                     telefone
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?);
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -128,7 +127,6 @@ public class MotoristaDAO {
         String sql = """
                 UPDATE motorista
                 SET id_empresa = ?,
-                    assinatura = ?,
                     nome = ?,
                     data_nascimento = ?,
                     senha = ?,
@@ -141,7 +139,7 @@ public class MotoristaDAO {
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             preencherStatement(stmt, motoristaModel);
-            stmt.setInt(8, id);
+            stmt.setInt(7, id);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -256,20 +254,19 @@ public class MotoristaDAO {
             stmt.setNull(1, Types.INTEGER);
         }
 
-        stmt.setString(2, motoristaModel.getAssinatura());
-        stmt.setString(3, motoristaModel.getNome());
+        stmt.setString(2, motoristaModel.getNome());
 
         if (motoristaModel.getDataNascimento() != null) {
             stmt.setDate(
-                    4,
+                    3,
                     Date.valueOf(motoristaModel.getDataNascimento())
             );
         } else {
-            stmt.setNull(4, Types.DATE);
+            stmt.setNull(3, Types.DATE);
         }
 
-        stmt.setString(5, motoristaModel.getSenha());
-        stmt.setString(6, motoristaModel.getEmail());
-        stmt.setString(7, motoristaModel.getTelefone());
+        stmt.setString(4, motoristaModel.getSenha());
+        stmt.setString(5, motoristaModel.getEmail());
+        stmt.setString(6, motoristaModel.getTelefone());
     }
 }
