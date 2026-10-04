@@ -236,6 +236,10 @@ button {
    ========================================================================== */
 
 .hero {
+    background-color: var(--color-primary-dark);
+    isolation: isolate;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
     min-height: 100vh;
     display: flex;
     align-items: center;
