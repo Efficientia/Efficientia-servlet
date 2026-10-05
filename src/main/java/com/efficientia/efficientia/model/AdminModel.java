@@ -13,6 +13,9 @@ public class AdminModel implements Model {
     /** Identificador único do administrador (chave primária no banco de dados). */
     private int id;
 
+    /** Empresa à qual o administrador está vinculado. */
+    private EmpresaModel empresaModel;
+
     /** E-mail institucional/pessoal utilizado para login e notificações. */
     private String email;
 
@@ -25,34 +28,39 @@ public class AdminModel implements Model {
     // ==================== CONSTRUTORES ====================
 
     /**
-     * Construtor completo com ID.
+     * Construtor completo com ID e vínculo com Empresa.
      * Utilizado na recuperação e hidratação de dados vindos do banco de dados.
      *
-     * @param id    identificador único gerado pelo banco de dados
-     * @param email e-mail de acesso do administrador
-     * @param senha senha de autenticação
-     * @param nome  nome completo do administrador
+     * @param id           identificador único gerado pelo banco de dados
+     * @param empresaModel empresa vinculada ao administrador
+     * @param email        e-mail de acesso do administrador
+     * @param senha        senha de autenticação
+     * @param nome         nome completo do administrador
      */
-    public AdminModel(int id, String email, String senha, String nome) {
+    public AdminModel(int id, EmpresaModel empresaModel, String email, String senha, String nome) {
         this.id = id;
+        this.empresaModel = empresaModel;
         this.email = email;
         this.senha = senha;
         this.nome = nome;
     }
 
     /**
-     * Construtor sem ID.
+     * Construtor sem ID com vínculo com Empresa.
      * Utilizado para criação de novos administradores antes da persistência no banco.
      *
-     * @param email e-mail de acesso do administrador
-     * @param senha senha de autenticação
-     * @param nome  nome completo do administrador
+     * @param empresaModel empresa vinculada ao administrador
+     * @param email        e-mail de acesso do administrador
+     * @param senha        senha de autenticação
+     * @param nome         nome completo do administrador
      */
-    public AdminModel(String email, String senha, String nome) {
+    public AdminModel(EmpresaModel empresaModel, String email, String senha, String nome) {
+        this.empresaModel = empresaModel;
         this.email = email;
         this.senha = senha;
         this.nome = nome;
     }
+
 
     // ==================== GETTERS E SETTERS ====================
 
@@ -106,6 +114,30 @@ public class AdminModel implements Model {
     }
 
     /**
+     * Obtém a empresa vinculada ao administrador.
+     * @return objeto EmpresaModel ou null se não vinculada
+     */
+    public EmpresaModel getEmpresaModel() {
+        return empresaModel;
+    }
+
+    /**
+     * Define a empresa vinculada ao administrador.
+     * @param empresaModel empresa a ser vinculada
+     */
+    public void setEmpresaModel(EmpresaModel empresaModel) {
+        this.empresaModel = empresaModel;
+    }
+
+    /**
+     * Obtém o identificador único da empresa vinculada.
+     * @return ID da empresa ou 0 se nula
+     */
+    public int getIdEmpresa() {
+        return empresaModel != null ? empresaModel.getId() : 0;
+    }
+
+    /**
      * Obtém o nome completo do administrador.
      * @return nome do administrador
      */
@@ -131,6 +163,7 @@ public class AdminModel implements Model {
     public String toString() {
         return "AdminModel{" +
                 "id=" + id +
+                ", empresaModel=" + empresaModel +
                 ", email='" + email + '\'' +
                 ", senha='" + senha + '\'' +
                 ", nome='" + nome + '\'' +

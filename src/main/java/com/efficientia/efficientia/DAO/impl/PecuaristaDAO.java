@@ -31,13 +31,12 @@ public class PecuaristaDAO {
     public boolean inserir(PecuaristaModel pecuaristaModel) {
         String sql = """
                 INSERT INTO pecuarista (cpf,
-                                      assinatura,
                                       data_nascimento,
                                       nome,
                                       senha,
                                       email,
                                       telefone)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?);
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -103,7 +102,6 @@ public class PecuaristaDAO {
         String sql = """
                 UPDATE pecuarista
                 SET cpf = ?,
-                    assinatura = ?,
                     data_nascimento = ?,
                     nome = ?,
                     senha = ?,
@@ -116,7 +114,7 @@ public class PecuaristaDAO {
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             preencherStatement(stmt, pecuaristaModel);
-            stmt.setInt(8, id);
+            stmt.setInt(7, id);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -201,17 +199,16 @@ public class PecuaristaDAO {
      */
     private void preencherStatement(PreparedStatement stmt, PecuaristaModel pecuaristaModel) throws SQLException {
         stmt.setString(1, pecuaristaModel.getCpf());
-        stmt.setString(2, pecuaristaModel.getAssinatura());
 
         if (pecuaristaModel.getDataNascimento() != null) {
-            stmt.setDate(3, Date.valueOf(pecuaristaModel.getDataNascimento()));
+            stmt.setDate(2, Date.valueOf(pecuaristaModel.getDataNascimento()));
         } else {
-            stmt.setDate(3, null);
+            stmt.setDate(2, null);
         }
 
-        stmt.setString(4, pecuaristaModel.getNome());
-        stmt.setString(5, pecuaristaModel.getSenha());
-        stmt.setString(6, pecuaristaModel.getEmail());
-        stmt.setString(7, pecuaristaModel.getTelefone());
+        stmt.setString(3, pecuaristaModel.getNome());
+        stmt.setString(4, pecuaristaModel.getSenha());
+        stmt.setString(5, pecuaristaModel.getEmail());
+        stmt.setString(6, pecuaristaModel.getTelefone());
     }
 }

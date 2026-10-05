@@ -377,15 +377,15 @@
                                                 title="Digite o DDD e o número (10 ou 11 dígitos numéricos)">
                                         </div>
 
-                                        <!-- Assinatura -->
+                                        <!-- Assinatura (Somente leitura do banco) -->
                                         <div class="form-group">
                                             <label for="assinatura">
-                                                Assinatura *
-                                                <span class="helper-text">Texto normal (futuro hash)</span>
+                                                Assinatura
+                                                <span class="helper-text">(gerada pelo banco de dados)</span>
                                             </label>
                                             <input type="text" id="assinatura" name="assinatura"
                                                 value="<c:out value='${pecuaristaModel.assinatura}' />"
-                                                placeholder="Digite a assinatura" required>
+                                                readonly>
                                         </div>
 
                                         <!-- Senha -->

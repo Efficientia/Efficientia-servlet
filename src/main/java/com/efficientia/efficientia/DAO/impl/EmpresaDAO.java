@@ -68,7 +68,8 @@ public class EmpresaDAO {
                 EmpresaModel empresaModel = new EmpresaModel(
                         rs.getInt("id"),
                         rs.getString("nome"),
-                        rs.getString("cnpj")
+                        rs.getString("cnpj"),
+                        rs.getString("codigo")
                 );
 
                 empresas.add(empresaModel);
@@ -157,13 +158,48 @@ public class EmpresaDAO {
                     return new EmpresaModel(
                             rs.getInt("id"),
                             rs.getString("nome"),
-                            rs.getString("cnpj")
+                            rs.getString("cnpj"),
+                            rs.getString("codigo")
                     );
                 }
             }
 
         } catch (SQLException e) {
             System.out.println("Erro ao buscar empresaModel: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Busca uma empresa pelo seu código identificador único corporativo existente no banco.
+     *
+     * @param codigo código identificador da empresa
+     * @return objeto EmpresaModel se encontrado, ou null caso contrário
+     */
+    public EmpresaModel buscarPorCodigo(String codigo) {
+        String sql = """
+                SELECT * FROM empresa WHERE codigo = ?;
+                """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codigo);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new EmpresaModel(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("cnpj"),
+                            rs.getString("codigo")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar empresaModel por codigo: " + e.getMessage());
         }
 
         return null;

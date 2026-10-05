@@ -120,6 +120,7 @@ public class ParadaImprevistaDAO {
                     e.id AS empresa_id,
                     e.nome AS empresa_nome,
                     e.cnpj AS empresa_cnpj,
+                    e.codigo AS empresa_codigo,
 
                     -- Pecuarista
                     pec.id AS pecuarista_id,
@@ -213,6 +214,7 @@ public class ParadaImprevistaDAO {
                     e.id AS empresa_id,
                     e.nome AS empresa_nome,
                     e.cnpj AS empresa_cnpj,
+                    e.codigo AS empresa_codigo,
 
                     -- Pecuarista
                     pec.id AS pecuarista_id,
@@ -307,6 +309,7 @@ public class ParadaImprevistaDAO {
                     e.id AS empresa_id,
                     e.nome AS empresa_nome,
                     e.cnpj AS empresa_cnpj,
+                    e.codigo AS empresa_codigo,
 
                     -- Pecuarista
                     pec.id AS pecuarista_id,
@@ -422,7 +425,8 @@ public class ParadaImprevistaDAO {
                 new EmpresaModel(
                         rs.getInt("empresa_id"),
                         rs.getString("empresa_nome"),
-                        rs.getString("empresa_cnpj")
+                        rs.getString("empresa_cnpj"),
+                        rs.getString("empresa_codigo")
                 ),
                 rs.getString("motorista_nome"),
                 rs.getString("motorista_assinatura"),

@@ -87,7 +87,6 @@ public class PecuaristaServlet extends HttpServlet {
                 int id = parseInt(req.getParameter("id"), 0);
 
                 String cpf = obterParametro(req, "cpf");
-                String assinatura = obterParametro(req, "assinatura");
                 LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
                 String nome = obterParametro(req, "nome");
                 String senha = obterParametro(req, "senha");
@@ -97,7 +96,6 @@ public class PecuaristaServlet extends HttpServlet {
                 PecuaristaModel pecuaristaModel = new PecuaristaModel(
                         id,
                         cpf,
-                        assinatura,
                         dataNascimento,
                         nome,
                         senha,
@@ -116,7 +114,6 @@ public class PecuaristaServlet extends HttpServlet {
 
         // Cadastro
         String cpf = obterParametro(req, "cpf");
-        String assinatura = obterParametro(req, "assinatura");
         LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
         String nome = obterParametro(req, "nome");
         String senha = obterParametro(req, "senha");
@@ -125,7 +122,6 @@ public class PecuaristaServlet extends HttpServlet {
 
         PecuaristaModel novoPecuarista = new PecuaristaModel(
                 cpf,
-                assinatura,
                 dataNascimento,
                 nome,
                 senha,

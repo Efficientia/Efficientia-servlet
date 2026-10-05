@@ -666,16 +666,7 @@
                         </label>
                         <input type="tel" id="telefone" name="telefone" maxlength="11" placeholder="Ex: 11987654321" pattern="[0-9]{10,11}" title="Digite o DDD e o número (10 ou 11 dígitos numéricos)">
                     </div>
-
-                    <!-- Assinatura -->
-                    <div class="form-group">
-                        <label for="assinatura">
-                            Assinatura *
-                            <span class="helper-text">Texto normal (futuro hash)</span>
-                        </label>
-                        <input type="text" id="assinatura" name="assinatura" placeholder="Digite a assinatura" required>
-                    </div>
-
+ 
                     <!-- Senha -->
                     <div class="form-group">
                         <label for="senha">Senha de Acesso *</label>

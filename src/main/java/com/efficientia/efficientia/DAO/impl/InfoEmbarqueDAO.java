@@ -114,6 +114,7 @@ public class InfoEmbarqueDAO {
                     e.id AS empresa_id,
                     e.nome AS empresa_nome,
                     e.cnpj AS empresa_cnpj,
+                    e.codigo AS empresa_codigo,
 
                     -- Pecuarista
                     p.id AS pecuarista_id,
@@ -149,7 +150,8 @@ public class InfoEmbarqueDAO {
                         new EmpresaModel(
                                 rs.getInt("empresa_id"),
                                 rs.getString("empresa_nome"),
-                                rs.getString("empresa_cnpj")
+                                rs.getString("empresa_cnpj"),
+                                rs.getString("empresa_codigo")
                         ),
                         rs.getString("motorista_nome"),
                         rs.getString("motorista_assinatura"),
@@ -290,6 +292,7 @@ public class InfoEmbarqueDAO {
                     e.id AS empresa_id,
                     e.nome AS empresa_nome,
                     e.cnpj AS empresa_cnpj,
+                    e.codigo AS empresa_codigo,
 
                     -- Pecuarista
                     p.id AS pecuarista_id,
@@ -325,7 +328,8 @@ public class InfoEmbarqueDAO {
                             new EmpresaModel(
                                     rs.getInt("empresa_id"),
                                     rs.getString("empresa_nome"),
-                                    rs.getString("empresa_cnpj")
+                                    rs.getString("empresa_cnpj"),
+                                    rs.getString("empresa_codigo")
                             ),
                             rs.getString("motorista_nome"),
                             rs.getString("motorista_assinatura"),

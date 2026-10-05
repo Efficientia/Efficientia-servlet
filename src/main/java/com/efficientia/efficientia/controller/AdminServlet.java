@@ -1,18 +1,29 @@
 package com.efficientia.efficientia.controller;
+
 import com.efficientia.efficientia.DAO.impl.AdminDAO;
+import com.efficientia.efficientia.DAO.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.AdminModel;
+import com.efficientia.efficientia.model.EmpresaModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
+
 @WebServlet(name = "AdminServlet", value = "/admin")
 public class AdminServlet extends HttpServlet {
     private AdminDAO dao;
+    private EmpresaDAO empresaDAO;
+
     @Override
-    public void init() {dao = new AdminDAO();}
+    public void init() {
+        dao = new AdminDAO();
+        empresaDAO = new EmpresaDAO();
+    }
+
     //get
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -25,6 +36,7 @@ public class AdminServlet extends HttpServlet {
                 if (adminModel != null) {
                     req.setAttribute("adminModel", adminModel);
                     req.setAttribute("admin", adminModel);
+                    req.setAttribute("empresas", empresaDAO.listar());
                     req.getRequestDispatcher("/WEB-INF/views/editarAdmin.jsp")
                             .forward(req, resp);
                     return;
@@ -36,8 +48,10 @@ public class AdminServlet extends HttpServlet {
         List<AdminModel> adminModels = dao.listar();
         req.setAttribute("adminModels", adminModels);
         req.setAttribute("admins", adminModels);
+        req.setAttribute("empresas", empresaDAO.listar());
         req.getRequestDispatcher("/WEB-INF/views/admin.jsp").forward(req, resp);
     }
+
     //alt
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -60,7 +74,8 @@ public class AdminServlet extends HttpServlet {
                 String email = obterParametro(req, "email");
                 String senha = obterParametro(req, "senha");
                 String nome = obterParametro(req, "nome");
-                AdminModel adminModel = new AdminModel(id, email, senha, nome);
+                EmpresaModel empresa = buscarEmpresa(req);
+                AdminModel adminModel = new AdminModel(id, empresa, email, senha, nome);
                 dao.atualizar(adminModel, id);
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar Admin: " + e.getMessage());
@@ -72,13 +87,27 @@ public class AdminServlet extends HttpServlet {
             String email = obterParametro(req, "email");
             String senha = obterParametro(req, "senha");
             String nome = obterParametro(req, "nome");
+            EmpresaModel empresa = buscarEmpresa(req);
 
-            AdminModel novoAdmin = new AdminModel(email, senha, nome);
+            AdminModel novoAdmin = new AdminModel(empresa, email, senha, nome);
             dao.inserir(novoAdmin);
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar Admin: " + e.getMessage());
         }
         resp.sendRedirect(req.getContextPath() + "/admin");
+    }
+
+    private EmpresaModel buscarEmpresa(HttpServletRequest req) {
+        String idTexto = obterParametro(req, "idEmpresa", "id_empresa");
+        if (idTexto != null) {
+            try {
+                int idEmpresa = Integer.parseInt(idTexto.trim());
+                return empresaDAO.buscar(idEmpresa);
+            } catch (Exception e) {
+                System.out.println("Erro ao buscar empresa do admin: " + e.getMessage());
+            }
+        }
+        return null;
     }
     private String obterParametro(HttpServletRequest req, String... nomes) {
         for (String nome : nomes) {
