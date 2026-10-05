@@ -47,8 +47,17 @@ public class CaminhaoServlet extends HttpServlet {
             }
         }
 
-        List<CaminhaoModel> caminhaoModels = dao.listar();
+        // Busca flexível por placa (cavalo ou carreta) ou listagem geral
+        String busca = obterParametro(req, "placa", "busca", "q", "pesquisa");
+        List<CaminhaoModel> caminhaoModels;
 
+        if (busca != null && !busca.isBlank()) {
+            caminhaoModels = dao.buscarPorPlaca(busca);
+        } else {
+            caminhaoModels = dao.listar();
+        }
+
+        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("caminhaoModels", caminhaoModels);
         req.setAttribute("caminhoes", caminhaoModels);
 

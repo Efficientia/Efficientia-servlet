@@ -175,6 +175,55 @@ public class CaminhaoDAO {
         return null;
     }
 
+    /**
+     * Busca caminhões por placa (pesquisando tanto em placa_cavalo quanto em placa_carreta),
+     * tolerante a hífens e maiúsculas/minúsculas.
+     *
+     * @param placa termo ou placa a ser pesquisada
+     * @return lista de caminhões correspondentes
+     */
+    public List<CaminhaoModel> buscarPorPlaca(String placa) {
+        if (placa == null || placa.isBlank()) {
+            return listar();
+        }
+
+        // Remove hífens e espaços para cobrir tanto ABC-1234 quanto ABC1234 e padrão Mercosul
+        String placaLimpa = placa.replace("-", "").trim().toUpperCase();
+
+        String sql = """
+                SELECT * FROM caminhao
+                WHERE REPLACE(UPPER(placa_cavalo), '-', '') LIKE ?
+                   OR REPLACE(UPPER(placa_carreta), '-', '') LIKE ?
+                ORDER BY id ASC;
+                """;
+
+        List<CaminhaoModel> caminhaoModels = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            String param = "%" + placaLimpa + "%";
+            stmt.setString(1, param);
+            stmt.setString(2, param);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    caminhaoModels.add(new CaminhaoModel(
+                            rs.getInt("id"),
+                            rs.getString("placa_cavalo"),
+                            rs.getString("placa_carreta"),
+                            rs.getInt("capacidade_maxima")
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar caminhões por placa: " + e.getMessage());
+        }
+
+        return caminhaoModels;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**

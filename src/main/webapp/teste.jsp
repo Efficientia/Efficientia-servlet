@@ -1,6 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.LinkedHashSet" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
@@ -9,31 +12,129 @@
 <%@ page import="com.efficientia.efficientia.DAO.impl.CaminhaoDAO" %>
 <%@ page import="com.efficientia.efficientia.DAO.impl.EmpresaDAO" %>
 <%@ page import="com.efficientia.efficientia.DAO.impl.TrajetoDAO" %>
+<%@ page import="com.efficientia.efficientia.DAO.impl.AdminDAO" %>
 <%@ page import="com.efficientia.efficientia.model.PecuaristaModel" %>
 <%@ page import="com.efficientia.efficientia.model.MotoristaModel" %>
 <%@ page import="com.efficientia.efficientia.model.CaminhaoModel" %>
 <%@ page import="com.efficientia.efficientia.model.EmpresaModel" %>
 <%@ page import="com.efficientia.efficientia.model.TrajetoModel" %>
+<%@ page import="com.efficientia.efficientia.model.AdminModel" %>
 <%@ page import="com.efficientia.efficientia.model.StatusTrajeto" %>
 
 <%
-    // Instanciação dos DAOs e carregamento das listas de dados
+    // Instanciação dos DAOs
     PecuaristaDAO pecuaristaDAO = new PecuaristaDAO();
     MotoristaDAO motoristaDAO = new MotoristaDAO();
     CaminhaoDAO caminhaoDAO = new CaminhaoDAO();
     EmpresaDAO empresaDAO = new EmpresaDAO();
     TrajetoDAO trajetoDAO = new TrajetoDAO();
+    AdminDAO adminDAO = new AdminDAO();
+
+    // Leitura dos parâmetros de busca
+    String buscaPec = request.getParameter("buscaPecuarista");
+    String buscaMot = request.getParameter("buscaMotorista");
+    String buscaCam = request.getParameter("buscaCaminhao");
+    String buscaEmp = request.getParameter("buscaEmpresa");
+    String buscaAdm = request.getParameter("buscaAdmin");
 
     List<PecuaristaModel> pecuaristas = null;
     List<MotoristaModel> motoristas = null;
     List<CaminhaoModel> caminhoes = null;
     List<EmpresaModel> empresas = null;
     List<TrajetoModel> trajetos = null;
+    List<AdminModel> admins = null;
 
-    try { pecuaristas = pecuaristaDAO.listar(); } catch (Exception e) { pecuaristas = new java.util.ArrayList<>(); }
-    try { motoristas = motoristaDAO.listar(); } catch (Exception e) { motoristas = new java.util.ArrayList<>(); }
-    try { caminhoes = caminhaoDAO.listar(); } catch (Exception e) { caminhoes = new java.util.ArrayList<>(); }
-    try { empresas = empresaDAO.listar(); } catch (Exception e) { empresas = new java.util.ArrayList<>(); }
+    // 1. Pecuaristas: busca unificada por Nome, CPF, E-mail ou Telefone
+    try {
+        if (buscaPec != null && !buscaPec.isBlank()) {
+            String termo = buscaPec.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            pecuaristas = new ArrayList<>();
+
+            for (PecuaristaModel p : pecuaristaDAO.buscarPorNome(termo)) {
+                if (ids.add(p.getId())) pecuaristas.add(p);
+            }
+            for (PecuaristaModel p : pecuaristaDAO.buscarPorCpf(termo)) {
+                if (ids.add(p.getId())) pecuaristas.add(p);
+            }
+            for (PecuaristaModel p : pecuaristaDAO.buscarPorEmail(termo)) {
+                if (ids.add(p.getId())) pecuaristas.add(p);
+            }
+            for (PecuaristaModel p : pecuaristaDAO.buscarPorTelefone(termo)) {
+                if (ids.add(p.getId())) pecuaristas.add(p);
+            }
+        } else {
+            pecuaristas = pecuaristaDAO.listar();
+        }
+    } catch (Exception e) { pecuaristas = new ArrayList<>(); }
+
+    // 2. Motoristas: busca unificada por Nome, E-mail ou Telefone
+    try {
+        if (buscaMot != null && !buscaMot.isBlank()) {
+            String termo = buscaMot.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            motoristas = new ArrayList<>();
+
+            for (MotoristaModel m : motoristaDAO.buscarPorNome(termo)) {
+                if (ids.add(m.getId())) motoristas.add(m);
+            }
+            for (MotoristaModel m : motoristaDAO.buscarPorEmail(termo)) {
+                if (ids.add(m.getId())) motoristas.add(m);
+            }
+            for (MotoristaModel m : motoristaDAO.buscarPorTelefone(termo)) {
+                if (ids.add(m.getId())) motoristas.add(m);
+            }
+        } else {
+            motoristas = motoristaDAO.listar();
+        }
+    } catch (Exception e) { motoristas = new ArrayList<>(); }
+
+    // 3. Caminhões: busca por placa (cavalo ou carreta)
+    try {
+        if (buscaCam != null && !buscaCam.isBlank()) {
+            caminhoes = caminhaoDAO.buscarPorPlaca(buscaCam);
+        } else {
+            caminhoes = caminhaoDAO.listar();
+        }
+    } catch (Exception e) { caminhoes = new ArrayList<>(); }
+
+    // 4. Empresas: busca unificada por Código (ex: EMP001 ou 001) ou por Nome
+    try {
+        if (buscaEmp != null && !buscaEmp.isBlank()) {
+            String termo = buscaEmp.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            empresas = new ArrayList<>();
+
+            for (EmpresaModel e : empresaDAO.buscarPorCodigoLista(termo)) {
+                if (ids.add(e.getId())) empresas.add(e);
+            }
+            for (EmpresaModel e : empresaDAO.buscarPorNome(termo)) {
+                if (ids.add(e.getId())) empresas.add(e);
+            }
+        } else {
+            empresas = empresaDAO.listar();
+        }
+    } catch (Exception e) { empresas = new ArrayList<>(); }
+
+    // 5. Admins: busca unificada por Nome ou por E-mail
+    try {
+        if (buscaAdm != null && !buscaAdm.isBlank()) {
+            String termo = buscaAdm.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            admins = new ArrayList<>();
+
+            for (AdminModel a : adminDAO.buscarPorNome(termo)) {
+                if (ids.add(a.getId())) admins.add(a);
+            }
+            for (AdminModel a : adminDAO.buscarPorEmail(termo)) {
+                if (ids.add(a.getId())) admins.add(a);
+            }
+        } else {
+            admins = adminDAO.listar();
+        }
+    } catch (Exception e) { admins = new ArrayList<>(); }
+
+    // 6. Trajetos
     try { trajetos = trajetoDAO.listar(); } catch (Exception e) { trajetos = new java.util.ArrayList<>(); }
 
     request.setAttribute("pecuaristas", pecuaristas);
@@ -41,7 +142,14 @@
     request.setAttribute("caminhoes", caminhoes);
     request.setAttribute("empresas", empresas);
     request.setAttribute("trajetos", trajetos);
+    request.setAttribute("admins", admins);
     request.setAttribute("statusTrajetos", StatusTrajeto.values());
+
+    request.setAttribute("buscaPecuarista", buscaPec != null ? buscaPec : "");
+    request.setAttribute("buscaMotorista", buscaMot != null ? buscaMot : "");
+    request.setAttribute("buscaCaminhao", buscaCam != null ? buscaCam : "");
+    request.setAttribute("buscaEmpresa", buscaEmp != null ? buscaEmp : "");
+    request.setAttribute("buscaAdmin", buscaAdm != null ? buscaAdm : "");
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     DateTimeFormatter dtfDateTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -123,6 +231,28 @@
                 </div>
             </div>
             <span class="servlet-count-badge">${not empty trajetos ? trajetos.size() : 0}</span>
+        </button>
+
+        <button type="button" class="servlet-nav-btn" id="navBtn-empresa" onclick="switchServlet('empresa')">
+            <div class="servlet-nav-info">
+                <span class="servlet-nav-icon">🏢</span>
+                <div>
+                    <span class="servlet-nav-title">Empresa</span>
+                    <span class="servlet-nav-sub">/empresa</span>
+                </div>
+            </div>
+            <span class="servlet-count-badge">${not empty empresas ? empresas.size() : 0}</span>
+        </button>
+
+        <button type="button" class="servlet-nav-btn" id="navBtn-admin" onclick="switchServlet('admin')">
+            <div class="servlet-nav-info">
+                <span class="servlet-nav-icon">🛡️</span>
+                <div>
+                    <span class="servlet-nav-title">Admin</span>
+                    <span class="servlet-nav-sub">/admin</span>
+                </div>
+            </div>
+            <span class="servlet-count-badge">${not empty admins ? admins.size() : 0}</span>
         </button>
     </nav>
 
@@ -246,10 +376,26 @@
             </div>
         </div>
 
-        <!-- LISTAGEM PECUARISTAS -->
+        <!-- LISTAGEM PECUARISTAS COM BUSCA -->
         <div class="list-section-header">
-            <h2>Pecuaristas Cadastrados</h2>
-            <span class="badge-count">${not empty pecuaristas ? pecuaristas.size() : 0} registros</span>
+            <div>
+                <h2>Pecuaristas Cadastrados</h2>
+                <c:if test="${not empty buscaPecuarista}">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Filtrando por: <strong><c:out value="${buscaPecuarista}"/></strong>
+                        <a href="${pageContext.request.contextPath}/teste.jsp?servlet=pecuarista" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                    </p>
+                </c:if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
+                    <input type="hidden" name="servlet" value="pecuarista">
+                    <input type="text" name="buscaPecuarista" value="<c:out value="${buscaPecuarista}"/>" placeholder="Buscar por Nome, CPF, Email ou Tel..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
+                </form>
+                <span class="badge-count">${not empty pecuaristas ? pecuaristas.size() : 0} registros</span>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -436,10 +582,26 @@
             </div>
         </div>
 
-        <!-- LISTAGEM MOTORISTAS -->
+        <!-- LISTAGEM MOTORISTAS COM BUSCA -->
         <div class="list-section-header">
-            <h2>Motoristas Cadastrados</h2>
-            <span class="badge-count">${not empty motoristas ? motoristas.size() : 0} registros</span>
+            <div>
+                <h2>Motoristas Cadastrados</h2>
+                <c:if test="${not empty buscaMotorista}">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Filtrando por: <strong><c:out value="${buscaMotorista}"/></strong>
+                        <a href="${pageContext.request.contextPath}/teste.jsp?servlet=motorista" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                    </p>
+                </c:if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
+                    <input type="hidden" name="servlet" value="motorista">
+                    <input type="text" name="buscaMotorista" value="<c:out value="${buscaMotorista}"/>" placeholder="Buscar por Nome, Email ou Telefone..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
+                </form>
+                <span class="badge-count">${not empty motoristas ? motoristas.size() : 0} registros</span>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -618,10 +780,26 @@
             </div>
         </div>
 
-        <!-- LISTAGEM CAMINHÕES -->
+        <!-- LISTAGEM CAMINHÕES COM BUSCA -->
         <div class="list-section-header">
-            <h2>Caminhões Cadastrados</h2>
-            <span class="badge-count">${not empty caminhoes ? caminhoes.size() : 0} registros</span>
+            <div>
+                <h2>Caminhões Cadastrados</h2>
+                <c:if test="${not empty buscaCaminhao}">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Filtrando por placa: <strong><c:out value="${buscaCaminhao}"/></strong>
+                        <a href="${pageContext.request.contextPath}/teste.jsp?servlet=caminhao" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                    </p>
+                </c:if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
+                    <input type="hidden" name="servlet" value="caminhao">
+                    <input type="text" name="buscaCaminhao" value="<c:out value="${buscaCaminhao}"/>" placeholder="Buscar por Placa (Cavalo ou Carreta)..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
+                </form>
+                <span class="badge-count">${not empty caminhoes ? caminhoes.size() : 0} registros</span>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -1229,6 +1407,324 @@
         </div>
     </section>
 
+    <!-- ==================================================================== -->
+    <!-- SEÇÃO 5: EMPRESA SERVLET -->
+    <!-- ==================================================================== -->
+    <section id="section-empresa" class="servlet-section">
+        <div class="tabs-header">
+            <button type="button" id="tabBtnCadastrar-empresa" class="tab-button active" onclick="switchTab('empresa', 'cadastrar')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Cadastrar Nova Empresa
+            </button>
+            <button type="button" id="tabBtnExcluir-empresa" class="tab-button tab-btn-danger" onclick="switchTab('empresa', 'excluir')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Excluir Empresa
+            </button>
+        </div>
+
+        <div class="card card-tab-wrapper">
+            <!-- ABA 1: CADASTRO -->
+            <div id="tabCadastrar-empresa" class="tab-content active">
+                <div class="card-header">
+                    <h2>Nova Empresa</h2>
+                    <p>Preencha os dados da transportadora parceira.</p>
+                </div>
+                <form action="${pageContext.request.contextPath}/empresa" method="post" onsubmit="return handleFormSubmit(event, 'Empresa cadastrada com sucesso!')">
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="emp-nome">Razão Social / Nome *</label>
+                            <input type="text" id="emp-nome" name="nome" placeholder="Ex: TransBoi Logística Ltda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emp-cnpj">CNPJ * <span class="helper-text">14 dígitos</span></label>
+                            <input type="text" id="emp-cnpj" name="cnpj" maxlength="14" placeholder="Ex: 12345678000101" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="reset" class="btn btn-secondary">Limpar</button>
+                        <button type="submit" class="btn btn-primary">Cadastrar Empresa</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ABA 2: EXCLUSÃO -->
+            <div id="tabExcluir-empresa" class="tab-content">
+                <div class="card-header">
+                    <h2 class="title-red">Excluir Empresa</h2>
+                    <p>Selecione uma empresa para remover do banco de dados.</p>
+                </div>
+                <c:choose>
+                    <c:when test="${empty empresas}">
+                        <div class="empty-state"><p>Não há empresas cadastradas disponíveis para exclusão.</p></div>
+                    </c:when>
+                    <c:otherwise>
+                        <form id="formAbaExcluirEmpresa" onsubmit="return handleSelectExcluirSubmit(event, 'selectExcluirEmpresa', '/empresa')">
+                            <div class="form-grid">
+                                <div class="form-group form-group-full">
+                                    <label for="selectExcluirEmpresa">Selecione a Empresa *</label>
+                                    <select id="selectExcluirEmpresa" name="id" class="danger-input" required>
+                                        <option value="" disabled selected>Escolha uma empresa...</option>
+                                        <c:forEach var="emp" items="${empresas}">
+                                            <option value="${emp.id}" data-nome="${emp.nome}">
+                                                ID #${emp.id} - ${emp.nome} (Código: ${not empty emp.codigo ? emp.codigo : 'S/C'})
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="switchTab('empresa', 'cadastrar')">Cancelar</button>
+                                <button type="submit" class="btn btn-danger">Excluir Empresa</button>
+                            </div>
+                        </form>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+
+        <!-- LISTAGEM EMPRESAS COM BUSCA -->
+        <div class="list-section-header">
+            <div>
+                <h2>Empresas Cadastradas</h2>
+                <c:if test="${not empty buscaEmpresa}">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Filtrando por: <strong><c:out value="${buscaEmpresa}"/></strong>
+                        <a href="${pageContext.request.contextPath}/teste.jsp?servlet=empresa" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                    </p>
+                </c:if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
+                    <input type="hidden" name="servlet" value="empresa">
+                    <input type="text" name="buscaEmpresa" value="<c:out value="${buscaEmpresa}"/>" placeholder="Buscar por Código (ex: EMP001) ou Nome..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 290px;" />
+                    <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
+                </form>
+                <span class="badge-count">${not empty empresas ? empresas.size() : 0} registros</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <c:choose>
+                <c:when test="${empty empresas}">
+                    <div class="empty-state"><p>Nenhuma empresa cadastrada até o momento.</p></div>
+                </c:when>
+                <c:otherwise>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome / Razão Social</th>
+                                <th>CNPJ</th>
+                                <th>Código</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="emp" items="${empresas}">
+                                <tr>
+                                    <td><strong>#${emp.id}</strong></td>
+                                    <td><strong><c:out value="${emp.nome}" /></strong></td>
+                                    <td><c:out value="${emp.cnpj}" /></td>
+                                    <td><span class="text-code"><c:out value="${not empty emp.codigo ? emp.codigo : '-'}" /></span></td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                                            <button type="button" class="btn-sm-edit" onclick="abrirModalEdicaoEmpresa(${emp.id}, '<c:out value="${emp.nome}" />', '<c:out value="${emp.cnpj}" />', '<c:out value="${emp.codigo}" />')">
+                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                Editar
+                                            </button>
+                                            <button type="button" class="btn-sm-danger" onclick="abrirConfirmacaoExcluir('/empresa', ${emp.id}, '<c:out value="${emp.nome}" />')">
+                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                Excluir
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SEÇÃO 6: ADMIN SERVLET -->
+    <!-- ==================================================================== -->
+    <section id="section-admin" class="servlet-section">
+        <div class="tabs-header">
+            <button type="button" id="tabBtnCadastrar-admin" class="tab-button active" onclick="switchTab('admin', 'cadastrar')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Cadastrar Novo Administrador
+            </button>
+            <button type="button" id="tabBtnExcluir-admin" class="tab-button tab-btn-danger" onclick="switchTab('admin', 'excluir')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Excluir Administrador
+            </button>
+        </div>
+
+        <div class="card card-tab-wrapper">
+            <!-- ABA 1: CADASTRO -->
+            <div id="tabCadastrar-admin" class="tab-content active">
+                <div class="card-header">
+                    <h2>Novo Administrador</h2>
+                    <p>Preencha os dados do administrador do sistema.</p>
+                </div>
+                <form action="${pageContext.request.contextPath}/admin" method="post" onsubmit="return handleFormSubmit(event, 'Administrador cadastrado com sucesso!')">
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="adm-nome">Nome Completo *</label>
+                            <input type="text" id="adm-nome" name="nome" placeholder="Ex: Carlos Oliveira" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-email">E-mail *</label>
+                            <input type="email" id="adm-email" name="email" placeholder="admin@empresa.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-senha">Senha *</label>
+                            <input type="password" id="adm-senha" name="senha" required>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="adm-idEmpresa">Empresa Vinculada</label>
+                            <select id="adm-idEmpresa" name="idEmpresa">
+                                <option value="">Sem vínculo com empresa</option>
+                                <c:forEach var="emp" items="${empresas}">
+                                    <option value="${emp.id}">${emp.nome} (${not empty emp.codigo ? emp.codigo : 'S/C'})</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="reset" class="btn btn-secondary">Limpar</button>
+                        <button type="submit" class="btn btn-primary">Cadastrar Admin</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ABA 2: EXCLUSÃO -->
+            <div id="tabExcluir-admin" class="tab-content">
+                <div class="card-header">
+                    <h2 class="title-red">Excluir Administrador</h2>
+                    <p>Selecione um administrador para remover do banco de dados.</p>
+                </div>
+                <c:choose>
+                    <c:when test="${empty admins}">
+                        <div class="empty-state"><p>Não há administradores cadastrados disponíveis para exclusão.</p></div>
+                    </c:when>
+                    <c:otherwise>
+                        <form id="formAbaExcluirAdmin" onsubmit="return handleSelectExcluirSubmit(event, 'selectExcluirAdmin', '/admin')">
+                            <div class="form-grid">
+                                <div class="form-group form-group-full">
+                                    <label for="selectExcluirAdmin">Selecione o Administrador *</label>
+                                    <select id="selectExcluirAdmin" name="id" class="danger-input" required>
+                                        <option value="" disabled selected>Escolha um administrador...</option>
+                                        <c:forEach var="adm" items="${admins}">
+                                            <option value="${adm.id}" data-nome="${adm.nome}">
+                                                ID #${adm.id} - ${adm.nome} (${adm.email})
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="switchTab('admin', 'cadastrar')">Cancelar</button>
+                                <button type="submit" class="btn btn-danger">Excluir Administrador</button>
+                            </div>
+                        </form>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+
+        <!-- LISTAGEM ADMINS COM BUSCA -->
+        <div class="list-section-header">
+            <div>
+                <h2>Administradores Cadastrados</h2>
+                <c:if test="${not empty buscaAdmin}">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Filtrando por: <strong><c:out value="${buscaAdmin}"/></strong>
+                        <a href="${pageContext.request.contextPath}/teste.jsp?servlet=admin" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                    </p>
+                </c:if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
+                    <input type="hidden" name="servlet" value="admin">
+                    <input type="text" name="buscaAdmin" value="<c:out value="${buscaAdmin}"/>" placeholder="Buscar por Nome ou E-mail..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
+                </form>
+                <span class="badge-count">${not empty admins ? admins.size() : 0} registros</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <c:choose>
+                <c:when test="${empty admins}">
+                    <div class="empty-state"><p>Nenhum administrador cadastrado até o momento.</p></div>
+                </c:when>
+                <c:otherwise>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Empresa</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="adm" items="${admins}">
+                                <tr>
+                                    <td><strong>#${adm.id}</strong></td>
+                                    <td><strong><c:out value="${adm.nome}" /></strong></td>
+                                    <td><c:out value="${adm.email}" /></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${adm.empresaModel != null}">
+                                                <c:out value="${adm.empresaModel.nome}" />
+                                            </c:when>
+                                            <c:otherwise><span class="text-muted">N/A</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                                            <button type="button" class="btn-sm-edit" onclick="abrirModalEdicaoAdmin(${adm.id}, '<c:out value="${adm.nome}" />', '<c:out value="${adm.email}" />', '${adm.empresaModel != null ? adm.empresaModel.id : ''}')">
+                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                Editar
+                                            </button>
+                                            <button type="button" class="btn-sm-danger" onclick="abrirConfirmacaoExcluir('/admin', ${adm.id}, '<c:out value="${adm.nome}" />')">
+                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                Excluir
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </section>
+
 </div>
 
 
@@ -1803,6 +2299,102 @@
 </div>
 
 
+<!-- ==================================================================== -->
+<!-- MODAL DE EDIÇÃO: EMPRESA -->
+<!-- ==================================================================== -->
+<div id="modalEdicaoEmpresa" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+        <div class="modal-header-edit">
+            <h3>
+                Editar Empresa
+                <span id="badgeEditEmpresaId" class="badge-id">#0</span>
+            </h3>
+            <button type="button" class="modal-close-btn" onclick="fecharModal('modalEdicaoEmpresa')">&times;</button>
+        </div>
+
+        <form id="formEditarEmpresa" action="${pageContext.request.contextPath}/empresa" method="post" onsubmit="return handleFormSubmit(event, 'Empresa atualizada com sucesso!')">
+            <input type="hidden" name="acao" value="atualizar">
+            <input type="hidden" id="editEmp-id" name="id" value="">
+
+            <div class="form-grid">
+                <div class="form-group form-group-full">
+                    <label for="editEmp-nome">Nome / Razão Social *</label>
+                    <input type="text" id="editEmp-nome" name="nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editEmp-cnpj">CNPJ * <span class="helper-text">14 números</span></label>
+                    <input type="text" id="editEmp-cnpj" name="cnpj" maxlength="18" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editEmp-codigo">Código <span class="helper-text">(ex: EMP12345)</span></label>
+                    <input type="text" id="editEmp-codigo" name="codigo" placeholder="EMP001">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="fecharModal('modalEdicaoEmpresa')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- ==================================================================== -->
+<!-- MODAL DE EDIÇÃO: ADMIN -->
+<!-- ==================================================================== -->
+<div id="modalEdicaoAdmin" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+        <div class="modal-header-edit">
+            <h3>
+                Editar Administrador
+                <span id="badgeEditAdminId" class="badge-id">#0</span>
+            </h3>
+            <button type="button" class="modal-close-btn" onclick="fecharModal('modalEdicaoAdmin')">&times;</button>
+        </div>
+
+        <form id="formEditarAdmin" action="${pageContext.request.contextPath}/admin" method="post" onsubmit="return handleFormSubmit(event, 'Administrador atualizado com sucesso!')">
+            <input type="hidden" name="acao" value="atualizar">
+            <input type="hidden" id="editAdm-id" name="id" value="">
+
+            <div class="form-grid">
+                <div class="form-group form-group-full">
+                    <label for="editAdm-nome">Nome Completo *</label>
+                    <input type="text" id="editAdm-nome" name="nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editAdm-email">E-mail *</label>
+                    <input type="email" id="editAdm-email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editAdm-senha">Senha de Acesso *</label>
+                    <input type="password" id="editAdm-senha" name="senha" required>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="editAdm-idEmpresa">Empresa Vinculada</label>
+                    <select id="editAdm-idEmpresa" name="idEmpresa">
+                        <option value="">Sem empresa associada</option>
+                        <c:forEach var="emp" items="${empresas}">
+                            <option value="${emp.id}">#${emp.id} - ${emp.nome} (${not empty emp.codigo ? emp.codigo : 'S/C'})</option>
+                        </c:forEach>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="fecharModal('modalEdicaoAdmin')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <!-- Container para Toasts Dinâmicos -->
 <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
@@ -1818,7 +2410,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const servletParam = urlParams.get('servlet');
-        if (servletParam && ['pecuarista', 'motorista', 'caminhao', 'trajeto'].includes(servletParam)) {
+        if (servletParam && ['pecuarista', 'motorista', 'caminhao', 'trajeto', 'empresa', 'admin'].includes(servletParam)) {
             switchServlet(servletParam);
         }
 
@@ -1949,6 +2541,25 @@
         abrirModal('modalEdicaoCaminhao');
     }
 
+    function abrirModalEdicaoEmpresa(id, nome, cnpj, codigo) {
+        document.getElementById('editEmp-id').value = id;
+        document.getElementById('badgeEditEmpresaId').textContent = '#' + id;
+        document.getElementById('editEmp-nome').value = nome || '';
+        document.getElementById('editEmp-cnpj').value = cnpj || '';
+        document.getElementById('editEmp-codigo').value = codigo || '';
+        abrirModal('modalEdicaoEmpresa');
+    }
+
+    function abrirModalEdicaoAdmin(id, nome, email, idEmpresa) {
+        document.getElementById('editAdm-id').value = id;
+        document.getElementById('badgeEditAdminId').textContent = '#' + id;
+        document.getElementById('editAdm-nome').value = nome || '';
+        document.getElementById('editAdm-email').value = email || '';
+        document.getElementById('editAdm-idEmpresa').value = idEmpresa || '';
+        document.getElementById('editAdm-senha').value = '';
+        abrirModal('modalEdicaoAdmin');
+    }
+
     function abrirModalEdicaoTrajeto(id, idMotorista, idCaminhao, idPecuarista, status, dataInicio, dataFim, kmSaida, kmChegada, gta, nf, embarque, macho, femea, marruco, desembarque, curral, curraleiro, manobrista, assCurraleiro, assManobrista, assMotorista) {
         document.getElementById('editTraj-id').value = id;
         document.getElementById('badgeEditTrajetoId').textContent = '#' + id;
@@ -2053,6 +2664,8 @@
                 fecharModal('modalEdicaoPecuarista');
                 fecharModal('modalEdicaoMotorista');
                 fecharModal('modalEdicaoCaminhao');
+                fecharModal('modalEdicaoEmpresa');
+                fecharModal('modalEdicaoAdmin');
                 fecharModal('modalEdicaoTrajeto');
 
                 // Recarrega a página mantendo a aba do servlet ativa

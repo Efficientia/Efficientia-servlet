@@ -10,7 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(name = "PecuaristaServlet", value = "/pecuarista")
 public class PecuaristaServlet extends HttpServlet {
@@ -48,17 +51,45 @@ public class PecuaristaServlet extends HttpServlet {
             }
         }
 
-        // Busca flexível por nome ou listagem geral de pecuaristas
+        // Busca flexível: CPF, email, telefone, nome ou listagem geral de pecuaristas
+        String cpf = obterParametro(req, "cpf");
+        String email = obterParametro(req, "email");
+        String telefone = obterParametro(req, "telefone");
         String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
         List<PecuaristaModel> pecuaristaModels;
 
-        if (busca != null && !busca.isBlank()) {
-            pecuaristaModels = dao.buscarPorNome(busca);
+        if (cpf != null && !cpf.isBlank()) {
+            pecuaristaModels = dao.buscarPorCpf(cpf);
+            req.setAttribute("termoBusca", cpf);
+        } else if (email != null && !email.isBlank()) {
+            pecuaristaModels = dao.buscarPorEmail(email);
+            req.setAttribute("termoBusca", email);
+        } else if (telefone != null && !telefone.isBlank()) {
+            pecuaristaModels = dao.buscarPorTelefone(telefone);
+            req.setAttribute("termoBusca", telefone);
+        } else if (busca != null && !busca.isBlank()) {
+            String termo = busca.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            pecuaristaModels = new ArrayList<>();
+
+            for (PecuaristaModel p : dao.buscarPorNome(termo)) {
+                if (ids.add(p.getId())) pecuaristaModels.add(p);
+            }
+            for (PecuaristaModel p : dao.buscarPorCpf(termo)) {
+                if (ids.add(p.getId())) pecuaristaModels.add(p);
+            }
+            for (PecuaristaModel p : dao.buscarPorEmail(termo)) {
+                if (ids.add(p.getId())) pecuaristaModels.add(p);
+            }
+            for (PecuaristaModel p : dao.buscarPorTelefone(termo)) {
+                if (ids.add(p.getId())) pecuaristaModels.add(p);
+            }
+            req.setAttribute("termoBusca", busca);
         } else {
             pecuaristaModels = dao.listar();
+            req.setAttribute("termoBusca", "");
         }
 
-        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("pecuaristaModels", pecuaristaModels);
         req.setAttribute("pecuaristas", pecuaristaModels);
 

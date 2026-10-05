@@ -178,14 +178,18 @@ public class EmpresaDAO {
      * @return objeto EmpresaModel se encontrado, ou null caso contrário
      */
     public EmpresaModel buscarPorCodigo(String codigo) {
+        if (codigo == null || codigo.isBlank()) {
+            return null;
+        }
+
         String sql = """
-                SELECT * FROM empresa WHERE codigo = ?;
+                SELECT * FROM empresa WHERE UPPER(codigo) = UPPER(?);
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, codigo);
+            stmt.setString(1, codigo.trim());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -203,6 +207,49 @@ public class EmpresaDAO {
         }
 
         return null;
+    }
+
+    /**
+     * Busca empresas pelo código corporativo (ex: EMP12345), suportando correspondência parcial
+     * e ignorando maiúsculas e minúsculas.
+     *
+     * @param codigo termo ou código a ser buscado
+     * @return lista de empresas encontradas
+     */
+    public List<EmpresaModel> buscarPorCodigoLista(String codigo) {
+        if (codigo == null || codigo.isBlank()) {
+            return listar();
+        }
+
+        String sql = """
+                SELECT * FROM empresa
+                WHERE UPPER(codigo) LIKE ?
+                ORDER BY codigo ASC, id ASC;
+                """;
+
+        List<EmpresaModel> empresas = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + codigo.trim().toUpperCase() + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    empresas.add(new EmpresaModel(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("cnpj"),
+                            rs.getString("codigo")
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar empresas por codigo: " + e.getMessage());
+        }
+
+        return empresas;
     }
 
     /**

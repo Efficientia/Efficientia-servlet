@@ -265,7 +265,111 @@ public class AdminDAO {
         return listaAdmin;
     }
 
+    /**
+     * Busca administradores pelo e-mail, ignorando maiúsculas e minúsculas.
+     *
+     * @param email endereço de email a pesquisar
+     * @return lista de administradores encontrados
+     */
+    public List<AdminModel> buscarPorEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return listar();
+        }
+
+        String sql = """
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM adm a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE LOWER(a.email) LIKE ?
+                ORDER BY a.nome ASC, a.id ASC;
+                """;
+
+        List<AdminModel> listaAdmin = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + email.trim().toLowerCase() + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    listaAdmin.add(extrairAdmin(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Admin por email: " + e.getMessage());
+        }
+
+        return listaAdmin;
+    }
+
+    /**
+     * Busca administradores vinculados a uma empresa específica.
+     *
+     * @param idEmpresa identificador da empresa
+     * @return lista de administradores da empresa
+     */
+    public List<AdminModel> buscarPorEmpresa(int idEmpresa) {
+        String sql = """
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM adm a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE a.id_empresa = ?
+                ORDER BY a.nome ASC, a.id ASC;
+                """;
+
+        List<AdminModel> listaAdmin = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idEmpresa);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    listaAdmin.add(extrairAdmin(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Admin por empresa: " + e.getMessage());
+        }
+
+        return listaAdmin;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Extrai os dados do ResultSet hidratando o objeto AdminModel com a empresa associada.
+     */
+    private AdminModel extrairAdmin(ResultSet rs) throws SQLException {
+        EmpresaModel empresaModel = null;
+        int idEmpresa = rs.getInt("empresa_id");
+        if (!rs.wasNull()) {
+            empresaModel = new EmpresaModel(
+                    idEmpresa,
+                    rs.getString("empresa_nome"),
+                    rs.getString("empresa_cnpj"),
+                    rs.getString("empresa_codigo")
+            );
+        }
+
+        return new AdminModel(
+                rs.getInt("id"),
+                empresaModel,
+                rs.getString("email"),
+                rs.getString("senha"),
+                rs.getString("nome")
+        );
+    }
 
     /**
      * Mapeia os atributos do modelo AdminModel para os parâmetros do PreparedStatement.
