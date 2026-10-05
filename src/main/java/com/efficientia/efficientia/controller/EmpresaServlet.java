@@ -56,9 +56,17 @@ public class EmpresaServlet extends HttpServlet {
             }
         }
 
-        // Listagem geral de empresas cadastradas
-        List<EmpresaModel> empresaModels = dao.listar();
+        // Busca flexível por nome ou listagem geral de empresas cadastradas
+        String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
+        List<EmpresaModel> empresaModels;
 
+        if (busca != null && !busca.isBlank()) {
+            empresaModels = dao.buscarPorNome(busca);
+        } else {
+            empresaModels = dao.listar();
+        }
+
+        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("empresaModels", empresaModels);
         req.setAttribute("empresas", empresaModels);
 

@@ -179,6 +179,62 @@ public class AnalistaDAO {
         return null;
     }
 
+    /**
+     * Busca analistas por nome, suportando correspondência exata, parcial ("picada")
+     * e case-insensitive (ignorando maiúsculas e minúsculas).
+     *
+     * @param termo termo ou palavras-chave de busca
+     * @return lista de analistas encontrados
+     */
+    public List<AnalistaModel> buscarPorNome(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listar();
+        }
+
+        String[] tokens = termo.trim().split("\\s+");
+        StringBuilder sql = new StringBuilder("""
+                SELECT * FROM analista
+                WHERE 1=1
+                """);
+
+        for (int i = 0; i < tokens.length; i++) {
+            sql.append(" AND LOWER(nome) LIKE ?");
+        }
+        sql.append(" ORDER BY nome ASC, id ASC;");
+
+        List<AnalistaModel> listaAnalista = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < tokens.length; i++) {
+                stmt.setString(i + 1, "%" + tokens[i].toLowerCase() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Date dataNasc = rs.getDate("data_nascimento");
+                    AnalistaModel analistaModel = new AnalistaModel(
+                            rs.getInt("id"),
+                            rs.getString("cpf"),
+                            rs.getString("nome"),
+                            rs.getString("assinatura"),
+                            dataNasc != null ? dataNasc.toLocalDate() : null,
+                            rs.getString("senha"),
+                            rs.getString("email"),
+                            rs.getString("telefone"),
+                            rs.getString("codigo")
+                    );
+                    listaAnalista.add(analistaModel);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Analista por nome: " + e.getMessage());
+        }
+
+        return listaAnalista;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**

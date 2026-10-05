@@ -730,11 +730,26 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- LISTA DE CADASTROS COM AÇÕES -->
+    <!-- LISTA DE CADASTROS COM AÇÕES E BUSCA -->
     <!-- ============================================== -->
     <div class="list-section-header">
-        <h2>Pecuaristas Cadastrados</h2>
-        <span class="badge-count">${not empty pecuaristaModels ? pecuaristaModels.size() : 0} registros</span>
+        <div>
+            <h2>Pecuaristas Cadastrados</h2>
+            <c:if test="${not empty termoBusca}">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                    Filtrando por: <strong><c:out value="${termoBusca}"/></strong>
+                    <a href="${pageContext.request.contextPath}/pecuarista" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                </p>
+            </c:if>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+            <form action="${pageContext.request.contextPath}/pecuarista" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="text" name="busca" value="<c:out value="${termoBusca}"/>" placeholder="Buscar por nome (exato ou picado)..." 
+                       style="padding: 0.5rem 0.85rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.88rem; outline: none; width: 250px; font-family: inherit;" />
+                <button type="submit" style="padding: 0.5rem 0.95rem; background: var(--primary-green); color: #0b111e; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; font-size: 0.88rem; font-family: inherit;">Buscar</button>
+            </form>
+            <span class="badge-count">${not empty pecuaristaModels ? pecuaristaModels.size() : 0} registros</span>
+        </div>
     </div>
 
     <div class="table-responsive">

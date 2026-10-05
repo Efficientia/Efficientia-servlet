@@ -197,6 +197,74 @@ public class AdminDAO {
         return null;
     }
 
+    /**
+     * Busca administradores por nome, suportando correspondência exata, parcial ("picada")
+     * e case-insensitive (ignorando maiúsculas e minúsculas), trazendo os dados da empresa via LEFT JOIN.
+     *
+     * @param termo termo ou palavras-chave de busca
+     * @return lista de administradores encontrados
+     */
+    public List<AdminModel> buscarPorNome(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listar();
+        }
+
+        String[] tokens = termo.trim().split("\\s+");
+        StringBuilder sql = new StringBuilder("""
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM adm a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE 1=1
+                """);
+
+        for (int i = 0; i < tokens.length; i++) {
+            sql.append(" AND LOWER(a.nome) LIKE ?");
+        }
+        sql.append(" ORDER BY a.nome ASC, a.id ASC;");
+
+        List<AdminModel> listaAdmin = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < tokens.length; i++) {
+                stmt.setString(i + 1, "%" + tokens[i].toLowerCase() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    EmpresaModel empresaModel = null;
+                    int idEmpresa = rs.getInt("empresa_id");
+                    if (!rs.wasNull()) {
+                        empresaModel = new EmpresaModel(
+                                idEmpresa,
+                                rs.getString("empresa_nome"),
+                                rs.getString("empresa_cnpj"),
+                                rs.getString("empresa_codigo")
+                        );
+                    }
+
+                    AdminModel adminModel = new AdminModel(
+                            rs.getInt("id"),
+                            empresaModel,
+                            rs.getString("email"),
+                            rs.getString("senha"),
+                            rs.getString("nome")
+                    );
+                    listaAdmin.add(adminModel);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Admin por nome: " + e.getMessage());
+        }
+
+        return listaAdmin;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
