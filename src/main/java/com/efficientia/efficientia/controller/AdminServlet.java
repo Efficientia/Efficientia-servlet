@@ -45,7 +45,18 @@ public class AdminServlet extends HttpServlet {
                 System.out.println("Erro ao buscar Admin para edição: " + e.getMessage());
             }
         }
-        List<AdminModel> adminModels = dao.listar();
+
+        // Busca flexível por nome ou listagem geral de administradores
+        String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
+        List<AdminModel> adminModels;
+
+        if (busca != null && !busca.isBlank()) {
+            adminModels = dao.buscarPorNome(busca);
+        } else {
+            adminModels = dao.listar();
+        }
+
+        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("adminModels", adminModels);
         req.setAttribute("admins", adminModels);
         req.setAttribute("empresas", empresaDAO.listar());

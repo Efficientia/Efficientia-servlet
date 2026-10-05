@@ -205,6 +205,57 @@ public class EmpresaDAO {
         return null;
     }
 
+    /**
+     * Busca empresas por nome, suportando correspondência exata, parcial ("picada")
+     * e case-insensitive (ignorando maiúsculas e minúsculas).
+     *
+     * @param termo termo ou palavras-chave de busca
+     * @return lista de empresas encontradas
+     */
+    public List<EmpresaModel> buscarPorNome(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listar();
+        }
+
+        String[] tokens = termo.trim().split("\\s+");
+        StringBuilder sql = new StringBuilder("""
+                SELECT * FROM empresa
+                WHERE 1=1
+                """);
+
+        for (int i = 0; i < tokens.length; i++) {
+            sql.append(" AND LOWER(nome) LIKE ?");
+        }
+        sql.append(" ORDER BY nome ASC, id ASC;");
+
+        List<EmpresaModel> empresas = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < tokens.length; i++) {
+                stmt.setString(i + 1, "%" + tokens[i].toLowerCase() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    EmpresaModel empresaModel = new EmpresaModel(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("cnpj"),
+                            rs.getString("codigo")
+                    );
+                    empresas.add(empresaModel);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar empresas por nome: " + e.getMessage());
+        }
+
+        return empresas;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**

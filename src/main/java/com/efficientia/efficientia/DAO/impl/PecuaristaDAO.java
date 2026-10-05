@@ -188,6 +188,64 @@ public class PecuaristaDAO {
         }
     }
 
+    /**
+     * Busca pecuaristas por nome, suportando correspondência exata, parcial ("picada")
+     * e case-insensitive (ignorando maiúsculas e minúsculas).
+     *
+     * @param termo termo ou palavras-chave de busca
+     * @return lista de pecuaristas encontrados
+     */
+    public List<PecuaristaModel> buscarPorNome(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listar();
+        }
+
+        String[] tokens = termo.trim().split("\\s+");
+        StringBuilder sql = new StringBuilder("""
+                SELECT * FROM pecuarista
+                WHERE 1=1
+                """);
+
+        for (int i = 0; i < tokens.length; i++) {
+            sql.append(" AND LOWER(nome) LIKE ?");
+        }
+        sql.append(" ORDER BY nome ASC, id ASC;");
+
+        List<PecuaristaModel> pecuaristas = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < tokens.length; i++) {
+                stmt.setString(i + 1, "%" + tokens[i].toLowerCase() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Date dataNascimento = rs.getDate("data_nascimento");
+                    LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
+
+                    PecuaristaModel pecuaristaModel = new PecuaristaModel(
+                            rs.getInt("id"),
+                            rs.getString("cpf"),
+                            rs.getString("assinatura"),
+                            nascimento,
+                            rs.getString("nome"),
+                            rs.getString("senha"),
+                            rs.getString("email"),
+                            rs.getString("telefone")
+                    );
+
+                    pecuaristas.add(pecuaristaModel);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar pecuaristas por nome: " + e.getMessage());
+        }
+
+        return pecuaristas;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**

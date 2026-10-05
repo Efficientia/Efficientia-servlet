@@ -238,6 +238,84 @@ public class MotoristaDAO {
         return null;
     }
 
+    /**
+     * Busca motoristas por nome, suportando correspondência exata, parcial ("picada")
+     * e case-insensitive (ignorando maiúsculas e minúsculas), trazendo os dados da empresa via LEFT JOIN.
+     *
+     * @param termo termo ou palavras-chave de busca
+     * @return lista de motoristas encontrados
+     */
+    public List<MotoristaModel> buscarPorNome(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listar();
+        }
+
+        String[] tokens = termo.trim().split("\\s+");
+        StringBuilder sql = new StringBuilder("""
+                SELECT m.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM motorista m
+                LEFT JOIN empresa e ON e.id = m.id_empresa
+                WHERE 1=1
+                """);
+
+        for (int i = 0; i < tokens.length; i++) {
+            sql.append(" AND LOWER(m.nome) LIKE ?");
+        }
+        sql.append(" ORDER BY m.nome ASC, m.id ASC;");
+
+        List<MotoristaModel> motoristaModels = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < tokens.length; i++) {
+                stmt.setString(i + 1, "%" + tokens[i].toLowerCase() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    EmpresaModel empresaModel = null;
+                    int idEmpresa = rs.getInt("empresa_id");
+
+                    if (!rs.wasNull()) {
+                        empresaModel = new EmpresaModel(
+                                idEmpresa,
+                                rs.getString("empresa_nome"),
+                                rs.getString("empresa_cnpj"),
+                                rs.getString("empresa_codigo")
+                        );
+                    }
+
+                    Date dataNascimento = rs.getDate("data_nascimento");
+
+                    MotoristaModel motoristaModel = new MotoristaModel(
+                            rs.getInt("id"),
+                            empresaModel,
+                            rs.getString("nome"),
+                            rs.getString("assinatura"),
+                            dataNascimento != null
+                                    ? dataNascimento.toLocalDate()
+                                    : null,
+                            rs.getString("senha"),
+                            rs.getString("email"),
+                            rs.getString("telefone")
+                    );
+
+                    motoristaModels.add(motoristaModel);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar motoristas por nome: " + e.getMessage());
+        }
+
+        return motoristaModels;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**

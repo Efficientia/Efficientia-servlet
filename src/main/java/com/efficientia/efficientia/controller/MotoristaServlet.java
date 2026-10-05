@@ -53,8 +53,17 @@ public class MotoristaServlet extends HttpServlet {
             }
         }
 
-        List<MotoristaModel> motoristaModels = dao.listar();
+        // Busca flexível por nome ou listagem geral de motoristas
+        String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
+        List<MotoristaModel> motoristaModels;
 
+        if (busca != null && !busca.isBlank()) {
+            motoristaModels = dao.buscarPorNome(busca);
+        } else {
+            motoristaModels = dao.listar();
+        }
+
+        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("motoristaModels", motoristaModels);
         req.setAttribute("motoristas", motoristaModels);
         req.setAttribute("empresaModels", empresaDAO.listar());

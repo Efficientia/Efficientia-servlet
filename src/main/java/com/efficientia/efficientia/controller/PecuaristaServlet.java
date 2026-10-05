@@ -48,8 +48,17 @@ public class PecuaristaServlet extends HttpServlet {
             }
         }
 
-        List<PecuaristaModel> pecuaristaModels = dao.listar();
+        // Busca flexível por nome ou listagem geral de pecuaristas
+        String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
+        List<PecuaristaModel> pecuaristaModels;
 
+        if (busca != null && !busca.isBlank()) {
+            pecuaristaModels = dao.buscarPorNome(busca);
+        } else {
+            pecuaristaModels = dao.listar();
+        }
+
+        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("pecuaristaModels", pecuaristaModels);
         req.setAttribute("pecuaristas", pecuaristaModels);
 

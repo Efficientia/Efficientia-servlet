@@ -279,6 +279,110 @@ public class PropriedadeDAO {
         }
     }
 
+    /**
+     * Busca propriedades por nome, suportando correspondência exata, parcial ("picada")
+     * e case-insensitive (ignorando maiúsculas e minúsculas).
+     *
+     * @param termo termo ou palavras-chave de busca
+     * @return lista de propriedades encontradas com pecuarista e endereço associados
+     */
+    public List<PropriedadeModel> buscarPorNome(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listar();
+        }
+
+        String[] tokens = termo.trim().split("\\s+");
+        StringBuilder sql = new StringBuilder("""
+                SELECT 
+                    pr.id AS propriedade_id,
+                    pr.nome AS propriedade_nome,
+
+                    -- Pecuarista
+                    pec.id AS pecuarista_id,
+                    pec.cpf AS pecuarista_cpf,
+                    pec.assinatura AS pecuarista_assinatura,
+                    pec.data_nascimento AS pecuarista_data_nascimento,
+                    pec.nome AS pecuarista_nome,
+                    pec.senha AS pecuarista_senha,
+                    pec.email AS pecuarista_email,
+                    pec.telefone AS pecuarista_telefone,
+
+                    -- Endereço
+                    e.id AS endereco_id,
+                    e.cep AS endereco_cep,
+                    e.tipo AS endereco_tipo,
+                    e.numero AS endereco_numero,
+                    e.rua AS endereco_rua,
+                    e.cidade AS endereco_cidade,
+                    e.estado AS endereco_estado,
+                    e.pais AS endereco_pais,
+                    e.complemento AS endereco_complemento
+
+                FROM propriedade pr
+                JOIN pecuarista pec ON pec.id = pr.id_pecuarista
+                JOIN endereco e ON e.id = pr.id_endereco
+                WHERE 1=1
+                """);
+
+        for (int i = 0; i < tokens.length; i++) {
+            sql.append(" AND LOWER(pr.nome) LIKE ?");
+        }
+        sql.append(" ORDER BY pr.nome ASC, pr.id ASC;");
+
+        List<PropriedadeModel> propriedades = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < tokens.length; i++) {
+                stmt.setString(i + 1, "%" + tokens[i].toLowerCase() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Date dataNascPec = rs.getDate("pecuarista_data_nascimento");
+                    LocalDate dataNascimento = dataNascPec != null ? dataNascPec.toLocalDate() : null;
+
+                    PecuaristaModel pecuarista = new PecuaristaModel(
+                            rs.getInt("pecuarista_id"),
+                            rs.getString("pecuarista_cpf"),
+                            rs.getString("pecuarista_assinatura"),
+                            dataNascimento,
+                            rs.getString("pecuarista_nome"),
+                            rs.getString("pecuarista_senha"),
+                            rs.getString("pecuarista_email"),
+                            rs.getString("pecuarista_telefone")
+                    );
+
+                    EnderecoModel endereco = new EnderecoModel(
+                            rs.getInt("endereco_id"),
+                            rs.getString("endereco_cep"),
+                            rs.getString("endereco_tipo"),
+                            rs.getString("endereco_numero"),
+                            rs.getString("endereco_rua"),
+                            rs.getString("endereco_cidade"),
+                            rs.getString("endereco_estado"),
+                            rs.getString("endereco_pais"),
+                            rs.getString("endereco_complemento")
+                    );
+
+                    PropriedadeModel propriedade = new PropriedadeModel(
+                            rs.getInt("propriedade_id"),
+                            pecuarista,
+                            endereco,
+                            rs.getString("propriedade_nome")
+                    );
+
+                    propriedades.add(propriedade);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Propriedades por nome: " + e.getMessage());
+        }
+
+        return propriedades;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
