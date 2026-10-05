@@ -2,11 +2,13 @@ package com.efficientia.efficientia.DAO.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.CaminhaoModel;
+import com.efficientia.efficientia.model.EmpresaModel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,8 @@ import java.util.List;
  *
  * Responsável por encapsular as operações de persistência e manipulação
  * de dados da tabela 'caminhao' no PostgreSQL, gerenciando conexões
- * via ConnectionFactory e garantindo fechamento de recursos com try-with-resources.
+ * via ConnectionFactory, realizando junções (JOIN) com 'empresa'
+ * e garantindo fechamento de recursos com try-with-resources.
  */
 public class CaminhaoDAO {
 
@@ -30,11 +33,12 @@ public class CaminhaoDAO {
     public boolean inserir(CaminhaoModel caminhaoModel) {
         String sql = """
                 INSERT INTO caminhao (
+                    id_empresa,
                     placa_cavalo,
                     placa_carreta,
                     capacidade_maxima
                 )
-                VALUES (?, ?, ?);
+                VALUES (?, ?, ?, ?);
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -52,13 +56,20 @@ public class CaminhaoDAO {
     }
 
     /**
-     * Recupera todos os caminhões cadastrados no banco de dados, ordenados por ID.
+     * Recupera todos os caminhões cadastrados no banco de dados, incluindo dados da empresa associada via LEFT JOIN.
      *
      * @return lista contendo os caminhões encontrados ou lista vazia em caso de falha/ausência
      */
     public List<CaminhaoModel> listar() {
         String sql = """
-                SELECT * FROM caminhao ORDER BY id;
+                SELECT c.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM caminhao c
+                LEFT JOIN empresa e ON e.id = c.id_empresa
+                ORDER BY c.id;
                 """;
 
         List<CaminhaoModel> caminhaoModels = new ArrayList<>();
@@ -68,14 +79,7 @@ public class CaminhaoDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                CaminhaoModel caminhaoModel = new CaminhaoModel(
-                        rs.getInt("id"),
-                        rs.getString("placa_cavalo"),
-                        rs.getString("placa_carreta"),
-                        rs.getInt("capacidade_maxima")
-                );
-
-                caminhaoModels.add(caminhaoModel);
+                caminhaoModels.add(extrairCaminhao(rs));
             }
 
         } catch (SQLException e) {
@@ -95,7 +99,8 @@ public class CaminhaoDAO {
     public boolean atualizar(CaminhaoModel caminhaoModel, int id) {
         String sql = """
                 UPDATE caminhao
-                SET placa_cavalo = ?,
+                SET id_empresa = ?,
+                    placa_cavalo = ?,
                     placa_carreta = ?,
                     capacidade_maxima = ?
                 WHERE id = ?;
@@ -105,7 +110,7 @@ public class CaminhaoDAO {
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             preencherStatement(stmt, caminhaoModel);
-            stmt.setInt(4, id);
+            stmt.setInt(5, id);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -149,7 +154,14 @@ public class CaminhaoDAO {
      */
     public CaminhaoModel buscar(int id) {
         String sql = """
-                SELECT * FROM caminhao WHERE id = ?;
+                SELECT c.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM caminhao c
+                LEFT JOIN empresa e ON e.id = c.id_empresa
+                WHERE c.id = ?;
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -159,12 +171,7 @@ public class CaminhaoDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new CaminhaoModel(
-                            rs.getInt("id"),
-                            rs.getString("placa_cavalo"),
-                            rs.getString("placa_carreta"),
-                            rs.getInt("capacidade_maxima")
-                    );
+                    return extrairCaminhao(rs);
                 }
             }
 
@@ -191,10 +198,16 @@ public class CaminhaoDAO {
         String placaLimpa = placa.replace("-", "").trim().toUpperCase();
 
         String sql = """
-                SELECT * FROM caminhao
-                WHERE REPLACE(UPPER(placa_cavalo), '-', '') LIKE ?
-                   OR REPLACE(UPPER(placa_carreta), '-', '') LIKE ?
-                ORDER BY id ASC;
+                SELECT c.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM caminhao c
+                LEFT JOIN empresa e ON e.id = c.id_empresa
+                WHERE REPLACE(UPPER(c.placa_cavalo), '-', '') LIKE ?
+                   OR REPLACE(UPPER(c.placa_carreta), '-', '') LIKE ?
+                ORDER BY c.id ASC;
                 """;
 
         List<CaminhaoModel> caminhaoModels = new ArrayList<>();
@@ -208,12 +221,7 @@ public class CaminhaoDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    caminhaoModels.add(new CaminhaoModel(
-                            rs.getInt("id"),
-                            rs.getString("placa_cavalo"),
-                            rs.getString("placa_carreta"),
-                            rs.getInt("capacidade_maxima")
-                    ));
+                    caminhaoModels.add(extrairCaminhao(rs));
                 }
             }
 
@@ -224,21 +232,95 @@ public class CaminhaoDAO {
         return caminhaoModels;
     }
 
+    /**
+     * Localiza todos os caminhões pertencentes a uma empresa específica.
+     *
+     * @param idEmpresa ID da empresa associada
+     * @return lista de caminhões pertencentes à empresa informada
+     */
+    public List<CaminhaoModel> buscarPorEmpresa(int idEmpresa) {
+        String sql = """
+                SELECT c.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM caminhao c
+                LEFT JOIN empresa e ON e.id = c.id_empresa
+                WHERE c.id_empresa = ?
+                ORDER BY c.id ASC;
+                """;
+
+        List<CaminhaoModel> caminhaoModels = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idEmpresa);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    caminhaoModels.add(extrairCaminhao(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar caminhões por empresa: " + e.getMessage());
+        }
+
+        return caminhaoModels;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
-     * Mapeia os dados do modelo nos parâmetros posicionais do PreparedStatement.
+     * Constrói uma instância de CaminhaoModel a partir do registro atual do ResultSet,
+     * incluindo o EmpresaModel caso a chave estrangeira esteja presente.
      *
-     * @param stmt           statement preparado para receber os parâmetros
-     * @param caminhaoModel  objeto com os dados a serem vinculados
+     * @param rs ResultSet posicionado no registro atual
+     * @return objeto CaminhaoModel preenchido
+     * @throws SQLException em caso de falha de leitura dos dados
+     */
+    private CaminhaoModel extrairCaminhao(ResultSet rs) throws SQLException {
+        EmpresaModel empresaModel = null;
+        int idEmpresa = rs.getInt("empresa_id");
+        if (!rs.wasNull()) {
+            empresaModel = new EmpresaModel(
+                    idEmpresa,
+                    rs.getString("empresa_nome"),
+                    rs.getString("empresa_cnpj"),
+                    rs.getString("empresa_codigo")
+            );
+        }
+
+        return new CaminhaoModel(
+                rs.getInt("id"),
+                empresaModel,
+                rs.getString("placa_cavalo"),
+                rs.getString("placa_carreta"),
+                rs.getInt("capacidade_maxima")
+        );
+    }
+
+    /**
+     * Mapeia os dados do modelo nos parâmetros posicionais do PreparedStatement,
+     * incluindo o identificador da empresa.
+     *
+     * @param stmt          statement preparado para receber os parâmetros
+     * @param caminhaoModel objeto com os dados a serem vinculados
      * @throws SQLException se ocorrer falha ao atribuir os valores no JDBC
      */
     private void preencherStatement(
             PreparedStatement stmt,
             CaminhaoModel caminhaoModel
     ) throws SQLException {
-        stmt.setString(1, caminhaoModel.getPlacaCavalo());
-        stmt.setString(2, caminhaoModel.getPlacaCarreta());
-        stmt.setInt(3, caminhaoModel.getCapacidadeMaxima());
+        if (caminhaoModel.getEmpresaModel() != null && caminhaoModel.getEmpresaModel().getId() > 0) {
+            stmt.setInt(1, caminhaoModel.getEmpresaModel().getId());
+        } else {
+            stmt.setNull(1, Types.INTEGER);
+        }
+        stmt.setString(2, caminhaoModel.getPlacaCavalo());
+        stmt.setString(3, caminhaoModel.getPlacaCarreta());
+        stmt.setInt(4, caminhaoModel.getCapacidadeMaxima());
     }
 }

@@ -722,6 +722,19 @@
                         </div>
 
                         <div class="form-group form-group-full">
+                            <label for="cam-idEmpresa">
+                                Empresa Proprietária *
+                                <span class="helper-text">Empresa à qual o caminhão pertence</span>
+                            </label>
+                            <select id="cam-idEmpresa" name="idEmpresa" required>
+                                <option value="" disabled selected>Selecione uma empresa...</option>
+                                <c:forEach var="emp" items="${empresas}">
+                                    <option value="${emp.id}">#${emp.id} - ${emp.nome} (CNPJ: ${emp.cnpj})</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-group form-group-full">
                             <label for="cam-capacidadeMaxima">
                                 Capacidade Máxima *
                                 <span class="helper-text">Carga suportada em kg ou unidades</span>
@@ -817,6 +830,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Empresa</th>
                                 <th>Placa Cavalo</th>
                                 <th>Placa Carreta</th>
                                 <th>Capacidade Máxima</th>
@@ -827,12 +841,23 @@
                             <c:forEach var="cam" items="${caminhoes}">
                                 <tr>
                                     <td><strong>#${cam.id}</strong></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${cam.empresaModel != null}">
+                                                <strong><c:out value="${cam.empresaModel.nome}" /></strong>
+                                                <c:if test="${not empty cam.empresaModel.codigo}">
+                                                    <span class="badge-code"><c:out value="${cam.empresaModel.codigo}" /></span>
+                                                </c:if>
+                                            </c:when>
+                                            <c:otherwise><span style="color: var(--text-muted); font-style: italic;">Sem empresa</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td><span class="text-code"><c:out value="${cam.placaCavalo}" /></span></td>
                                     <td><span class="text-code"><c:out value="${cam.placaCarreta}" /></span></td>
                                     <td><strong><c:out value="${cam.capacidadeMaxima}" /></strong></td>
                                     <td style="text-align: center;">
                                         <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                                            <button type="button" class="btn-sm-edit" onclick="abrirModalEdicaoCaminhao(${cam.id}, '<c:out value="${cam.placaCavalo}" />', '<c:out value="${cam.placaCarreta}" />', ${cam.capacidadeMaxima})">
+                                            <button type="button" class="btn-sm-edit" onclick="abrirModalEdicaoCaminhao(${cam.id}, '${cam.empresaModel != null ? cam.empresaModel.id : ''}', '<c:out value="${cam.placaCavalo}" />', '<c:out value="${cam.placaCarreta}" />', ${cam.capacidadeMaxima})">
                                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                 </svg>
@@ -1905,6 +1930,16 @@
             <input type="hidden" id="editCam-id" name="id" value="">
 
             <div class="form-grid">
+                <div class="form-group form-group-full">
+                    <label for="editCam-idEmpresa">Empresa Vinculada *</label>
+                    <select id="editCam-idEmpresa" name="idEmpresa" required>
+                        <option value="" disabled>Selecione a empresa...</option>
+                        <c:forEach var="emp" items="${empresas}">
+                            <option value="${emp.id}">#${emp.id} - ${emp.nome} (CNPJ: ${emp.cnpj})</option>
+                        </c:forEach>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label for="editCam-placaCavalo">Placa do Cavalo *</label>
                     <input type="text" id="editCam-placaCavalo" name="placaCavalo" class="input-plate" maxlength="8" required>
@@ -2532,9 +2567,10 @@
         abrirModal('modalEdicaoMotorista');
     }
 
-    function abrirModalEdicaoCaminhao(id, placaCavalo, placaCarreta, capacidadeMaxima) {
+    function abrirModalEdicaoCaminhao(id, idEmpresa, placaCavalo, placaCarreta, capacidadeMaxima) {
         document.getElementById('editCam-id').value = id;
         document.getElementById('badgeEditCaminhaoId').textContent = '#' + id;
+        document.getElementById('editCam-idEmpresa').value = idEmpresa || '';
         document.getElementById('editCam-placaCavalo').value = placaCavalo || '';
         document.getElementById('editCam-placaCarreta').value = placaCarreta || '';
         document.getElementById('editCam-capacidadeMaxima').value = capacidadeMaxima || '';
