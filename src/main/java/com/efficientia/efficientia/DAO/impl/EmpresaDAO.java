@@ -29,8 +29,8 @@ public class EmpresaDAO {
      */
     public boolean inserir(EmpresaModel empresa) {
         String sql = """
-                INSERT INTO empresa (nome, cnpj, codigo)
-                VALUES (?, ?, ?);
+                INSERT INTO empresa (nome, cnpj)
+                VALUES (?, ?);
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -93,8 +93,7 @@ public class EmpresaDAO {
         String sql = """
                 UPDATE empresa
                 SET nome = ?, 
-                    cnpj = ?,
-                    codigo = ?
+                    cnpj = ? 
                 WHERE id = ?;
                 """;
 
@@ -102,7 +101,7 @@ public class EmpresaDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             preencherStatement(stmt, empresa);
-            stmt.setInt(4, id);
+            stmt.setInt(3, id);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -172,6 +171,40 @@ public class EmpresaDAO {
         return null;
     }
 
+    /**
+     * Busca uma empresa pelo seu código identificador único corporativo existente no banco.
+     *
+     * @param codigo código identificador da empresa
+     * @return objeto EmpresaModel se encontrado, ou null caso contrário
+     */
+    public EmpresaModel buscarPorCodigo(String codigo) {
+        String sql = """
+                SELECT * FROM empresa WHERE codigo = ?;
+                """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codigo);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new EmpresaModel(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getString("cnpj"),
+                            rs.getString("codigo")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar empresaModel por codigo: " + e.getMessage());
+        }
+
+        return null;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
@@ -184,6 +217,5 @@ public class EmpresaDAO {
     private void preencherStatement(PreparedStatement stmt, EmpresaModel empresa) throws SQLException {
         stmt.setString(1, empresa.getNome());
         stmt.setString(2, empresa.getCnpj());
-        stmt.setString(3, empresa.getCodigo());
     }
 }

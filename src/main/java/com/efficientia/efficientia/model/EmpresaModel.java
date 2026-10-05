@@ -31,7 +31,7 @@ public class EmpresaModel implements Model {
      * @param id     identificador único da empresa
      * @param nome   razão social ou nome fantasia da empresa
      * @param cnpj   Cadastro Nacional da Pessoa Jurídica (CNPJ)
-     * @param codigo código identificador da empresa
+     * @param codigo código identificador da empresa vindo do banco de dados
      */
     public EmpresaModel(int id, String nome, String cnpj, String codigo) {
         this.id = id;
@@ -41,17 +41,27 @@ public class EmpresaModel implements Model {
     }
 
     /**
-     * Construtor sem ID com código.
-     * Utilizado para registrar uma nova empresa antes da persistência no banco.
+     * Construtor com ID (caso a consulta não selecione o código).
      *
-     * @param nome   razão social ou nome fantasia da empresa
-     * @param cnpj   Cadastro Nacional da Pessoa Jurídica (CNPJ)
-     * @param codigo código identificador da empresa
+     * @param id   identificador único da empresa
+     * @param nome razão social ou nome fantasia da empresa
+     * @param cnpj Cadastro Nacional da Pessoa Jurídica (CNPJ)
      */
-    public EmpresaModel(String nome, String cnpj, String codigo) {
+    public EmpresaModel(int id, String nome, String cnpj) {
+        this.id = id;
         this.nome = nome;
         this.cnpj = cnpj;
-        this.codigo = codigo;
+    }
+
+    /**
+     * Construtor sem ID (utilizado no cadastro de nova empresa pela aplicação, onde o código não é inserido).
+     *
+     * @param nome razão social ou nome fantasia da empresa
+     * @param cnpj Cadastro Nacional da Pessoa Jurídica (CNPJ)
+     */
+    public EmpresaModel(String nome, String cnpj) {
+        this.nome = nome;
+        this.cnpj = cnpj;
     }
 
 
