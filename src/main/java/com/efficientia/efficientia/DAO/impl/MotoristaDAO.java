@@ -67,7 +67,8 @@ public class MotoristaDAO {
                 SELECT m.*,
                        e.id AS empresa_id,
                        e.nome AS empresa_nome,
-                       e.cnpj AS empresa_cnpj
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
                 FROM motorista m
                 LEFT JOIN empresa e ON e.id = m.id_empresa
                 ORDER BY m.id;
@@ -87,7 +88,8 @@ public class MotoristaDAO {
                     empresaModel = new EmpresaModel(
                             idEmpresa,
                             rs.getString("empresa_nome"),
-                            rs.getString("empresa_cnpj")
+                            rs.getString("empresa_cnpj"),
+                            rs.getString("empresa_codigo")
                     );
                 }
 
@@ -186,7 +188,8 @@ public class MotoristaDAO {
                 SELECT m.*,
                        e.id AS empresa_id,
                        e.nome AS empresa_nome,
-                       e.cnpj AS empresa_cnpj
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
                 FROM motorista m
                 LEFT JOIN empresa e ON e.id = m.id_empresa
                 WHERE m.id = ?;
@@ -206,7 +209,8 @@ public class MotoristaDAO {
                         empresaModel = new EmpresaModel(
                                 idEmpresa,
                                 rs.getString("empresa_nome"),
-                                rs.getString("empresa_cnpj")
+                                rs.getString("empresa_cnpj"),
+                                rs.getString("empresa_codigo")
                         );
                     }
 

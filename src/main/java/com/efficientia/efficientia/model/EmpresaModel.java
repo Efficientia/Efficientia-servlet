@@ -19,33 +19,41 @@ public class EmpresaModel implements Model {
     /** Cadastro Nacional da Pessoa Jurídica (CNPJ) formatado ou numérico. */
     private String cnpj;
 
+    /** Código de registro ou identificador corporativo da empresa. */
+    private String codigo;
+
     // ==================== CONSTRUTORES ====================
 
     /**
-     * Construtor completo com ID.
+     * Construtor completo com ID e código.
      * Utilizado na recuperação e hidratação de dados vindos do banco de dados.
      *
-     * @param id   identificador único da empresa
-     * @param nome razão social ou nome fantasia da empresa
-     * @param cnpj Cadastro Nacional da Pessoa Jurídica (CNPJ)
+     * @param id     identificador único da empresa
+     * @param nome   razão social ou nome fantasia da empresa
+     * @param cnpj   Cadastro Nacional da Pessoa Jurídica (CNPJ)
+     * @param codigo código identificador da empresa
      */
-    public EmpresaModel(int id, String nome, String cnpj) {
+    public EmpresaModel(int id, String nome, String cnpj, String codigo) {
         this.id = id;
         this.nome = nome;
         this.cnpj = cnpj;
+        this.codigo = codigo;
     }
 
     /**
-     * Construtor sem ID.
+     * Construtor sem ID com código.
      * Utilizado para registrar uma nova empresa antes da persistência no banco.
      *
-     * @param nome razão social ou nome fantasia da empresa
-     * @param cnpj Cadastro Nacional da Pessoa Jurídica (CNPJ)
+     * @param nome   razão social ou nome fantasia da empresa
+     * @param cnpj   Cadastro Nacional da Pessoa Jurídica (CNPJ)
+     * @param codigo código identificador da empresa
      */
-    public EmpresaModel(String nome, String cnpj) {
+    public EmpresaModel(String nome, String cnpj, String codigo) {
         this.nome = nome;
         this.cnpj = cnpj;
+        this.codigo = codigo;
     }
+
 
     // ==================== GETTERS E SETTERS ====================
 
@@ -98,6 +106,22 @@ public class EmpresaModel implements Model {
         this.cnpj = cnpj;
     }
 
+    /**
+     * Obtém o código identificador da empresa.
+     * @return código da empresa
+     */
+    public String getCodigo() {
+        return codigo;
+    }
+
+    /**
+     * Define o código identificador da empresa.
+     * @param codigo novo código da empresa
+     */
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
     // ==================== TO STRING ====================
 
     /**
@@ -110,6 +134,7 @@ public class EmpresaModel implements Model {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", cnpj='" + cnpj + '\'' +
+                ", codigo='" + codigo + '\'' +
                 '}';
     }
 }

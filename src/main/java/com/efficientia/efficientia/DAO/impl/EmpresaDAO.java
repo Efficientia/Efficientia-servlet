@@ -29,8 +29,8 @@ public class EmpresaDAO {
      */
     public boolean inserir(EmpresaModel empresa) {
         String sql = """
-                INSERT INTO empresa (nome, cnpj)
-                VALUES (?, ?);
+                INSERT INTO empresa (nome, cnpj, codigo)
+                VALUES (?, ?, ?);
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -68,7 +68,8 @@ public class EmpresaDAO {
                 EmpresaModel empresaModel = new EmpresaModel(
                         rs.getInt("id"),
                         rs.getString("nome"),
-                        rs.getString("cnpj")
+                        rs.getString("cnpj"),
+                        rs.getString("codigo")
                 );
 
                 empresas.add(empresaModel);
@@ -92,7 +93,8 @@ public class EmpresaDAO {
         String sql = """
                 UPDATE empresa
                 SET nome = ?, 
-                    cnpj = ? 
+                    cnpj = ?,
+                    codigo = ?
                 WHERE id = ?;
                 """;
 
@@ -100,7 +102,7 @@ public class EmpresaDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             preencherStatement(stmt, empresa);
-            stmt.setInt(3, id);
+            stmt.setInt(4, id);
 
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -157,7 +159,8 @@ public class EmpresaDAO {
                     return new EmpresaModel(
                             rs.getInt("id"),
                             rs.getString("nome"),
-                            rs.getString("cnpj")
+                            rs.getString("cnpj"),
+                            rs.getString("codigo")
                     );
                 }
             }
@@ -181,5 +184,6 @@ public class EmpresaDAO {
     private void preencherStatement(PreparedStatement stmt, EmpresaModel empresa) throws SQLException {
         stmt.setString(1, empresa.getNome());
         stmt.setString(2, empresa.getCnpj());
+        stmt.setString(3, empresa.getCodigo());
     }
 }
