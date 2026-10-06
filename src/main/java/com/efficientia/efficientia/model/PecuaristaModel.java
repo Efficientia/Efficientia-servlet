@@ -60,23 +60,13 @@ public class PecuaristaModel implements Model {
                            String email,
                            String telefone) {
         this.id = id;
-        this.cpf = cpf;
+        this.cpf = normalizarCpf(cpf);
         this.assinatura = assinatura;
         this.dataNascimento = dataNascimento;
         this.nome = nome;
         this.senha = senha;
         this.email = email;
-        this.telefone = telefone;
-
-        // Normalização defensiva: anula CPF caso exceda o limite de 11 caracteres
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
-
-        // Normalização defensiva: anula telefone caso exceda o limite de 11 caracteres
-        if (telefone != null && telefone.length() > 11) {
-            this.telefone = "nulo";
-        }
+        this.telefone = normalizarTelefone(telefone);
     }
 
     /**
@@ -119,23 +109,13 @@ public class PecuaristaModel implements Model {
                            String senha,
                            String email,
                            String telefone) {
-        this.cpf = cpf;
+        this.cpf = normalizarCpf(cpf);
         this.assinatura = assinatura;
         this.dataNascimento = dataNascimento;
         this.nome = nome;
         this.senha = senha;
         this.email = email;
-        this.telefone = telefone;
-
-        // Normalização defensiva: anula CPF caso exceda o limite de 11 caracteres
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
-
-        // Normalização defensiva: anula telefone caso exceda o limite de 11 caracteres
-        if (telefone != null && telefone.length() > 11) {
-            this.telefone = "nulo";
-        }
+        this.telefone = normalizarTelefone(telefone);
     }
 
     /**
@@ -162,6 +142,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Obtém o identificador único do pecuarista.
+     *
      * @return ID numérico
      */
     @Override
@@ -171,6 +152,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define o identificador único do pecuarista.
+     *
      * @param id ID numérico
      */
     public void setId(int id) {
@@ -179,6 +161,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Obtém o CPF do pecuarista.
+     *
      * @return número do CPF
      */
     public String getCpf() {
@@ -187,14 +170,16 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define o CPF do pecuarista.
+     *
      * @param cpf novo número de CPF
      */
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+        this.cpf = normalizarCpf(cpf);
     }
 
     /**
      * Obtém a assinatura digitalizada do pecuarista.
+     *
      * @return representação da assinatura ou rubrica
      */
     public String getAssinatura() {
@@ -203,6 +188,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define a assinatura digitalizada do pecuarista.
+     *
      * @param assinatura nova assinatura ou rubrica
      */
     public void setAssinatura(String assinatura) {
@@ -211,6 +197,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Obtém a data de nascimento do pecuarista.
+     *
      * @return data de nascimento
      */
     public LocalDate getDataNascimento() {
@@ -219,6 +206,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define a data de nascimento do pecuarista.
+     *
      * @param dataNascimento nova data de nascimento
      */
     public void setDataNascimento(LocalDate dataNascimento) {
@@ -227,6 +215,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Obtém o nome completo do pecuarista.
+     *
      * @return nome do pecuarista
      */
     public String getNome() {
@@ -235,6 +224,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define o nome completo do pecuarista.
+     *
      * @param nome novo nome
      */
     public void setNome(String nome) {
@@ -243,6 +233,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Obtém a senha de acesso ao sistema.
+     *
      * @return senha do pecuarista
      */
     public String getSenha() {
@@ -251,6 +242,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define a senha de acesso ao sistema.
+     *
      * @param senha nova senha
      */
     public void setSenha(String senha) {
@@ -259,6 +251,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Obtém o endereço de e-mail do pecuarista.
+     *
      * @return e-mail cadastrado
      */
     public String getEmail() {
@@ -267,6 +260,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define o endereço de e-mail do pecuarista.
+     *
      * @param email novo e-mail
      */
     public void setEmail(String email) {
@@ -275,6 +269,7 @@ public class PecuaristaModel implements Model {
 
     /**
      * Obtém o telefone de contato.
+     *
      * @return número de telefone
      */
     public String getTelefone() {
@@ -283,16 +278,46 @@ public class PecuaristaModel implements Model {
 
     /**
      * Define o telefone de contato.
+     *
      * @param telefone novo número de telefone
      */
     public void setTelefone(String telefone) {
-        this.telefone = telefone;
+        this.telefone = normalizarTelefone(telefone);
+    }
+
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Normaliza defensivamente o CPF para manter consistência com limites de colunas.
+     *
+     * @param cpf valor original informado
+     * @return "nulo" caso exceda 11 caracteres, ou o próprio CPF
+     */
+    private String normalizarCpf(String cpf) {
+        if (cpf != null && cpf.length() > 11) {
+            return "nulo";
+        }
+        return cpf;
+    }
+
+    /**
+     * Normaliza defensivamente o telefone para manter consistência com limites de colunas.
+     *
+     * @param telefone valor original informado
+     * @return "nulo" caso exceda 11 caracteres, ou o próprio telefone
+     */
+    private String normalizarTelefone(String telefone) {
+        if (telefone != null && telefone.length() > 11) {
+            return "nulo";
+        }
+        return telefone;
     }
 
     // ==================== TO STRING ====================
 
     /**
      * Retorna a representação textual dos dados do pecuarista.
+     *
      * @return string formatada contendo os atributos do pecuarista
      */
     @Override

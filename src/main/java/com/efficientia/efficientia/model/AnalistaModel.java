@@ -8,8 +8,9 @@ import java.time.LocalDate;
  * O Analista é um tipo especializado de {@link UsuarioModel}, encarregado de
  * auditar trajetos, validar conformidades de transporte e bem-estar animal,
  * emitir pareceres e aprovar ou reprovar relatórios de viagem.
+ * Todo analista é obrigatoriamente vinculado a uma {@link EmpresaModel}.
  */
-public class AnalistaModel extends UsuarioModel implements Model {
+public class AnalistaModel extends UsuarioModel {
 
     // ==================== ATRIBUTOS ====================
 
@@ -47,110 +48,8 @@ public class AnalistaModel extends UsuarioModel implements Model {
                          String telefone,
                          String codigo) {
         super(id, empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
+        this.cpf = normalizarCpf(cpf);
         this.codigo = codigo;
-
-        // Normalização defensiva: anula CPF caso exceda o limite de 11 dígitos
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
-    }
-
-    /**
-     * Construtor com ID e sem vínculo com Empresa.
-     * Utilizado para analistas independentes ou registros sem empresa associada.
-     *
-     * @param id             identificador único do analista
-     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
-     * @param nome           nome completo do analista
-     * @param assinatura     assinatura digitalizada ou rubrica
-     * @param dataNascimento data de nascimento
-     * @param senha          senha de acesso ao sistema
-     * @param email          e-mail institucional ou para contato
-     * @param telefone       número de telefone para contato
-     * @param codigo         código de registro funcional
-     */
-    public AnalistaModel(int id,
-                         String cpf,
-                         String nome,
-                         String assinatura,
-                         LocalDate dataNascimento,
-                         String senha,
-                         String email,
-                         String telefone,
-                         String codigo) {
-        super(id, nome, assinatura, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
-        this.codigo = codigo;
-
-        // Normalização defensiva: anula CPF caso exceda o limite de 11 dígitos
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
-    }
-
-    /**
-     * Construtor sem ID e com vínculo com Empresa.
-     * Utilizado no cadastro de um novo analista vinculado a uma empresa antes da persistência.
-     *
-     * @param empresaModel   empresa à qual o analista será vinculado
-     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
-     * @param nome           nome completo do analista
-     * @param assinatura     assinatura digitalizada ou rubrica
-     * @param dataNascimento data de nascimento
-     * @param senha          senha de acesso ao sistema
-     * @param email          e-mail para login
-     * @param telefone       número de telefone
-     * @param codigo         código de registro funcional
-     */
-    public AnalistaModel(EmpresaModel empresaModel,
-                         String cpf,
-                         String nome,
-                         String assinatura,
-                         LocalDate dataNascimento,
-                         String senha,
-                         String email,
-                         String telefone,
-                         String codigo) {
-        super(empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
-        this.codigo = codigo;
-
-        // Normalização defensiva: anula CPF caso exceda o limite de 11 dígitos
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
-    }
-
-    /**
-     * Construtor sem ID e sem vínculo com Empresa (com assinatura).
-     * Utilizado no cadastro inicial de um analista avulso.
-     *
-     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
-     * @param nome           nome completo do analista
-     * @param assinatura     assinatura digitalizada ou rubrica
-     * @param dataNascimento data de nascimento
-     * @param senha          senha de acesso ao sistema
-     * @param email          e-mail para login
-     * @param telefone       número de telefone
-     * @param codigo         código de registro funcional
-     */
-    public AnalistaModel(String cpf,
-                         String nome,
-                         String assinatura,
-                         LocalDate dataNascimento,
-                         String senha,
-                         String email,
-                         String telefone,
-                         String codigo) {
-        super(nome, assinatura, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
-        this.codigo = codigo;
-
-        // Normalização defensiva: anula CPF caso exceda o limite de 11 dígitos
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
     }
 
     /**
@@ -177,41 +76,35 @@ public class AnalistaModel extends UsuarioModel implements Model {
                          String telefone,
                          String codigo) {
         super(id, empresaModel, nome, null, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
+        this.cpf = normalizarCpf(cpf);
         this.codigo = codigo;
-
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
     }
 
     /**
-     * Construtor com ID e sem vínculo com Empresa (sem assinatura).
+     * Construtor sem ID e com vínculo com Empresa (com assinatura).
      *
-     * @param id             identificador único do analista
+     * @param empresaModel   empresa à qual o analista será vinculado
      * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
      * @param nome           nome completo do analista
+     * @param assinatura     assinatura digitalizada ou rubrica
      * @param dataNascimento data de nascimento
      * @param senha          senha de acesso ao sistema
-     * @param email          e-mail institucional ou para contato
-     * @param telefone       número de telefone para contato
+     * @param email          e-mail para login
+     * @param telefone       número de telefone
      * @param codigo         código de registro funcional
      */
-    public AnalistaModel(int id,
+    public AnalistaModel(EmpresaModel empresaModel,
                          String cpf,
                          String nome,
+                         String assinatura,
                          LocalDate dataNascimento,
                          String senha,
                          String email,
                          String telefone,
                          String codigo) {
-        super(id, nome, null, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
+        super(empresaModel, nome, assinatura, dataNascimento, senha, email, telefone);
+        this.cpf = normalizarCpf(cpf);
         this.codigo = codigo;
-
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
     }
 
     /**
@@ -236,45 +129,15 @@ public class AnalistaModel extends UsuarioModel implements Model {
                          String telefone,
                          String codigo) {
         super(empresaModel, nome, null, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
+        this.cpf = normalizarCpf(cpf);
         this.codigo = codigo;
-
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
-    }
-
-    /**
-     * Construtor sem ID e sem vínculo com Empresa (sem assinatura).
-     *
-     * @param cpf            número do CPF (máximo de 11 caracteres numéricos)
-     * @param nome           nome completo do analista
-     * @param dataNascimento data de nascimento
-     * @param senha          senha de acesso ao sistema
-     * @param email          e-mail para login
-     * @param telefone       número de telefone
-     * @param codigo         código de registro funcional
-     */
-    public AnalistaModel(String cpf,
-                         String nome,
-                         LocalDate dataNascimento,
-                         String senha,
-                         String email,
-                         String telefone,
-                         String codigo) {
-        super(nome, null, dataNascimento, senha, email, telefone);
-        this.cpf = cpf;
-        this.codigo = codigo;
-
-        if (cpf != null && cpf.length() > 11) {
-            this.cpf = "nulo";
-        }
     }
 
     // ==================== GETTERS E SETTERS ====================
 
     /**
      * Obtém o CPF do analista.
+     *
      * @return CPF formatado ou numérico
      */
     public String getCpf() {
@@ -283,14 +146,16 @@ public class AnalistaModel extends UsuarioModel implements Model {
 
     /**
      * Define o CPF do analista.
+     *
      * @param cpf novo número de CPF
      */
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+        this.cpf = normalizarCpf(cpf);
     }
 
     /**
      * Obtém o código funcional do analista.
+     *
      * @return código de registro profissional
      */
     public String getCodigo() {
@@ -299,16 +164,33 @@ public class AnalistaModel extends UsuarioModel implements Model {
 
     /**
      * Define o código funcional do analista.
+     *
      * @param codigo novo código de registro
      */
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Normaliza defensivamente o CPF para manter consistência com limites de colunas.
+     *
+     * @param cpf valor original informado
+     * @return "nulo" caso exceda 11 caracteres, ou o próprio CPF
+     */
+    private String normalizarCpf(String cpf) {
+        if (cpf != null && cpf.length() > 11) {
+            return "nulo";
+        }
+        return cpf;
+    }
+
     // ==================== TO STRING ====================
 
     /**
      * Retorna a representação textual dos dados do analista.
+     *
      * @return string formatada contendo os atributos do analista
      */
     @Override

@@ -66,6 +66,7 @@ public class AdminModel implements Model {
 
     /**
      * Obtém o identificador único do administrador.
+     *
      * @return ID numérico do administrador
      */
     @Override
@@ -75,6 +76,7 @@ public class AdminModel implements Model {
 
     /**
      * Define o identificador único do administrador.
+     *
      * @param id ID numérico
      */
     public void setId(int id) {
@@ -83,6 +85,7 @@ public class AdminModel implements Model {
 
     /**
      * Obtém o e-mail de acesso.
+     *
      * @return endereço de e-mail
      */
     public String getEmail() {
@@ -91,6 +94,7 @@ public class AdminModel implements Model {
 
     /**
      * Define o e-mail de acesso.
+     *
      * @param email novo endereço de e-mail
      */
     public void setEmail(String email) {
@@ -99,6 +103,7 @@ public class AdminModel implements Model {
 
     /**
      * Obtém a senha de autenticação.
+     *
      * @return senha do administrador
      */
     public String getSenha() {
@@ -107,6 +112,7 @@ public class AdminModel implements Model {
 
     /**
      * Define a senha de autenticação.
+     *
      * @param senha nova senha
      */
     public void setSenha(String senha) {
@@ -115,6 +121,7 @@ public class AdminModel implements Model {
 
     /**
      * Obtém a empresa vinculada ao administrador.
+     *
      * @return objeto EmpresaModel ou null se não vinculada
      */
     public EmpresaModel getEmpresaModel() {
@@ -123,6 +130,7 @@ public class AdminModel implements Model {
 
     /**
      * Define a empresa vinculada ao administrador.
+     *
      * @param empresaModel empresa a ser vinculada
      */
     public void setEmpresaModel(EmpresaModel empresaModel) {
@@ -130,7 +138,17 @@ public class AdminModel implements Model {
     }
 
     /**
+     * Método utilitário alternativo para obter a empresa associada.
+     *
+     * @return objeto EmpresaModel associado
+     */
+    public EmpresaModel getEmpresa() {
+        return empresaModel;
+    }
+
+    /**
      * Obtém o identificador único da empresa vinculada.
+     *
      * @return ID da empresa ou 0 se nula
      */
     public int getIdEmpresa() {
@@ -139,6 +157,7 @@ public class AdminModel implements Model {
 
     /**
      * Obtém o nome completo do administrador.
+     *
      * @return nome do administrador
      */
     public String getNome() {
@@ -147,6 +166,7 @@ public class AdminModel implements Model {
 
     /**
      * Define o nome completo do administrador.
+     *
      * @param nome novo nome
      */
     public void setNome(String nome) {
@@ -157,6 +177,7 @@ public class AdminModel implements Model {
 
     /**
      * Retorna a representação em texto dos dados do administrador.
+     *
      * @return string formatada com os atributos do administrador
      */
     @Override
