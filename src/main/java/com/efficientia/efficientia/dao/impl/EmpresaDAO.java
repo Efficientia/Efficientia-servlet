@@ -65,14 +65,7 @@ public class EmpresaDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                EmpresaModel empresaModel = new EmpresaModel(
-                        rs.getInt("id"),
-                        rs.getString("nome"),
-                        rs.getString("cnpj"),
-                        rs.getString("codigo")
-                );
-
-                empresas.add(empresaModel);
+                empresas.add(extrairEmpresa(rs));
             }
 
         } catch (SQLException e) {
@@ -113,14 +106,15 @@ public class EmpresaDAO {
     }
 
     /**
-     * Remove um registro de empresa do banco de dados pelo seu ID.
+     * Remove uma empresa da base de dados através de seu ID.
      *
-     * @param id identificador único da empresa
-     * @return true se o registro foi excluído, false em caso de erro
+     * @param id identificador numérico da empresa a ser excluída
+     * @return true se o registro foi removido com sucesso, false caso contrário
      */
     public boolean excluir(int id) {
         String sql = """
-                DELETE FROM empresa WHERE id = ?;
+                DELETE FROM empresa
+                WHERE id = ?;
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -138,14 +132,15 @@ public class EmpresaDAO {
     }
 
     /**
-     * Busca uma empresa pelo seu identificador único.
+     * Localiza uma empresa pelo seu identificador único no banco de dados.
      *
-     * @param id identificador único da empresa
+     * @param id identificador numérico da empresa
      * @return objeto EmpresaModel se encontrado, ou null caso contrário
      */
     public EmpresaModel buscar(int id) {
         String sql = """
-                SELECT * FROM empresa WHERE id = ?;
+                SELECT * FROM empresa
+                WHERE id = ?;
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -155,17 +150,52 @@ public class EmpresaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new EmpresaModel(
-                            rs.getInt("id"),
-                            rs.getString("nome"),
-                            rs.getString("cnpj"),
-                            rs.getString("codigo")
-                    );
+                    return extrairEmpresa(rs);
                 }
             }
 
         } catch (SQLException e) {
             System.out.println("Erro ao buscar empresaModel: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    // ==================== CONSULTAS ESPECÍFICAS ====================
+
+    /**
+     * Localiza uma empresa pelo seu Cadastro Nacional da Pessoa Jurídica (CNPJ).
+     *
+     * @param cnpj número ou máscara de CNPJ
+     * @return objeto EmpresaModel correspondente ou null caso não encontrado
+     */
+    public EmpresaModel buscarPorCnpj(String cnpj) {
+        if (cnpj == null || cnpj.isBlank()) {
+            return null;
+        }
+
+        String cnpjLimpo = cnpj.replaceAll("\\D", "").trim();
+
+        String sql = """
+                SELECT * FROM empresa
+                WHERE REGEXP_REPLACE(cnpj, '[^0-9]', '', 'g') = ?
+                   OR cnpj = ?;
+                """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cnpjLimpo);
+            stmt.setString(2, cnpj.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairEmpresa(rs);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar empresa por CNPJ: " + e.getMessage());
         }
 
         return null;
@@ -193,12 +223,7 @@ public class EmpresaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new EmpresaModel(
-                            rs.getInt("id"),
-                            rs.getString("nome"),
-                            rs.getString("cnpj"),
-                            rs.getString("codigo")
-                    );
+                    return extrairEmpresa(rs);
                 }
             }
 
@@ -236,12 +261,7 @@ public class EmpresaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    empresas.add(new EmpresaModel(
-                            rs.getInt("id"),
-                            rs.getString("nome"),
-                            rs.getString("cnpj"),
-                            rs.getString("codigo")
-                    ));
+                    empresas.add(extrairEmpresa(rs));
                 }
             }
 
@@ -253,8 +273,7 @@ public class EmpresaDAO {
     }
 
     /**
-     * Busca empresas por nome, suportando correspondência exata, parcial ("picada")
-     * e case-insensitive (ignorando maiúsculas e minúsculas).
+     * Busca empresas por nome, suportando correspondência exata, parcial e case-insensitive.
      *
      * @param termo termo ou palavras-chave de busca
      * @return lista de empresas encontradas
@@ -286,13 +305,7 @@ public class EmpresaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    EmpresaModel empresaModel = new EmpresaModel(
-                            rs.getInt("id"),
-                            rs.getString("nome"),
-                            rs.getString("cnpj"),
-                            rs.getString("codigo")
-                    );
-                    empresas.add(empresaModel);
+                    empresas.add(extrairEmpresa(rs));
                 }
             }
 
@@ -304,6 +317,22 @@ public class EmpresaDAO {
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Constrói uma instância de EmpresaModel a partir do ResultSet atual.
+     *
+     * @param rs ResultSet posicionado no registro atual
+     * @return objeto EmpresaModel hidratado
+     * @throws SQLException se ocorrer erro de leitura do ResultSet
+     */
+    private EmpresaModel extrairEmpresa(ResultSet rs) throws SQLException {
+        return new EmpresaModel(
+                rs.getInt("id"),
+                rs.getString("nome"),
+                rs.getString("cnpj"),
+                rs.getString("codigo")
+        );
+    }
 
     /**
      * Mapeia os atributos do modelo EmpresaModel para os parâmetros do PreparedStatement.

@@ -24,6 +24,37 @@ import java.util.List;
  */
 public class PropriedadeDAO {
 
+    private static final String BASE_SELECT = """
+            SELECT
+                pr.id AS propriedade_id,
+                pr.nome AS propriedade_nome,
+
+                -- Pecuarista
+                pec.id AS pecuarista_id,
+                pec.cpf AS pecuarista_cpf,
+                pec.assinatura AS pecuarista_assinatura,
+                pec.data_nascimento AS pecuarista_data_nascimento,
+                pec.nome AS pecuarista_nome,
+                pec.senha AS pecuarista_senha,
+                pec.email AS pecuarista_email,
+                pec.telefone AS pecuarista_telefone,
+
+                -- Endereço
+                e.id AS endereco_id,
+                e.cep AS endereco_cep,
+                e.tipo AS endereco_tipo,
+                e.numero AS endereco_numero,
+                e.rua AS endereco_rua,
+                e.cidade AS endereco_cidade,
+                e.estado AS endereco_estado,
+                e.pais AS endereco_pais,
+                e.complemento AS endereco_complemento
+
+            FROM propriedade pr
+            JOIN pecuarista pec ON pec.id = pr.id_pecuarista
+            JOIN endereco e ON e.id = pr.id_endereco
+            """;
+
     // ==================== OPERAÇÕES CRUD ====================
 
     /**
@@ -57,38 +88,7 @@ public class PropriedadeDAO {
      * @return lista contendo as propriedades rurais completas ordenadas por ID
      */
     public List<PropriedadeModel> listar() {
-        String sql = """
-                SELECT
-                    pr.id AS propriedade_id,
-                    pr.nome AS propriedade_nome,
-
-                    -- Pecuarista
-                    pec.id AS pecuarista_id,
-                    pec.cpf AS pecuarista_cpf,
-                    pec.assinatura AS pecuarista_assinatura,
-                    pec.data_nascimento AS pecuarista_data_nascimento,
-                    pec.nome AS pecuarista_nome,
-                    pec.senha AS pecuarista_senha,
-                    pec.email AS pecuarista_email,
-                    pec.telefone AS pecuarista_telefone,
-
-                    -- Endereço
-                    e.id AS endereco_id,
-                    e.cep AS endereco_cep,
-                    e.tipo AS endereco_tipo,
-                    e.numero AS endereco_numero,
-                    e.rua AS endereco_rua,
-                    e.cidade AS endereco_cidade,
-                    e.estado AS endereco_estado,
-                    e.pais AS endereco_pais,
-                    e.complemento AS endereco_complemento
-
-                FROM propriedade pr
-                JOIN pecuarista pec ON pec.id = pr.id_pecuarista
-                JOIN endereco e ON e.id = pr.id_endereco
-                ORDER BY pr.id;
-                """;
-
+        String sql = BASE_SELECT + " ORDER BY pr.id;";
         List<PropriedadeModel> propriedades = new ArrayList<>();
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -96,40 +96,7 @@ public class PropriedadeDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Date dataNascPec = rs.getDate("pecuarista_data_nascimento");
-                LocalDate dataNascimento = dataNascPec != null ? dataNascPec.toLocalDate() : null;
-
-                PecuaristaModel pecuarista = new PecuaristaModel(
-                        rs.getInt("pecuarista_id"),
-                        rs.getString("pecuarista_cpf"),
-                        rs.getString("pecuarista_assinatura"),
-                        dataNascimento,
-                        rs.getString("pecuarista_nome"),
-                        rs.getString("pecuarista_senha"),
-                        rs.getString("pecuarista_email"),
-                        rs.getString("pecuarista_telefone")
-                );
-
-                EnderecoModel endereco = new EnderecoModel(
-                        rs.getInt("endereco_id"),
-                        rs.getString("endereco_cep"),
-                        rs.getString("endereco_tipo"),
-                        rs.getString("endereco_numero"),
-                        rs.getString("endereco_rua"),
-                        rs.getString("endereco_cidade"),
-                        rs.getString("endereco_estado"),
-                        rs.getString("endereco_pais"),
-                        rs.getString("endereco_complemento")
-                );
-
-                PropriedadeModel propriedade = new PropriedadeModel(
-                        rs.getInt("propriedade_id"),
-                        pecuarista,
-                        endereco,
-                        rs.getString("propriedade_nome")
-                );
-
-                propriedades.add(propriedade);
+                propriedades.add(extrairPropriedade(rs));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar Propriedade: " + e.getMessage());
@@ -145,37 +112,7 @@ public class PropriedadeDAO {
      * @return objeto PropriedadeModel completamente hidratado ou null se não for encontrada
      */
     public PropriedadeModel buscar(int id) {
-        String sql = """
-                SELECT
-                    pr.id AS propriedade_id,
-                    pr.nome AS propriedade_nome,
-
-                    -- Pecuarista
-                    pec.id AS pecuarista_id,
-                    pec.cpf AS pecuarista_cpf,
-                    pec.assinatura AS pecuarista_assinatura,
-                    pec.data_nascimento AS pecuarista_data_nascimento,
-                    pec.nome AS pecuarista_nome,
-                    pec.senha AS pecuarista_senha,
-                    pec.email AS pecuarista_email,
-                    pec.telefone AS pecuarista_telefone,
-
-                    -- Endereço
-                    e.id AS endereco_id,
-                    e.cep AS endereco_cep,
-                    e.tipo AS endereco_tipo,
-                    e.numero AS endereco_numero,
-                    e.rua AS endereco_rua,
-                    e.cidade AS endereco_cidade,
-                    e.estado AS endereco_estado,
-                    e.pais AS endereco_pais,
-                    e.complemento AS endereco_complemento
-
-                FROM propriedade pr
-                JOIN pecuarista pec ON pec.id = pr.id_pecuarista
-                JOIN endereco e ON e.id = pr.id_endereco
-                WHERE pr.id = ?;
-                """;
+        String sql = BASE_SELECT + " WHERE pr.id = ?;";
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -184,38 +121,7 @@ public class PropriedadeDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Date dataNascPec = rs.getDate("pecuarista_data_nascimento");
-                    LocalDate dataNascimento = dataNascPec != null ? dataNascPec.toLocalDate() : null;
-
-                    PecuaristaModel pecuarista = new PecuaristaModel(
-                            rs.getInt("pecuarista_id"),
-                            rs.getString("pecuarista_cpf"),
-                            rs.getString("pecuarista_assinatura"),
-                            dataNascimento,
-                            rs.getString("pecuarista_nome"),
-                            rs.getString("pecuarista_senha"),
-                            rs.getString("pecuarista_email"),
-                            rs.getString("pecuarista_telefone")
-                    );
-
-                    EnderecoModel endereco = new EnderecoModel(
-                            rs.getInt("endereco_id"),
-                            rs.getString("endereco_cep"),
-                            rs.getString("endereco_tipo"),
-                            rs.getString("endereco_numero"),
-                            rs.getString("endereco_rua"),
-                            rs.getString("endereco_cidade"),
-                            rs.getString("endereco_estado"),
-                            rs.getString("endereco_pais"),
-                            rs.getString("endereco_complemento")
-                    );
-
-                    return new PropriedadeModel(
-                            rs.getInt("propriedade_id"),
-                            pecuarista,
-                            endereco,
-                            rs.getString("propriedade_nome")
-                    );
+                    return extrairPropriedade(rs);
                 }
             }
         } catch (SQLException e) {
@@ -279,6 +185,8 @@ public class PropriedadeDAO {
         }
     }
 
+    // ==================== CONSULTAS ESPECÍFICAS ====================
+
     /**
      * Busca propriedades por nome, suportando correspondência exata, parcial ("picada")
      * e case-insensitive (ignorando maiúsculas e minúsculas).
@@ -292,37 +200,8 @@ public class PropriedadeDAO {
         }
 
         String[] tokens = termo.trim().split("\\s+");
-        StringBuilder sql = new StringBuilder("""
-                SELECT 
-                    pr.id AS propriedade_id,
-                    pr.nome AS propriedade_nome,
-
-                    -- Pecuarista
-                    pec.id AS pecuarista_id,
-                    pec.cpf AS pecuarista_cpf,
-                    pec.assinatura AS pecuarista_assinatura,
-                    pec.data_nascimento AS pecuarista_data_nascimento,
-                    pec.nome AS pecuarista_nome,
-                    pec.senha AS pecuarista_senha,
-                    pec.email AS pecuarista_email,
-                    pec.telefone AS pecuarista_telefone,
-
-                    -- Endereço
-                    e.id AS endereco_id,
-                    e.cep AS endereco_cep,
-                    e.tipo AS endereco_tipo,
-                    e.numero AS endereco_numero,
-                    e.rua AS endereco_rua,
-                    e.cidade AS endereco_cidade,
-                    e.estado AS endereco_estado,
-                    e.pais AS endereco_pais,
-                    e.complemento AS endereco_complemento
-
-                FROM propriedade pr
-                JOIN pecuarista pec ON pec.id = pr.id_pecuarista
-                JOIN endereco e ON e.id = pr.id_endereco
-                WHERE 1=1
-                """);
+        StringBuilder sql = new StringBuilder(BASE_SELECT);
+        sql.append(" WHERE 1=1");
 
         for (int i = 0; i < tokens.length; i++) {
             sql.append(" AND LOWER(pr.nome) LIKE ?");
@@ -340,40 +219,7 @@ public class PropriedadeDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Date dataNascPec = rs.getDate("pecuarista_data_nascimento");
-                    LocalDate dataNascimento = dataNascPec != null ? dataNascPec.toLocalDate() : null;
-
-                    PecuaristaModel pecuarista = new PecuaristaModel(
-                            rs.getInt("pecuarista_id"),
-                            rs.getString("pecuarista_cpf"),
-                            rs.getString("pecuarista_assinatura"),
-                            dataNascimento,
-                            rs.getString("pecuarista_nome"),
-                            rs.getString("pecuarista_senha"),
-                            rs.getString("pecuarista_email"),
-                            rs.getString("pecuarista_telefone")
-                    );
-
-                    EnderecoModel endereco = new EnderecoModel(
-                            rs.getInt("endereco_id"),
-                            rs.getString("endereco_cep"),
-                            rs.getString("endereco_tipo"),
-                            rs.getString("endereco_numero"),
-                            rs.getString("endereco_rua"),
-                            rs.getString("endereco_cidade"),
-                            rs.getString("endereco_estado"),
-                            rs.getString("endereco_pais"),
-                            rs.getString("endereco_complemento")
-                    );
-
-                    PropriedadeModel propriedade = new PropriedadeModel(
-                            rs.getInt("propriedade_id"),
-                            pecuarista,
-                            endereco,
-                            rs.getString("propriedade_nome")
-                    );
-
-                    propriedades.add(propriedade);
+                    propriedades.add(extrairPropriedade(rs));
                 }
             }
         } catch (SQLException e) {
@@ -383,7 +229,73 @@ public class PropriedadeDAO {
         return propriedades;
     }
 
+    /**
+     * Busca todas as propriedades rurais pertencentes a um determinado pecuarista.
+     *
+     * @param idPecuarista identificador do pecuarista proprietário
+     * @return lista de propriedades pertencentes ao pecuarista
+     */
+    public List<PropriedadeModel> buscarPorPecuarista(int idPecuarista) {
+        String sql = BASE_SELECT + " WHERE pr.id_pecuarista = ? ORDER BY pr.nome ASC, pr.id ASC;";
+        List<PropriedadeModel> propriedades = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idPecuarista);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    propriedades.add(extrairPropriedade(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar propriedades por pecuarista: " + e.getMessage());
+        }
+
+        return propriedades;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Extrai os dados do ResultSet e hidrata um objeto PropriedadeModel completo
+     * com seu PecuaristaModel e EnderecoModel associados.
+     */
+    private PropriedadeModel extrairPropriedade(ResultSet rs) throws SQLException {
+        Date dataNascPec = rs.getDate("pecuarista_data_nascimento");
+        LocalDate dataNascimento = dataNascPec != null ? dataNascPec.toLocalDate() : null;
+
+        PecuaristaModel pecuarista = new PecuaristaModel(
+                rs.getInt("pecuarista_id"),
+                rs.getString("pecuarista_cpf"),
+                rs.getString("pecuarista_assinatura"),
+                dataNascimento,
+                rs.getString("pecuarista_nome"),
+                rs.getString("pecuarista_senha"),
+                rs.getString("pecuarista_email"),
+                rs.getString("pecuarista_telefone")
+        );
+
+        EnderecoModel endereco = new EnderecoModel(
+                rs.getInt("endereco_id"),
+                rs.getString("endereco_cep"),
+                rs.getString("endereco_tipo"),
+                rs.getString("endereco_numero"),
+                rs.getString("endereco_rua"),
+                rs.getString("endereco_cidade"),
+                rs.getString("endereco_estado"),
+                rs.getString("endereco_pais"),
+                rs.getString("endereco_complemento")
+        );
+
+        return new PropriedadeModel(
+                rs.getInt("propriedade_id"),
+                pecuarista,
+                endereco,
+                rs.getString("propriedade_nome")
+        );
+    }
 
     /**
      * Preenche os parâmetros do PreparedStatement tratando referências nulas de objetos compostos.

@@ -81,34 +81,7 @@ public class MotoristaDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                EmpresaModel empresaModel = null;
-                int idEmpresa = rs.getInt("empresa_id");
-
-                if (!rs.wasNull()) {
-                    empresaModel = new EmpresaModel(
-                            idEmpresa,
-                            rs.getString("empresa_nome"),
-                            rs.getString("empresa_cnpj"),
-                            rs.getString("empresa_codigo")
-                    );
-                }
-
-                Date dataNascimento = rs.getDate("data_nascimento");
-
-                MotoristaModel motoristaModel = new MotoristaModel(
-                        rs.getInt("id"),
-                        empresaModel,
-                        rs.getString("nome"),
-                        rs.getString("assinatura"),
-                        dataNascimento != null
-                                ? dataNascimento.toLocalDate()
-                                : null,
-                        rs.getString("senha"),
-                        rs.getString("email"),
-                        rs.getString("telefone")
-                );
-
-                motoristaModels.add(motoristaModel);
+                motoristaModels.add(extrairMotorista(rs));
             }
 
         } catch (SQLException e) {
@@ -202,32 +175,7 @@ public class MotoristaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    EmpresaModel empresaModel = null;
-                    int idEmpresa = rs.getInt("empresa_id");
-
-                    if (!rs.wasNull()) {
-                        empresaModel = new EmpresaModel(
-                                idEmpresa,
-                                rs.getString("empresa_nome"),
-                                rs.getString("empresa_cnpj"),
-                                rs.getString("empresa_codigo")
-                        );
-                    }
-
-                    Date dataNascimento = rs.getDate("data_nascimento");
-
-                    return new MotoristaModel(
-                            rs.getInt("id"),
-                            empresaModel,
-                            rs.getString("nome"),
-                            rs.getString("assinatura"),
-                            dataNascimento != null
-                                    ? dataNascimento.toLocalDate()
-                                    : null,
-                            rs.getString("senha"),
-                            rs.getString("email"),
-                            rs.getString("telefone")
-                    );
+                    return extrairMotorista(rs);
                 }
             }
 
@@ -278,34 +226,7 @@ public class MotoristaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    EmpresaModel empresaModel = null;
-                    int idEmpresa = rs.getInt("empresa_id");
-
-                    if (!rs.wasNull()) {
-                        empresaModel = new EmpresaModel(
-                                idEmpresa,
-                                rs.getString("empresa_nome"),
-                                rs.getString("empresa_cnpj"),
-                                rs.getString("empresa_codigo")
-                        );
-                    }
-
-                    Date dataNascimento = rs.getDate("data_nascimento");
-
-                    MotoristaModel motoristaModel = new MotoristaModel(
-                            rs.getInt("id"),
-                            empresaModel,
-                            rs.getString("nome"),
-                            rs.getString("assinatura"),
-                            dataNascimento != null
-                                    ? dataNascimento.toLocalDate()
-                                    : null,
-                            rs.getString("senha"),
-                            rs.getString("email"),
-                            rs.getString("telefone")
-                    );
-
-                    motoristaModels.add(motoristaModel);
+                    motoristaModels.add(extrairMotorista(rs));
                 }
             }
 

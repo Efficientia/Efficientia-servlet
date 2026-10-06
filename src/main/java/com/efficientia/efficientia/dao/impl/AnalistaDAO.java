@@ -80,7 +80,7 @@ public class AnalistaDAO {
              PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                listaAnalista.add(construirAnalista(rs));
+                listaAnalista.add(extrairAnalista(rs));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar Analista: " + e.getMessage());
@@ -165,7 +165,7 @@ public class AnalistaDAO {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return construirAnalista(rs);
+                    return extrairAnalista(rs);
                 }
             }
         } catch (SQLException e) {
@@ -174,9 +174,10 @@ public class AnalistaDAO {
         return null;
     }
 
+    // ==================== CONSULTAS ESPECÍFICAS ====================
+
     /**
-     * Busca analistas por nome, suportando correspondência exata, parcial ("picada")
-     * e case-insensitive (ignorando maiúsculas e minúsculas).
+     * Busca analistas por nome, suportando correspondência exata, parcial e case-insensitive.
      *
      * @param termo termo ou palavras-chave de busca
      * @return lista de analistas encontrados
@@ -214,7 +215,7 @@ public class AnalistaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    listaAnalista.add(construirAnalista(rs));
+                    listaAnalista.add(extrairAnalista(rs));
                 }
             }
         } catch (SQLException e) {
@@ -222,6 +223,155 @@ public class AnalistaDAO {
         }
 
         return listaAnalista;
+    }
+
+    /**
+     * Busca analistas vinculados a uma empresa específica.
+     *
+     * @param idEmpresa ID da empresa associada
+     * @return lista de analistas vinculados à empresa
+     */
+    public List<AnalistaModel> buscarPorEmpresa(int idEmpresa) {
+        String sql = """
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM analista a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE a.id_empresa = ?
+                ORDER BY a.nome ASC, a.id ASC;
+                """;
+
+        List<AnalistaModel> listaAnalista = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idEmpresa);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    listaAnalista.add(extrairAnalista(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Analista por empresa: " + e.getMessage());
+        }
+
+        return listaAnalista;
+    }
+
+    /**
+     * Localiza um analista pelo seu CPF.
+     *
+     * @param cpf número de CPF do analista
+     * @return objeto AnalistaModel se encontrado, ou null caso contrário
+     */
+    public AnalistaModel buscarPorCpf(String cpf) {
+        if (cpf == null || cpf.isBlank()) return null;
+
+        String sql = """
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM analista a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE a.cpf = ?;
+                """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairAnalista(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Analista por CPF: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Localiza um analista pelo seu código funcional corporativo.
+     *
+     * @param codigo código de registro funcional
+     * @return objeto AnalistaModel se encontrado, ou null caso contrário
+     */
+    public AnalistaModel buscarPorCodigo(String codigo) {
+        if (codigo == null || codigo.isBlank()) return null;
+
+        String sql = """
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM analista a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE UPPER(a.codigo) = UPPER(?);
+                """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, codigo.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairAnalista(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Analista por código: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Localiza um analista pelo seu e-mail de acesso.
+     *
+     * @param email endereço de e-mail cadastrado
+     * @return objeto AnalistaModel se encontrado, ou null caso contrário
+     */
+    public AnalistaModel buscarPorEmail(String email) {
+        if (email == null || email.isBlank()) return null;
+
+        String sql = """
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM analista a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE LOWER(a.email) = LOWER(?);
+                """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, email.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairAnalista(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Analista por email: " + e.getMessage());
+        }
+
+        return null;
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
@@ -233,7 +383,7 @@ public class AnalistaDAO {
      * @return objeto AnalistaModel populado
      * @throws SQLException se ocorrer erro de leitura do ResultSet
      */
-    private AnalistaModel construirAnalista(ResultSet rs) throws SQLException {
+    private AnalistaModel extrairAnalista(ResultSet rs) throws SQLException {
         EmpresaModel empresaModel = null;
         int idEmpresa = rs.getInt("empresa_id");
         if (!rs.wasNull()) {
@@ -269,7 +419,7 @@ public class AnalistaDAO {
      * @throws SQLException se ocorrer erro durante a parametrização
      */
     private void preencherStatement(PreparedStatement stmt, AnalistaModel analistaModel) throws SQLException {
-        if (analistaModel.getEmpresaModel() != null) {
+        if (analistaModel.getEmpresaModel() != null && analistaModel.getEmpresaModel().getId() > 0) {
             stmt.setInt(1, analistaModel.getEmpresaModel().getId());
         } else {
             stmt.setNull(1, Types.INTEGER);
