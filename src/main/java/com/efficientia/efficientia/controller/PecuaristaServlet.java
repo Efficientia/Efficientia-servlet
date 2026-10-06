@@ -1,6 +1,6 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.PecuaristaDAO;
+import com.efficientia.efficientia.dao.impl.PecuaristaDAO;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

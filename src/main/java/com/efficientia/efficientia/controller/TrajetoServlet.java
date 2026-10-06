@@ -1,9 +1,9 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.CaminhaoDAO;
-import com.efficientia.efficientia.DAO.impl.MotoristaDAO;
-import com.efficientia.efficientia.DAO.impl.PecuaristaDAO;
-import com.efficientia.efficientia.DAO.impl.TrajetoDAO;
+import com.efficientia.efficientia.dao.impl.CaminhaoDAO;
+import com.efficientia.efficientia.dao.impl.MotoristaDAO;
+import com.efficientia.efficientia.dao.impl.PecuaristaDAO;
+import com.efficientia.efficientia.dao.impl.TrajetoDAO;
 import com.efficientia.efficientia.model.CaminhaoModel;
 import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.model.PecuaristaModel;

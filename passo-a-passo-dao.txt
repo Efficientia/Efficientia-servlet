@@ -21,7 +21,7 @@ encapsula todas as operações de persistência e comandos SQL de uma entidade:
 No padrão estabelecido em TrajetoDAO, a classe segue as seguintes regras de ouro:
 
 1. Pacote padrão:
-   package com.efficientia.efficientia.DAO.impl;
+   package com.efficientia.efficientia.dao.impl;
 
 2. Imports essenciais:
    import com.efficientia.efficientia.factory.ConnectionFactory;

@@ -1,4 +1,4 @@
-package com.efficientia.efficientia.DAO.impl;
+package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.PecuaristaModel;

@@ -1,7 +1,7 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.AdminDAO;
-import com.efficientia.efficientia.DAO.impl.EmpresaDAO;
+import com.efficientia.efficientia.dao.impl.AdminDAO;
+import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import jakarta.servlet.ServletException;

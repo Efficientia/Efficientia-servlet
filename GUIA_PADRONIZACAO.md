@@ -89,7 +89,7 @@ Toda classe Model deve fornecer no mínimo dois construtores:
 Toda classe DAO deve seguir exatamente a seguinte organização visual e de seções:
 
 ```java
-package com.efficientia.efficientia.DAO.impl;
+package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.ExemploModel;
