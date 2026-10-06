@@ -1,7 +1,7 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.EmpresaDAO;
-import com.efficientia.efficientia.DAO.impl.MotoristaDAO;
+import com.efficientia.efficientia.dao.impl.EmpresaDAO;
+import com.efficientia.efficientia.dao.impl.MotoristaDAO;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.model.MotoristaModel;
 import jakarta.servlet.ServletException;
@@ -12,7 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(name = "MotoristaServlet", value = "/motorista")
 public class MotoristaServlet extends HttpServlet {
@@ -53,17 +56,43 @@ public class MotoristaServlet extends HttpServlet {
             }
         }
 
-        // Busca flexível por nome ou listagem geral de motoristas
+        // Busca flexível: email, telefone, empresa, nome ou listagem geral de motoristas
+        String email = obterParametro(req, "email");
+        String telefone = obterParametro(req, "telefone");
+        String idEmpresaStr = obterParametro(req, "idEmpresa", "id_empresa");
         String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
         List<MotoristaModel> motoristaModels;
 
-        if (busca != null && !busca.isBlank()) {
-            motoristaModels = dao.buscarPorNome(busca);
+        if (email != null && !email.isBlank()) {
+            motoristaModels = dao.buscarPorEmail(email);
+            req.setAttribute("termoBusca", email);
+        } else if (telefone != null && !telefone.isBlank()) {
+            motoristaModels = dao.buscarPorTelefone(telefone);
+            req.setAttribute("termoBusca", telefone);
+        } else if (idEmpresaStr != null && !idEmpresaStr.isBlank()) {
+            int idEmpresa = parseInt(idEmpresaStr, 0);
+            motoristaModels = dao.buscarPorEmpresa(idEmpresa);
+            req.setAttribute("termoBusca", "Empresa #" + idEmpresa);
+        } else if (busca != null && !busca.isBlank()) {
+            String termo = busca.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            motoristaModels = new ArrayList<>();
+
+            for (MotoristaModel m : dao.buscarPorNome(termo)) {
+                if (ids.add(m.getId())) motoristaModels.add(m);
+            }
+            for (MotoristaModel m : dao.buscarPorEmail(termo)) {
+                if (ids.add(m.getId())) motoristaModels.add(m);
+            }
+            for (MotoristaModel m : dao.buscarPorTelefone(termo)) {
+                if (ids.add(m.getId())) motoristaModels.add(m);
+            }
+            req.setAttribute("termoBusca", busca);
         } else {
             motoristaModels = dao.listar();
+            req.setAttribute("termoBusca", "");
         }
 
-        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("motoristaModels", motoristaModels);
         req.setAttribute("motoristas", motoristaModels);
         req.setAttribute("empresaModels", empresaDAO.listar());

@@ -1,6 +1,6 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.EmpresaDAO;
+import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.EmpresaModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,7 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Servlet responsável pelo controle de requisições relacionadas à entidade Empresa.
@@ -56,17 +59,30 @@ public class EmpresaServlet extends HttpServlet {
             }
         }
 
-        // Busca flexível por nome ou listagem geral de empresas cadastradas
+        // Busca flexível por código, nome ou listagem geral de empresas cadastradas
+        String codigo = obterParametro(req, "codigo");
         String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
         List<EmpresaModel> empresaModels;
 
-        if (busca != null && !busca.isBlank()) {
-            empresaModels = dao.buscarPorNome(busca);
+        if (codigo != null && !codigo.isBlank()) {
+            empresaModels = dao.buscarPorCodigoLista(codigo);
+            req.setAttribute("termoBusca", codigo);
+        } else if (busca != null && !busca.isBlank()) {
+            String termo = busca.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            empresaModels = new ArrayList<>();
+
+            for (EmpresaModel e : dao.buscarPorCodigoLista(termo)) {
+                if (ids.add(e.getId())) empresaModels.add(e);
+            }
+            for (EmpresaModel e : dao.buscarPorNome(termo)) {
+                if (ids.add(e.getId())) empresaModels.add(e);
+            }
+            req.setAttribute("termoBusca", busca);
         } else {
             empresaModels = dao.listar();
+            req.setAttribute("termoBusca", "");
         }
-
-        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("empresaModels", empresaModels);
         req.setAttribute("empresas", empresaModels);
 

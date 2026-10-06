@@ -1,4 +1,4 @@
-package com.efficientia.efficientia.DAO.impl;
+package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.PecuaristaModel;
@@ -246,7 +246,136 @@ public class PecuaristaDAO {
         return pecuaristas;
     }
 
+    /**
+     * Busca pecuaristas pelo CPF (aceita com ou sem máscara/pontuação).
+     *
+     * @param cpf documento a pesquisar
+     * @return lista de pecuaristas encontrados
+     */
+    public List<PecuaristaModel> buscarPorCpf(String cpf) {
+        if (cpf == null || cpf.isBlank()) {
+            return listar();
+        }
+
+        String digitos = cpf.replaceAll("\\D", "");
+        String sql = """
+                SELECT * FROM pecuarista
+                WHERE regexp_replace(cpf, '\\D', '', 'g') LIKE ?
+                ORDER BY nome ASC, id ASC;
+                """;
+
+        List<PecuaristaModel> pecuaristas = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + (digitos.isEmpty() ? cpf.trim() : digitos) + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    pecuaristas.add(extrairPecuarista(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar pecuaristas por CPF: " + e.getMessage());
+        }
+
+        return pecuaristas;
+    }
+
+    /**
+     * Busca pecuaristas pelo e-mail, ignorando maiúsculas e minúsculas.
+     *
+     * @param email endereço de email a pesquisar
+     * @return lista de pecuaristas encontrados
+     */
+    public List<PecuaristaModel> buscarPorEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return listar();
+        }
+
+        String sql = """
+                SELECT * FROM pecuarista
+                WHERE LOWER(email) LIKE ?
+                ORDER BY nome ASC, id ASC;
+                """;
+
+        List<PecuaristaModel> pecuaristas = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + email.trim().toLowerCase() + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    pecuaristas.add(extrairPecuarista(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar pecuaristas por email: " + e.getMessage());
+        }
+
+        return pecuaristas;
+    }
+
+    /**
+     * Busca pecuaristas pelo telefone (tolerante a caracteres especiais de máscara).
+     *
+     * @param telefone número a ser pesquisado
+     * @return lista de pecuaristas encontrados
+     */
+    public List<PecuaristaModel> buscarPorTelefone(String telefone) {
+        if (telefone == null || telefone.isBlank()) {
+            return listar();
+        }
+
+        String digitos = telefone.replaceAll("\\D", "");
+        String sql = """
+                SELECT * FROM pecuarista
+                WHERE regexp_replace(telefone, '\\D', '', 'g') LIKE ?
+                ORDER BY nome ASC, id ASC;
+                """;
+
+        List<PecuaristaModel> pecuaristas = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + (digitos.isEmpty() ? telefone.trim() : digitos) + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    pecuaristas.add(extrairPecuarista(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar pecuaristas por telefone: " + e.getMessage());
+        }
+
+        return pecuaristas;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Extrai os dados do ResultSet hidratando o objeto PecuaristaModel.
+     */
+    private PecuaristaModel extrairPecuarista(ResultSet rs) throws SQLException {
+        Date dataNascimento = rs.getDate("data_nascimento");
+        LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
+
+        return new PecuaristaModel(
+                rs.getInt("id"),
+                rs.getString("cpf"),
+                rs.getString("assinatura"),
+                nascimento,
+                rs.getString("nome"),
+                rs.getString("senha"),
+                rs.getString("email"),
+                rs.getString("telefone")
+        );
+    }
 
     /**
      * Atribui os campos de PecuaristaModel aos parâmetros indexados do PreparedStatement.

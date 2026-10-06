@@ -1,7 +1,9 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.CaminhaoDAO;
+import com.efficientia.efficientia.dao.impl.CaminhaoDAO;
+import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.CaminhaoModel;
+import com.efficientia.efficientia.model.EmpresaModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,10 +17,12 @@ import java.util.List;
 public class CaminhaoServlet extends HttpServlet {
 
     private CaminhaoDAO dao;
+    private EmpresaDAO empresaDAO;
 
     @Override
     public void init() {
         dao = new CaminhaoDAO();
+        empresaDAO = new EmpresaDAO();
     }
 
     @Override
@@ -37,6 +41,7 @@ public class CaminhaoServlet extends HttpServlet {
                 if (caminhaoModel != null) {
                     req.setAttribute("caminhaoModel", caminhaoModel);
                     req.setAttribute("caminhao", caminhaoModel);
+                    req.setAttribute("empresaModels", empresaDAO.listar());
                     req.getRequestDispatcher(
                             "/WEB-INF/views/editar-caminhao.jsp"
                     ).forward(req, resp);
@@ -47,10 +52,27 @@ public class CaminhaoServlet extends HttpServlet {
             }
         }
 
-        List<CaminhaoModel> caminhaoModels = dao.listar();
+        // Busca flexível: por empresa, por placa (cavalo ou carreta) ou listagem geral
+        String idEmpresaStr = obterParametro(req, "idEmpresa", "id_empresa");
+        String busca = obterParametro(req, "placa", "busca", "q", "pesquisa");
+        List<CaminhaoModel> caminhaoModels;
 
+        if (idEmpresaStr != null && !idEmpresaStr.isBlank()) {
+            int idEmpresa = parseInt(idEmpresaStr, 0);
+            caminhaoModels = dao.buscarPorEmpresa(idEmpresa);
+            req.setAttribute("termoBusca", "Empresa #" + idEmpresa);
+        } else if (busca != null && !busca.isBlank()) {
+            caminhaoModels = dao.buscarPorPlaca(busca);
+            req.setAttribute("termoBusca", busca);
+        } else {
+            caminhaoModels = dao.listar();
+            req.setAttribute("termoBusca", "");
+        }
+
+        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("caminhaoModels", caminhaoModels);
         req.setAttribute("caminhoes", caminhaoModels);
+        req.setAttribute("empresaModels", empresaDAO.listar());
 
         req.getRequestDispatcher(
                 "/WEB-INF/views/caminhao.jsp"
@@ -84,12 +106,12 @@ public class CaminhaoServlet extends HttpServlet {
         if ("atualizar".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-
+                EmpresaModel empresaModel = buscarEmpresa(req);
                 String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
                 String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
                 int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
 
-                CaminhaoModel caminhaoModel = new CaminhaoModel(id, placaCavalo, placaCarreta, capacidadeMaxima);
+                CaminhaoModel caminhaoModel = new CaminhaoModel(id, empresaModel, placaCavalo, placaCarreta, capacidadeMaxima);
                 dao.atualizar(caminhaoModel, id);
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar caminhão: " + e.getMessage());
@@ -100,17 +122,35 @@ public class CaminhaoServlet extends HttpServlet {
         }
 
         // Cadastro
+        EmpresaModel empresaModel = buscarEmpresa(req);
         String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
         String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
         int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
 
-        CaminhaoModel novoCaminhao = new CaminhaoModel(placaCavalo, placaCarreta, capacidadeMaxima);
+        CaminhaoModel novoCaminhao = new CaminhaoModel(empresaModel, placaCavalo, placaCarreta, capacidadeMaxima);
         dao.inserir(novoCaminhao);
 
         resp.sendRedirect(req.getContextPath() + "/caminhao");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
+
+    private EmpresaModel buscarEmpresa(HttpServletRequest req) {
+        String idTexto = obterParametro(req, "idEmpresa", "id_empresa");
+        if (idTexto != null && !idTexto.isBlank()) {
+            try {
+                int idEmpresa = Integer.parseInt(idTexto.trim());
+                for (EmpresaModel empresa : empresaDAO.listar()) {
+                    if (empresa.getId() == idEmpresa) {
+                        return empresa;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Erro ao buscar empresa do caminhão: " + e.getMessage());
+            }
+        }
+        return null;
+    }
 
     private String obterParametro(HttpServletRequest req, String... nomes) {
         for (String nome : nomes) {

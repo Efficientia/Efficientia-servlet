@@ -1,4 +1,4 @@
-package com.efficientia.efficientia.DAO.impl;
+package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.EmpresaModel;
@@ -316,7 +316,160 @@ public class MotoristaDAO {
         return motoristaModels;
     }
 
+    /**
+     * Busca motoristas pelo e-mail (ou parte do e-mail), ignorando maiúsculas e minúsculas.
+     *
+     * @param email termo de e-mail a pesquisar
+     * @return lista de motoristas encontrados
+     */
+    public List<MotoristaModel> buscarPorEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return listar();
+        }
+
+        String sql = """
+                SELECT m.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM motorista m
+                LEFT JOIN empresa e ON e.id = m.id_empresa
+                WHERE LOWER(m.email) LIKE ?
+                ORDER BY m.nome ASC, m.id ASC;
+                """;
+
+        List<MotoristaModel> motoristas = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + email.trim().toLowerCase() + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    motoristas.add(extrairMotorista(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar motoristas por email: " + e.getMessage());
+        }
+
+        return motoristas;
+    }
+
+    /**
+     * Busca motoristas pelo número de telefone (tolerante a caracteres especiais).
+     *
+     * @param telefone número ou fragmento do telefone
+     * @return lista de motoristas encontrados
+     */
+    public List<MotoristaModel> buscarPorTelefone(String telefone) {
+        if (telefone == null || telefone.isBlank()) {
+            return listar();
+        }
+
+        String digitos = telefone.replaceAll("\\D", "");
+        String sql = """
+                SELECT m.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM motorista m
+                LEFT JOIN empresa e ON e.id = m.id_empresa
+                WHERE regexp_replace(m.telefone, '\\D', '', 'g') LIKE ?
+                ORDER BY m.nome ASC, m.id ASC;
+                """;
+
+        List<MotoristaModel> motoristas = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + (digitos.isEmpty() ? telefone.trim() : digitos) + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    motoristas.add(extrairMotorista(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar motoristas por telefone: " + e.getMessage());
+        }
+
+        return motoristas;
+    }
+
+    /**
+     * Busca motoristas vinculados a uma empresa específica.
+     *
+     * @param idEmpresa identificador da empresa
+     * @return lista de motoristas da empresa
+     */
+    public List<MotoristaModel> buscarPorEmpresa(int idEmpresa) {
+        String sql = """
+                SELECT m.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM motorista m
+                LEFT JOIN empresa e ON e.id = m.id_empresa
+                WHERE m.id_empresa = ?
+                ORDER BY m.nome ASC, m.id ASC;
+                """;
+
+        List<MotoristaModel> motoristas = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idEmpresa);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    motoristas.add(extrairMotorista(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar motoristas por empresa: " + e.getMessage());
+        }
+
+        return motoristas;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Extrai os dados do ResultSet hidratando o objeto MotoristaModel com sua empresa associada.
+     */
+    private MotoristaModel extrairMotorista(ResultSet rs) throws SQLException {
+        EmpresaModel empresaModel = null;
+        int idEmpresa = rs.getInt("empresa_id");
+
+        if (!rs.wasNull()) {
+            empresaModel = new EmpresaModel(
+                    idEmpresa,
+                    rs.getString("empresa_nome"),
+                    rs.getString("empresa_cnpj"),
+                    rs.getString("empresa_codigo")
+            );
+        }
+
+        Date dataNascimento = rs.getDate("data_nascimento");
+
+        return new MotoristaModel(
+                rs.getInt("id"),
+                empresaModel,
+                rs.getString("nome"),
+                rs.getString("assinatura"),
+                dataNascimento != null ? dataNascimento.toLocalDate() : null,
+                rs.getString("senha"),
+                rs.getString("email"),
+                rs.getString("telefone")
+        );
+    }
 
     /**
      * Preenche os parâmetros do PreparedStatement tratando valores nulos para chave estrangeira e data.

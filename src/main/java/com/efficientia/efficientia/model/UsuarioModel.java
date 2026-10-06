@@ -71,28 +71,6 @@ public abstract class UsuarioModel implements Model {
     }
 
     /**
-     * Construtor com ID e sem vínculo de Empresa.
-     * Utilizado para carregar usuários que não estão atrelados a uma empresa específica.
-     *
-     * @param id             identificador único do usuário
-     * @param nome           nome completo do usuário
-     * @param assinatura     assinatura digital ou rubrica
-     * @param dataNascimento data de nascimento
-     * @param senha          senha de acesso ao sistema
-     * @param email          endereço de e-mail
-     * @param telefone       número de contato telefônico
-     */
-    public UsuarioModel(int id,
-                        String nome,
-                        String assinatura,
-                        LocalDate dataNascimento,
-                        String senha,
-                        String email,
-                        String telefone) {
-        this(id, null, nome, assinatura, dataNascimento, senha, email, telefone);
-    }
-
-    /**
      * Construtor sem ID e com vínculo de Empresa.
      * Utilizado para registrar um novo usuário corporativo antes da inserção no banco.
      *
@@ -118,26 +96,6 @@ public abstract class UsuarioModel implements Model {
         this.senha = senha;
         this.email = email;
         this.telefone = telefone;
-    }
-
-    /**
-     * Construtor sem ID e sem vínculo de Empresa.
-     * Utilizado para registrar um novo usuário avulso antes da inserção no banco.
-     *
-     * @param nome           nome completo do usuário
-     * @param assinatura     assinatura digital ou rubrica
-     * @param dataNascimento data de nascimento
-     * @param senha          senha de acesso ao sistema
-     * @param email          endereço de e-mail
-     * @param telefone       número de contato telefônico
-     */
-    public UsuarioModel(String nome,
-                        String assinatura,
-                        LocalDate dataNascimento,
-                        String senha,
-                        String email,
-                        String telefone) {
-        this(null, nome, assinatura, dataNascimento, senha, email, telefone);
     }
 
     // ==================== GETTERS E SETTERS ====================

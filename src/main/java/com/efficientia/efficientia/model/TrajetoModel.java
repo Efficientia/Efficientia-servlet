@@ -43,7 +43,7 @@ public class TrajetoModel implements Model {
     private int kmChegada;
 
     /** Pecuarista/produtor rural remetente da carga viva. */
-    private PecuaristaModel pecuarista;
+    private PecuaristaModel pecuaristaModel;
 
     /** Número da Guia de Trânsito Animal (documento sanitário oficial emitido pelo órgão competente). */
     private String numeroGTA;
@@ -137,7 +137,7 @@ public class TrajetoModel implements Model {
         this.dataHoraFim = dataHoraFim;
         this.kmSaida = kmSaida != null ? kmSaida : 0;
         this.kmChegada = kmChegada != null ? kmChegada : 0;
-        this.pecuarista = pecuarista;
+        this.pecuaristaModel = pecuarista;
         this.numeroGTA = numeroGTA;
         this.numeroNotaFiscal = numeroNotaFiscal;
         this.horarioEmbarque = horarioEmbarque;
@@ -198,7 +198,7 @@ public class TrajetoModel implements Model {
         this.dataHoraFim = dataHoraFim;
         this.kmSaida = kmSaida;
         this.kmChegada = kmChegada;
-        this.pecuarista = pecuarista;
+        this.pecuaristaModel = pecuarista;
         this.numeroGTA = numeroGTA;
         this.numeroNotaFiscal = numeroNotaFiscal;
         this.horarioEmbarque = horarioEmbarque;
@@ -362,16 +362,32 @@ public class TrajetoModel implements Model {
      * Obtém o pecuarista/produtor responsável pelo lote transportado.
      * @return objeto {@link PecuaristaModel}
      */
-    public PecuaristaModel getPecuarista() {
-        return pecuarista;
+    public PecuaristaModel getPecuaristaModel() {
+        return pecuaristaModel;
     }
 
     /**
      * Define o pecuarista/produtor da carga.
+     * @param pecuaristaModel produtor rural
+     */
+    public void setPecuaristaModel(PecuaristaModel pecuaristaModel) {
+        this.pecuaristaModel = pecuaristaModel;
+    }
+
+    /**
+     * Método utilitário alternativo para obter o pecuarista do trajeto.
+     * @return objeto {@link PecuaristaModel}
+     */
+    public PecuaristaModel getPecuarista() {
+        return pecuaristaModel;
+    }
+
+    /**
+     * Define o pecuarista/produtor da carga (método de compatibilidade).
      * @param pecuarista produtor rural
      */
     public void setPecuarista(PecuaristaModel pecuarista) {
-        this.pecuarista = pecuarista;
+        this.pecuaristaModel = pecuarista;
     }
 
     /**
@@ -379,7 +395,7 @@ public class TrajetoModel implements Model {
      * @param nomePecuarista produtor rural
      */
     public void setNomePecuarista(PecuaristaModel nomePecuarista) {
-        this.pecuarista = nomePecuarista;
+        this.pecuaristaModel = nomePecuarista;
     }
 
     /**
@@ -607,7 +623,7 @@ public class TrajetoModel implements Model {
                 ", dataHoraFim=" + dataHoraFim +
                 ", kmSaida=" + kmSaida +
                 ", kmChegada=" + kmChegada +
-                ", pecuarista=" + pecuarista +
+                ", pecuaristaModel=" + pecuaristaModel +
                 ", numeroGTA='" + numeroGTA + '\'' +
                 ", numeroNotaFiscal='" + numeroNotaFiscal + '\'' +
                 ", horarioEmbarque=" + horarioEmbarque +

@@ -69,8 +69,9 @@ A classe abstrata `UsuarioModel` centraliza os atributos comuns a qualquer indiv
 - `id`, `nome`, `senha`, `email`, `telefone`, `assinatura`, `dataNascimento`, `empresaModel`.
 
 **Regra de Herança:**
-- **Devem herdar de `UsuarioModel`**: `MotoristaModel`, `AnalistaModel`, `AdminModel` e `PecuaristaModel`.
-- **Atenção:** Como `UsuarioModel` já implementa `Model`, as subclasses filhas **não** precisam declarar `implements Model` novamente.
+- **Herança direta de `UsuarioModel`**: `MotoristaModel` e `AnalistaModel` (entidades que compartilham o conjunto completo de atributos de usuário com empresa e assinatura).
+- **Entidades com esquema dedicado**: `AdminModel` e `PecuaristaModel` implementam `Model` diretamente, mapeando fielmente as colunas do banco sem atributos artificiais ou chamadas a `super(null)`.
+- **Atenção:** Como `UsuarioModel` já implementa `Model`, suas subclasses filhas **não** precisam declarar `implements Model` novamente.
 
 ### 3.3. Sobrecarga Padronizada de Construtores
 Toda classe Model deve fornecer no mínimo dois construtores:
@@ -89,7 +90,7 @@ Toda classe Model deve fornecer no mínimo dois construtores:
 Toda classe DAO deve seguir exatamente a seguinte organização visual e de seções:
 
 ```java
-package com.efficientia.efficientia.DAO.impl;
+package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.ExemploModel;

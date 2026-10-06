@@ -1,7 +1,7 @@
 package com.efficientia.efficientia.controller;
 
-import com.efficientia.efficientia.DAO.impl.AdminDAO;
-import com.efficientia.efficientia.DAO.impl.EmpresaDAO;
+import com.efficientia.efficientia.dao.impl.AdminDAO;
+import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import jakarta.servlet.ServletException;
@@ -11,7 +11,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(name = "AdminServlet", value = "/admin")
 public class AdminServlet extends HttpServlet {
@@ -46,17 +49,36 @@ public class AdminServlet extends HttpServlet {
             }
         }
 
-        // Busca flexível por nome ou listagem geral de administradores
+        // Busca flexível: email, empresa, nome ou listagem geral de administradores
+        String email = obterParametro(req, "email");
+        String idEmpresaStr = obterParametro(req, "idEmpresa", "id_empresa");
         String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
         List<AdminModel> adminModels;
 
-        if (busca != null && !busca.isBlank()) {
-            adminModels = dao.buscarPorNome(busca);
+        if (email != null && !email.isBlank()) {
+            adminModels = dao.buscarPorEmail(email);
+            req.setAttribute("termoBusca", email);
+        } else if (idEmpresaStr != null && !idEmpresaStr.isBlank()) {
+            int idEmpresa = parseInt(idEmpresaStr, 0);
+            adminModels = dao.buscarPorEmpresa(idEmpresa);
+            req.setAttribute("termoBusca", "Empresa #" + idEmpresa);
+        } else if (busca != null && !busca.isBlank()) {
+            String termo = busca.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            adminModels = new ArrayList<>();
+
+            for (AdminModel a : dao.buscarPorNome(termo)) {
+                if (ids.add(a.getId())) adminModels.add(a);
+            }
+            for (AdminModel a : dao.buscarPorEmail(termo)) {
+                if (ids.add(a.getId())) adminModels.add(a);
+            }
+            req.setAttribute("termoBusca", busca);
         } else {
             adminModels = dao.listar();
+            req.setAttribute("termoBusca", "");
         }
 
-        req.setAttribute("termoBusca", busca != null ? busca : "");
         req.setAttribute("adminModels", adminModels);
         req.setAttribute("admins", adminModels);
         req.setAttribute("empresas", empresaDAO.listar());
