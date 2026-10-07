@@ -17,7 +17,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(name = "TrajetoServlet", value = "/trajeto")
 public class TrajetoServlet extends HttpServlet {
@@ -66,7 +69,129 @@ public class TrajetoServlet extends HttpServlet {
             }
         }
 
-        List<TrajetoModel> trajetoModels = dao.listar();
+        // Buscas especializadas e busca flexível de trajetos
+        String gta = obterParametro(req, "gta", "numeroGta", "numero_gta");
+        String nf = obterParametro(req, "nf", "notaFiscal", "numeroNotaFiscal", "numero_nota_fiscal");
+        String statusStr = obterParametro(req, "status");
+        String idMotoristaStr = obterParametro(req, "idMotorista", "id_motorista");
+        String idCaminhaoStr = obterParametro(req, "idCaminhao", "id_caminhao");
+        String idPecuaristaStr = obterParametro(req, "idPecuarista", "id_pecuarista");
+        String inicioStr = obterParametro(req, "inicio", "dataInicio", "data_inicio");
+        String fimStr = obterParametro(req, "fim", "dataFim", "data_fim");
+        String busca = obterParametro(req, "busca", "q", "pesquisa", "termo");
+
+        List<TrajetoModel> trajetoModels;
+
+        if (gta != null && !gta.isBlank()) {
+            TrajetoModel t = dao.buscarPorGTA(gta);
+            trajetoModels = new ArrayList<>();
+            if (t != null) trajetoModels.add(t);
+            req.setAttribute("termoBusca", "GTA: " + gta);
+        } else if (nf != null && !nf.isBlank()) {
+            TrajetoModel t = dao.buscarPorNotaFiscal(nf);
+            trajetoModels = new ArrayList<>();
+            if (t != null) trajetoModels.add(t);
+            req.setAttribute("termoBusca", "NF: " + nf);
+        } else if (statusStr != null && !statusStr.isBlank()) {
+            try {
+                StatusTrajeto st = StatusTrajeto.valueOf(statusStr.trim().toUpperCase());
+                trajetoModels = dao.buscarPorStatus(st);
+            } catch (Exception e) {
+                trajetoModels = dao.listar();
+            }
+            req.setAttribute("termoBusca", "Status: " + statusStr);
+        } else if (idMotoristaStr != null && !idMotoristaStr.isBlank()) {
+            int idMot = parseInt(idMotoristaStr, 0);
+            trajetoModels = dao.buscarPorMotorista(idMot);
+            req.setAttribute("termoBusca", "Motorista #" + idMot);
+        } else if (idCaminhaoStr != null && !idCaminhaoStr.isBlank()) {
+            int idCam = parseInt(idCaminhaoStr, 0);
+            trajetoModels = dao.buscarPorCaminhao(idCam);
+            req.setAttribute("termoBusca", "Caminhão #" + idCam);
+        } else if (idPecuaristaStr != null && !idPecuaristaStr.isBlank()) {
+            int idPec = parseInt(idPecuaristaStr, 0);
+            trajetoModels = dao.buscarPorPecuarista(idPec);
+            req.setAttribute("termoBusca", "Pecuarista #" + idPec);
+        } else if (inicioStr != null && !inicioStr.isBlank() && fimStr != null && !fimStr.isBlank()) {
+            try {
+                LocalDateTime ini = parseLocalDateTime(inicioStr);
+                LocalDateTime fim = parseLocalDateTime(fimStr);
+                trajetoModels = dao.buscarPorPeriodo(ini, fim);
+                req.setAttribute("termoBusca", inicioStr + " a " + fimStr);
+            } catch (Exception e) {
+                trajetoModels = dao.listar();
+                req.setAttribute("termoBusca", "");
+            }
+        } else if (busca != null && !busca.isBlank()) {
+            String termo = busca.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            trajetoModels = new ArrayList<>();
+
+            // 1. GTA
+            TrajetoModel tGta = dao.buscarPorGTA(termo);
+            if (tGta != null && ids.add(tGta.getId())) trajetoModels.add(tGta);
+
+            // 2. Nota Fiscal
+            TrajetoModel tNf = dao.buscarPorNotaFiscal(termo);
+            if (tNf != null && ids.add(tNf.getId())) trajetoModels.add(tNf);
+
+            // 3. Status coincidente
+            for (StatusTrajeto st : StatusTrajeto.values()) {
+                if (st.name().equalsIgnoreCase(termo.replace(" ", "_"))
+                        || st.name().toUpperCase().contains(termo.toUpperCase().replace(" ", "_"))) {
+                    for (TrajetoModel t : dao.buscarPorStatus(st)) {
+                        if (ids.add(t.getId())) trajetoModels.add(t);
+                    }
+                }
+            }
+
+            // 4. Motorista (por nome)
+            for (MotoristaModel m : motoristaDAO.buscarPorNome(termo)) {
+                for (TrajetoModel t : dao.buscarPorMotorista(m.getId())) {
+                    if (ids.add(t.getId())) trajetoModels.add(t);
+                }
+            }
+
+            // 5. Caminhão (por placa)
+            for (CaminhaoModel c : caminhaoDAO.buscarPorPlaca(termo)) {
+                for (TrajetoModel t : dao.buscarPorCaminhao(c.getId())) {
+                    if (ids.add(t.getId())) trajetoModels.add(t);
+                }
+            }
+
+            // 6. Pecuarista (por nome ou CPF)
+            for (PecuaristaModel p : pecuaristaDAO.buscarPorNome(termo)) {
+                for (TrajetoModel t : dao.buscarPorPecuarista(p.getId())) {
+                    if (ids.add(t.getId())) trajetoModels.add(t);
+                }
+            }
+            for (PecuaristaModel p : pecuaristaDAO.buscarPorCpf(termo)) {
+                for (TrajetoModel t : dao.buscarPorPecuarista(p.getId())) {
+                    if (ids.add(t.getId())) trajetoModels.add(t);
+                }
+            }
+
+            // 7. Se for número: ID direto, ID motorista, caminhão ou pecuarista
+            try {
+                int idNum = Integer.parseInt(termo);
+                TrajetoModel tId = dao.buscar(idNum);
+                if (tId != null && ids.add(tId.getId())) trajetoModels.add(tId);
+                for (TrajetoModel t : dao.buscarPorMotorista(idNum)) {
+                    if (ids.add(t.getId())) trajetoModels.add(t);
+                }
+                for (TrajetoModel t : dao.buscarPorCaminhao(idNum)) {
+                    if (ids.add(t.getId())) trajetoModels.add(t);
+                }
+                for (TrajetoModel t : dao.buscarPorPecuarista(idNum)) {
+                    if (ids.add(t.getId())) trajetoModels.add(t);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            req.setAttribute("termoBusca", busca);
+        } else {
+            trajetoModels = dao.listar();
+            req.setAttribute("termoBusca", "");
+        }
 
         req.setAttribute("trajetoModels", trajetoModels);
         req.setAttribute("trajetos", trajetoModels);

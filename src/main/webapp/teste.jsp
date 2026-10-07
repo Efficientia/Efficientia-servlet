@@ -36,6 +36,10 @@
     String buscaCam = request.getParameter("buscaCaminhao");
     String buscaEmp = request.getParameter("buscaEmpresa");
     String buscaAdm = request.getParameter("buscaAdmin");
+    String buscaTraj = request.getParameter("buscaTrajeto");
+    String statusTraj = request.getParameter("statusTrajeto");
+    String dataInicioTraj = request.getParameter("dataInicioTrajeto");
+    String dataFimTraj = request.getParameter("dataFimTrajeto");
 
     List<PecuaristaModel> pecuaristas = null;
     List<MotoristaModel> motoristas = null;
@@ -68,7 +72,7 @@
         }
     } catch (Exception e) { pecuaristas = new ArrayList<>(); }
 
-    // 2. Motoristas: busca unificada por Nome, E-mail ou Telefone
+    // 2. Motoristas: busca unificada por Nome, E-mail, Telefone ou Empresa (por ID ou Nome)
     try {
         if (buscaMot != null && !buscaMot.isBlank()) {
             String termo = buscaMot.trim();
@@ -84,21 +88,61 @@
             for (MotoristaModel m : motoristaDAO.buscarPorTelefone(termo)) {
                 if (ids.add(m.getId())) motoristas.add(m);
             }
+            // Busca por Empresa associada
+            try {
+                int idEmp = Integer.parseInt(termo);
+                for (MotoristaModel m : motoristaDAO.buscarPorEmpresa(idEmp)) {
+                    if (ids.add(m.getId())) motoristas.add(m);
+                }
+            } catch (NumberFormatException ignored) {}
+            for (EmpresaModel emp : empresaDAO.buscarPorNome(termo)) {
+                for (MotoristaModel m : motoristaDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(m.getId())) motoristas.add(m);
+                }
+            }
+            for (EmpresaModel emp : empresaDAO.buscarPorCodigoLista(termo)) {
+                for (MotoristaModel m : motoristaDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(m.getId())) motoristas.add(m);
+                }
+            }
         } else {
             motoristas = motoristaDAO.listar();
         }
     } catch (Exception e) { motoristas = new ArrayList<>(); }
 
-    // 3. Caminhões: busca por placa (cavalo ou carreta)
+    // 3. Caminhões: busca por Placa (cavalo ou carreta) ou por Empresa (por ID ou Nome)
     try {
         if (buscaCam != null && !buscaCam.isBlank()) {
-            caminhoes = caminhaoDAO.buscarPorPlaca(buscaCam);
+            String termo = buscaCam.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            caminhoes = new ArrayList<>();
+
+            for (CaminhaoModel c : caminhaoDAO.buscarPorPlaca(termo)) {
+                if (ids.add(c.getId())) caminhoes.add(c);
+            }
+            // Busca por Empresa associada
+            try {
+                int idEmp = Integer.parseInt(termo);
+                for (CaminhaoModel c : caminhaoDAO.buscarPorEmpresa(idEmp)) {
+                    if (ids.add(c.getId())) caminhoes.add(c);
+                }
+            } catch (NumberFormatException ignored) {}
+            for (EmpresaModel emp : empresaDAO.buscarPorNome(termo)) {
+                for (CaminhaoModel c : caminhaoDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(c.getId())) caminhoes.add(c);
+                }
+            }
+            for (EmpresaModel emp : empresaDAO.buscarPorCodigoLista(termo)) {
+                for (CaminhaoModel c : caminhaoDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(c.getId())) caminhoes.add(c);
+                }
+            }
         } else {
             caminhoes = caminhaoDAO.listar();
         }
     } catch (Exception e) { caminhoes = new ArrayList<>(); }
 
-    // 4. Empresas: busca unificada por Código (ex: EMP001 ou 001) ou por Nome
+    // 4. Empresas: busca unificada por Código (ex: EMP001 ou 001), Nome ou CNPJ
     try {
         if (buscaEmp != null && !buscaEmp.isBlank()) {
             String termo = buscaEmp.trim();
@@ -108,15 +152,23 @@
             for (EmpresaModel e : empresaDAO.buscarPorCodigoLista(termo)) {
                 if (ids.add(e.getId())) empresas.add(e);
             }
+            EmpresaModel eCod = empresaDAO.buscarPorCodigo(termo);
+            if (eCod != null && ids.add(eCod.getId())) {
+                empresas.add(eCod);
+            }
             for (EmpresaModel e : empresaDAO.buscarPorNome(termo)) {
                 if (ids.add(e.getId())) empresas.add(e);
+            }
+            EmpresaModel eCnpj = empresaDAO.buscarPorCnpj(termo);
+            if (eCnpj != null && ids.add(eCnpj.getId())) {
+                empresas.add(eCnpj);
             }
         } else {
             empresas = empresaDAO.listar();
         }
     } catch (Exception e) { empresas = new ArrayList<>(); }
 
-    // 5. Admins: busca unificada por Nome ou por E-mail
+    // 5. Admins: busca unificada por Nome, E-mail ou por Empresa (por ID ou Nome)
     try {
         if (buscaAdm != null && !buscaAdm.isBlank()) {
             String termo = buscaAdm.trim();
@@ -129,13 +181,130 @@
             for (AdminModel a : adminDAO.buscarPorEmail(termo)) {
                 if (ids.add(a.getId())) admins.add(a);
             }
+            // Busca por Empresa associada
+            try {
+                int idEmp = Integer.parseInt(termo);
+                for (AdminModel a : adminDAO.buscarPorEmpresa(idEmp)) {
+                    if (ids.add(a.getId())) admins.add(a);
+                }
+            } catch (NumberFormatException ignored) {}
+            for (EmpresaModel emp : empresaDAO.buscarPorNome(termo)) {
+                for (AdminModel a : adminDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(a.getId())) admins.add(a);
+                }
+            }
+            for (EmpresaModel emp : empresaDAO.buscarPorCodigoLista(termo)) {
+                for (AdminModel a : adminDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(a.getId())) admins.add(a);
+                }
+            }
         } else {
             admins = adminDAO.listar();
         }
     } catch (Exception e) { admins = new ArrayList<>(); }
 
-    // 6. Trajetos
-    try { trajetos = trajetoDAO.listar(); } catch (Exception e) { trajetos = new java.util.ArrayList<>(); }
+    // 6. Trajetos: busca inteligente multi-campos (GTA, Nota Fiscal, Status, Motorista, Caminhão, Pecuarista, Período)
+    try {
+        boolean temBuscaGeral = buscaTraj != null && !buscaTraj.isBlank();
+        boolean temStatus = statusTraj != null && !statusTraj.isBlank();
+        boolean temPeriodo = dataInicioTraj != null && !dataInicioTraj.isBlank() && dataFimTraj != null && !dataFimTraj.isBlank();
+
+        if (temBuscaGeral || temStatus || temPeriodo) {
+            Set<Integer> ids = new LinkedHashSet<>();
+            trajetos = new ArrayList<>();
+
+            // 6.1. Busca por Período
+            if (temPeriodo) {
+                try {
+                    LocalDateTime dtIni = LocalDateTime.parse(dataInicioTraj);
+                    LocalDateTime dtFim = LocalDateTime.parse(dataFimTraj);
+                    for (TrajetoModel t : trajetoDAO.buscarPorPeriodo(dtIni, dtFim)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            // 6.2. Busca por Status explícito
+            if (temStatus) {
+                try {
+                    StatusTrajeto st = StatusTrajeto.valueOf(statusTraj.trim().toUpperCase());
+                    for (TrajetoModel t : trajetoDAO.buscarPorStatus(st)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            // 6.3. Busca geral multi-campos
+            if (temBuscaGeral) {
+                String termo = buscaTraj.trim();
+
+                // Busca por GTA
+                TrajetoModel tGta = trajetoDAO.buscarPorGTA(termo);
+                if (tGta != null && ids.add(tGta.getId())) trajetos.add(tGta);
+
+                // Busca por Nota Fiscal
+                TrajetoModel tNf = trajetoDAO.buscarPorNotaFiscal(termo);
+                if (tNf != null && ids.add(tNf.getId())) trajetos.add(tNf);
+
+                // Busca por Status
+                for (StatusTrajeto st : StatusTrajeto.values()) {
+                    if (st.name().equalsIgnoreCase(termo.replace(" ", "_"))
+                            || st.name().toUpperCase().contains(termo.toUpperCase().replace(" ", "_"))) {
+                        for (TrajetoModel t : trajetoDAO.buscarPorStatus(st)) {
+                            if (ids.add(t.getId())) trajetos.add(t);
+                        }
+                    }
+                }
+
+                // Busca por Motorista (via motoristaDAO.buscarPorNome)
+                for (MotoristaModel m : motoristaDAO.buscarPorNome(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorMotorista(m.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+
+                // Busca por Caminhão (via caminhaoDAO.buscarPorPlaca)
+                for (CaminhaoModel c : caminhaoDAO.buscarPorPlaca(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorCaminhao(c.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+
+                // Busca por Pecuarista (via pecuaristaDAO.buscarPorNome e buscarPorCpf)
+                for (PecuaristaModel p : pecuaristaDAO.buscarPorNome(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorPecuarista(p.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+                for (PecuaristaModel p : pecuaristaDAO.buscarPorCpf(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorPecuarista(p.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+
+                // Busca direta por ID se for numérico
+                try {
+                    int idNum = Integer.parseInt(termo);
+                    TrajetoModel tId = trajetoDAO.buscar(idNum);
+                    if (tId != null && ids.add(tId.getId())) trajetos.add(tId);
+
+                    for (TrajetoModel t : trajetoDAO.buscarPorMotorista(idNum)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                    for (TrajetoModel t : trajetoDAO.buscarPorCaminhao(idNum)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                    for (TrajetoModel t : trajetoDAO.buscarPorPecuarista(idNum)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                } catch (NumberFormatException ignored) {}
+            }
+        } else {
+            trajetos = trajetoDAO.listar();
+        }
+    } catch (Exception e) {
+        trajetos = new ArrayList<>();
+    }
 
     request.setAttribute("pecuaristas", pecuaristas);
     request.setAttribute("motoristas", motoristas);
@@ -150,6 +319,10 @@
     request.setAttribute("buscaCaminhao", buscaCam != null ? buscaCam : "");
     request.setAttribute("buscaEmpresa", buscaEmp != null ? buscaEmp : "");
     request.setAttribute("buscaAdmin", buscaAdm != null ? buscaAdm : "");
+    request.setAttribute("buscaTrajeto", buscaTraj != null ? buscaTraj : "");
+    request.setAttribute("statusTrajeto", statusTraj != null ? statusTraj : "");
+    request.setAttribute("dataInicioTrajeto", dataInicioTraj != null ? dataInicioTraj : "");
+    request.setAttribute("dataFimTrajeto", dataFimTraj != null ? dataFimTraj : "");
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     DateTimeFormatter dtfDateTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -596,8 +769,8 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="motorista">
-                    <input type="text" name="buscaMotorista" value="<c:out value="${buscaMotorista}"/>" placeholder="Buscar por Nome, Email ou Telefone..." 
-                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <input type="text" name="buscaMotorista" value="<c:out value="${buscaMotorista}"/>" placeholder="Buscar por Nome, Email, Tel ou Empresa..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 300px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
                 <span class="badge-count">${not empty motoristas ? motoristas.size() : 0} registros</span>
@@ -799,7 +972,7 @@
                 <h2>Caminhões Cadastrados</h2>
                 <c:if test="${not empty buscaCaminhao}">
                     <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
-                        Filtrando por placa: <strong><c:out value="${buscaCaminhao}"/></strong>
+                        Filtrando por: <strong><c:out value="${buscaCaminhao}"/></strong>
                         <a href="${pageContext.request.contextPath}/teste.jsp?servlet=caminhao" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
                     </p>
                 </c:if>
@@ -807,7 +980,7 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="caminhao">
-                    <input type="text" name="buscaCaminhao" value="<c:out value="${buscaCaminhao}"/>" placeholder="Buscar por Placa (Cavalo ou Carreta)..." 
+                    <input type="text" name="buscaCaminhao" value="<c:out value="${buscaCaminhao}"/>" placeholder="Buscar por Placa ou Empresa..." 
                            style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
@@ -1300,10 +1473,36 @@
             </div>
         </div>
 
-        <!-- LISTAGEM TRAJETOS -->
+        <!-- LISTAGEM TRAJETOS COM BUSCA -->
         <div class="list-section-header">
-            <h2>Trajetos / Viagens Cadastradas</h2>
-            <span class="badge-count">${not empty trajetos ? trajetos.size() : 0} registros</span>
+            <div>
+                <h2>Trajetos / Viagens Cadastradas</h2>
+                <c:if test="${not empty buscaTrajeto or not empty statusTrajeto or not empty dataInicioTrajeto}">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Filtrando por:
+                        <c:if test="${not empty buscaTrajeto}"><strong>"<c:out value="${buscaTrajeto}"/>"</strong> </c:if>
+                        <c:if test="${not empty statusTrajeto}">[Status: <strong><c:out value="${statusTrajeto}"/></strong>] </c:if>
+                        <c:if test="${not empty dataInicioTrajeto}">[Período: <strong><c:out value="${dataInicioTrajeto}"/></strong> a <strong><c:out value="${dataFimTrajeto}"/></strong>] </c:if>
+                        <a href="${pageContext.request.contextPath}/teste.jsp?servlet=trajeto" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                    </p>
+                </c:if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+                    <input type="hidden" name="servlet" value="trajeto">
+                    <input type="text" name="buscaTrajeto" value="<c:out value="${buscaTrajeto}"/>" 
+                           placeholder="Buscar por GTA, NF, Motorista, Placa, Pecuarista ou Status..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 320px;" />
+                    <select name="statusTrajeto" style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem;">
+                        <option value="">Status (Todos)</option>
+                        <c:forEach var="st" items="${statusTrajetos}">
+                            <option value="${st}" ${statusTrajeto == st ? 'selected' : ''}>${st}</option>
+                        </c:forEach>
+                    </select>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
+                </form>
+                <span class="badge-count">${not empty trajetos ? trajetos.size() : 0} registros</span>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -1525,7 +1724,7 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="empresa">
-                    <input type="text" name="buscaEmpresa" value="<c:out value="${buscaEmpresa}"/>" placeholder="Buscar por Código (ex: EMP001) ou Nome..." 
+                    <input type="text" name="buscaEmpresa" value="<c:out value="${buscaEmpresa}"/>" placeholder="Buscar por Código, CNPJ ou Nome..." 
                            style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 290px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
@@ -1687,8 +1886,8 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="admin">
-                    <input type="text" name="buscaAdmin" value="<c:out value="${buscaAdmin}"/>" placeholder="Buscar por Nome ou E-mail..." 
-                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <input type="text" name="buscaAdmin" value="<c:out value="${buscaAdmin}"/>" placeholder="Buscar por Nome, E-mail ou Empresa..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 290px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
                 <span class="badge-count">${not empty admins ? admins.size() : 0} registros</span>
