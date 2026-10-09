@@ -70,19 +70,7 @@ public class PecuaristaDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Date dataNascimento = rs.getDate("data_nascimento");
-
-                PecuaristaModel pecuaristaModel = new PecuaristaModel(
-                        rs.getInt("id"),
-                        rs.getString("cpf"),
-                        rs.getString("assinatura"),
-                        dataNascimento != null ? dataNascimento.toLocalDate() : null,
-                        rs.getString("nome"),
-                        rs.getString("senha"),
-                        rs.getString("email"),
-                        rs.getString("telefone")
-                );
-                listaPecuarista.add(pecuaristaModel);
+                listaPecuarista.add(extrairPecuarista(rs));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar Pecuarista: " + e.getMessage());
@@ -100,8 +88,8 @@ public class PecuaristaDAO {
      */
     public boolean atualizar(PecuaristaModel pecuaristaModel, int id) {
         String sql = """
-                UPDATE pecuarista
-                SET cpf = ?,
+                UPDATE pecuarista SET
+                    cpf = ?,
                     data_nascimento = ?,
                     nome = ?,
                     senha = ?,
@@ -125,20 +113,22 @@ public class PecuaristaDAO {
     }
 
     /**
-     * Remove um pecuarista da base de dados com base no ID informado.
+     * Remove um pecuarista da base de dados através do seu ID.
      *
-     * @param id identificador único do pecuarista a ser excluído
-     * @return true se o registro foi removido com êxito, false caso contrário
+     * @param id identificador único do pecuarista a ser removido
+     * @return true se o registro foi removido com sucesso, false em caso de falha
      */
     public boolean excluir(int id) {
         String sql = """
-                DELETE FROM pecuarista WHERE id = ?;
+                DELETE FROM pecuarista
+                WHERE id = ?;
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
+
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
@@ -148,14 +138,15 @@ public class PecuaristaDAO {
     }
 
     /**
-     * Localiza um pecuarista a partir do seu identificador único.
+     * Localiza um pecuarista com base em seu ID primário.
      *
-     * @param id identificador único do pecuarista
-     * @return objeto PecuaristaModel correspondente ou null se não for localizado
+     * @param id identificador numérico do pecuarista
+     * @return objeto PecuaristaModel populado ou null caso não seja localizado
      */
     public PecuaristaModel buscar(int id) {
         String sql = """
-                SELECT * FROM pecuarista WHERE id = ?;
+                SELECT * FROM pecuarista
+                WHERE id = ?;
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -165,32 +156,159 @@ public class PecuaristaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Date dataNascimento = rs.getDate("data_nascimento");
-                    LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
-
-                    return new PecuaristaModel(
-                            rs.getInt("id"),
-                            rs.getString("cpf"),
-                            rs.getString("assinatura"),
-                            nascimento,
-                            rs.getString("nome"),
-                            rs.getString("senha"),
-                            rs.getString("email"),
-                            rs.getString("telefone")
-                    );
-                } else {
-                    return null;
+                    return extrairPecuarista(rs);
                 }
             }
         } catch (SQLException e) {
             System.out.println("Erro ao buscar pecuarista: " + e.getMessage());
-            return null;
+        }
+
+        return null;
+    }
+
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um pecuarista de forma simplificada apenas com os dados essenciais.
+     */
+    public boolean inserirSimples(String nome, String cpf, String email, String senha) {
+        String sql = """
+                INSERT INTO pecuarista (nome, cpf, email, senha)
+                VALUES (?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            stmt.setString(2, cpf);
+            stmt.setString(3, email);
+            stmt.setString(4, senha);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir pecuarista simples: " + e.getMessage());
+            return false;
         }
     }
 
     /**
-     * Busca pecuaristas por nome, suportando correspondência exata, parcial ("picada")
-     * e case-insensitive (ignorando maiúsculas e minúsculas).
+     * Atualiza especificamente o CPF de um pecuarista.
+     */
+    public boolean atualizarCpf(int id, String novoCpf) {
+        String sql = "UPDATE pecuarista SET cpf = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoCpf != null ? novoCpf.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar CPF do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o nome de um pecuarista.
+     */
+    public boolean atualizarNome(int id, String novoNome) {
+        String sql = "UPDATE pecuarista SET nome = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoNome != null ? novoNome.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar nome do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o e-mail de um pecuarista.
+     */
+    public boolean atualizarEmail(int id, String novoEmail) {
+        String sql = "UPDATE pecuarista SET email = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoEmail != null ? novoEmail.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar email do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o telefone de um pecuarista.
+     */
+    public boolean atualizarTelefone(int id, String novoTelefone) {
+        String sql = "UPDATE pecuarista SET telefone = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoTelefone != null ? novoTelefone.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar telefone do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a senha de acesso de um pecuarista.
+     */
+    public boolean atualizarSenha(int id, String novaSenha) {
+        String sql = "UPDATE pecuarista SET senha = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaSenha);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar senha do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a data de nascimento de um pecuarista.
+     */
+    public boolean atualizarDataNascimento(int id, LocalDate novaData) {
+        String sql = "UPDATE pecuarista SET data_nascimento = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (novaData != null) {
+                stmt.setDate(1, Date.valueOf(novaData));
+            } else {
+                stmt.setNull(1, java.sql.Types.DATE);
+            }
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar data de nascimento do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a assinatura de um pecuarista.
+     */
+    public boolean atualizarAssinatura(int id, String novaAssinatura) {
+        String sql = "UPDATE pecuarista SET assinatura = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaAssinatura);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar assinatura do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ==================== CONSULTAS ESPECÍFICAS ====================
+
+    /**
+     * Busca pecuaristas por nome, suportando correspondência exata, parcial e case-insensitive.
      *
      * @param termo termo ou palavras-chave de busca
      * @return lista de pecuaristas encontrados
@@ -222,21 +340,7 @@ public class PecuaristaDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Date dataNascimento = rs.getDate("data_nascimento");
-                    LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
-
-                    PecuaristaModel pecuaristaModel = new PecuaristaModel(
-                            rs.getInt("id"),
-                            rs.getString("cpf"),
-                            rs.getString("assinatura"),
-                            nascimento,
-                            rs.getString("nome"),
-                            rs.getString("senha"),
-                            rs.getString("email"),
-                            rs.getString("telefone")
-                    );
-
-                    pecuaristas.add(pecuaristaModel);
+                    pecuaristas.add(extrairPecuarista(rs));
                 }
             }
         } catch (SQLException e) {
@@ -247,20 +351,22 @@ public class PecuaristaDAO {
     }
 
     /**
-     * Busca pecuaristas pelo CPF (aceita com ou sem máscara/pontuação).
+     * Localiza pecuaristas por número de CPF.
      *
-     * @param cpf documento a pesquisar
-     * @return lista de pecuaristas encontrados
+     * @param cpf CPF numérico ou formatado
+     * @return lista de pecuaristas correspondentes
      */
     public List<PecuaristaModel> buscarPorCpf(String cpf) {
         if (cpf == null || cpf.isBlank()) {
             return listar();
         }
 
-        String digitos = cpf.replaceAll("\\D", "");
+        String cpfLimpo = cpf.replaceAll("\\D", "").trim();
+
         String sql = """
                 SELECT * FROM pecuarista
-                WHERE regexp_replace(cpf, '\\D', '', 'g') LIKE ?
+                WHERE REGEXP_REPLACE(cpf, '[^0-9]', '', 'g') LIKE ?
+                   OR cpf LIKE ?
                 ORDER BY nome ASC, id ASC;
                 """;
 
@@ -269,7 +375,8 @@ public class PecuaristaDAO {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, "%" + (digitos.isEmpty() ? cpf.trim() : digitos) + "%");
+            stmt.setString(1, "%" + cpfLimpo + "%");
+            stmt.setString(2, "%" + cpf.trim() + "%");
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -284,10 +391,10 @@ public class PecuaristaDAO {
     }
 
     /**
-     * Busca pecuaristas pelo e-mail, ignorando maiúsculas e minúsculas.
+     * Localiza pecuaristas por e-mail de acesso.
      *
-     * @param email endereço de email a pesquisar
-     * @return lista de pecuaristas encontrados
+     * @param email endereço de e-mail cadastrado
+     * @return lista de pecuaristas correspondentes
      */
     public List<PecuaristaModel> buscarPorEmail(String email) {
         if (email == null || email.isBlank()) {
@@ -313,27 +420,29 @@ public class PecuaristaDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao buscar pecuaristas por email: " + e.getMessage());
+            System.out.println("Erro ao buscar pecuaristas por e-mail: " + e.getMessage());
         }
 
         return pecuaristas;
     }
 
     /**
-     * Busca pecuaristas pelo telefone (tolerante a caracteres especiais de máscara).
+     * Localiza pecuaristas por telefone de contato.
      *
-     * @param telefone número a ser pesquisado
-     * @return lista de pecuaristas encontrados
+     * @param telefone número de telefone formatado ou numérico
+     * @return lista de pecuaristas correspondentes
      */
     public List<PecuaristaModel> buscarPorTelefone(String telefone) {
         if (telefone == null || telefone.isBlank()) {
             return listar();
         }
 
-        String digitos = telefone.replaceAll("\\D", "");
+        String telefoneLimpo = telefone.replaceAll("\\D", "").trim();
+
         String sql = """
                 SELECT * FROM pecuarista
-                WHERE regexp_replace(telefone, '\\D', '', 'g') LIKE ?
+                WHERE REGEXP_REPLACE(telefone, '[^0-9]', '', 'g') LIKE ?
+                   OR telefone LIKE ?
                 ORDER BY nome ASC, id ASC;
                 """;
 
@@ -342,7 +451,8 @@ public class PecuaristaDAO {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, "%" + (digitos.isEmpty() ? telefone.trim() : digitos) + "%");
+            stmt.setString(1, "%" + telefoneLimpo + "%");
+            stmt.setString(2, "%" + telefone.trim() + "%");
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -359,17 +469,20 @@ public class PecuaristaDAO {
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
-     * Extrai os dados do ResultSet hidratando o objeto PecuaristaModel.
+     * Constrói uma instância de PecuaristaModel a partir do ResultSet atual.
+     *
+     * @param rs ResultSet posicionado no registro atual
+     * @return objeto PecuaristaModel preenchido
+     * @throws SQLException em caso de falha na leitura dos dados
      */
     private PecuaristaModel extrairPecuarista(ResultSet rs) throws SQLException {
         Date dataNascimento = rs.getDate("data_nascimento");
-        LocalDate nascimento = dataNascimento != null ? dataNascimento.toLocalDate() : null;
 
         return new PecuaristaModel(
                 rs.getInt("id"),
                 rs.getString("cpf"),
                 rs.getString("assinatura"),
-                nascimento,
+                dataNascimento != null ? dataNascimento.toLocalDate() : null,
                 rs.getString("nome"),
                 rs.getString("senha"),
                 rs.getString("email"),
@@ -378,21 +491,15 @@ public class PecuaristaDAO {
     }
 
     /**
-     * Atribui os campos de PecuaristaModel aos parâmetros indexados do PreparedStatement.
+     * Preenche os parâmetros do PreparedStatement com os atributos de PecuaristaModel.
      *
-     * @param stmt            PreparedStatement pronto para recepção dos parâmetros
-     * @param pecuaristaModel modelo com os dados cadastrais
-     * @throws SQLException se houver erro durante a associação dos tipos JDBC
+     * @param stmt            PreparedStatement associado à query SQL
+     * @param pecuaristaModel modelo com os dados a serem vinculados
+     * @throws SQLException em caso de erro na vinculação dos parâmetros
      */
     private void preencherStatement(PreparedStatement stmt, PecuaristaModel pecuaristaModel) throws SQLException {
         stmt.setString(1, pecuaristaModel.getCpf());
-
-        if (pecuaristaModel.getDataNascimento() != null) {
-            stmt.setDate(2, Date.valueOf(pecuaristaModel.getDataNascimento()));
-        } else {
-            stmt.setDate(2, null);
-        }
-
+        stmt.setDate(2, pecuaristaModel.getDataNascimento() != null ? Date.valueOf(pecuaristaModel.getDataNascimento()) : null);
         stmt.setString(3, pecuaristaModel.getNome());
         stmt.setString(4, pecuaristaModel.getSenha());
         stmt.setString(5, pecuaristaModel.getEmail());
