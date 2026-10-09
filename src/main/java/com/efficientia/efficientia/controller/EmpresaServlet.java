@@ -25,6 +25,11 @@ public class EmpresaServlet extends HttpServlet {
 
     private EmpresaDAO dao;
 
+    // ==================== INICIALIZAÇÃO ====================
+
+    /**
+     * Inicializa os Data Access Objects (DAOs) necessários durante o ciclo de vida do servlet.
+     */
     @Override
     public void init() {
         dao = new EmpresaDAO();
@@ -32,6 +37,16 @@ public class EmpresaServlet extends HttpServlet {
 
     // ==================== REQUISIÇÕES GET ====================
 
+    /**
+     * Processa requisições HTTP GET para consulta e exibição de empresas cadastradas.
+     * Suporta a ação 'editar' para carregar os dados de uma empresa específica,
+     * bem como filtros de busca por código, busca unificada por nome/código ou listagem geral.
+     *
+     * @param req  objeto {@link HttpServletRequest} contendo os parâmetros da requisição
+     * @param resp objeto {@link HttpServletResponse} para direcionamento e resposta HTTP
+     * @throws ServletException caso ocorra erro no despacho para a visão JSP
+     * @throws IOException      caso ocorra erro de entrada/saída durante o encaminhamento
+     */
     @Override
     protected void doGet(
             HttpServletRequest req,
@@ -59,14 +74,16 @@ public class EmpresaServlet extends HttpServlet {
             }
         }
 
-        // Busca flexível por código, nome ou listagem geral de empresas cadastradas
+        // Busca flexível: por código de integração, razão social ou listagem geral de empresas
         String codigo = obterParametro(req, "codigo");
         String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
         List<EmpresaModel> empresaModels;
 
+        // 1. Busca por código de integração exato
         if (codigo != null && !codigo.isBlank()) {
             empresaModels = dao.buscarPorCodigoLista(codigo);
             req.setAttribute("termoBusca", codigo);
+        // 2. Busca textual unificada (código ou razão social com desduplicação via LinkedHashSet)
         } else if (busca != null && !busca.isBlank()) {
             String termo = busca.trim();
             Set<Integer> ids = new LinkedHashSet<>();
@@ -79,6 +96,7 @@ public class EmpresaServlet extends HttpServlet {
                 if (ids.add(e.getId())) empresaModels.add(e);
             }
             req.setAttribute("termoBusca", busca);
+        // 3. Listagem geral de todas as empresas cadastradas
         } else {
             empresaModels = dao.listar();
             req.setAttribute("termoBusca", "");
@@ -93,6 +111,14 @@ public class EmpresaServlet extends HttpServlet {
 
     // ==================== REQUISIÇÕES POST ====================
 
+    /**
+     * Processa requisições HTTP POST para operações de modificação (CUD: Cadastro, Atualização e Exclusão).
+     * Aplica o padrão Post-Redirect-Get (PRG) para evitar submissões duplicadas por recarregamento acidental.
+     *
+     * @param req  objeto {@link HttpServletRequest} contendo os dados enviados no formulário
+     * @param resp objeto {@link HttpServletResponse} para redirecionamento após a operação
+     * @throws IOException caso ocorra erro no redirecionamento HTTP
+     */
     @Override
     protected void doPost(
             HttpServletRequest req,

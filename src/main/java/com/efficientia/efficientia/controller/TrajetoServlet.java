@@ -22,6 +22,19 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Servlet controlador central da operação logística de viagens e transportes pecuários.
+ *
+ * Mapeado no endpoint '/trajeto', coordena todo o fluxo operacional do transporte de gado no sistema Efficientia:
+ * - Emissão e controle documental de GTA (Guia de Trânsito Animal) e Nota Fiscal
+ * - Alocação de motorista condutor, caminhão de transporte e pecuarista (produtor remetente)
+ * - Monitoramento do ciclo de vida da viagem (status EM_ANDAMENTO e CONCLUIDA)
+ * - Registro de odômetro e quilometragens de saída e chegada
+ * - Horários de embarque e desembarque com contagem segregada por categoria animal (macho, fêmea e marruco)
+ * - Gestão de destinação em curral, conferência por curraleiro e manobrista, e assinaturas digitais
+ * - Ações pontuais rápidas (atualização de status, GTA, NF, Km, Curral) e inserção simplificada
+ * - Mecanismos de busca especializada e pesquisa flexível global insensível a acentos
+ */
 @WebServlet(name = "TrajetoServlet", value = "/trajeto")
 public class TrajetoServlet extends HttpServlet {
 
@@ -30,6 +43,12 @@ public class TrajetoServlet extends HttpServlet {
     private CaminhaoDAO caminhaoDAO;
     private PecuaristaDAO pecuaristaDAO;
 
+    // ==================== INICIALIZAÇÃO ====================
+
+    /**
+     * Inicializa os Data Access Objects (DAOs) necessários para o ciclo de vida do servlet,
+     * permitindo a recuperação e montagem de todo o grafo relacional da viagem.
+     */
     @Override
     public void init() {
         dao = new TrajetoDAO();
@@ -38,6 +57,19 @@ public class TrajetoServlet extends HttpServlet {
         pecuaristaDAO = new PecuaristaDAO();
     }
 
+    // ==================== REQUISIÇÕES GET ====================
+
+    /**
+     * Processa requisições HTTP GET para consulta, filtros especializados e edição de viagens pecuárias.
+     * Suporta a ação 'editar' para carregamento dos dados da viagem e coleções relacionais,
+     * bem como múltiplos filtros específicos (GTA, Nota Fiscal, Status, Motorista, Caminhão, Pecuarista, Período)
+     * e mecanismo de busca global flexível com normalização textual contra acentos.
+     *
+     * @param req  objeto {@link HttpServletRequest} contendo os parâmetros e filtros da requisição
+     * @param resp objeto {@link HttpServletResponse} para direcionamento ou encaminhamento HTTP
+     * @throws ServletException caso ocorra erro no despacho para a visão JSP
+     * @throws IOException      caso ocorra erro de entrada/saída durante o encaminhamento
+     */
     @Override
     protected void doGet(
             HttpServletRequest req,
@@ -46,6 +78,7 @@ public class TrajetoServlet extends HttpServlet {
 
         String acao = req.getParameter("acao");
 
+        // Edição: busca o trajeto pelo ID e popula os modelos relacionais para os selects da visão
         if ("editar".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -82,32 +115,39 @@ public class TrajetoServlet extends HttpServlet {
 
         List<TrajetoModel> trajetoModels;
 
+        // 1. Filtro especializado: busca exata por GTA (Guia de Trânsito Animal)
         if (gta != null && !gta.isBlank()) {
             TrajetoModel t = dao.buscarPorGTA(gta);
             trajetoModels = new ArrayList<>();
             if (t != null) trajetoModels.add(t);
             req.setAttribute("termoBusca", "GTA: " + gta);
+        // 2. Filtro especializado: busca exata por número de Nota Fiscal
         } else if (nf != null && !nf.isBlank()) {
             TrajetoModel t = dao.buscarPorNotaFiscal(nf);
             trajetoModels = new ArrayList<>();
             if (t != null) trajetoModels.add(t);
             req.setAttribute("termoBusca", "NF: " + nf);
+        // 3. Filtro especializado: busca por status do ciclo de vida (EM_ANDAMENTO / CONCLUIDA)
         } else if (statusStr != null && !statusStr.isBlank()) {
             StatusTrajeto st = StatusTrajeto.from(statusStr);
             trajetoModels = dao.buscarPorStatus(st);
             req.setAttribute("termoBusca", "Status: " + statusStr);
+        // 4. Filtro especializado: busca por motorista condutor
         } else if (idMotoristaStr != null && !idMotoristaStr.isBlank()) {
             int idMot = parseInt(idMotoristaStr, 0);
             trajetoModels = dao.buscarPorMotorista(idMot);
             req.setAttribute("termoBusca", "Motorista #" + idMot);
+        // 5. Filtro especializado: busca por caminhão de transporte
         } else if (idCaminhaoStr != null && !idCaminhaoStr.isBlank()) {
             int idCam = parseInt(idCaminhaoStr, 0);
             trajetoModels = dao.buscarPorCaminhao(idCam);
             req.setAttribute("termoBusca", "Caminhão #" + idCam);
+        // 6. Filtro especializado: busca por produtor rural / pecuarista remetente
         } else if (idPecuaristaStr != null && !idPecuaristaStr.isBlank()) {
             int idPec = parseInt(idPecuaristaStr, 0);
             trajetoModels = dao.buscarPorPecuarista(idPec);
             req.setAttribute("termoBusca", "Pecuarista #" + idPec);
+        // 7. Filtro especializado: busca por período de datas (intervalo entre início e fim)
         } else if (inicioStr != null && !inicioStr.isBlank() && fimStr != null && !fimStr.isBlank()) {
             try {
                 LocalDateTime ini = parseLocalDateTime(inicioStr);
@@ -118,20 +158,21 @@ public class TrajetoServlet extends HttpServlet {
                 trajetoModels = dao.listar();
                 req.setAttribute("termoBusca", "");
             }
+        // 8. Busca flexível unificada: varre GTA, NF, status, motorista, caminhão, pecuarista e IDs numéricos
         } else if (busca != null && !busca.isBlank()) {
             String termo = busca.trim();
             Set<Integer> ids = new LinkedHashSet<>();
             trajetoModels = new ArrayList<>();
 
-            // 1. GTA
+            // 8.1. Correspondência por GTA
             TrajetoModel tGta = dao.buscarPorGTA(termo);
             if (tGta != null && ids.add(tGta.getId())) trajetoModels.add(tGta);
 
-            // 2. Nota Fiscal
+            // 8.2. Correspondência por Nota Fiscal
             TrajetoModel tNf = dao.buscarPorNotaFiscal(termo);
             if (tNf != null && ids.add(tNf.getId())) trajetoModels.add(tNf);
 
-            // 3. Status coincidente (normalizado contra acentos como 'Concluída')
+            // 8.3. Correspondência por Status do Enum (com normalização contra acentos como 'Concluída')
             String termoNorm = normalizar(termo);
             for (StatusTrajeto st : StatusTrajeto.values()) {
                 String stNorm = normalizar(st.name());
@@ -144,21 +185,21 @@ public class TrajetoServlet extends HttpServlet {
                 }
             }
 
-            // 4. Motorista (por nome)
+            // 8.4. Correspondência por condutor (nome do motorista)
             for (MotoristaModel m : motoristaDAO.buscarPorNome(termo)) {
                 for (TrajetoModel t : dao.buscarPorMotorista(m.getId())) {
                     if (ids.add(t.getId())) trajetoModels.add(t);
                 }
             }
 
-            // 5. Caminhão (por placa)
+            // 8.5. Correspondência por caminhão (placa do cavalo ou carreta)
             for (CaminhaoModel c : caminhaoDAO.buscarPorPlaca(termo)) {
                 for (TrajetoModel t : dao.buscarPorCaminhao(c.getId())) {
                     if (ids.add(t.getId())) trajetoModels.add(t);
                 }
             }
 
-            // 6. Pecuarista (por nome ou CPF)
+            // 8.6. Correspondência por pecuarista (nome ou CPF)
             for (PecuaristaModel p : pecuaristaDAO.buscarPorNome(termo)) {
                 for (TrajetoModel t : dao.buscarPorPecuarista(p.getId())) {
                     if (ids.add(t.getId())) trajetoModels.add(t);
@@ -170,7 +211,7 @@ public class TrajetoServlet extends HttpServlet {
                 }
             }
 
-            // 7. Se for número: ID direto, ID motorista, caminhão ou pecuarista
+            // 8.7. Correspondência por identificadores numéricos diretos (ID trajeto, motorista, caminhão, pecuarista)
             try {
                 int idNum = Integer.parseInt(termo);
                 TrajetoModel tId = dao.buscar(idNum);
@@ -187,11 +228,13 @@ public class TrajetoServlet extends HttpServlet {
             } catch (NumberFormatException ignored) {}
 
             req.setAttribute("termoBusca", busca);
+        // 9. Listagem padrão de todos os trajetos cadastrados
         } else {
             trajetoModels = dao.listar();
             req.setAttribute("termoBusca", "");
         }
 
+        // Define os dados consultados e as coleções relacionais na requisição para a visão JSP
         req.setAttribute("trajetoModels", trajetoModels);
         req.setAttribute("trajetos", trajetoModels);
         req.setAttribute("motoristaModels", motoristaDAO.listar());
@@ -204,17 +247,37 @@ public class TrajetoServlet extends HttpServlet {
         ).forward(req, resp);
     }
 
+    // ==================== REQUISIÇÕES POST ====================
+
+    /**
+     * Processa requisições HTTP POST para criação, exclusão e alterações operacionais do trajeto.
+     * Implementa o padrão Post-Redirect-Get (PRG) e suporta múltiplas rotas de ação operacional:
+     * - 'atualizarStatus': transição rápida do ciclo de vida da viagem (ex.: conclusão ou reabertura)
+     * - 'inserirSimples': cadastro enxuto de viagem com motorista, caminhão, pecuarista, GTA e NF
+     * - 'atualizarGTA': atualização pontual da Guia de Trânsito Animal
+     * - 'atualizarNotaFiscal': atualização pontual da Nota Fiscal
+     * - 'atualizarKm': registro do odômetro de saída e chegada
+     * - 'atualizarCurral': destinação de desembarque no frigorífico/curral com registro do curraleiro
+     * - 'excluir': exclusão física de um registro de trajeto
+     * - 'atualizar': edição completa de todos os dados do trajeto, contagens e assinaturas
+     * - Cadastro padrão: inserção detalhada de nova viagem pecuária
+     *
+     * @param req  objeto {@link HttpServletRequest} contendo os dados submetidos pelo formulário
+     * @param resp objeto {@link HttpServletResponse} para redirecionamento após a operação
+     * @throws IOException caso ocorra erro no redirecionamento HTTP
+     */
     @Override
     protected void doPost(
             HttpServletRequest req,
             HttpServletResponse resp
     ) throws IOException {
 
+        // Garante suporte adequado à codificação UTF-8
         req.setCharacterEncoding("UTF-8");
 
         String acao = req.getParameter("acao");
 
-        //Atualização Rápida de Status (Conclusão / Retorno a Em Andamento)
+        // 1. Ação rápida: Atualização de Status (Conclusão da viagem ou retorno a Em Andamento)
         if ("atualizarStatus".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -228,7 +291,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Inserção Rápida / Simplificada
+        // 2. Ação rápida: Inserção Simplificada de Viagem (fluxo ágil de despacho)
         if ("inserirSimples".equals(acao)) {
             try {
                 Integer idMotorista = parseIntegerNull(req.getParameter("idMotorista"));
@@ -246,7 +309,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Atualização Rápida de GTA
+        // 3. Ação rápida: Atualização de GTA (Guia de Trânsito Animal)
         if ("atualizarGTA".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -260,7 +323,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Atualização Rápida de Nota Fiscal
+        // 4. Ação rápida: Atualização de Nota Fiscal
         if ("atualizarNotaFiscal".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -274,7 +337,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Atualização Rápida de Km
+        // 5. Ação rápida: Atualização de Odômetro (Km Saída e Km Chegada)
         if ("atualizarKm".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -289,7 +352,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Atualização Rápida de Curral
+        // 6. Ação rápida: Destinação de Desembarque (Número do Curral e Curraleiro responsável)
         if ("atualizarCurral".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -304,7 +367,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Exclusão
+        // 7. Ação: Exclusão de Trajeto por ID
         if ("excluir".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -317,7 +380,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Atualização
+        // 8. Ação: Atualização Completa de Trajeto (parâmetros operacionais, desembarque e assinaturas)
         if ("atualizar".equals(acao)) {
             int id = Integer.parseInt(req.getParameter("id"));
 
@@ -330,6 +393,7 @@ public class TrajetoServlet extends HttpServlet {
             LocalDateTime dataHoraFim = parseLocalDateTime(obterParametro(req, "dataHoraFim", "data_hora_fim"));
             LocalDateTime horarioDesembarque = parseLocalDateTime(obterParametro(req, "horarioDesembarque", "horario_desembarque"));
 
+            // Se o status for CONCLUIDA e dataHoraFim não foi informada, utiliza o horário de desembarque ou o momento atual
             if (status == StatusTrajeto.CONCLUIDA && dataHoraFim == null) {
                 dataHoraFim = horarioDesembarque != null ? horarioDesembarque : LocalDateTime.now();
             }
@@ -376,6 +440,7 @@ public class TrajetoServlet extends HttpServlet {
                     nomeManobrista
             );
 
+            // Vincula assinaturas caso tenham sido fornecidas
             if (assinaturaCurraleiro != null) {
                 trajetoModel.setAssinaturaCurraleiro(assinaturaCurraleiro);
             }
@@ -392,7 +457,7 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        //Cadastro
+        // 9. Ação padrão: Cadastro Completo de Novo Trajeto
         MotoristaModel motoristaModel = buscarMotorista(req);
         CaminhaoModel caminhaoModel = buscarCaminhao(req);
         PecuaristaModel pecuaristaModel = buscarPecuarista(req);
@@ -407,6 +472,7 @@ public class TrajetoServlet extends HttpServlet {
         String numeroGTA = obterParametro(req, "numeroGTA", "numero_gta", "numeroGta");
         String numeroNotaFiscal = obterParametro(req, "numeroNotaFiscal", "numero_nota_fiscal");
 
+        // Fallback operacional para horário de embarque quando não informado explicitamente
         LocalDateTime horarioEmbarque = parseLocalDateTime(obterParametro(req, "horarioEmbarque", "horario_embarque"));
         if (horarioEmbarque == null) {
             horarioEmbarque = dataHoraInicio != null ? dataHoraInicio : LocalDateTime.now();
@@ -418,6 +484,7 @@ public class TrajetoServlet extends HttpServlet {
 
         LocalDateTime horarioDesembarque = parseLocalDateTime(obterParametro(req, "horarioDesembarque", "horario_desembarque"));
 
+        // Fallback operacional para horário de conclusão em viagens finalizadas
         if (status == StatusTrajeto.CONCLUIDA && dataHoraFim == null) {
             dataHoraFim = horarioDesembarque != null ? horarioDesembarque : LocalDateTime.now();
         }
@@ -451,6 +518,7 @@ public class TrajetoServlet extends HttpServlet {
                 nomeManobrista
         );
 
+        // Vincula assinaturas digitais capturadas
         if (assinaturaCurraleiro != null) {
             novoTrajeto.setAssinaturaCurraleiro(assinaturaCurraleiro);
         }
@@ -466,6 +534,15 @@ public class TrajetoServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/trajeto");
     }
 
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Recupera a entidade {@link MotoristaModel} a partir do ID enviado na requisição.
+     * Resolve a chave estrangeira do motorista condutor da viagem.
+     *
+     * @param req requisição HTTP contendo o identificador do motorista
+     * @return objeto {@link MotoristaModel} correspondente ou null se inválido ou não informado
+     */
     private MotoristaModel buscarMotorista(HttpServletRequest req) {
         String idTexto = obterParametro(req, "idMotorista", "id_motorista");
         if (idTexto != null && !idTexto.isBlank()) {
@@ -478,6 +555,13 @@ public class TrajetoServlet extends HttpServlet {
         return null;
     }
 
+    /**
+     * Recupera a entidade {@link CaminhaoModel} a partir do ID enviado na requisição.
+     * Resolve a chave estrangeira do veículo de transporte pecuário.
+     *
+     * @param req requisição HTTP contendo o identificador do caminhão
+     * @return objeto {@link CaminhaoModel} correspondente ou null se inválido ou não informado
+     */
     private CaminhaoModel buscarCaminhao(HttpServletRequest req) {
         String idTexto = obterParametro(req, "idCaminhao", "id_caminhao");
         if (idTexto != null && !idTexto.isBlank()) {
@@ -490,6 +574,13 @@ public class TrajetoServlet extends HttpServlet {
         return null;
     }
 
+    /**
+     * Recupera a entidade {@link PecuaristaModel} a partir do ID enviado na requisição.
+     * Resolve a chave estrangeira do produtor rural remetente dos animais.
+     *
+     * @param req requisição HTTP contendo o identificador do pecuarista
+     * @return objeto {@link PecuaristaModel} correspondente ou null se inválido ou não informado
+     */
     private PecuaristaModel buscarPecuarista(HttpServletRequest req) {
         String idTexto = obterParametro(req, "idPecuarista", "id_pecuarista");
         if (idTexto != null && !idTexto.isBlank()) {
@@ -502,6 +593,14 @@ public class TrajetoServlet extends HttpServlet {
         return null;
     }
 
+    /**
+     * Obtém o primeiro valor não nulo e não em branco correspondente aos nomes informados nos parâmetros da requisição.
+     * Fornece resiliência contra variações de parâmetros (suporte a camelCase e snake_case).
+     *
+     * @param req   requisição HTTP
+     * @param nomes nomes alternativos de parâmetros aceitos
+     * @return valor do parâmetro ou null caso não encontrado
+     */
     private String obterParametro(HttpServletRequest req, String... nomes) {
         for (String nome : nomes) {
             String valor = req.getParameter(nome);
@@ -512,6 +611,13 @@ public class TrajetoServlet extends HttpServlet {
         return null;
     }
 
+    /**
+     * Converte com segurança uma string de data e hora para {@link LocalDateTime}.
+     * Trata variações de formato comuns em inputs HTML datetime-local (substitui espaços por 'T').
+     *
+     * @param texto texto contendo a data e hora
+     * @return objeto {@link LocalDateTime} correspondente ou null em caso de erro ou valor vazio
+     */
     private LocalDateTime parseLocalDateTime(String texto) {
         if (texto == null || texto.isBlank()) {
             return null;
@@ -524,6 +630,14 @@ public class TrajetoServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Converte com segurança uma string para número inteiro, retornando um valor padrão em caso de falha.
+     * Previne exceções do tipo {@link NumberFormatException} que resultariam em erro HTTP 500.
+     *
+     * @param texto  string a ser convertida
+     * @param padrao valor padrão de retorno em caso de ausência ou falha de conversão
+     * @return inteiro convertido ou valor padrão
+     */
     private int parseInt(String texto, int padrao) {
         if (texto == null || texto.isBlank()) {
             return padrao;
@@ -536,10 +650,24 @@ public class TrajetoServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Converte com segurança uma string para o enum {@link StatusTrajeto}.
+     * Utiliza o método defensivo {@link StatusTrajeto#from(String, StatusTrajeto)} com fallback para EM_ANDAMENTO.
+     *
+     * @param statusTexto texto representando o status do trajeto
+     * @return valor do enum {@link StatusTrajeto} correspondente
+     */
     private StatusTrajeto parseStatus(String statusTexto) {
         return StatusTrajeto.from(statusTexto, StatusTrajeto.EM_ANDAMENTO);
     }
 
+    /**
+     * Converte uma string para Integer permitindo retorno null para valores em branco ou menores/iguais a zero.
+     * Utilizado para campos de chave estrangeira opcionais.
+     *
+     * @param texto texto contendo o número inteiro
+     * @return valor {@link Integer} ou null
+     */
     private Integer parseIntegerNull(String texto) {
         if (texto == null || texto.isBlank()) {
             return null;
@@ -552,6 +680,13 @@ public class TrajetoServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Normaliza uma string removendo diacríticos (acentos), espaços extras e convertendo para maiúsculas.
+     * Garante comparações consistentes em buscas textuais (ex.: 'Concluída' vs 'CONCLUIDA').
+     *
+     * @param str string a ser normalizada
+     * @return string tratada em caixa alta sem acentuação
+     */
     private static String normalizar(String str) {
         if (str == null) return "";
         return java.text.Normalizer.normalize(str, java.text.Normalizer.Form.NFD)
