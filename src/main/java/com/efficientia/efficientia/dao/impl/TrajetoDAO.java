@@ -263,6 +263,161 @@ public class TrajetoDAO {
         }
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um trajeto de forma simplificada apenas com os vínculos e documentos essenciais.
+     */
+    public boolean inserirSimples(Integer idMotorista, Integer idCaminhao, Integer idPecuarista, StatusTrajeto status, String numeroGta, String numeroNotaFiscal) {
+        String sql = """
+                INSERT INTO trajeto (id_motorista, id_caminhao, id_pecuarista, status, numero_gta, numero_nota_fiscal)
+                VALUES (?, ?, ?, ?::status_trajeto, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idMotorista != null && idMotorista > 0) stmt.setInt(1, idMotorista); else stmt.setNull(1, Types.INTEGER);
+            if (idCaminhao != null && idCaminhao > 0) stmt.setInt(2, idCaminhao); else stmt.setNull(2, Types.INTEGER);
+            if (idPecuarista != null && idPecuarista > 0) stmt.setInt(3, idPecuarista); else stmt.setNull(3, Types.INTEGER);
+            stmt.setString(4, status != null ? status.name() : StatusTrajeto.EM_ANDAMENTO.name());
+            stmt.setString(5, numeroGta);
+            stmt.setString(6, numeroNotaFiscal);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir trajeto simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o status operacional de um trajeto.
+     */
+    public boolean atualizarStatus(int id, StatusTrajeto novoStatus) {
+        String sql = "UPDATE trajeto SET status = ?::status_trajeto WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoStatus != null ? novoStatus.name() : StatusTrajeto.EM_ANDAMENTO.name());
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar status do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número da GTA de um trajeto.
+     */
+    public boolean atualizarGTA(int id, String novoGta) {
+        String sql = "UPDATE trajeto SET numero_gta = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoGta != null ? novoGta.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar GTA do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número da Nota Fiscal de um trajeto.
+     */
+    public boolean atualizarNotaFiscal(int id, String novaNotaFiscal) {
+        String sql = "UPDATE trajeto SET numero_nota_fiscal = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaNotaFiscal != null ? novaNotaFiscal.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar NF do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a quilometragem (saída e chegada) de um trajeto.
+     */
+    public boolean atualizarKm(int id, int kmSaida, int kmChegada) {
+        String sql = "UPDATE trajeto SET km_saida = ?, km_chegada = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, kmSaida);
+            stmt.setInt(2, kmChegada);
+            stmt.setInt(3, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar Km do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o motorista designado para um trajeto.
+     */
+    public boolean atualizarMotorista(int id, Integer idMotorista) {
+        String sql = "UPDATE trajeto SET id_motorista = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idMotorista != null && idMotorista > 0) stmt.setInt(1, idMotorista); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar motorista do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o caminhão designado para um trajeto.
+     */
+    public boolean atualizarCaminhao(int id, Integer idCaminhao) {
+        String sql = "UPDATE trajeto SET id_caminhao = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idCaminhao != null && idCaminhao > 0) stmt.setInt(1, idCaminhao); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar caminhão do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o pecuarista associado a um trajeto.
+     */
+    public boolean atualizarPecuarista(int id, Integer idPecuarista) {
+        String sql = "UPDATE trajeto SET id_pecuarista = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idPecuarista != null && idPecuarista > 0) stmt.setInt(1, idPecuarista); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar pecuarista do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número do curral e nome do curraleiro.
+     */
+    public boolean atualizarCurral(int id, String numeroCurral, String curraleiro) {
+        String sql = "UPDATE trajeto SET numero_curral = ?, nome_curraleiro = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, numeroCurral);
+            stmt.setString(2, curraleiro);
+            stmt.setInt(3, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar curral do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ==================== CONSULTAS ESPECÍFICAS ====================
 
     /**
@@ -469,7 +624,7 @@ public class TrajetoDAO {
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
-     * Converte o registro atual do ResultSet em um objeto TrajetoModel completamente populado.
+     * Converte o registro atual do ResultSet num objeto TrajetoModel completamente populado.
      *
      * @param rs ResultSet posicionado no registro a ser lido
      * @return instância de TrajetoModel completamente instanciada
@@ -517,7 +672,7 @@ public class TrajetoDAO {
         );
 
         String statusStr = rs.getString("status");
-        StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+        StatusTrajeto status = StatusTrajeto.from(statusStr);
 
         Timestamp tsInicio = rs.getTimestamp("data_hora_inicio");
         LocalDateTime dataHoraInicio = tsInicio != null ? tsInicio.toLocalDateTime() : null;
@@ -588,7 +743,7 @@ public class TrajetoDAO {
             stmt.setNull(3, Types.INTEGER);
         }
 
-        stmt.setString(4, trajeto.getStatus() != null ? trajeto.getStatus().name() : null);
+        stmt.setString(4, trajeto.getStatus() != null ? trajeto.getStatus().name() : StatusTrajeto.EM_ANDAMENTO.name());
         stmt.setObject(5, trajeto.getDataHoraInicio());
         stmt.setObject(6, trajeto.getDataHoraFim());
         stmt.setInt(7, trajeto.getKmSaida());

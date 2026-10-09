@@ -356,7 +356,7 @@ public class InfoEmbarqueDAO {
             }
 
             String statusStr = rs.getString("status");
-            StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+            StatusTrajeto status = StatusTrajeto.from(statusStr);
 
             Timestamp tsInicio = rs.getTimestamp("data_hora_inicio");
             LocalDateTime dataHoraInicio = tsInicio != null ? tsInicio.toLocalDateTime() : null;

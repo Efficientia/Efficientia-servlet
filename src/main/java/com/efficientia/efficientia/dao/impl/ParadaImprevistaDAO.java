@@ -336,7 +336,7 @@ public class ParadaImprevistaDAO {
             }
 
             String statusStr = rs.getString("status");
-            StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+            StatusTrajeto status = StatusTrajeto.from(statusStr);
 
             Timestamp tsTrajetoInicio = rs.getTimestamp("trajeto_data_hora_inicio");
             LocalDateTime trajetoInicio = tsTrajetoInicio != null ? tsTrajetoInicio.toLocalDateTime() : null;
