@@ -185,6 +185,76 @@ public class PropriedadeDAO {
         }
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere uma propriedade rural de forma simplificada com nome e vínculos.
+     */
+    public boolean inserirSimples(String nome, Integer idPecuarista, Integer idEndereco) {
+        String sql = """
+                INSERT INTO propriedade (id_pecuarista, id_endereco, nome)
+                VALUES (?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idPecuarista != null && idPecuarista > 0) stmt.setInt(1, idPecuarista); else stmt.setNull(1, Types.INTEGER);
+            if (idEndereco != null && idEndereco > 0) stmt.setInt(2, idEndereco); else stmt.setNull(2, Types.INTEGER);
+            stmt.setString(3, nome);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir propriedade simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o nome de uma propriedade rural.
+     */
+    public boolean atualizarNome(int id, String novoNome) {
+        String sql = "UPDATE propriedade SET nome = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoNome != null ? novoNome.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar nome da propriedade: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o pecuarista proprietário da fazenda.
+     */
+    public boolean atualizarPecuarista(int id, Integer idPecuarista) {
+        String sql = "UPDATE propriedade SET id_pecuarista = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idPecuarista != null && idPecuarista > 0) stmt.setInt(1, idPecuarista); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar pecuarista da propriedade: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o endereço da propriedade rural.
+     */
+    public boolean atualizarEndereco(int id, Integer idEndereco) {
+        String sql = "UPDATE propriedade SET id_endereco = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEndereco != null && idEndereco > 0) stmt.setInt(1, idEndereco); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar endereço da propriedade: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ==================== CONSULTAS ESPECÍFICAS ====================
 
     /**

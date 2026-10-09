@@ -164,6 +164,110 @@ public class EnderecoDAO {
         }
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um endereço de forma simplificada com logradouro básico e CEP.
+     */
+    public boolean inserirSimples(String rua, int numero, String bairro, String cidade, String cep) {
+        String sql = """
+                INSERT INTO endereco (rua, numero, bairro, cidade, cep)
+                VALUES (?, ?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, rua);
+            stmt.setInt(2, numero);
+            stmt.setString(3, bairro);
+            stmt.setString(4, cidade);
+            stmt.setString(5, cep);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir endereço simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o CEP de um endereço.
+     */
+    public boolean atualizarCep(int id, String novoCep) {
+        String sql = "UPDATE endereco SET cep = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoCep != null ? novoCep.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar CEP do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a cidade de um endereço.
+     */
+    public boolean atualizarCidade(int id, String novaCidade) {
+        String sql = "UPDATE endereco SET cidade = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaCidade != null ? novaCidade.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar cidade do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o bairro de um endereço.
+     */
+    public boolean atualizarBairro(int id, String novoBairro) {
+        String sql = "UPDATE endereco SET bairro = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoBairro != null ? novoBairro.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar bairro do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a rua de um endereço.
+     */
+    public boolean atualizarRua(int id, String novaRua) {
+        String sql = "UPDATE endereco SET rua = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaRua != null ? novaRua.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar rua do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número do imóvel.
+     */
+    public boolean atualizarNumero(int id, int novoNumero) {
+        String sql = "UPDATE endereco SET numero = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, novoNumero);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar número do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ==================== CONSULTAS ESPECÍFICAS ====================
 
     /**

@@ -166,6 +166,145 @@ public class PecuaristaDAO {
         return null;
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um pecuarista de forma simplificada apenas com os dados essenciais.
+     */
+    public boolean inserirSimples(String nome, String cpf, String email, String senha) {
+        String sql = """
+                INSERT INTO pecuarista (nome, cpf, email, senha)
+                VALUES (?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            stmt.setString(2, cpf);
+            stmt.setString(3, email);
+            stmt.setString(4, senha);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir pecuarista simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o CPF de um pecuarista.
+     */
+    public boolean atualizarCpf(int id, String novoCpf) {
+        String sql = "UPDATE pecuarista SET cpf = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoCpf != null ? novoCpf.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar CPF do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o nome de um pecuarista.
+     */
+    public boolean atualizarNome(int id, String novoNome) {
+        String sql = "UPDATE pecuarista SET nome = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoNome != null ? novoNome.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar nome do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o e-mail de um pecuarista.
+     */
+    public boolean atualizarEmail(int id, String novoEmail) {
+        String sql = "UPDATE pecuarista SET email = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoEmail != null ? novoEmail.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar email do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o telefone de um pecuarista.
+     */
+    public boolean atualizarTelefone(int id, String novoTelefone) {
+        String sql = "UPDATE pecuarista SET telefone = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoTelefone != null ? novoTelefone.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar telefone do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a senha de acesso de um pecuarista.
+     */
+    public boolean atualizarSenha(int id, String novaSenha) {
+        String sql = "UPDATE pecuarista SET senha = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaSenha);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar senha do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a data de nascimento de um pecuarista.
+     */
+    public boolean atualizarDataNascimento(int id, LocalDate novaData) {
+        String sql = "UPDATE pecuarista SET data_nascimento = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (novaData != null) {
+                stmt.setDate(1, Date.valueOf(novaData));
+            } else {
+                stmt.setNull(1, java.sql.Types.DATE);
+            }
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar data de nascimento do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a assinatura de um pecuarista.
+     */
+    public boolean atualizarAssinatura(int id, String novaAssinatura) {
+        String sql = "UPDATE pecuarista SET assinatura = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaAssinatura);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar assinatura do pecuarista: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ==================== CONSULTAS ESPECÍFICAS ====================
 
     /**

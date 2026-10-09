@@ -186,6 +186,153 @@ public class MotoristaDAO {
         return null;
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um motorista de forma simplificada apenas com os dados essenciais.
+     */
+    public boolean inserirSimples(String nome, String email, String senha, Integer idEmpresa) {
+        String sql = """
+                INSERT INTO motorista (id_empresa, nome, email, senha)
+                VALUES (?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setString(2, nome);
+            stmt.setString(3, email);
+            stmt.setString(4, senha);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir motorista simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o nome de um motorista.
+     */
+    public boolean atualizarNome(int id, String novoNome) {
+        String sql = "UPDATE motorista SET nome = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoNome != null ? novoNome.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar nome do motorista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o e-mail de um motorista.
+     */
+    public boolean atualizarEmail(int id, String novoEmail) {
+        String sql = "UPDATE motorista SET email = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoEmail != null ? novoEmail.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar email do motorista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o telefone de um motorista.
+     */
+    public boolean atualizarTelefone(int id, String novoTelefone) {
+        String sql = "UPDATE motorista SET telefone = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoTelefone != null ? novoTelefone.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar telefone do motorista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a empresa vinculada a um motorista.
+     */
+    public boolean atualizarEmpresa(int id, Integer idEmpresa) {
+        String sql = "UPDATE motorista SET id_empresa = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar empresa do motorista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a senha de um motorista.
+     */
+    public boolean atualizarSenha(int id, String novaSenha) {
+        String sql = "UPDATE motorista SET senha = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaSenha);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar senha do motorista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a data de nascimento de um motorista.
+     */
+    public boolean atualizarDataNascimento(int id, java.time.LocalDate novaData) {
+        String sql = "UPDATE motorista SET data_nascimento = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (novaData != null) {
+                stmt.setDate(1, Date.valueOf(novaData));
+            } else {
+                stmt.setNull(1, Types.DATE);
+            }
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar data de nascimento do motorista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a assinatura de um motorista.
+     */
+    public boolean atualizarAssinatura(int id, String novaAssinatura) {
+        String sql = "UPDATE motorista SET assinatura = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaAssinatura);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar assinatura do motorista: " + e.getMessage());
+            return false;
+        }
+    }
+
     /**
      * Busca motoristas por nome, suportando correspondência exata, parcial ("picada")
      * e case-insensitive (ignorando maiúsculas e minúsculas), trazendo os dados da empresa via LEFT JOIN.

@@ -161,6 +161,76 @@ public class EmpresaDAO {
         return null;
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere uma empresa de forma simplificada com os campos principais.
+     */
+    public boolean inserirSimples(String nome, String cnpj, String codigo) {
+        String sql = """
+                INSERT INTO empresa (nome, cnpj, codigo)
+                VALUES (?, ?, ?);
+                """;
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            stmt.setString(2, cnpj);
+            stmt.setString(3, codigo != null && !codigo.isBlank() ? codigo.trim().toUpperCase() : null);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir empresa simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a razão social / nome da empresa.
+     */
+    public boolean atualizarNome(int id, String novoNome) {
+        String sql = "UPDATE empresa SET nome = ? WHERE id = ?;";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, novoNome != null ? novoNome.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar nome da empresa: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o CNPJ da empresa.
+     */
+    public boolean atualizarCnpj(int id, String novoCnpj) {
+        String sql = "UPDATE empresa SET cnpj = ? WHERE id = ?;";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, novoCnpj != null ? novoCnpj.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar CNPJ da empresa: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o código identificador corporativo da empresa.
+     */
+    public boolean atualizarCodigo(int id, String novoCodigo) {
+        String sql = "UPDATE empresa SET codigo = ? WHERE id = ?;";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, novoCodigo != null ? novoCodigo.trim().toUpperCase() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar código da empresa: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ==================== CONSULTAS ESPECÍFICAS ====================
 
     /**

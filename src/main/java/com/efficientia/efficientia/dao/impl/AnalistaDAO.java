@@ -174,6 +174,101 @@ public class AnalistaDAO {
         return null;
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um analista de forma simplificada com os campos essenciais.
+     */
+    public boolean inserirSimples(String nome, String email, String senha, Integer idEmpresa) {
+        String sql = """
+                INSERT INTO analista (id_empresa, nome, email, senha)
+                VALUES (?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setString(2, nome);
+            stmt.setString(3, email);
+            stmt.setString(4, senha);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir analista simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o nome de um analista.
+     */
+    public boolean atualizarNome(int id, String novoNome) {
+        String sql = "UPDATE analista SET nome = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoNome != null ? novoNome.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar nome do analista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o e-mail de um analista.
+     */
+    public boolean atualizarEmail(int id, String novoEmail) {
+        String sql = "UPDATE analista SET email = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoEmail != null ? novoEmail.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar email do analista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a senha de um analista.
+     */
+    public boolean atualizarSenha(int id, String novaSenha) {
+        String sql = "UPDATE analista SET senha = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaSenha);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar senha do analista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a empresa vinculada a um analista.
+     */
+    public boolean atualizarEmpresa(int id, Integer idEmpresa) {
+        String sql = "UPDATE analista SET id_empresa = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar empresa do analista: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ==================== CONSULTAS ESPECÍFICAS ====================
 
     /**
