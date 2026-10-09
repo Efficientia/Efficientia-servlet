@@ -197,6 +197,101 @@ public class AdminDAO {
         return null;
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um administrador de forma simplificada com os campos essenciais.
+     */
+    public boolean inserirSimples(String nome, String email, String senha, Integer idEmpresa) {
+        String sql = """
+                INSERT INTO adm (id_empresa, email, senha, nome)
+                VALUES (?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setString(2, email);
+            stmt.setString(3, senha);
+            stmt.setString(4, nome);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir administrador simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o nome de um administrador.
+     */
+    public boolean atualizarNome(int id, String novoNome) {
+        String sql = "UPDATE adm SET nome = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoNome != null ? novoNome.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar nome do administrador: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o e-mail de um administrador.
+     */
+    public boolean atualizarEmail(int id, String novoEmail) {
+        String sql = "UPDATE adm SET email = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoEmail != null ? novoEmail.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar email do administrador: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a senha de um administrador.
+     */
+    public boolean atualizarSenha(int id, String novaSenha) {
+        String sql = "UPDATE adm SET senha = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaSenha);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar senha do administrador: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a empresa vinculada a um administrador.
+     */
+    public boolean atualizarEmpresa(int id, Integer idEmpresa) {
+        String sql = "UPDATE adm SET id_empresa = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar empresa do administrador: " + e.getMessage());
+            return false;
+        }
+    }
+
     /**
      * Busca administradores por nome, suportando correspondência exata, parcial ("picada")
      * e case-insensitive (ignorando maiúsculas e minúsculas), trazendo os dados da empresa via LEFT JOIN.

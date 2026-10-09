@@ -36,6 +36,10 @@
     String buscaCam = request.getParameter("buscaCaminhao");
     String buscaEmp = request.getParameter("buscaEmpresa");
     String buscaAdm = request.getParameter("buscaAdmin");
+    String buscaTraj = request.getParameter("buscaTrajeto");
+    String statusTraj = request.getParameter("statusTrajeto");
+    String dataInicioTraj = request.getParameter("dataInicioTrajeto");
+    String dataFimTraj = request.getParameter("dataFimTrajeto");
 
     List<PecuaristaModel> pecuaristas = null;
     List<MotoristaModel> motoristas = null;
@@ -68,7 +72,7 @@
         }
     } catch (Exception e) { pecuaristas = new ArrayList<>(); }
 
-    // 2. Motoristas: busca unificada por Nome, E-mail ou Telefone
+    // 2. Motoristas: busca unificada por Nome, E-mail, Telefone ou Empresa (por ID ou Nome)
     try {
         if (buscaMot != null && !buscaMot.isBlank()) {
             String termo = buscaMot.trim();
@@ -84,21 +88,61 @@
             for (MotoristaModel m : motoristaDAO.buscarPorTelefone(termo)) {
                 if (ids.add(m.getId())) motoristas.add(m);
             }
+            // Busca por Empresa associada
+            try {
+                int idEmp = Integer.parseInt(termo);
+                for (MotoristaModel m : motoristaDAO.buscarPorEmpresa(idEmp)) {
+                    if (ids.add(m.getId())) motoristas.add(m);
+                }
+            } catch (NumberFormatException ignored) {}
+            for (EmpresaModel emp : empresaDAO.buscarPorNome(termo)) {
+                for (MotoristaModel m : motoristaDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(m.getId())) motoristas.add(m);
+                }
+            }
+            for (EmpresaModel emp : empresaDAO.buscarPorCodigoLista(termo)) {
+                for (MotoristaModel m : motoristaDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(m.getId())) motoristas.add(m);
+                }
+            }
         } else {
             motoristas = motoristaDAO.listar();
         }
     } catch (Exception e) { motoristas = new ArrayList<>(); }
 
-    // 3. Caminhões: busca por placa (cavalo ou carreta)
+    // 3. Caminhões: busca por Placa (cavalo ou carreta) ou por Empresa (por ID ou Nome)
     try {
         if (buscaCam != null && !buscaCam.isBlank()) {
-            caminhoes = caminhaoDAO.buscarPorPlaca(buscaCam);
+            String termo = buscaCam.trim();
+            Set<Integer> ids = new LinkedHashSet<>();
+            caminhoes = new ArrayList<>();
+
+            for (CaminhaoModel c : caminhaoDAO.buscarPorPlaca(termo)) {
+                if (ids.add(c.getId())) caminhoes.add(c);
+            }
+            // Busca por Empresa associada
+            try {
+                int idEmp = Integer.parseInt(termo);
+                for (CaminhaoModel c : caminhaoDAO.buscarPorEmpresa(idEmp)) {
+                    if (ids.add(c.getId())) caminhoes.add(c);
+                }
+            } catch (NumberFormatException ignored) {}
+            for (EmpresaModel emp : empresaDAO.buscarPorNome(termo)) {
+                for (CaminhaoModel c : caminhaoDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(c.getId())) caminhoes.add(c);
+                }
+            }
+            for (EmpresaModel emp : empresaDAO.buscarPorCodigoLista(termo)) {
+                for (CaminhaoModel c : caminhaoDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(c.getId())) caminhoes.add(c);
+                }
+            }
         } else {
             caminhoes = caminhaoDAO.listar();
         }
     } catch (Exception e) { caminhoes = new ArrayList<>(); }
 
-    // 4. Empresas: busca unificada por Código (ex: EMP001 ou 001) ou por Nome
+    // 4. Empresas: busca unificada por Código (ex: EMP001 ou 001), Nome ou CNPJ
     try {
         if (buscaEmp != null && !buscaEmp.isBlank()) {
             String termo = buscaEmp.trim();
@@ -108,15 +152,23 @@
             for (EmpresaModel e : empresaDAO.buscarPorCodigoLista(termo)) {
                 if (ids.add(e.getId())) empresas.add(e);
             }
+            EmpresaModel eCod = empresaDAO.buscarPorCodigo(termo);
+            if (eCod != null && ids.add(eCod.getId())) {
+                empresas.add(eCod);
+            }
             for (EmpresaModel e : empresaDAO.buscarPorNome(termo)) {
                 if (ids.add(e.getId())) empresas.add(e);
+            }
+            EmpresaModel eCnpj = empresaDAO.buscarPorCnpj(termo);
+            if (eCnpj != null && ids.add(eCnpj.getId())) {
+                empresas.add(eCnpj);
             }
         } else {
             empresas = empresaDAO.listar();
         }
     } catch (Exception e) { empresas = new ArrayList<>(); }
 
-    // 5. Admins: busca unificada por Nome ou por E-mail
+    // 5. Admins: busca unificada por Nome, E-mail ou por Empresa (por ID ou Nome)
     try {
         if (buscaAdm != null && !buscaAdm.isBlank()) {
             String termo = buscaAdm.trim();
@@ -129,13 +181,133 @@
             for (AdminModel a : adminDAO.buscarPorEmail(termo)) {
                 if (ids.add(a.getId())) admins.add(a);
             }
+            // Busca por Empresa associada
+            try {
+                int idEmp = Integer.parseInt(termo);
+                for (AdminModel a : adminDAO.buscarPorEmpresa(idEmp)) {
+                    if (ids.add(a.getId())) admins.add(a);
+                }
+            } catch (NumberFormatException ignored) {}
+            for (EmpresaModel emp : empresaDAO.buscarPorNome(termo)) {
+                for (AdminModel a : adminDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(a.getId())) admins.add(a);
+                }
+            }
+            for (EmpresaModel emp : empresaDAO.buscarPorCodigoLista(termo)) {
+                for (AdminModel a : adminDAO.buscarPorEmpresa(emp.getId())) {
+                    if (ids.add(a.getId())) admins.add(a);
+                }
+            }
         } else {
             admins = adminDAO.listar();
         }
     } catch (Exception e) { admins = new ArrayList<>(); }
 
-    // 6. Trajetos
-    try { trajetos = trajetoDAO.listar(); } catch (Exception e) { trajetos = new java.util.ArrayList<>(); }
+    // 6. Trajetos: busca inteligente multi-campos (GTA, Nota Fiscal, Status, Motorista, Caminhão, Pecuarista, Período)
+    try {
+        boolean temBuscaGeral = buscaTraj != null && !buscaTraj.isBlank();
+        boolean temStatus = statusTraj != null && !statusTraj.isBlank();
+        boolean temPeriodo = dataInicioTraj != null && !dataInicioTraj.isBlank() && dataFimTraj != null && !dataFimTraj.isBlank();
+
+        if (temBuscaGeral || temStatus || temPeriodo) {
+            Set<Integer> ids = new LinkedHashSet<>();
+            trajetos = new ArrayList<>();
+
+            // 6.1. Busca por Período
+            if (temPeriodo) {
+                try {
+                    LocalDateTime dtIni = LocalDateTime.parse(dataInicioTraj);
+                    LocalDateTime dtFim = LocalDateTime.parse(dataFimTraj);
+                    for (TrajetoModel t : trajetoDAO.buscarPorPeriodo(dtIni, dtFim)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            // 6.2. Busca por Status explícito
+            if (temStatus) {
+                StatusTrajeto st = StatusTrajeto.from(statusTraj);
+                for (TrajetoModel t : trajetoDAO.buscarPorStatus(st)) {
+                    if (ids.add(t.getId())) trajetos.add(t);
+                }
+            }
+
+            // 6.3. Busca geral multi-campos
+            if (temBuscaGeral) {
+                String termo = buscaTraj.trim();
+
+                // Busca por GTA
+                TrajetoModel tGta = trajetoDAO.buscarPorGTA(termo);
+                if (tGta != null && ids.add(tGta.getId())) trajetos.add(tGta);
+
+                // Busca por Nota Fiscal
+                TrajetoModel tNf = trajetoDAO.buscarPorNotaFiscal(termo);
+                if (tNf != null && ids.add(tNf.getId())) trajetos.add(tNf);
+
+                // Busca por Status (com normalização de acentos)
+                String termoNorm = java.text.Normalizer.normalize(termo, java.text.Normalizer.Form.NFD)
+                        .replaceAll("\\p{M}", "").trim().toUpperCase().replace(" ", "_");
+                for (StatusTrajeto st : StatusTrajeto.values()) {
+                    String stNorm = java.text.Normalizer.normalize(st.name(), java.text.Normalizer.Form.NFD)
+                            .replaceAll("\\p{M}", "").trim().toUpperCase().replace(" ", "_");
+                    if (stNorm.equalsIgnoreCase(termoNorm)
+                            || stNorm.contains(termoNorm)
+                            || termoNorm.contains(stNorm)) {
+                        for (TrajetoModel t : trajetoDAO.buscarPorStatus(st)) {
+                            if (ids.add(t.getId())) trajetos.add(t);
+                        }
+                    }
+                }
+
+                // Busca por Motorista (via motoristaDAO.buscarPorNome)
+                for (MotoristaModel m : motoristaDAO.buscarPorNome(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorMotorista(m.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+
+                // Busca por Caminhão (via caminhaoDAO.buscarPorPlaca)
+                for (CaminhaoModel c : caminhaoDAO.buscarPorPlaca(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorCaminhao(c.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+
+                // Busca por Pecuarista (via pecuaristaDAO.buscarPorNome e buscarPorCpf)
+                for (PecuaristaModel p : pecuaristaDAO.buscarPorNome(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorPecuarista(p.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+                for (PecuaristaModel p : pecuaristaDAO.buscarPorCpf(termo)) {
+                    for (TrajetoModel t : trajetoDAO.buscarPorPecuarista(p.getId())) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                }
+
+                // Busca direta por ID se for numérico
+                try {
+                    int idNum = Integer.parseInt(termo);
+                    TrajetoModel tId = trajetoDAO.buscar(idNum);
+                    if (tId != null && ids.add(tId.getId())) trajetos.add(tId);
+
+                    for (TrajetoModel t : trajetoDAO.buscarPorMotorista(idNum)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                    for (TrajetoModel t : trajetoDAO.buscarPorCaminhao(idNum)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                    for (TrajetoModel t : trajetoDAO.buscarPorPecuarista(idNum)) {
+                        if (ids.add(t.getId())) trajetos.add(t);
+                    }
+                } catch (NumberFormatException ignored) {}
+            }
+        } else {
+            trajetos = trajetoDAO.listar();
+        }
+    } catch (Exception e) {
+        trajetos = new ArrayList<>();
+    }
 
     request.setAttribute("pecuaristas", pecuaristas);
     request.setAttribute("motoristas", motoristas);
@@ -150,6 +322,10 @@
     request.setAttribute("buscaCaminhao", buscaCam != null ? buscaCam : "");
     request.setAttribute("buscaEmpresa", buscaEmp != null ? buscaEmp : "");
     request.setAttribute("buscaAdmin", buscaAdm != null ? buscaAdm : "");
+    request.setAttribute("buscaTrajeto", buscaTraj != null ? buscaTraj : "");
+    request.setAttribute("statusTrajeto", statusTraj != null ? statusTraj : "");
+    request.setAttribute("dataInicioTrajeto", dataInicioTraj != null ? dataInicioTraj : "");
+    request.setAttribute("dataFimTrajeto", dataFimTraj != null ? dataFimTraj : "");
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     DateTimeFormatter dtfDateTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -596,8 +772,8 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="motorista">
-                    <input type="text" name="buscaMotorista" value="<c:out value="${buscaMotorista}"/>" placeholder="Buscar por Nome, Email ou Telefone..." 
-                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <input type="text" name="buscaMotorista" value="<c:out value="${buscaMotorista}"/>" placeholder="Buscar por Nome, Email, Tel ou Empresa..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 300px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
                 <span class="badge-count">${not empty motoristas ? motoristas.size() : 0} registros</span>
@@ -799,7 +975,7 @@
                 <h2>Caminhões Cadastrados</h2>
                 <c:if test="${not empty buscaCaminhao}">
                     <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
-                        Filtrando por placa: <strong><c:out value="${buscaCaminhao}"/></strong>
+                        Filtrando por: <strong><c:out value="${buscaCaminhao}"/></strong>
                         <a href="${pageContext.request.contextPath}/teste.jsp?servlet=caminhao" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
                     </p>
                 </c:if>
@@ -807,7 +983,7 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="caminhao">
-                    <input type="text" name="buscaCaminhao" value="<c:out value="${buscaCaminhao}"/>" placeholder="Buscar por Placa (Cavalo ou Carreta)..." 
+                    <input type="text" name="buscaCaminhao" value="<c:out value="${buscaCaminhao}"/>" placeholder="Buscar por Placa ou Empresa..." 
                            style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
@@ -892,6 +1068,18 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Cadastrar Novo Trajeto
+            </button>
+            <button type="button" id="tabBtnSimples-trajeto" class="tab-button" onclick="switchTab('trajeto', 'simples')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Cadastro Simples (inserirSimples)
+            </button>
+            <button type="button" id="tabBtnOperacoes-trajeto" class="tab-button" onclick="switchTab('trajeto', 'operacoes')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Atualizações Específicas (DAO)
             </button>
             <button type="button" id="tabBtnExcluir-trajeto" class="tab-button tab-danger" onclick="switchTab('trajeto', 'excluir')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1298,12 +1486,212 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+
+            <!-- ABA 3: CADASTRO SIMPLIFICADO (inserirSimples) -->
+            <div id="tabSimples-trajeto" class="tab-content">
+                <div class="card-header">
+                    <h2>Cadastro Rápido de Trajeto (inserirSimples)</h2>
+                    <p>Insere um trajeto com vínculos essenciais e documentos fiscais via método especializado <code>TrajetoDAO.inserirSimples()</code>.</p>
+                </div>
+                <form id="formCadastrarTrajetoSimples" action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Trajeto simples registrado com sucesso!')">
+                    <input type="hidden" name="acao" value="inserirSimples">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Motorista Condutor *</label>
+                            <select name="idMotorista" class="form-control" required>
+                                <option value="">Selecione o motorista...</option>
+                                <c:forEach var="mot" items="${motoristas}">
+                                    <option value="${mot.id}"><c:out value="${mot.nome}" /></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Caminhão *</label>
+                            <select name="idCaminhao" class="form-control" required>
+                                <option value="">Selecione o caminhão...</option>
+                                <c:forEach var="cam" items="${caminhoes}">
+                                    <option value="${cam.id}"><c:out value="${cam.placaCavalo}" /> / <c:out value="${cam.placaCarreta}" /></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Pecuarista Remetente *</label>
+                            <select name="idPecuarista" class="form-control" required>
+                                <option value="">Selecione o pecuarista...</option>
+                                <c:forEach var="pec" items="${pecuaristas}">
+                                    <option value="${pec.id}"><c:out value="${pec.nome}" /> (CPF: <c:out value="${pec.cpf}" />)</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status Operacional *</label>
+                            <select name="status" class="form-control" required>
+                                <option value="EM_ANDAMENTO" selected>EM ANDAMENTO</option>
+                                <option value="CONCLUIDA">CONCLUÍDA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Número da GTA *</label>
+                            <input type="text" name="numeroGTA" class="form-control" placeholder="Ex: GTA-999888" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Número da Nota Fiscal *</label>
+                            <input type="text" name="numeroNotaFiscal" class="form-control" placeholder="Ex: NF-777666" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="switchTab('trajeto', 'cadastrar')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Inserir Trajeto Simples
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ABA 4: ATUALIZAÇÕES ESPECÍFICAS (MÉTODOS DAO) -->
+            <div id="tabOperacoes-trajeto" class="tab-content">
+                <div class="card-header">
+                    <h2>Atualizações Específicas de Trajeto (Métodos TrajetoDAO)</h2>
+                    <p>Execução direta dos métodos especializados de atualização do <code>TrajetoDAO</code>.</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    <!-- Card A: Atualizar GTA -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">1. Atualizar GTA (atualizarGTA)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'GTA atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarGTA">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - GTA Atual: ${t.numeroGTA}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova GTA *</label>
+                                <input type="text" name="numeroGTA" class="form-control" placeholder="Nova GTA" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar GTA</button>
+                        </form>
+                    </div>
+
+                    <!-- Card B: Atualizar NF -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">2. Atualizar NF (atualizarNotaFiscal)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Nota Fiscal atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarNotaFiscal">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - NF Atual: ${t.numeroNotaFiscal}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Nota Fiscal *</label>
+                                <input type="text" name="numeroNotaFiscal" class="form-control" placeholder="Nova Nota Fiscal" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Nota Fiscal</button>
+                        </form>
+                    </div>
+
+                    <!-- Card C: Atualizar Km -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">3. Atualizar Odômetro (atualizarKm)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Quilometragem atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarKm">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} (Km Saída: ${t.kmSaida} | Chegada: ${t.kmChegada})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.8rem;">
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Km Saída</label>
+                                    <input type="number" name="kmSaida" class="form-control" min="0" required>
+                                </div>
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Km Chegada</label>
+                                    <input type="number" name="kmChegada" class="form-control" min="0" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Km</button>
+                        </form>
+                    </div>
+
+                    <!-- Card D: Atualizar Curral -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">4. Atualizar Curral (atualizarCurral)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Dados de curral atualizados!')">
+                            <input type="hidden" name="acao" value="atualizarCurral">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - Curral: ${not empty t.numeroCurral ? t.numeroCurral : '-'}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.8rem;">
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Nº Curral *</label>
+                                    <input type="text" name="numeroCurral" class="form-control" placeholder="Ex: C-12" required>
+                                </div>
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Nome Curraleiro *</label>
+                                    <input type="text" name="nomeCurraleiro" class="form-control" placeholder="Nome" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Curral</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- LISTAGEM TRAJETOS -->
+        <!-- LISTAGEM TRAJETOS COM BUSCA -->
         <div class="list-section-header">
-            <h2>Trajetos / Viagens Cadastradas</h2>
-            <span class="badge-count">${not empty trajetos ? trajetos.size() : 0} registros</span>
+            <div>
+                <h2>Trajetos / Viagens Cadastradas</h2>
+                <c:if test="${not empty buscaTrajeto or not empty statusTrajeto or not empty dataInicioTrajeto}">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Filtrando por:
+                        <c:if test="${not empty buscaTrajeto}"><strong>"<c:out value="${buscaTrajeto}"/>"</strong> </c:if>
+                        <c:if test="${not empty statusTrajeto}">[Status: <strong><c:out value="${statusTrajeto}"/></strong>] </c:if>
+                        <c:if test="${not empty dataInicioTrajeto}">[Período: <strong><c:out value="${dataInicioTrajeto}"/></strong> a <strong><c:out value="${dataFimTrajeto}"/></strong>] </c:if>
+                        <a href="${pageContext.request.contextPath}/teste.jsp?servlet=trajeto" style="color: var(--primary-green); margin-left: 0.6rem; text-decoration: underline;">Limpar filtro</a>
+                    </p>
+                </c:if>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+                    <input type="hidden" name="servlet" value="trajeto">
+                    <input type="text" name="buscaTrajeto" value="<c:out value="${buscaTrajeto}"/>" 
+                           placeholder="Buscar por GTA, NF, Motorista, Placa, Pecuarista ou Status..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 320px;" />
+                    <select name="statusTrajeto" style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem;">
+                        <option value="">Status (Todos)</option>
+                        <c:forEach var="st" items="${statusTrajetos}">
+                            <option value="${st}" ${statusTrajeto == st ? 'selected' : ''}>${st}</option>
+                        </c:forEach>
+                    </select>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
+                </form>
+                <span class="badge-count">${not empty trajetos ? trajetos.size() : 0} registros</span>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -1385,7 +1773,25 @@
                                         </div>
                                     </td>
                                     <td style="text-align: center;">
-                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+                                            <c:choose>
+                                                <c:when test="${t.status == 'CONCLUIDA'}">
+                                                    <button type="button" class="btn-sm-warning" title="Reabrir viagem para EM_ANDAMENTO (atualizarStatus)" onclick="atualizarStatusRapido(${t.id}, 'EM_ANDAMENTO')">
+                                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                        </svg>
+                                                        Reabrir
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button" class="btn-sm-success" title="Concluir viagem definitivamente (atualizarStatus)" onclick="atualizarStatusRapido(${t.id}, 'CONCLUIDA')">
+                                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        Concluir
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                             <button type="button" class="btn-sm-edit" onclick="abrirModalEdicaoTrajeto(
                                                 ${t.id},
                                                 ${t.motoristaModel != null ? t.motoristaModel.id : 'null'},
@@ -1525,7 +1931,7 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="empresa">
-                    <input type="text" name="buscaEmpresa" value="<c:out value="${buscaEmpresa}"/>" placeholder="Buscar por Código (ex: EMP001) ou Nome..." 
+                    <input type="text" name="buscaEmpresa" value="<c:out value="${buscaEmpresa}"/>" placeholder="Buscar por Código, CNPJ ou Nome..." 
                            style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 290px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
@@ -1687,8 +2093,8 @@
             <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
                 <form action="${pageContext.request.contextPath}/teste.jsp" method="GET" style="display: flex; gap: 0.4rem; align-items: center;">
                     <input type="hidden" name="servlet" value="admin">
-                    <input type="text" name="buscaAdmin" value="<c:out value="${buscaAdmin}"/>" placeholder="Buscar por Nome ou E-mail..." 
-                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 280px;" />
+                    <input type="text" name="buscaAdmin" value="<c:out value="${buscaAdmin}"/>" placeholder="Buscar por Nome, E-mail ou Empresa..." 
+                           style="padding: 0.45rem 0.8rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.85rem; width: 290px;" />
                     <button type="submit" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">Buscar</button>
                 </form>
                 <span class="badge-count">${not empty admins ? admins.size() : 0} registros</span>
@@ -1981,7 +2387,6 @@
         <form id="formEditarTrajeto" action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Relatório atualizado com sucesso!')">
             <input type="hidden" name="acao" value="atualizar">
             <input type="hidden" id="editTraj-id" name="id" value="">
-            <input type="hidden" id="editTraj-status" name="status" value="EM_ANDAMENTO">
 
             <div class="doc-sheet-wrapper" style="margin: 0.5rem 0;">
                 <div class="doc-sheet" style="box-shadow: none;">
@@ -2005,6 +2410,20 @@
                         <div class="doc-number-box" id="doc-modal-num">
                             33235
                         </div>
+                    </div>
+
+                    <!-- LINHA DE STATUS OPERACIONAL -->
+                    <div class="doc-row" style="background: rgba(30, 41, 59, 0.04); border-bottom: 2px solid #000; padding: 0.5rem 0.75rem; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span class="doc-cell-label" style="margin: 0; font-weight: 700; color: #1e293b;">STATUS DO TRANSPORTE:</span>
+                            <select id="editTraj-status" name="status" class="doc-cell-select" style="font-weight: 700; font-size: 0.9rem; padding: 0.35rem 0.75rem; border-radius: 4px; border: 2px solid #000; background: #fff; cursor: pointer;" required>
+                                <option value="EM_ANDAMENTO">EM ANDAMENTO</option>
+                                <option value="CONCLUIDA">CONCLUÍDA</option>
+                            </select>
+                        </div>
+                        <span style="font-size: 0.8rem; color: #475569; font-style: italic;">
+                            Controle de ciclo de vida do transporte
+                        </span>
                     </div>
 
                     <!-- LINHA 1: PECUARISTA -->
@@ -2484,25 +2903,51 @@
         if (activeSec) activeSec.classList.add('active');
     }
 
-    // ── Alternância de Abas Internas (Cadastrar / Excluir) ──
+    // ── Alternância de Abas Internas (Cadastrar / Excluir / Simples / Operações) ──
     function switchTab(servlet, tabName) {
-        const tabCadastrar = document.getElementById('tabCadastrar-' + servlet);
-        const tabExcluir = document.getElementById('tabExcluir-' + servlet);
-        const btnCadastrar = document.getElementById('tabBtnCadastrar-' + servlet);
-        const btnExcluir = document.getElementById('tabBtnExcluir-' + servlet);
+        const section = document.getElementById('section-' + servlet);
+        if (!section) return;
 
-        if (!tabCadastrar || !tabExcluir) return;
+        section.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        section.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
 
-        if (tabName === 'cadastrar') {
-            tabCadastrar.classList.add('active');
-            tabExcluir.classList.remove('active');
-            btnCadastrar.classList.add('active');
-            btnExcluir.classList.remove('active');
-        } else {
-            tabCadastrar.classList.remove('active');
-            tabExcluir.classList.add('active');
-            btnCadastrar.classList.remove('active');
-            btnExcluir.classList.add('active');
+        const targetTabName = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+        const targetTab = document.getElementById('tab' + targetTabName + '-' + servlet);
+        const targetBtn = document.getElementById('tabBtn' + targetTabName + '-' + servlet);
+
+        if (targetTab) targetTab.classList.add('active');
+        if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    // ── Atualização Rápida de Status (DAO.atualizarStatus) ──
+    async function atualizarStatusRapido(id, novoStatus) {
+        const confirmMsg = novoStatus === 'CONCLUIDA'
+            ? 'Deseja marcar o Trajeto #' + id + ' como CONCLUÍDO?'
+            : 'Deseja reabrir o Trajeto #' + id + ' para EM ANDAMENTO?';
+        if (!confirm(confirmMsg)) return;
+
+        const params = new URLSearchParams();
+        params.append('acao', 'atualizarStatus');
+        params.append('id', id);
+        params.append('status', novoStatus);
+        params.append('redirect', '/teste.jsp?servlet=trajeto');
+
+        try {
+            const resp = await fetch(CTX + '/trajeto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                body: params.toString()
+            });
+            if (resp.ok || resp.status === 302 || resp.type === 'opaqueredirect') {
+                showToast('Status do Trajeto #' + id + ' atualizado para ' + novoStatus + ' com sucesso!', 'toast-success');
+                setTimeout(() => {
+                    window.location.href = CTX + '/teste.jsp?servlet=trajeto';
+                }, 400);
+            } else {
+                showToast('Erro ao atualizar status', 'toast-danger');
+            }
+        } catch (e) {
+            showToast('Erro de comunicação: ' + e.message, 'toast-danger');
         }
     }
 
