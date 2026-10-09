@@ -51,7 +51,6 @@
     <form action="${pageContext.request.contextPath}/trajeto" method="post" id="formEditarDocumento">
         <input type="hidden" name="acao" value="atualizar">
         <input type="hidden" name="id" value="${trajetoModel.id}">
-        <input type="hidden" name="status" value="${trajetoModel.status != null ? trajetoModel.status.name() : 'EM_ANDAMENTO'}">
 
         <div class="doc-sheet-wrapper">
             <div class="doc-sheet">
@@ -80,6 +79,20 @@
                             <c:otherwise>33235</c:otherwise>
                         </c:choose>
                     </div>
+                </div>
+
+                <!-- LINHA DE STATUS OPERACIONAL -->
+                <div class="doc-row" style="background: rgba(30, 41, 59, 0.04); border-bottom: 2px solid #000; padding: 0.5rem 0.75rem; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span class="doc-cell-label" style="margin: 0; font-weight: 700; color: #1e293b;">STATUS DO TRANSPORTE:</span>
+                        <select name="status" class="doc-cell-select" style="font-weight: 700; font-size: 0.9rem; padding: 0.35rem 0.75rem; border-radius: 4px; border: 2px solid #000; background: #fff; cursor: pointer;" required>
+                            <option value="EM_ANDAMENTO" ${trajetoModel.status == 'EM_ANDAMENTO' || trajetoModel.status == null ? 'selected' : ''}>EM ANDAMENTO</option>
+                            <option value="CONCLUIDA" ${trajetoModel.status == 'CONCLUIDA' ? 'selected' : ''}>CONCLUÍDA</option>
+                        </select>
+                    </div>
+                    <span style="font-size: 0.8rem; color: #475569; font-style: italic;">
+                        ${trajetoModel.status == 'CONCLUIDA' ? '✓ Viagem finalizada no frigorífico' : '⚡ Caminhão em rota de transporte'}
+                    </span>
                 </div>
 
                 <!-- LINHA 1: PECUARISTA -->

@@ -226,12 +226,10 @@
 
             // 6.2. Busca por Status explícito
             if (temStatus) {
-                try {
-                    StatusTrajeto st = StatusTrajeto.valueOf(statusTraj.trim().toUpperCase());
-                    for (TrajetoModel t : trajetoDAO.buscarPorStatus(st)) {
-                        if (ids.add(t.getId())) trajetos.add(t);
-                    }
-                } catch (Exception ignored) {}
+                StatusTrajeto st = StatusTrajeto.from(statusTraj);
+                for (TrajetoModel t : trajetoDAO.buscarPorStatus(st)) {
+                    if (ids.add(t.getId())) trajetos.add(t);
+                }
             }
 
             // 6.3. Busca geral multi-campos
@@ -246,10 +244,15 @@
                 TrajetoModel tNf = trajetoDAO.buscarPorNotaFiscal(termo);
                 if (tNf != null && ids.add(tNf.getId())) trajetos.add(tNf);
 
-                // Busca por Status
+                // Busca por Status (com normalização de acentos)
+                String termoNorm = java.text.Normalizer.normalize(termo, java.text.Normalizer.Form.NFD)
+                        .replaceAll("\\p{M}", "").trim().toUpperCase().replace(" ", "_");
                 for (StatusTrajeto st : StatusTrajeto.values()) {
-                    if (st.name().equalsIgnoreCase(termo.replace(" ", "_"))
-                            || st.name().toUpperCase().contains(termo.toUpperCase().replace(" ", "_"))) {
+                    String stNorm = java.text.Normalizer.normalize(st.name(), java.text.Normalizer.Form.NFD)
+                            .replaceAll("\\p{M}", "").trim().toUpperCase().replace(" ", "_");
+                    if (stNorm.equalsIgnoreCase(termoNorm)
+                            || stNorm.contains(termoNorm)
+                            || termoNorm.contains(stNorm)) {
                         for (TrajetoModel t : trajetoDAO.buscarPorStatus(st)) {
                             if (ids.add(t.getId())) trajetos.add(t);
                         }
@@ -1066,6 +1069,18 @@
                 </svg>
                 Cadastrar Novo Trajeto
             </button>
+            <button type="button" id="tabBtnSimples-trajeto" class="tab-button" onclick="switchTab('trajeto', 'simples')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Cadastro Simples (inserirSimples)
+            </button>
+            <button type="button" id="tabBtnOperacoes-trajeto" class="tab-button" onclick="switchTab('trajeto', 'operacoes')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Atualizações Específicas (DAO)
+            </button>
             <button type="button" id="tabBtnExcluir-trajeto" class="tab-button tab-danger" onclick="switchTab('trajeto', 'excluir')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -1471,6 +1486,180 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+
+            <!-- ABA 3: CADASTRO SIMPLIFICADO (inserirSimples) -->
+            <div id="tabSimples-trajeto" class="tab-content">
+                <div class="card-header">
+                    <h2>Cadastro Rápido de Trajeto (inserirSimples)</h2>
+                    <p>Insere um trajeto com vínculos essenciais e documentos fiscais via método especializado <code>TrajetoDAO.inserirSimples()</code>.</p>
+                </div>
+                <form id="formCadastrarTrajetoSimples" action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Trajeto simples registrado com sucesso!')">
+                    <input type="hidden" name="acao" value="inserirSimples">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Motorista Condutor *</label>
+                            <select name="idMotorista" class="form-control" required>
+                                <option value="">Selecione o motorista...</option>
+                                <c:forEach var="mot" items="${motoristas}">
+                                    <option value="${mot.id}"><c:out value="${mot.nome}" /></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Caminhão *</label>
+                            <select name="idCaminhao" class="form-control" required>
+                                <option value="">Selecione o caminhão...</option>
+                                <c:forEach var="cam" items="${caminhoes}">
+                                    <option value="${cam.id}"><c:out value="${cam.placaCavalo}" /> / <c:out value="${cam.placaCarreta}" /></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Pecuarista Remetente *</label>
+                            <select name="idPecuarista" class="form-control" required>
+                                <option value="">Selecione o pecuarista...</option>
+                                <c:forEach var="pec" items="${pecuaristas}">
+                                    <option value="${pec.id}"><c:out value="${pec.nome}" /> (CPF: <c:out value="${pec.cpf}" />)</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status Operacional *</label>
+                            <select name="status" class="form-control" required>
+                                <option value="EM_ANDAMENTO" selected>EM ANDAMENTO</option>
+                                <option value="CONCLUIDA">CONCLUÍDA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Número da GTA *</label>
+                            <input type="text" name="numeroGTA" class="form-control" placeholder="Ex: GTA-999888" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Número da Nota Fiscal *</label>
+                            <input type="text" name="numeroNotaFiscal" class="form-control" placeholder="Ex: NF-777666" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="switchTab('trajeto', 'cadastrar')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Inserir Trajeto Simples
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ABA 4: ATUALIZAÇÕES ESPECÍFICAS (MÉTODOS DAO) -->
+            <div id="tabOperacoes-trajeto" class="tab-content">
+                <div class="card-header">
+                    <h2>Atualizações Específicas de Trajeto (Métodos TrajetoDAO)</h2>
+                    <p>Execução direta dos métodos especializados de atualização do <code>TrajetoDAO</code>.</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    <!-- Card A: Atualizar GTA -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">1. Atualizar GTA (atualizarGTA)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'GTA atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarGTA">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - GTA Atual: ${t.numeroGTA}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova GTA *</label>
+                                <input type="text" name="numeroGTA" class="form-control" placeholder="Nova GTA" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar GTA</button>
+                        </form>
+                    </div>
+
+                    <!-- Card B: Atualizar NF -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">2. Atualizar NF (atualizarNotaFiscal)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Nota Fiscal atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarNotaFiscal">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - NF Atual: ${t.numeroNotaFiscal}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Nota Fiscal *</label>
+                                <input type="text" name="numeroNotaFiscal" class="form-control" placeholder="Nova Nota Fiscal" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Nota Fiscal</button>
+                        </form>
+                    </div>
+
+                    <!-- Card C: Atualizar Km -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">3. Atualizar Odômetro (atualizarKm)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Quilometragem atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarKm">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} (Km Saída: ${t.kmSaida} | Chegada: ${t.kmChegada})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.8rem;">
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Km Saída</label>
+                                    <input type="number" name="kmSaida" class="form-control" min="0" required>
+                                </div>
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Km Chegada</label>
+                                    <input type="number" name="kmChegada" class="form-control" min="0" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Km</button>
+                        </form>
+                    </div>
+
+                    <!-- Card D: Atualizar Curral -->
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">4. Atualizar Curral (atualizarCurral)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Dados de curral atualizados!')">
+                            <input type="hidden" name="acao" value="atualizarCurral">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - Curral: ${not empty t.numeroCurral ? t.numeroCurral : '-'}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.8rem;">
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Nº Curral *</label>
+                                    <input type="text" name="numeroCurral" class="form-control" placeholder="Ex: C-12" required>
+                                </div>
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <label>Nome Curraleiro *</label>
+                                    <input type="text" name="nomeCurraleiro" class="form-control" placeholder="Nome" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Curral</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- LISTAGEM TRAJETOS COM BUSCA -->
@@ -1584,7 +1773,25 @@
                                         </div>
                                     </td>
                                     <td style="text-align: center;">
-                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+                                            <c:choose>
+                                                <c:when test="${t.status == 'CONCLUIDA'}">
+                                                    <button type="button" class="btn-sm-warning" title="Reabrir viagem para EM_ANDAMENTO (atualizarStatus)" onclick="atualizarStatusRapido(${t.id}, 'EM_ANDAMENTO')">
+                                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                        </svg>
+                                                        Reabrir
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button" class="btn-sm-success" title="Concluir viagem definitivamente (atualizarStatus)" onclick="atualizarStatusRapido(${t.id}, 'CONCLUIDA')">
+                                                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        Concluir
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                             <button type="button" class="btn-sm-edit" onclick="abrirModalEdicaoTrajeto(
                                                 ${t.id},
                                                 ${t.motoristaModel != null ? t.motoristaModel.id : 'null'},
@@ -2180,7 +2387,6 @@
         <form id="formEditarTrajeto" action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Relatório atualizado com sucesso!')">
             <input type="hidden" name="acao" value="atualizar">
             <input type="hidden" id="editTraj-id" name="id" value="">
-            <input type="hidden" id="editTraj-status" name="status" value="EM_ANDAMENTO">
 
             <div class="doc-sheet-wrapper" style="margin: 0.5rem 0;">
                 <div class="doc-sheet" style="box-shadow: none;">
@@ -2204,6 +2410,20 @@
                         <div class="doc-number-box" id="doc-modal-num">
                             33235
                         </div>
+                    </div>
+
+                    <!-- LINHA DE STATUS OPERACIONAL -->
+                    <div class="doc-row" style="background: rgba(30, 41, 59, 0.04); border-bottom: 2px solid #000; padding: 0.5rem 0.75rem; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span class="doc-cell-label" style="margin: 0; font-weight: 700; color: #1e293b;">STATUS DO TRANSPORTE:</span>
+                            <select id="editTraj-status" name="status" class="doc-cell-select" style="font-weight: 700; font-size: 0.9rem; padding: 0.35rem 0.75rem; border-radius: 4px; border: 2px solid #000; background: #fff; cursor: pointer;" required>
+                                <option value="EM_ANDAMENTO">EM ANDAMENTO</option>
+                                <option value="CONCLUIDA">CONCLUÍDA</option>
+                            </select>
+                        </div>
+                        <span style="font-size: 0.8rem; color: #475569; font-style: italic;">
+                            Controle de ciclo de vida do transporte
+                        </span>
                     </div>
 
                     <!-- LINHA 1: PECUARISTA -->
@@ -2683,25 +2903,51 @@
         if (activeSec) activeSec.classList.add('active');
     }
 
-    // ── Alternância de Abas Internas (Cadastrar / Excluir) ──
+    // ── Alternância de Abas Internas (Cadastrar / Excluir / Simples / Operações) ──
     function switchTab(servlet, tabName) {
-        const tabCadastrar = document.getElementById('tabCadastrar-' + servlet);
-        const tabExcluir = document.getElementById('tabExcluir-' + servlet);
-        const btnCadastrar = document.getElementById('tabBtnCadastrar-' + servlet);
-        const btnExcluir = document.getElementById('tabBtnExcluir-' + servlet);
+        const section = document.getElementById('section-' + servlet);
+        if (!section) return;
 
-        if (!tabCadastrar || !tabExcluir) return;
+        section.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        section.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
 
-        if (tabName === 'cadastrar') {
-            tabCadastrar.classList.add('active');
-            tabExcluir.classList.remove('active');
-            btnCadastrar.classList.add('active');
-            btnExcluir.classList.remove('active');
-        } else {
-            tabCadastrar.classList.remove('active');
-            tabExcluir.classList.add('active');
-            btnCadastrar.classList.remove('active');
-            btnExcluir.classList.add('active');
+        const targetTabName = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+        const targetTab = document.getElementById('tab' + targetTabName + '-' + servlet);
+        const targetBtn = document.getElementById('tabBtn' + targetTabName + '-' + servlet);
+
+        if (targetTab) targetTab.classList.add('active');
+        if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    // ── Atualização Rápida de Status (DAO.atualizarStatus) ──
+    async function atualizarStatusRapido(id, novoStatus) {
+        const confirmMsg = novoStatus === 'CONCLUIDA'
+            ? 'Deseja marcar o Trajeto #' + id + ' como CONCLUÍDO?'
+            : 'Deseja reabrir o Trajeto #' + id + ' para EM ANDAMENTO?';
+        if (!confirm(confirmMsg)) return;
+
+        const params = new URLSearchParams();
+        params.append('acao', 'atualizarStatus');
+        params.append('id', id);
+        params.append('status', novoStatus);
+        params.append('redirect', '/teste.jsp?servlet=trajeto');
+
+        try {
+            const resp = await fetch(CTX + '/trajeto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                body: params.toString()
+            });
+            if (resp.ok || resp.status === 302 || resp.type === 'opaqueredirect') {
+                showToast('Status do Trajeto #' + id + ' atualizado para ' + novoStatus + ' com sucesso!', 'toast-success');
+                setTimeout(() => {
+                    window.location.href = CTX + '/teste.jsp?servlet=trajeto';
+                }, 400);
+            } else {
+                showToast('Erro ao atualizar status', 'toast-danger');
+            }
+        } catch (e) {
+            showToast('Erro de comunicação: ' + e.message, 'toast-danger');
         }
     }
 
