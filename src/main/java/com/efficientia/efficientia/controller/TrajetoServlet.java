@@ -9,6 +9,7 @@ import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.model.StatusTrajeto;
 import com.efficientia.efficientia.model.TrajetoModel;
+import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -314,6 +315,13 @@ public class TrajetoServlet extends HttpServlet {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
                 String novoGta = obterParametro(req, "numeroGTA", "numero_gta", "gta");
+
+                // Validação defensiva com REGEX
+                if (novoGta != null && !novoGta.isBlank() && !ValidadorRegex.isGtaValido(novoGta)) {
+                    resp.sendRedirect(req.getContextPath() + "/trajeto?erro=gta_invalido");
+                    return;
+                }
+
                 dao.atualizarGTA(id, novoGta);
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar GTA: " + e.getMessage());
@@ -328,6 +336,13 @@ public class TrajetoServlet extends HttpServlet {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
                 String novaNf = obterParametro(req, "numeroNotaFiscal", "numero_nota_fiscal", "nf");
+
+                // Validação defensiva com REGEX
+                if (novaNf != null && !novaNf.isBlank() && !ValidadorRegex.isNotaFiscalValida(novaNf)) {
+                    resp.sendRedirect(req.getContextPath() + "/trajeto?erro=nf_invalida");
+                    return;
+                }
+
                 dao.atualizarNotaFiscal(id, novaNf);
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar Nota Fiscal: " + e.getMessage());

@@ -4,6 +4,7 @@ import com.efficientia.efficientia.dao.impl.CaminhaoDAO;
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.CaminhaoModel;
 import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -151,7 +152,16 @@ public class CaminhaoServlet extends HttpServlet {
                 String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
                 int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
 
-                CaminhaoModel caminhaoModel = new CaminhaoModel(id, empresaModel, placaCavalo, placaCarreta, capacidadeMaxima);
+                // Validação defensiva com REGEX (Lógica e Integridade de Dados)
+                if (!ValidadorRegex.isPlacaValida(placaCavalo) || !ValidadorRegex.isPlacaValida(placaCarreta)) {
+                    resp.sendRedirect(req.getContextPath() + "/caminhao?acao=editar&id=" + id + "&erro=placa_invalida");
+                    return;
+                }
+
+                String placaCavaloNorm = ValidadorRegex.normalizarPlaca(placaCavalo);
+                String placaCarretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
+
+                CaminhaoModel caminhaoModel = new CaminhaoModel(id, empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
                 dao.atualizar(caminhaoModel, id);
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar caminhão: " + e.getMessage());
@@ -167,7 +177,16 @@ public class CaminhaoServlet extends HttpServlet {
         String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
         int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
 
-        CaminhaoModel novoCaminhao = new CaminhaoModel(empresaModel, placaCavalo, placaCarreta, capacidadeMaxima);
+        // Validação defensiva com REGEX (Lógica e Integridade de Dados)
+        if (!ValidadorRegex.isPlacaValida(placaCavalo) || !ValidadorRegex.isPlacaValida(placaCarreta)) {
+            resp.sendRedirect(req.getContextPath() + "/caminhao?erro=placa_invalida");
+            return;
+        }
+
+        String placaCavaloNorm = ValidadorRegex.normalizarPlaca(placaCavalo);
+        String placaCarretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
+
+        CaminhaoModel novoCaminhao = new CaminhaoModel(empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
         dao.inserir(novoCaminhao);
 
         resp.sendRedirect(req.getContextPath() + "/caminhao");

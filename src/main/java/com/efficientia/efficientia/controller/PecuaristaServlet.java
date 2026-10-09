@@ -2,6 +2,7 @@ package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.PecuaristaDAO;
 import com.efficientia.efficientia.model.PecuaristaModel;
+import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -175,9 +176,26 @@ public class PecuaristaServlet extends HttpServlet {
                 String email = obterParametro(req, "email");
                 String telefone = obterParametro(req, "telefone");
 
+                // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
+                if (!ValidadorRegex.isCpfValido(cpf)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?acao=editar&id=" + id + "&erro=cpf_invalido");
+                    return;
+                }
+                if (telefone != null && !telefone.isBlank() && !ValidadorRegex.isCelularValido(telefone)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?acao=editar&id=" + id + "&erro=telefone_invalido");
+                    return;
+                }
+                if (email != null && !email.isBlank() && !ValidadorRegex.isEmailValido(email)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?acao=editar&id=" + id + "&erro=email_invalido");
+                    return;
+                }
+
+                // Sanitização: assegura 11 dígitos para cumprimento do CHECK (length(cpf) = 11) do PostgreSQL
+                String cpfSanitizado = ValidadorRegex.apenasDigitos(cpf);
+
                 PecuaristaModel pecuaristaModel = new PecuaristaModel(
                         id,
-                        cpf,
+                        cpfSanitizado,
                         dataNascimento,
                         nome,
                         senha,
@@ -202,8 +220,25 @@ public class PecuaristaServlet extends HttpServlet {
         String email = obterParametro(req, "email");
         String telefone = obterParametro(req, "telefone");
 
+        // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
+        if (!ValidadorRegex.isCpfValido(cpf)) {
+            resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=cpf_invalido");
+            return;
+        }
+        if (telefone != null && !telefone.isBlank() && !ValidadorRegex.isCelularValido(telefone)) {
+            resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=telefone_invalido");
+            return;
+        }
+        if (email != null && !email.isBlank() && !ValidadorRegex.isEmailValido(email)) {
+            resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=email_invalido");
+            return;
+        }
+
+        // Sanitização: assegura 11 dígitos para cumprimento do CHECK do PostgreSQL
+        String cpfSanitizado = ValidadorRegex.apenasDigitos(cpf);
+
         PecuaristaModel novoPecuarista = new PecuaristaModel(
-                cpf,
+                cpfSanitizado,
                 dataNascimento,
                 nome,
                 senha,

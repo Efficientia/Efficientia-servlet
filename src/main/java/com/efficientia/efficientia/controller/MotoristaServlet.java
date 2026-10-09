@@ -4,6 +4,7 @@ import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.dao.impl.MotoristaDAO;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.model.MotoristaModel;
+import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -180,6 +181,16 @@ public class MotoristaServlet extends HttpServlet {
                 String email = obterParametro(req, "email");
                 String telefone = obterParametro(req, "telefone");
 
+                // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
+                if (telefone != null && !telefone.isBlank() && !ValidadorRegex.isCelularValido(telefone)) {
+                    resp.sendRedirect(req.getContextPath() + "/motorista?acao=editar&id=" + id + "&erro=telefone_invalido");
+                    return;
+                }
+                if (email != null && !email.isBlank() && !ValidadorRegex.isEmailValido(email)) {
+                    resp.sendRedirect(req.getContextPath() + "/motorista?acao=editar&id=" + id + "&erro=email_invalido");
+                    return;
+                }
+
                 MotoristaModel motoristaModel = new MotoristaModel(
                         id,
                         empresaModel,
@@ -206,6 +217,16 @@ public class MotoristaServlet extends HttpServlet {
         String senha = obterParametro(req, "senha");
         String email = obterParametro(req, "email");
         String telefone = obterParametro(req, "telefone");
+
+        // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
+        if (telefone != null && !telefone.isBlank() && !ValidadorRegex.isCelularValido(telefone)) {
+            resp.sendRedirect(req.getContextPath() + "/motorista?erro=telefone_invalido");
+            return;
+        }
+        if (email != null && !email.isBlank() && !ValidadorRegex.isEmailValido(email)) {
+            resp.sendRedirect(req.getContextPath() + "/motorista?erro=email_invalido");
+            return;
+        }
 
         MotoristaModel novoMotorista = new MotoristaModel(
                 empresaModel,
