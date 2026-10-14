@@ -68,18 +68,7 @@ public class EnderecoDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                EnderecoModel enderecoModel = new EnderecoModel(
-                        rs.getInt("id"),
-                        rs.getString("cep"),
-                        rs.getString("tipo"),
-                        rs.getString("numero"),
-                        rs.getString("rua"),
-                        rs.getString("cidade"),
-                        rs.getString("estado"),
-                        rs.getString("pais"),
-                        rs.getString("complemento")
-                );
-                enderecoModels.add(enderecoModel);
+                enderecoModels.add(extrairEndereco(rs));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar Endereco: " + e.getMessage());
@@ -123,10 +112,10 @@ public class EnderecoDAO {
     }
 
     /**
-     * Remove um endereço do banco de dados pelo seu ID.
+     * Exclui um endereço da base de dados através de seu identificador numérico.
      *
-     * @param id identificador único do endereço a ser excluído
-     * @return true se o registro foi removido com sucesso, false caso ocorra erro
+     * @param id identificador do registro a ser removido
+     * @return true se o registro foi deletado, false caso ocorra falha
      */
     public boolean excluir(int id) {
         String sql = """
@@ -137,6 +126,7 @@ public class EnderecoDAO {
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
+
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
@@ -146,7 +136,7 @@ public class EnderecoDAO {
     }
 
     /**
-     * Localiza um endereço individual com base em seu ID.
+     * Consulta um endereço através de sua chave primária.
      *
      * @param id identificador único do endereço pesquisado
      * @return objeto EnderecoModel preenchido ou null se não for encontrado
@@ -163,17 +153,7 @@ public class EnderecoDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new EnderecoModel(
-                            rs.getInt("id"),
-                            rs.getString("cep"),
-                            rs.getString("tipo"),
-                            rs.getString("numero"),
-                            rs.getString("rua"),
-                            rs.getString("cidade"),
-                            rs.getString("estado"),
-                            rs.getString("pais"),
-                            rs.getString("complemento")
-                    );
+                    return extrairEndereco(rs);
                 } else {
                     return null;
                 }
@@ -184,7 +164,210 @@ public class EnderecoDAO {
         }
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um endereço de forma simplificada com logradouro básico e CEP.
+     */
+    public boolean inserirSimples(String rua, int numero, String bairro, String cidade, String cep) {
+        String sql = """
+                INSERT INTO endereco (rua, numero, bairro, cidade, cep)
+                VALUES (?, ?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, rua);
+            stmt.setInt(2, numero);
+            stmt.setString(3, bairro);
+            stmt.setString(4, cidade);
+            stmt.setString(5, cep);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir endereço simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o CEP de um endereço.
+     */
+    public boolean atualizarCep(int id, String novoCep) {
+        String sql = "UPDATE endereco SET cep = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoCep != null ? novoCep.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar CEP do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a cidade de um endereço.
+     */
+    public boolean atualizarCidade(int id, String novaCidade) {
+        String sql = "UPDATE endereco SET cidade = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaCidade != null ? novaCidade.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar cidade do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o bairro de um endereço.
+     */
+    public boolean atualizarBairro(int id, String novoBairro) {
+        String sql = "UPDATE endereco SET bairro = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoBairro != null ? novoBairro.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar bairro do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a rua de um endereço.
+     */
+    public boolean atualizarRua(int id, String novaRua) {
+        String sql = "UPDATE endereco SET rua = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaRua != null ? novaRua.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar rua do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número do imóvel.
+     */
+    public boolean atualizarNumero(int id, int novoNumero) {
+        String sql = "UPDATE endereco SET numero = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, novoNumero);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar número do endereço: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ==================== CONSULTAS ESPECÍFICAS ====================
+
+    /**
+     * Localiza endereços com base no Código de Endereçamento Postal (CEP).
+     *
+     * @param cep código postal formatado ou numérico
+     * @return lista de endereços que possuem o CEP informado
+     */
+    public List<EnderecoModel> buscarPorCep(String cep) {
+        if (cep == null || cep.isBlank()) {
+            return listar();
+        }
+
+        String cepLimpo = cep.replaceAll("\\D", "").trim();
+
+        String sql = """
+                SELECT * FROM endereco
+                WHERE REGEXP_REPLACE(cep, '[^0-9]', '', 'g') LIKE ?
+                   OR cep LIKE ?
+                ORDER BY id ASC;
+                """;
+
+        List<EnderecoModel> enderecos = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + cepLimpo + "%");
+            stmt.setString(2, "%" + cep.trim() + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    enderecos.add(extrairEndereco(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Endereco por CEP: " + e.getMessage());
+        }
+
+        return enderecos;
+    }
+
+    /**
+     * Localiza endereços por cidade, tolerante a maiúsculas e minúsculas.
+     *
+     * @param cidade nome da cidade/município
+     * @return lista de endereços encontrados no município
+     */
+    public List<EnderecoModel> buscarPorCidade(String cidade) {
+        if (cidade == null || cidade.isBlank()) {
+            return listar();
+        }
+
+        String sql = """
+                SELECT * FROM endereco
+                WHERE LOWER(cidade) LIKE ?
+                ORDER BY cidade ASC, id ASC;
+                """;
+
+        List<EnderecoModel> enderecos = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + cidade.trim().toLowerCase() + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    enderecos.add(extrairEndereco(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar Endereco por cidade: " + e.getMessage());
+        }
+
+        return enderecos;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
+
+    /**
+     * Constrói uma instância de EnderecoModel a partir do ResultSet atual.
+     *
+     * @param rs ResultSet posicionado no registro atual
+     * @return objeto EnderecoModel preenchido
+     * @throws SQLException em caso de falha na leitura dos dados
+     */
+    private EnderecoModel extrairEndereco(ResultSet rs) throws SQLException {
+        return new EnderecoModel(
+                rs.getInt("id"),
+                rs.getString("cep"),
+                rs.getString("tipo"),
+                rs.getString("numero"),
+                rs.getString("rua"),
+                rs.getString("cidade"),
+                rs.getString("estado"),
+                rs.getString("pais"),
+                rs.getString("complemento")
+        );
+    }
 
     /**
      * Preenche os parâmetros do PreparedStatement com os atributos de EnderecoModel.

@@ -123,13 +123,21 @@ public class ExemploDAO {
 
     public boolean excluir(int id) { ... }
 
+    // ==================== CONSULTAS ESPECÍFICAS ====================
+
+    public List<ExemploModel> buscarPorNome(String termo) { ... }
+
+    public List<ExemploModel> buscarPorEmpresa(int idEmpresa) { ... }
+
     // ==================== MÉTODOS AUXILIARES ====================
+
+    private ExemploModel extrairExemplo(ResultSet rs) throws SQLException { ... }
 
     private void preencherStatement(PreparedStatement stmt, ExemploModel model) throws SQLException { ... }
 }
 ```
 
-### 4.2. Contrato Obrigatório de Métodos CRUD
+### 4.2. Contrato Obrigatório de Métodos CRUD e Consultas
 
 | Método | Assinatura | Retorno em Sucesso | Retorno em Falha |
 | :--- | :--- | :--- | :--- |
@@ -138,22 +146,19 @@ public class ExemploDAO {
 | **Busca por ID** | `XModel buscar(int id)` | Objeto populado | `null` |
 | **Atualização** | `boolean atualizar(XModel model, int id)` | `true` se atualizado | `false` |
 | **Exclusão** | `boolean excluir(int id)` | `true` se removido | `false` |
-| **Auxiliar** | `void preencherStatement(PreparedStatement stmt, XModel m)` | Mapeia `?` da query | Lança `SQLException` |
+| **Busca por Nome** | `List<XModel> buscarPorNome(String termo)` | Lista filtrada (case-insensitive / parcial) | `List` vazia |
+| **Busca por Vínculo** | `List<XModel> buscarPorEmpresa(int idEmpresa)` | Lista vinculada | `List` vazia |
+| **Busca por ID Único** | `XModel buscarPor<Campo>(String valor)` | Objeto correspondente | `null` |
+| **Extração** | `XModel extrairX(ResultSet rs)` | Objeto populado | Lança `SQLException` |
+| **Preenchimento** | `void preencherStatement(PreparedStatement stmt, XModel m)` | Mapeia `?` da query | Lança `SQLException` |
 
-### 4.3. Regras de Ouro no JDBC
-1. **Nunca propagar `throws SQLException` nos métodos públicos do DAO:** Capture a exceção internamente com `try-catch`, registre a mensagem de erro e devolva um valor seguro (`false`, `null` ou lista vazia).
-2. **Try-with-resources Obrigatório:** Garanta o fechamento seguro de `Connection`, `PreparedStatement` e `ResultSet` declarando-os nos parênteses do `try`:
-   ```java
-   try (Connection conn = ConnectionFactory.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
-       // execução segura
-   } catch (SQLException e) {
-       System.out.println("Erro ao ...: " + e.getMessage());
-       return false;
-   }
-   ```
-3. **Uso de Text Blocks (`"""`):** Queries SQL devem ser declaradas com blocos de texto multilinha, mantendo quebras de linha e indentação legíveis.
-4. **Tratamento de Chaves Estrangeiras Nulas:** Sempre verifique referências a objetos associados antes de fazer `stmt.setInt(...)`. Se nulo, use `stmt.setNull(posicao, Types.INTEGER)`.
+### 4.3. Regras de Ouro no JDBC e Boas Práticas do DAO
+1. **Nunca propagar `throws SQLException` nos métodos públicos do DAO:** Capture a exceção internamente com `try-catch`, registre a mensagem de erro no console e devolva um valor seguro (`false`, `null` ou lista vazia).
+2. **Try-with-resources Obrigatório:** Garanta o fechamento seguro de `Connection`, `PreparedStatement` e `ResultSet` declarando-os nos parênteses do `try`.
+3. **Helper de Hidratação Único (`extrair<Entidade>`):** Para eliminar duplicação de código de mapeamento relacional entre `listar()`, `buscar(id)` e métodos de busca específicos, centralize a montagem do Model no método privado `extrair<Entidade>(ResultSet rs)`.
+4. **Constante `BASE_SELECT`:** Para entidades com múltiplos `JOIN`s (como `TrajetoDAO` e `PropriedadeDAO`), declare uma constante `BASE_SELECT` com as projeções completas, reaproveitando-a em todas as leituras.
+5. **Uso de Text Blocks (`"""`):** Queries SQL devem ser declaradas com blocos de texto multilinha, mantendo quebras de linha e indentação legíveis.
+6. **Tratamento de Chaves Estrangeiras Nulas:** Sempre verifique referências a objetos associados antes de fazer `stmt.setInt(...)`. Se nulo, use `stmt.setNull(posicao, Types.INTEGER)`.
 
 ---
 

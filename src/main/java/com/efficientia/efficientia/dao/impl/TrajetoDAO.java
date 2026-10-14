@@ -30,6 +30,68 @@ import java.util.List;
  */
 public class TrajetoDAO {
 
+    private static final String BASE_SELECT = """
+            SELECT
+                -- Trajeto
+                t.id AS trajeto_id,
+                t.status,
+                t.data_hora_inicio,
+                t.data_hora_fim,
+                t.km_saida,
+                t.km_chegada,
+                t.numero_gta,
+                t.numero_nota_fiscal,
+                t.horario_embarque,
+                t.qtd_macho,
+                t.qtd_femea,
+                t.qtd_marruco,
+                t.horario_desembarque,
+                t.numero_curral,
+                t.nome_curraleiro,
+                t.nome_manobrista,
+                t.assinatura_curraleiro,
+                t.assinatura_manobrista,
+                t.assinatura_motorista,
+
+                -- Motorista
+                m.id AS motorista_id,
+                m.id_empresa,
+                m.assinatura AS motorista_assinatura,
+                m.nome AS motorista_nome,
+                m.data_nascimento AS motorista_data_nascimento,
+                m.senha AS motorista_senha,
+                m.email AS motorista_email,
+                m.telefone AS motorista_telefone,
+
+                -- Caminhão
+                c.id AS caminhao_id,
+                c.capacidade_maxima,
+                c.placa_carreta,
+                c.placa_cavalo,
+
+                -- Empresa
+                e.id AS empresa_id,
+                e.nome AS empresa_nome,
+                e.cnpj AS empresa_cnpj,
+                e.codigo AS empresa_codigo,
+
+                -- Pecuarista
+                p.id AS pecuarista_id,
+                p.cpf AS pecuarista_cpf,
+                p.assinatura AS pecuarista_assinatura,
+                p.data_nascimento AS pecuarista_data_nascimento,
+                p.nome AS pecuarista_nome,
+                p.senha AS pecuarista_senha,
+                p.email AS pecuarista_email,
+                p.telefone AS pecuarista_telefone
+
+            FROM trajeto t
+            JOIN motorista m ON m.id = t.id_motorista
+            JOIN caminhao c ON c.id = t.id_caminhao
+            JOIN empresa e ON e.id = m.id_empresa
+            JOIN pecuarista p ON p.id = t.id_pecuarista
+            """;
+
     // ==================== OPERAÇÕES CRUD ====================
 
     /**
@@ -86,69 +148,7 @@ public class TrajetoDAO {
      * @return lista de objetos TrajetoModel ordenados pelo identificador do trajeto
      */
     public List<TrajetoModel> listar() {
-        String sql = """
-                SELECT
-                    -- Trajeto
-                    t.id AS trajeto_id,
-                    t.status,
-                    t.data_hora_inicio,
-                    t.data_hora_fim,
-                    t.km_saida,
-                    t.km_chegada,
-                    t.numero_gta,
-                    t.numero_nota_fiscal,
-                    t.horario_embarque,
-                    t.qtd_macho,
-                    t.qtd_femea,
-                    t.qtd_marruco,
-                    t.horario_desembarque,
-                    t.numero_curral,
-                    t.nome_curraleiro,
-                    t.nome_manobrista,
-                    t.assinatura_curraleiro,
-                    t.assinatura_manobrista,
-                    t.assinatura_motorista,
-
-                    -- Motorista
-                    m.id AS motorista_id,
-                    m.id_empresa,
-                    m.assinatura AS motorista_assinatura,
-                    m.nome AS motorista_nome,
-                    m.data_nascimento AS motorista_data_nascimento,
-                    m.senha AS motorista_senha,
-                    m.email AS motorista_email,
-                    m.telefone AS motorista_telefone,
-
-                    -- Caminhão
-                    c.id AS caminhao_id,
-                    c.capacidade_maxima,
-                    c.placa_carreta,
-                    c.placa_cavalo,
-
-                    -- Empresa
-                    e.id AS empresa_id,
-                    e.nome AS empresa_nome,
-                    e.cnpj AS empresa_cnpj,
-                    e.codigo AS empresa_codigo,
-
-                    -- Pecuarista
-                    p.id AS pecuarista_id,
-                    p.cpf AS pecuarista_cpf,
-                    p.assinatura AS pecuarista_assinatura,
-                    p.data_nascimento AS pecuarista_data_nascimento,
-                    p.nome AS pecuarista_nome,
-                    p.senha AS pecuarista_senha,
-                    p.email AS pecuarista_email,
-                    p.telefone AS pecuarista_telefone
-
-                FROM trajeto t
-                JOIN motorista m ON m.id = t.id_motorista
-                JOIN caminhao c ON c.id = t.id_caminhao
-                JOIN empresa e ON e.id = m.id_empresa
-                JOIN pecuarista p ON p.id = t.id_pecuarista
-                ORDER BY t.id;
-                """;
-
+        String sql = BASE_SELECT + " ORDER BY t.id;";
         List<TrajetoModel> trajetos = new ArrayList<>();
 
         try (Connection connection = ConnectionFactory.getConnection();
@@ -156,7 +156,7 @@ public class TrajetoDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                trajetos.add(mapearResultSet(rs));
+                trajetos.add(extrairTrajeto(rs));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar trajeto: " + e.getMessage());
@@ -172,68 +172,7 @@ public class TrajetoDAO {
      * @return objeto TrajetoModel preenchido ou null se não for encontrado
      */
     public TrajetoModel buscar(int id) {
-        String sql = """
-                SELECT
-                    -- Trajeto
-                    t.id AS trajeto_id,
-                    t.status,
-                    t.data_hora_inicio,
-                    t.data_hora_fim,
-                    t.km_saida,
-                    t.km_chegada,
-                    t.numero_gta,
-                    t.numero_nota_fiscal,
-                    t.horario_embarque,
-                    t.qtd_macho,
-                    t.qtd_femea,
-                    t.qtd_marruco,
-                    t.horario_desembarque,
-                    t.numero_curral,
-                    t.nome_curraleiro,
-                    t.nome_manobrista,
-                    t.assinatura_curraleiro,
-                    t.assinatura_manobrista,
-                    t.assinatura_motorista,
-
-                    -- Motorista
-                    m.id AS motorista_id,
-                    m.id_empresa,
-                    m.assinatura AS motorista_assinatura,
-                    m.nome AS motorista_nome,
-                    m.data_nascimento AS motorista_data_nascimento,
-                    m.senha AS motorista_senha,
-                    m.email AS motorista_email,
-                    m.telefone AS motorista_telefone,
-
-                    -- Caminhão
-                    c.id AS caminhao_id,
-                    c.capacidade_maxima,
-                    c.placa_carreta,
-                    c.placa_cavalo,
-
-                    -- Empresa
-                    e.id AS empresa_id,
-                    e.nome AS empresa_nome,
-                    e.cnpj AS empresa_cnpj,
-                    e.codigo AS empresa_codigo,
-
-                    -- Pecuarista
-                    p.id AS pecuarista_id,
-                    p.cpf AS pecuarista_cpf,
-                    p.assinatura AS pecuarista_assinatura,
-                    p.data_nascimento AS pecuarista_data_nascimento,
-                    p.nome AS pecuarista_nome,
-                    p.senha AS pecuarista_senha,
-                    p.email AS pecuarista_email,
-                    p.telefone AS pecuarista_telefone
-
-                FROM trajeto t
-                JOIN motorista m ON m.id = t.id_motorista
-                JOIN caminhao c ON c.id = t.id_caminhao
-                JOIN empresa e ON e.id = m.id_empresa
-                JOIN pecuarista p ON p.id = t.id_pecuarista
-                WHERE t.id = ?;
-                """;
+        String sql = BASE_SELECT + " WHERE t.id = ?;";
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -242,7 +181,7 @@ public class TrajetoDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapearResultSet(rs);
+                    return extrairTrajeto(rs);
                 }
             }
         } catch (SQLException e) {
@@ -308,8 +247,7 @@ public class TrajetoDAO {
      */
     public boolean excluir(int id) {
         String sql = """
-                DELETE
-                FROM trajeto
+                DELETE FROM trajeto
                 WHERE id = ?;
                 """;
 
@@ -325,16 +263,374 @@ public class TrajetoDAO {
         }
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um trajeto de forma simplificada apenas com os vínculos e documentos essenciais.
+     */
+    public boolean inserirSimples(Integer idMotorista, Integer idCaminhao, Integer idPecuarista, StatusTrajeto status, String numeroGta, String numeroNotaFiscal) {
+        String sql = """
+                INSERT INTO trajeto (id_motorista, id_caminhao, id_pecuarista, status, numero_gta, numero_nota_fiscal)
+                VALUES (?, ?, ?, ?::status_trajeto, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idMotorista != null && idMotorista > 0) stmt.setInt(1, idMotorista); else stmt.setNull(1, Types.INTEGER);
+            if (idCaminhao != null && idCaminhao > 0) stmt.setInt(2, idCaminhao); else stmt.setNull(2, Types.INTEGER);
+            if (idPecuarista != null && idPecuarista > 0) stmt.setInt(3, idPecuarista); else stmt.setNull(3, Types.INTEGER);
+            stmt.setString(4, status != null ? status.name() : StatusTrajeto.EM_ANDAMENTO.name());
+            stmt.setString(5, numeroGta);
+            stmt.setString(6, numeroNotaFiscal);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir trajeto simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o status operacional de um trajeto.
+     */
+    public boolean atualizarStatus(int id, StatusTrajeto novoStatus) {
+        String sql = "UPDATE trajeto SET status = ?::status_trajeto WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoStatus != null ? novoStatus.name() : StatusTrajeto.EM_ANDAMENTO.name());
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar status do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número da GTA de um trajeto.
+     */
+    public boolean atualizarGTA(int id, String novoGta) {
+        String sql = "UPDATE trajeto SET numero_gta = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novoGta != null ? novoGta.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar GTA do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número da Nota Fiscal de um trajeto.
+     */
+    public boolean atualizarNotaFiscal(int id, String novaNotaFiscal) {
+        String sql = "UPDATE trajeto SET numero_nota_fiscal = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaNotaFiscal != null ? novaNotaFiscal.trim() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar NF do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a quilometragem (saída e chegada) de um trajeto.
+     */
+    public boolean atualizarKm(int id, int kmSaida, int kmChegada) {
+        String sql = "UPDATE trajeto SET km_saida = ?, km_chegada = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, kmSaida);
+            stmt.setInt(2, kmChegada);
+            stmt.setInt(3, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar Km do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o motorista designado para um trajeto.
+     */
+    public boolean atualizarMotorista(int id, Integer idMotorista) {
+        String sql = "UPDATE trajeto SET id_motorista = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idMotorista != null && idMotorista > 0) stmt.setInt(1, idMotorista); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar motorista do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o caminhão designado para um trajeto.
+     */
+    public boolean atualizarCaminhao(int id, Integer idCaminhao) {
+        String sql = "UPDATE trajeto SET id_caminhao = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idCaminhao != null && idCaminhao > 0) stmt.setInt(1, idCaminhao); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar caminhão do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o pecuarista associado a um trajeto.
+     */
+    public boolean atualizarPecuarista(int id, Integer idPecuarista) {
+        String sql = "UPDATE trajeto SET id_pecuarista = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idPecuarista != null && idPecuarista > 0) stmt.setInt(1, idPecuarista); else stmt.setNull(1, Types.INTEGER);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar pecuarista do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente o número do curral e nome do curraleiro.
+     */
+    public boolean atualizarCurral(int id, String numeroCurral, String curraleiro) {
+        String sql = "UPDATE trajeto SET numero_curral = ?, nome_curraleiro = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, numeroCurral);
+            stmt.setString(2, curraleiro);
+            stmt.setInt(3, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar curral do trajeto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ==================== CONSULTAS ESPECÍFICAS ====================
+
+    /**
+     * Busca todos os trajetos realizados por um motorista específico.
+     *
+     * @param idMotorista identificador do motorista
+     * @return lista de trajetos do motorista ordenados por data decrescente
+     */
+    public List<TrajetoModel> buscarPorMotorista(int idMotorista) {
+        String sql = BASE_SELECT + " WHERE t.id_motorista = ? ORDER BY t.data_hora_inicio DESC, t.id DESC;";
+        List<TrajetoModel> trajetos = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idMotorista);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    trajetos.add(extrairTrajeto(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar trajetos por motorista: " + e.getMessage());
+        }
+
+        return trajetos;
+    }
+
+    /**
+     * Busca todos os trajetos realizados utilizando um determinado caminhão.
+     *
+     * @param idCaminhao identificador do veículo
+     * @return lista de trajetos vinculados ao caminhão ordenados por data decrescente
+     */
+    public List<TrajetoModel> buscarPorCaminhao(int idCaminhao) {
+        String sql = BASE_SELECT + " WHERE t.id_caminhao = ? ORDER BY t.data_hora_inicio DESC, t.id DESC;";
+        List<TrajetoModel> trajetos = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idCaminhao);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    trajetos.add(extrairTrajeto(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar trajetos por caminhão: " + e.getMessage());
+        }
+
+        return trajetos;
+    }
+
+    /**
+     * Busca todos os trajetos associados a um pecuarista específico.
+     *
+     * @param idPecuarista identificador do pecuarista
+     * @return lista de trajetos vinculados ao produtor rural
+     */
+    public List<TrajetoModel> buscarPorPecuarista(int idPecuarista) {
+        String sql = BASE_SELECT + " WHERE t.id_pecuarista = ? ORDER BY t.data_hora_inicio DESC, t.id DESC;";
+        List<TrajetoModel> trajetos = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, idPecuarista);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    trajetos.add(extrairTrajeto(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar trajetos por pecuarista: " + e.getMessage());
+        }
+
+        return trajetos;
+    }
+
+    /**
+     * Busca trajetos filtrados por seu status operacional atual.
+     *
+     * @param status status do trajeto (ex: PENDENTE, EM_TRANSITO, FINALIZADO)
+     * @return lista de trajetos no status informado
+     */
+    public List<TrajetoModel> buscarPorStatus(StatusTrajeto status) {
+        if (status == null) {
+            return listar();
+        }
+
+        String sql = BASE_SELECT + " WHERE t.status = ?::status_trajeto ORDER BY t.data_hora_inicio DESC, t.id DESC;";
+        List<TrajetoModel> trajetos = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, status.name());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    trajetos.add(extrairTrajeto(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar trajetos por status: " + e.getMessage());
+        }
+
+        return trajetos;
+    }
+
+    /**
+     * Localiza um trajeto pelo número da Guia de Trânsito Animal (GTA).
+     *
+     * @param numeroGta número da GTA a pesquisar
+     * @return objeto TrajetoModel correspondente ou null se não encontrado
+     */
+    public TrajetoModel buscarPorGTA(String numeroGta) {
+        if (numeroGta == null || numeroGta.isBlank()) {
+            return null;
+        }
+
+        String sql = BASE_SELECT + " WHERE LOWER(t.numero_gta) = LOWER(?) LIMIT 1;";
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, numeroGta.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairTrajeto(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar trajeto por GTA: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Localiza um trajeto pelo número da Nota Fiscal emitida.
+     *
+     * @param numeroNotaFiscal número fiscal a pesquisar
+     * @return objeto TrajetoModel correspondente ou null se não encontrado
+     */
+    public TrajetoModel buscarPorNotaFiscal(String numeroNotaFiscal) {
+        if (numeroNotaFiscal == null || numeroNotaFiscal.isBlank()) {
+            return null;
+        }
+
+        String sql = BASE_SELECT + " WHERE LOWER(t.numero_nota_fiscal) = LOWER(?) LIMIT 1;";
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, numeroNotaFiscal.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairTrajeto(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar trajeto por Nota Fiscal: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Busca viagens que tiveram início dentro de um determinado intervalo de datas/horas.
+     *
+     * @param inicio data/hora inicial do intervalo
+     * @param fim    data/hora final do intervalo
+     * @return lista de trajetos iniciados no intervalo
+     */
+    public List<TrajetoModel> buscarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
+        String sql = BASE_SELECT + " WHERE t.data_hora_inicio BETWEEN ? AND ? ORDER BY t.data_hora_inicio ASC;";
+        List<TrajetoModel> trajetos = new ArrayList<>();
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setObject(1, inicio);
+            stmt.setObject(2, fim);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    trajetos.add(extrairTrajeto(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar trajetos por período: " + e.getMessage());
+        }
+
+        return trajetos;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
-     * Converte o registro atual do ResultSet em um objeto TrajetoModel completamente populado.
+     * Converte o registro atual do ResultSet num objeto TrajetoModel completamente populado.
      *
      * @param rs ResultSet posicionado no registro a ser lido
      * @return instância de TrajetoModel completamente instanciada
      * @throws SQLException se houver falha de acesso aos dados do ResultSet
      */
-    private TrajetoModel mapearResultSet(ResultSet rs) throws SQLException {
+    public TrajetoModel extrairTrajeto(ResultSet rs) throws SQLException {
         Date dataNascMotorista = rs.getDate("motorista_data_nascimento");
         LocalDate nascimentoMotorista = dataNascMotorista != null ? dataNascMotorista.toLocalDate() : null;
 
@@ -376,7 +672,7 @@ public class TrajetoDAO {
         );
 
         String statusStr = rs.getString("status");
-        StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+        StatusTrajeto status = StatusTrajeto.from(statusStr);
 
         Timestamp tsInicio = rs.getTimestamp("data_hora_inicio");
         LocalDateTime dataHoraInicio = tsInicio != null ? tsInicio.toLocalDateTime() : null;
@@ -439,13 +735,15 @@ public class TrajetoDAO {
             stmt.setNull(2, Types.INTEGER);
         }
 
-        if (trajeto.getPecuarista() != null) {
+        if (trajeto.getPecuaristaModel() != null) {
+            stmt.setInt(3, trajeto.getPecuaristaModel().getId());
+        } else if (trajeto.getPecuarista() != null) {
             stmt.setInt(3, trajeto.getPecuarista().getId());
         } else {
             stmt.setNull(3, Types.INTEGER);
         }
 
-        stmt.setString(4, trajeto.getStatus() != null ? trajeto.getStatus().name() : null);
+        stmt.setString(4, trajeto.getStatus() != null ? trajeto.getStatus().name() : StatusTrajeto.EM_ANDAMENTO.name());
         stmt.setObject(5, trajeto.getDataHoraInicio());
         stmt.setObject(6, trajeto.getDataHoraFim());
         stmt.setInt(7, trajeto.getKmSaida());

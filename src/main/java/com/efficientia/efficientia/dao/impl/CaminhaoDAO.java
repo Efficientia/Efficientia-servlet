@@ -182,6 +182,101 @@ public class CaminhaoDAO {
         return null;
     }
 
+    // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /**
+     * Insere um caminhão de forma simplificada com dados essenciais.
+     */
+    public boolean inserirSimples(String placaCavalo, String placaCarreta, int capacidadeMaxima, Integer idEmpresa) {
+        String sql = """
+                INSERT INTO caminhao (id_empresa, placa_cavalo, placa_carreta, capacidade_maxima)
+                VALUES (?, ?, ?, ?);
+                """;
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setString(2, placaCavalo);
+            stmt.setString(3, placaCarreta);
+            stmt.setInt(4, capacidadeMaxima);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir caminhão simples: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a placa do cavalo mecânico.
+     */
+    public boolean atualizarPlacaCavalo(int id, String novaPlaca) {
+        String sql = "UPDATE caminhao SET placa_cavalo = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaPlaca != null ? novaPlaca.trim().toUpperCase() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar placa cavalo do caminhão: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a placa da carreta.
+     */
+    public boolean atualizarPlacaCarreta(int id, String novaPlaca) {
+        String sql = "UPDATE caminhao SET placa_carreta = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, novaPlaca != null ? novaPlaca.trim().toUpperCase() : null);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar placa carreta do caminhão: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a capacidade máxima do caminhão.
+     */
+    public boolean atualizarCapacidadeMaxima(int id, int novaCapacidade) {
+        String sql = "UPDATE caminhao SET capacidade_maxima = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, novaCapacidade);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar capacidade do caminhão: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza especificamente a empresa vinculada ao caminhão.
+     */
+    public boolean atualizarEmpresa(int id, Integer idEmpresa) {
+        String sql = "UPDATE caminhao SET id_empresa = ? WHERE id = ?;";
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (idEmpresa != null && idEmpresa > 0) {
+                stmt.setInt(1, idEmpresa);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar empresa do caminhão: " + e.getMessage());
+            return false;
+        }
+    }
+
     /**
      * Busca caminhões por placa (pesquisando tanto em placa_cavalo quanto em placa_carreta),
      * tolerante a hífens e maiúsculas/minúsculas.
