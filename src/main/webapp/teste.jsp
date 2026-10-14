@@ -22,6 +22,16 @@
 <%@ page import="com.efficientia.efficientia.model.StatusTrajeto" %>
 
 <%
+    // =========================================================================
+    // [ALTERAÇÃO FUTURA]: Proteção de Sessão da Área Restrita.
+    // Caso este arquivo mude de nome ou seja substituído por outra JSP,
+    // replique esta validação de sessão no novo arquivo:
+    // =========================================================================
+    if (session == null || session.getAttribute("adminLogado") == null) {
+        response.sendRedirect(request.getContextPath() + "/login?erro=nao_autorizado");
+        return;
+    }
+
     // Instanciação dos DAOs
     PecuaristaDAO pecuaristaDAO = new PecuaristaDAO();
     MotoristaDAO motoristaDAO = new MotoristaDAO();
@@ -358,9 +368,19 @@
             <h1>Efficientia <span>| Gestão Integrada</span></h1>
             <p>Painel Unificado de Testes e Gerenciamento CRUD dos Servlets</p>
         </div>
-        <a href="${pageContext.request.contextPath}/" class="btn-voltar">
-            &larr; Página Principal
-        </a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <c:if test="${not empty sessionScope.adminLogado}">
+                <span style="color: #cbd5e1; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+                    👤 Logado como: <strong style="color: #4ade80;">${sessionScope.adminLogado.nome}</strong>
+                </span>
+            </c:if>
+            <a href="${pageContext.request.contextPath}/" class="btn-voltar">
+                &larr; Página Principal
+            </a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn-voltar" style="background: #dc2626; border-color: #ef4444; color: #ffffff;">
+                Sair
+            </a>
+        </div>
     </header>
 
     <!-- Navegação Principal entre Servlets -->
