@@ -26,7 +26,7 @@ import java.io.IOException;
         // (por exemplo: de teste.jsp para dashboard.jsp, painel.jsp ou outra rota),
         // altere ou adicione o caminho do arquivo na linha abaixo:
         // =========================================================================
-        "/teste.jsp"
+        "/teste.jsp", "/admin", "/empresa", "/motorista", "/caminhao", "/pecuarista", "/trajeto"
 })
 public class AuthFilter implements Filter {
 
@@ -41,6 +41,7 @@ public class AuthFilter implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
+        resp.setHeader("Cache-Control", "no-store");
 
         // Obtém a sessão existente sem criar uma nova caso não exista
         HttpSession session = req.getSession(false);

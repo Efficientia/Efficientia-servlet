@@ -3,6 +3,7 @@ package com.efficientia.efficientia.dao.impl;
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.util.PasswordHasher;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -202,7 +203,7 @@ public class AdminDAO {
     /**
      * Insere um administrador de forma simplificada com os campos essenciais.
      */
-    public boolean inserirSimples(String nome, String email, String senha, Integer idEmpresa) {
+    public boolean inserirSimples(String nome, String email, String senha, Integer idEmpresa) throws SQLException {
         String sql = """
                 INSERT INTO adm (id_empresa, email, senha, nome)
                 VALUES (?, ?, ?, ?);
@@ -215,12 +216,19 @@ public class AdminDAO {
                 stmt.setNull(1, Types.INTEGER);
             }
             stmt.setString(2, email);
-            stmt.setString(3, senha);
+            stmt.setString(3, PasswordHasher.hash(senha));
             stmt.setString(4, nome);
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println("Erro ao inserir administrador simples: " + e.getMessage());
-            return false;
+        }
+    }
+
+    public boolean emailCadastrado(String email) throws SQLException {
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement("SELECT 1 FROM adm WHERE LOWER(email) = ?")) {
+            stmt.setString(1, email.trim().toLowerCase(java.util.Locale.ROOT));
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 
@@ -263,7 +271,7 @@ public class AdminDAO {
         String sql = "UPDATE adm SET senha = ? WHERE id = ?;";
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, novaSenha);
+            stmt.setString(1, PasswordHasher.hash(novaSenha));
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -448,7 +456,7 @@ public class AdminDAO {
      * @param senha senha cadastrada
      * @return objeto {@link AdminModel} com os dados completos e empresa vinculada se autenticado com sucesso, ou null caso contrário
      */
-    public AdminModel autenticar(String email, String senha) {
+    public AdminModel autenticar(String email, String senha) throws SQLException {
         if (email == null || email.isBlank() || senha == null || senha.isBlank()) {
             return null;
         }
@@ -461,22 +469,31 @@ public class AdminDAO {
                        e.codigo AS empresa_codigo
                 FROM adm a
                 LEFT JOIN empresa e ON e.id = a.id_empresa
-                WHERE LOWER(a.email) = ? AND a.senha = ?;
+                WHERE LOWER(a.email) = ?;
                 """;
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, email.trim().toLowerCase());
-            stmt.setString(2, senha);
+            stmt.setString(1, email.trim().toLowerCase(java.util.Locale.ROOT));
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return extrairAdmin(rs);
+                    AdminModel admin = extrairAdmin(rs);
+                    if (!PasswordHasher.verify(senha, admin.getSenha())) return null;
+                    if (!PasswordHasher.isHashed(admin.getSenha())) {
+                        try (PreparedStatement migrate = connection.prepareStatement(
+                                "UPDATE adm SET senha = ? WHERE id = ? AND senha = ?")) {
+                            migrate.setString(1, PasswordHasher.hash(senha));
+                            migrate.setInt(2, admin.getId());
+                            migrate.setString(3, admin.getSenha());
+                            if (migrate.executeUpdate() != 1) return null;
+                        }
+                    }
+                    admin.setSenha(null);
+                    return admin;
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("Erro ao autenticar Admin: " + e.getMessage());
         }
 
         return null;
@@ -522,7 +539,8 @@ public class AdminDAO {
             stmt.setNull(1, Types.INTEGER);
         }
         stmt.setString(2, adminModel.getEmail());
-        stmt.setString(3, adminModel.getSenha());
+        stmt.setString(3, PasswordHasher.isHashed(adminModel.getSenha())
+                ? adminModel.getSenha() : PasswordHasher.hash(adminModel.getSenha()));
         stmt.setString(4, adminModel.getNome());
     }
 }

@@ -46,6 +46,10 @@ public class ConnectionFactory {
     }
 
     public static Connection getConnection() throws SQLException {
+        if (dotenv.get("db.url") == null || dotenv.get("db.user") == null
+                || dotenv.get("db.password") == null) {
+            throw new SQLException("Configure db.url, db.user e db.password no .env local.");
+        }
         return DriverManager.getConnection(
                 dotenv.get("db.url"),
                 dotenv.get("db.user"),

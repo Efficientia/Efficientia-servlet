@@ -4,6 +4,15 @@ html {
     max-width: 100%;
 }
 
+.alerta-erro, .alerta-sucesso {
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    line-height: 1.4;
+}
+.alerta-erro { color: #8a1c1c; background: #fff0f0; }
+.alerta-sucesso { color: #14532d; background: #eaf8ee; }
+
 * {
     margin: 0;
     padding: 0;
