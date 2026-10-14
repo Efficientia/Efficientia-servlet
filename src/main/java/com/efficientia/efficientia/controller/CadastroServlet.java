@@ -39,11 +39,22 @@ public class CadastroServlet extends HttpServlet {
         String nome = req.getParameter("nome");
         String email = req.getParameter("email");
         String senha = req.getParameter("senha");
+        String nomeEmpresa = req.getParameter("nomeEmpresa");
+        String cnpj = req.getParameter("cnpj");
         req.setAttribute("nomeInformado", nome);
         req.setAttribute("emailInformado", email);
+        req.setAttribute("empresaInformada", nomeEmpresa);
+        req.setAttribute("cnpjInformado", cnpj);
 
-        if (nome == null || nome.isBlank() || email == null || email.isBlank() || senha == null || senha.isBlank()) {
+        if (nome == null || nome.isBlank() || email == null || email.isBlank() || senha == null || senha.isBlank()
+                || nomeEmpresa == null || nomeEmpresa.isBlank() || cnpj == null || cnpj.isBlank()) {
             req.setAttribute("erro", "Todos os campos são obrigatórios.");
+            req.getRequestDispatcher("/cadastro.jsp").forward(req, resp);
+            return;
+        }
+
+        if (nomeEmpresa.trim().length() > 150 || !ValidadorRegex.isCnpjValido(cnpj)) {
+            req.setAttribute("erro", "Informe o nome da empresa (até 150 caracteres) e um CNPJ com 14 dígitos.");
             req.getRequestDispatcher("/cadastro.jsp").forward(req, resp);
             return;
         }
@@ -62,20 +73,14 @@ public class CadastroServlet extends HttpServlet {
                 return;
             }
 
-            boolean sucesso = adminDAO.inserirSimples(nome.trim(),
-                    email.trim().toLowerCase(java.util.Locale.ROOT), senha, null);
-            if (sucesso) {
-                resp.sendRedirect(req.getContextPath() + "/login?msg=cadastrado");
-            } else {
-                resp.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                req.setAttribute("erro", "Não foi possível salvar no banco de dados. Tente novamente mais tarde.");
-                req.getRequestDispatcher("/cadastro.jsp").forward(req, resp);
-            }
+            adminDAO.cadastrarComEmpresa(nomeEmpresa.trim(), cnpj.replaceAll("[./-]", "").trim(),
+                    nome.trim(), email.trim().toLowerCase(java.util.Locale.ROOT), senha);
+            resp.sendRedirect(req.getContextPath() + "/login?msg=cadastrado");
         } catch (SQLException ex) {
             boolean duplicado = "23505".equals(ex.getSQLState());
             if (!duplicado) getServletContext().log("Falha no cadastro de administrador.", ex);
             resp.setStatus(duplicado ? HttpServletResponse.SC_CONFLICT : HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            req.setAttribute("erro", duplicado ? "Este e-mail já está em uso."
+            req.setAttribute("erro", duplicado ? "Nome ou CNPJ da empresa, ou e-mail do administrador, já cadastrado."
                     : "Não foi possível acessar o banco de dados. Tente novamente mais tarde.");
             req.getRequestDispatcher("/cadastro.jsp").forward(req, resp);
         }

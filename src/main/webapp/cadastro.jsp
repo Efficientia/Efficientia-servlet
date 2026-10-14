@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="pagina-cadastro">
     <div class="conteudo">
         <div class="lateral-esquerda">
             <a href="${pageContext.request.contextPath}/"><img class="logo-efficientia" src="${pageContext.request.contextPath}/assets/logo_efficientia.png" alt="Logo Efficientia"></a>
@@ -22,7 +22,15 @@
                     <h1 class="titulo-login">Cadastrar</h1>
                     <c:if test="${not empty erro}"><p class="alerta-erro" role="alert"><c:out value="${erro}" /></p></c:if>
                     <div class="grupo-input">
-                        <label for="nome">Nome</label>
+                        <label for="nomeEmpresa">Nome da empresa</label>
+                        <input type="text" id="nomeEmpresa" name="nomeEmpresa" value="<c:out value='${empresaInformada}' />" placeholder="Nome da empresa" maxlength="150" autocomplete="organization" required>
+                    </div>
+                    <div class="grupo-input">
+                        <label for="cnpj">CNPJ da empresa</label>
+                        <input type="text" id="cnpj" name="cnpj" value="<c:out value='${cnpjInformado}' />" placeholder="00.000.000/0001-00" maxlength="18" inputmode="numeric" pattern="([0-9]{14}|[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}\-[0-9]{2})" required>
+                    </div>
+                    <div class="grupo-input">
+                        <label for="nome">Nome do administrador</label>
                         <input type="text" id="nome" name="nome" value="<c:out value='${nomeInformado}' />" placeholder="Nome" maxlength="100" autocomplete="name" required>
                     </div>
                     <div class="grupo-input">

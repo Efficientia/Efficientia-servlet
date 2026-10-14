@@ -214,3 +214,22 @@ background: linear-gradient(191deg, rgba(33, 78, 143, 0.90) 0%, rgba(0, 29, 137,
     min-height: 85vh;
 
 }
+
+.pagina-cadastro .menu-login {
+    min-width: 0;
+    width: 100%;
+    max-width: 90vh;
+    padding: 24px;
+}
+
+.pagina-cadastro .titulo-login {
+    font-size: clamp(36px, 6vw, 64px);
+}
+
+@media (max-width: 860px) {
+    .pagina-cadastro .conteudo { grid-template-columns: 1fr; }
+    .pagina-cadastro .lateral-esquerda { padding: 20px; }
+    .pagina-cadastro .logo-efficientia { width: 220px; max-width: 100%; }
+    .pagina-cadastro .direita { padding: 24px 16px; }
+    .pagina-cadastro .menu-login { min-height: 0; }
+}

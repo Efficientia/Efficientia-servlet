@@ -232,6 +232,43 @@ public class AdminDAO {
         }
     }
 
+    /** Cria a empresa e seu primeiro administrador de forma atômica. */
+    public void cadastrarComEmpresa(String nomeEmpresa, String cnpj, String nome,
+                                    String email, String senha) throws SQLException {
+        String hash = PasswordHasher.hash(senha);
+        try (Connection connection = ConnectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                int idEmpresa;
+                try (PreparedStatement stmt = connection.prepareStatement(
+                        "INSERT INTO empresa (nome, cnpj) VALUES (?, ?) RETURNING id")) {
+                    stmt.setString(1, nomeEmpresa);
+                    stmt.setString(2, cnpj);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (!rs.next()) throw new SQLException("Empresa não foi criada.");
+                        idEmpresa = rs.getInt("id");
+                    }
+                }
+                try (PreparedStatement stmt = connection.prepareStatement(
+                        "INSERT INTO adm (id_empresa, email, senha, nome) VALUES (?, ?, ?, ?)")) {
+                    stmt.setInt(1, idEmpresa);
+                    stmt.setString(2, email);
+                    stmt.setString(3, hash);
+                    stmt.setString(4, nome);
+                    if (stmt.executeUpdate() != 1) throw new SQLException("Administrador não foi criado.");
+                }
+                connection.commit();
+            } catch (SQLException | RuntimeException ex) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackError) {
+                    ex.addSuppressed(rollbackError);
+                }
+                throw ex;
+            }
+        }
+    }
+
     /**
      * Atualiza especificamente o nome de um administrador.
      */
