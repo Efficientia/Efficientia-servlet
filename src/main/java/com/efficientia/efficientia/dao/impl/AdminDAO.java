@@ -440,6 +440,48 @@ public class AdminDAO {
         return listaAdmin;
     }
 
+    /**
+     * Autentica um administrador com base no e-mail e senha fornecidos.
+     * Realiza a busca pelo e-mail (case-insensitive) e verifica a correspondência da senha.
+     *
+     * @param email endereço de e-mail de acesso do administrador
+     * @param senha senha cadastrada
+     * @return objeto {@link AdminModel} com os dados completos e empresa vinculada se autenticado com sucesso, ou null caso contrário
+     */
+    public AdminModel autenticar(String email, String senha) {
+        if (email == null || email.isBlank() || senha == null || senha.isBlank()) {
+            return null;
+        }
+
+        String sql = """
+                SELECT a.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM adm a
+                LEFT JOIN empresa e ON e.id = a.id_empresa
+                WHERE LOWER(a.email) = ? AND a.senha = ?;
+                """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, email.trim().toLowerCase());
+            stmt.setString(2, senha);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extrairAdmin(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao autenticar Admin: " + e.getMessage());
+        }
+
+        return null;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
