@@ -138,6 +138,8 @@ p, a, span {
 
 .menu-links {
     display: flex;
+    flex: 1;
+    min-width: 0;
     align-items: center;
     gap: 40px;
 }
@@ -146,7 +148,7 @@ p, a, span {
     font-family: "Manrope", sans-serif;
     color: #FFF8E1;
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     line-height: normal;
     text-decoration: none;
@@ -157,6 +159,36 @@ p, a, span {
 .link-menu:hover {
     opacity: 0.8;
     text-decoration: underline;
+}
+
+.menu .menu-entrar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-height: 44px;
+    margin-left: auto;
+    padding: 0 20px;
+    border: 1px solid #FFF8E1;
+    border-radius: 40px;
+    background: transparent;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    text-decoration: none;
+    transform: none;
+    transition: background-color 0.2s ease;
+}
+
+.menu .menu-entrar:hover {
+    background-color: rgba(255, 248, 225, 0.12);
+    opacity: 1;
+}
+
+.menu .menu-entrar:focus-visible {
+    outline: 3px solid #FFF8E1;
+    outline-offset: 3px;
 }
 
 #logo {
@@ -852,10 +884,10 @@ p, a, span {
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        padding: 10px 40px;
+        padding: 10px 24px;
         height: 56px;
         justify-content: flex-start;
-        gap: 35px;
+        gap: 20px;
         border-radius: 20px;
     }
 
@@ -864,7 +896,7 @@ p, a, span {
     }
 
     .menu-links {
-        gap: 25px;
+        gap: clamp(12px, 1.6vw, 25px);
     }
 
     .link-menu {
@@ -1217,7 +1249,7 @@ p, a, span {
    14. MEDIA QUERY - 768PX
    ========================================================================== */
 
-@media (max-width: 768px) {
+@media (max-width: 860px) {
     /* Menu Hamburguer Mobile */
     .menu {
         position: fixed;
@@ -1268,6 +1300,7 @@ p, a, span {
 
     .menu-links {
         display: none;
+        flex: 0 0 100%;
         width: 100%;
         flex-direction: column;
         align-items: center;
@@ -1281,6 +1314,12 @@ p, a, span {
     .menu.open .menu-links {
         display: flex;
         animation: menuDropdown 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .menu .menu-entrar {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 6px;
     }
 
     @keyframes menuDropdown {
