@@ -1,29 +1,34 @@
-================================================================================
-           GUIA PASSO A PASSO: COMO CRIAR CLASSES DAO (DATA ACCESS OBJECT)
-             JAVA 17+ + JDBC + POSTGRESQL (PADRÃO BASEADO EM TrajetoDAO)
-================================================================================
+# Guia Passo a Passo: Como Criar Classes DAO (Data Access Object)
 
-1. O QUE É UM DAO?
---------------------------------------------------------------------------------
-DAO (Data Access Object) é o padrão de projeto arquitetural que centraliza e
-encapsula todas as operações de persistência e comandos SQL de uma entidade:
+**Tecnologias:** Java 17+ | JDBC | PostgreSQL  
+**Referência:** Padrão arquitetural baseado em `TrajetoDAO`
 
-- MODEL (ex: TrajetoModel, ParadaImprevistaModel):
+---
+
+## 1. O que é um DAO?
+
+**DAO (Data Access Object)** é o padrão de projeto arquitetural que centraliza e encapsula todas as operações de persistência e comandos SQL de uma entidade:
+
+- **MODEL** (ex: `TrajetoModel`, `ParadaImprevistaModel`):  
   Representa as entidades de negócio em POO (atributos, construtores, getters/setters).
-- DAO (ex: TrajetoDAO, ParadaImprevistaDAO):
-  Executa diretamente as operações no banco de dados via JDBC (INSERT, SELECT, UPDATE, DELETE).
-- Conexão (ConnectionFactory):
+- **DAO** (ex: `TrajetoDAO`, `ParadaImprevistaDAO`):  
+  Executa diretamente as operações no banco de dados via JDBC (`INSERT`, `SELECT`, `UPDATE`, `DELETE`).
+- **Conexão** (`ConnectionFactory`):  
   Fornece a conexão ativa com o banco PostgreSQL.
 
+---
 
-2. ESTRUTURA GERAL E BOAS PRÁTICAS (PADRÃO TrajetoDAO)
---------------------------------------------------------------------------------
-No padrão estabelecido em TrajetoDAO, a classe segue as seguintes regras de ouro:
+## 2. Estrutura Geral e Boas Práticas (Padrão `TrajetoDAO`)
 
-1. Pacote padrão:
+No padrão estabelecido em `TrajetoDAO`, a classe segue as seguintes regras de ouro:
+
+1. **Pacote padrão:**
+   ```java
    package com.efficientia.efficientia.dao.impl;
+   ```
 
-2. Imports essenciais:
+2. **Imports essenciais:**
+   ```java
    import com.efficientia.efficientia.factory.ConnectionFactory;
    import com.efficientia.efficientia.model.*;
    import java.sql.*;
@@ -31,69 +36,61 @@ No padrão estabelecido em TrajetoDAO, a classe segue as seguintes regras de our
    import java.time.LocalDateTime;
    import java.util.ArrayList;
    import java.util.List;
+   ```
 
-3. Tratamento de Exceções:
-   - Os métodos NÃO propagam 'throws SQLException'.
-   - Usam 'try-with-resources' para garantir o fechamento seguro de Connection,
-     PreparedStatement e ResultSet.
-   - Em caso de falha, capturam SQLException, imprimem o erro no console de forma clara
-     e retornam valores seguros (false para boolean, null para objetos, lista vazia para listas).
+3. **Tratamento de Exceções:**
+   - Os métodos **NÃO** propagam `throws SQLException`.
+   - Usam `try-with-resources` para garantir o fechamento seguro de `Connection`, `PreparedStatement` e `ResultSet`.
+   - Em caso de falha, capturam `SQLException`, imprimem o erro no console de forma clara e retornam valores seguros (`false` para boolean, `null` para objetos, lista vazia para coleções).
 
-4. Consultas SQL legíveis com Text Blocks ("""):
-   - Todas as queries SQL são declaradas com blocos de texto multilinha ("""),
-     mantendo indentação organizada e comentários descritivos por bloco.
+4. **Consultas SQL legíveis com Text Blocks (`"""`):**
+   - Todas as queries SQL são declaradas com blocos de texto multilinha (`"""`), mantendo indentação organizada e comentários descritivos por bloco.
 
-5. Método auxiliar 'preencherStatement':
-   - Centraliza o preenchimento de parâmetros para evitar código duplicado
-     entre os métodos 'inserir' e 'atualizar'.
+5. **Método auxiliar `preencherStatement`:**
+   - Centraliza o preenchimento de parâmetros para evitar código duplicado entre os métodos `inserir` e `atualizar`.
 
+---
 
-================================================================================
-3. GESTÃO E FECHAMENTO DE CONEXÕES: POR QUE E COMO FECHAR?
-================================================================================
+## 3. Gestão e Fechamento de Conexões: Por que e Como Fechar?
 
-[A] PRECISA FECHAR A CONEXÃO COM O BANCO DE DADOS?
---------------------------------------------------------------------------------
-SIM! É OBRIGATÓRIO fechar conexões, statements e result sets em JDBC.
+### [A] Precisa fechar a conexão com o banco de dados?
 
-Por que é indispensável:
-1. Esgotamento do Pool (Connection Leak):
-   Cada chamada a ConnectionFactory.getConnection() abre um socket de rede TCP
-   com o PostgreSQL. Servidores (como o PostgreSQL na nuvem e o PgBouncer) têm um
-   limite estrito de conexões simultâneas (geralmente entre 10 e 100 conexões).
-   Se você não fechar a conexão, ela continuará aberta até o timeout do servidor.
-   Poucas requisições já serão suficientes para travar o sistema com o erro:
-   "FATAL: remaining connection slots are reserved for non-replication superuser connections".
+**SIM! É OBRIGATÓRIO** fechar conexões, statements e result sets em JDBC.
 
-2. Liberação de Recursos no Servidor e na JVM:
-   Conexões abertas prendem memória RAM, threads no PostgreSQL, transações ativas e
-   travas (locks) de tabelas. Statements e ResultSets abertos também retêm cursores
-   no banco de dados.
+#### Por que é indispensável:
+1. **Esgotamento do Pool (Connection Leak):**  
+   Cada chamada a `ConnectionFactory.getConnection()` abre um socket de rede TCP com o PostgreSQL. Servidores (como o PostgreSQL na nuvem e o PgBouncer) têm um limite estrito de conexões simultâneas (geralmente entre 10 e 100 conexões).  
+   Se você não fechar a conexão, ela continuará aberta até o timeout do servidor. Poucas requisições já serão suficientes para travar o sistema com o erro:  
+   `FATAL: remaining connection slots are reserved for non-replication superuser connections`.
 
+2. **Liberação de Recursos no Servidor e na JVM:**  
+   Conexões abertas prendem memória RAM, threads no PostgreSQL, transações ativas e travas (*locks*) de tabelas. Statements e ResultSets abertos também retêm cursores no banco de dados.
 
-[B] COMO FECHAR DE FORMA MODERNA E SEGURA: TRY-WITH-RESOURCES
---------------------------------------------------------------------------------
-No Java 7+, NUNCA precisamos chamar connection.close() manualmente em blocos 'finally'.
-Em vez disso, utilizamos o 'try-with-resources':
+---
 
-Qualquer classe que implemente 'java.lang.AutoCloseable' (como Connection,
-PreparedStatement e ResultSet) declarada dentro dos parênteses do try(...) será
-FECHADA AUTOMATICAMENTE pela JVM assim que a execução sair do bloco try, mesmo que:
-- Ocorra uma exceção (SQLException).
-- O método retorne antes (return true / return false).
-- A ordem de fechamento é garantida e reversa à abertura (ResultSet -> PreparedStatement -> Connection).
+### [B] Como fechar de forma moderna e segura: Try-with-resources
 
-Exemplos práticos de uso correto:
+No Java 7+, **NUNCA** precisamos chamar `connection.close()` manualmente em blocos `finally`. Em vez disso, utilizamos o **`try-with-resources`**:
 
-1. Para comandos INSERT, UPDATE e DELETE:
+Qualquer classe que implemente `java.lang.AutoCloseable` (como `Connection`, `PreparedStatement` e `ResultSet`) declarada dentro dos parênteses do `try(...)` será **FECHADA AUTOMATICAMENTE** pela JVM assim que a execução sair do bloco try, mesmo que:
+- Ocorra uma exceção (`SQLException`).
+- O método retorne antes (`return true` / `return false`).
+- A ordem de fechamento é garantida e reversa à abertura (`ResultSet` &rarr; `PreparedStatement` &rarr; `Connection`).
+
+#### Exemplos práticos de uso correto:
+
+1. **Para comandos `INSERT`, `UPDATE` e `DELETE`:**
+   ```java
    try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)) {
 
        preencherStatement(stmt, model);
        return stmt.executeUpdate() > 0;
    } // <-- Aqui 'stmt' e 'connection' são fechados automaticamente pela JVM!
+   ```
 
-2. Para comando SELECT com iteração (listar):
+2. **Para comando `SELECT` com iteração (`listar`):**
+   ```java
    try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery()) {
@@ -102,8 +99,10 @@ Exemplos práticos de uso correto:
            // mapeia os objetos...
        }
    } // <-- Aqui 'rs', 'stmt' e 'connection' são fechados automaticamente!
+   ```
 
-3. Para comando SELECT com parâmetros (buscar por ID):
+3. **Para comando `SELECT` com parâmetros (`buscar por ID`):**
+   ```java
    try (Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement(sql)) {
 
@@ -115,15 +114,17 @@ Exemplos práticos de uso correto:
            }
        } // <-- 'rs' fechado automaticamente aqui
    } // <-- 'stmt' e 'connection' fechados automaticamente aqui
+   ```
 
+---
 
-4. O MÉTODO AUXILIAR: preencherStatement
---------------------------------------------------------------------------------
-Objetivo: Mapear os atributos do Model para os parâmetros '?' do PreparedStatement.
-É compartilhado por inserir() e atualizar().
+## 4. O Método Auxiliar: `preencherStatement`
 
-Exemplo (baseado em TrajetoDAO):
---------------------------------------------------------------------------------
+**Objetivo:** Mapear os atributos do Model para os parâmetros `?` do `PreparedStatement`. É compartilhado por `inserir()` e `atualizar()`.
+
+### Exemplo (baseado em `TrajetoDAO`):
+
+```java
 private void preencherStatement(PreparedStatement stmt, TrajetoModel trajeto) throws SQLException {
     // 1. Chaves Estrangeiras (FKs): Tratar se o objeto associado pode ser nulo
     if (trajeto.getMotoristaModel() != null) {
@@ -168,24 +169,25 @@ private void preencherStatement(PreparedStatement stmt, TrajetoModel trajeto) th
     stmt.setString(20, trajeto.getAssinaturaManobrista());
     stmt.setString(21, trajeto.getAssinaturaMotorista());
 }
+```
 
+---
 
-5. OS 5 MÉTODOS DO CRUD PASSO A PASSO
---------------------------------------------------------------------------------
+## 5. Os 5 Métodos do CRUD Passo a Passo
 
---------------------------------------------------------------------------------
-MÉTODO 1: INSERIR (CREATE)
-Assinatura: public boolean inserir(EntidadeModel model)
---------------------------------------------------------------------------------
-Passo a Passo:
-1. Defina o comando INSERT com os nomes explícitos de todas as colunas.
-   Para colunas com tipo customizado do Postgres (ENUM), use casting (?::nome_enum).
-2. Abra Connection e PreparedStatement com try-with-resources.
-3. Chame preencherStatement(stmt, model).
-4. Execute stmt.executeUpdate() e retorne linhasAfetadas > 0.
-5. Capture SQLException imprimindo log de erro e retorne false.
+---
 
-Código de referência:
+### Método 1: Inserir (`CREATE`)
+**Assinatura:** `public boolean inserir(EntidadeModel model)`
+
+#### Passo a Passo:
+1. Defina o comando `INSERT` com os nomes explícitos de todas as colunas. Para colunas com tipo customizado do Postgres (ENUM), use casting (`?::nome_enum`).
+2. Abra `Connection` e `PreparedStatement` com `try-with-resources`.
+3. Chame `preencherStatement(stmt, model)`.
+4. Execute `stmt.executeUpdate()` e retorne `linhasAfetadas > 0`.
+5. Capture `SQLException` imprimindo log de erro e retorne `false`.
+
+```java
 public boolean inserir(TrajetoModel trajeto) {
     String sql = """
             INSERT INTO trajeto (
@@ -227,27 +229,26 @@ public boolean inserir(TrajetoModel trajeto) {
         return false;
     }
 }
+```
 
+---
 
---------------------------------------------------------------------------------
-MÉTODO 2: LISTAR (READ GERAL COM JOINS)
-Assinatura: public List<EntidadeModel> listar()
---------------------------------------------------------------------------------
-Passo a Passo:
-1. Escreva a query SELECT trazendo os dados da tabela principal e de TODAS as tabelas
-   relacionadas utilizando JOINs.
-2. IMPORTANTE: Use aliases (AS) para diferenciar colunas com mesmo nome entre as tabelas
-   (ex: t.id AS trajeto_id, m.id AS motorista_id, m.nome AS motorista_nome, etc.).
-3. Declare Connection, PreparedStatement e ResultSet todos dentro do try-with-resources.
-4. Itere com while (rs.next()).
+### Método 2: Listar (`READ` Geral com JOINs)
+**Assinatura:** `public List<EntidadeModel> listar()`
+
+#### Passo a Passo:
+1. Escreva a query `SELECT` trazendo os dados da tabela principal e de **TODAS** as tabelas relacionadas utilizando `JOIN`s.
+2. **IMPORTANTE:** Use aliases (`AS`) para diferenciar colunas com mesmo nome entre as tabelas (ex: `t.id AS trajeto_id`, `m.id AS motorista_id`, `m.nome AS motorista_nome`, etc.).
+3. Declare `Connection`, `PreparedStatement` e `ResultSet` dentro do `try-with-resources`.
+4. Itere com `while (rs.next())`.
 5. Extraia os dados de cada entidade relacionada e instancie seus Models:
-   - Date para LocalDate: rs.getDate("...") != null ? rs.getDate("...").toLocalDate() : null
-   - Timestamp para LocalDateTime: rs.getTimestamp("...") != null ? rs.getTimestamp("...").toLocalDateTime() : null
-   - ENUM: rs.getString("status") != null ? StatusTrajeto.valueOf(rs.getString("status")) : null
+   - Date para LocalDate: `rs.getDate("...") != null ? rs.getDate("...").toLocalDate() : null`
+   - Timestamp para LocalDateTime: `rs.getTimestamp("...") != null ? rs.getTimestamp("...").toLocalDateTime() : null`
+   - ENUM: `rs.getString("status") != null ? StatusTrajeto.valueOf(rs.getString("status")) : null`
 6. Instancie o Model principal passando os objetos aninhados e adicione à lista.
 7. Retorne a lista preenchida.
 
-Código de referência:
+```java
 public List<TrajetoModel> listar() {
     String sql = """
             SELECT
@@ -406,25 +407,28 @@ public List<TrajetoModel> listar() {
 
     return trajetos;
 }
+```
 
+---
 
---------------------------------------------------------------------------------
-MÉTODO 3: BUSCAR POR ID (READ ESPECÍFICO)
-Assinatura: public EntidadeModel buscar(int id)
---------------------------------------------------------------------------------
-Passo a Passo:
-1. Utilize a mesma estrutura com JOINs do listar(), adicionando WHERE t.id = ?.
-2. Defina o ID no PreparedStatement: stmt.setInt(1, id);
-3. Abra ResultSet no try-with-resources interno:
+### Método 3: Buscar por ID (`READ` Específico)
+**Assinatura:** `public EntidadeModel buscar(int id)`
+
+#### Passo a Passo:
+1. Utilize a mesma estrutura com `JOIN`s do `listar()`, adicionando `WHERE t.id = ?`.
+2. Defina o ID no PreparedStatement: `stmt.setInt(1, id);`
+3. Abra ResultSet no `try-with-resources` interno:
+   ```java
    try (ResultSet rs = stmt.executeQuery()) {
        if (rs.next()) {
            // Mapeia e retorna o Model
        }
    }
-4. Se não encontrar o registro, retorne null.
-5. Capture SQLException e retorne null.
+   ```
+4. Se não encontrar o registro, retorne `null`.
+5. Capture `SQLException` e retorne `null`.
 
-Código de referência:
+```java
 public TrajetoModel buscar(int id) {
     String sql = """
             SELECT
@@ -455,20 +459,21 @@ public TrajetoModel buscar(int id) {
 
     return null;
 }
+```
 
+---
 
---------------------------------------------------------------------------------
-MÉTODO 4: ATUALIZAR (UPDATE)
-Assinatura: public boolean atualizar(EntidadeModel model, int id)
---------------------------------------------------------------------------------
-Passo a Passo:
-1. Monte o SQL UPDATE especificando as colunas no SET e filtrando por WHERE id = ?.
-2. Use preencherStatement(stmt, model) para preencher as colunas do SET.
-3. Defina o parâmetro do WHERE id no índice final com stmt.setInt(ultimoIndice, id).
-4. Execute stmt.executeUpdate() e retorne linhasAfetadas > 0.
-5. Capture SQLException e retorne false.
+### Método 4: Atualizar (`UPDATE`)
+**Assinatura:** `public boolean atualizar(EntidadeModel model, int id)`
 
-Código de referência:
+#### Passo a Passo:
+1. Monte o SQL `UPDATE` especificando as colunas no `SET` e filtrando por `WHERE id = ?`.
+2. Use `preencherStatement(stmt, model)` para preencher as colunas do `SET`.
+3. Defina o parâmetro do `WHERE id` no índice final com `stmt.setInt(ultimoIndice, id)`.
+4. Execute `stmt.executeUpdate()` e retorne `linhasAfetadas > 0`.
+5. Capture `SQLException` e retorne `false`.
+
+```java
 public boolean atualizar(TrajetoModel trajeto, int id) {
     String sql = """
             UPDATE trajeto
@@ -509,19 +514,20 @@ public boolean atualizar(TrajetoModel trajeto, int id) {
         return false;
     }
 }
+```
 
+---
 
---------------------------------------------------------------------------------
-MÉTODO 5: EXCLUIR (DELETE)
-Assinatura: public boolean excluir(int id)
---------------------------------------------------------------------------------
-Passo a Passo:
-1. Monte o SQL DELETE FROM nome_tabela WHERE id = ?;
-2. Configure o parâmetro com stmt.setInt(1, id).
-3. Execute stmt.executeUpdate() e retorne linhasAfetadas > 0.
-4. Capture SQLException e retorne false.
+### Método 5: Excluir (`DELETE`)
+**Assinatura:** `public boolean excluir(int id)`
 
-Código de referência:
+#### Passo a Passo:
+1. Monte o SQL `DELETE FROM nome_tabela WHERE id = ?;`
+2. Configure o parâmetro com `stmt.setInt(1, id)`.
+3. Execute `stmt.executeUpdate()` e retorne `linhasAfetadas > 0`.
+4. Capture `SQLException` e retorne `false`.
+
+```java
 public boolean excluir(int id) {
     String sql = """
             DELETE
@@ -540,60 +546,72 @@ public boolean excluir(int id) {
         return false;
     }
 }
+```
 
+---
 
-================================================================================
-6. RESOLUÇÃO DE CHAVES ESTRANGEIRAS (FKS): SQL JOINS VS N+1 QUERIES
-================================================================================
-No padrão moderno de TrajetoDAO, NÃO chamamos outros DAOs dentro do loop (o que
-causaria dezenas de conexões e consultas desnecessárias no padrão N+1).
+## 6. Resolução de Chaves Estrangeiras (FKs): SQL JOINs vs N+1 Queries
 
-Em vez disso:
-1. Realizamos SQL JOINs entre as tabelas diretamente na query do listar/buscar.
-2. Usamos ALIASES explícitos em cada coluna para não haver sobreposição de nomes
-   (ex: m.nome AS motorista_nome, e.nome AS empresa_nome, etc.).
-3. No while (rs.next()), instanciamos os objetos dependentes a partir das colunas
-   apelidadas do ResultSet e compomos o objeto principal.
-4. Benefícios:
-   - Desempenho muito superior (uma única viagem de ida e volta ao banco).
-   - Não sobrecarrega o pool de conexões com conexões aninhadas.
-   - Dados consistentes no mesmo snapshot da transação.
-   - Código desacoplado de instâncias externas de outros DAOs.
+No padrão moderno de `TrajetoDAO`, **NÃO** chamamos outros DAOs dentro do loop (o que causaria dezenas de conexões e consultas desnecessárias no antipadrão N+1).
 
+### Em vez disso:
+1. Realizamos **SQL JOINs** entre as tabelas diretamente na query do `listar` e `buscar`.
+2. Usamos **ALIASES explícitos** em cada coluna para não haver sobreposição de nomes (ex: `m.nome AS motorista_nome`, `e.nome AS empresa_nome`, etc.).
+3. No `while (rs.next())`, instanciamos os objetos dependentes a partir das colunas apelidadas do `ResultSet` e compomos o objeto principal.
 
-================================================================================
-7. CONVERSÕES ESSENCIAIS: DATAS, TIMESTAMPS E ENUMS
-================================================================================
-[1] Datas (LocalDate <-> java.sql.Date):
-    - Banco -> Java (SELECT):
-      Date dataSql = rs.getDate("campo_data");
-      LocalDate data = dataSql != null ? dataSql.toLocalDate() : null;
+### Benefícios:
+- **Desempenho muito superior:** Uma única viagem de ida e volta ao banco (*round-trip*).
+- **Sem sobrecarga do pool:** Não esgota conexões com chamadas aninhadas.
+- **Consistência de dados:** Registros capturados no mesmo snapshot de transação.
+- **Desacoplamento:** Código livre de dependências externas de outros DAOs.
 
-    - Java -> Banco (PreparedStatement):
-      stmt.setDate(indice, model.getData() != null ? Date.valueOf(model.getData()) : null);
+---
 
-[2] Data/Hora (LocalDateTime <-> java.sql.Timestamp):
-    - Banco -> Java (SELECT):
-      Timestamp ts = rs.getTimestamp("campo_timestamp");
-      LocalDateTime dataHora = ts != null ? ts.toLocalDateTime() : null;
+## 7. Conversões Essenciais: Datas, Timestamps e Enums
 
-    - Java -> Banco (PreparedStatement):
-      stmt.setObject(indice, model.getDataHora()); // Suportado nativamente pelo JDBC 4.2+
+### [1] Datas (`LocalDate` &harr; `java.sql.Date`)
+- **Banco &rarr; Java (SELECT):**
+  ```java
+  Date dataSql = rs.getDate("campo_data");
+  LocalDate data = dataSql != null ? dataSql.toLocalDate() : null;
+  ```
+- **Java &rarr; Banco (PreparedStatement):**
+  ```java
+  stmt.setDate(indice, model.getData() != null ? Date.valueOf(model.getData()) : null);
+  ```
 
-[3] Enums do PostgreSQL:
-    - No SQL de INSERT/UPDATE, use casting explícito para o ENUM do PostgreSQL:
-      VALUES (?, ?::status_trajeto, ...)
-    - No PreparedStatement:
-      stmt.setString(indice, model.getStatus() != null ? model.getStatus().name() : null);
-    - No ResultSet:
-      String statusStr = rs.getString("status");
-      StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+### [2] Data/Hora (`LocalDateTime` &harr; `java.sql.Timestamp`)
+- **Banco &rarr; Java (SELECT):**
+  ```java
+  Timestamp ts = rs.getTimestamp("campo_timestamp");
+  LocalDateTime dataHora = ts != null ? ts.toLocalDateTime() : null;
+  ```
+- **Java &rarr; Banco (PreparedStatement):**
+  ```java
+  stmt.setObject(indice, model.getDataHora()); // Suportado nativamente pelo JDBC 4.2+
+  ```
 
-[4] Null Safety em Chaves Estrangeiras:
-    - Sempre verifique se o objeto associado não é nulo antes de chamar .getId():
-      if (model.getObjetoRelacionado() != null) {
-          stmt.setInt(indice, model.getObjetoRelacionado().getId());
-      } else {
-          stmt.setNull(indice, Types.INTEGER);
-      }
-================================================================================
+### [3] Enums do PostgreSQL
+- **No SQL (`INSERT` / `UPDATE`):** Use casting explícito para o tipo customizado do PostgreSQL:
+  ```sql
+  VALUES (?, ?::status_trajeto, ...)
+  ```
+- **No `PreparedStatement`:**
+  ```java
+  stmt.setString(indice, model.getStatus() != null ? model.getStatus().name() : null);
+  ```
+- **No `ResultSet`:**
+  ```java
+  String statusStr = rs.getString("status");
+  StatusTrajeto status = statusStr != null ? StatusTrajeto.valueOf(statusStr) : null;
+  ```
+
+### [4] Null Safety em Chaves Estrangeiras
+Sempre verifique se o objeto associado não é nulo antes de chamar `.getId()`:
+```java
+if (model.getObjetoRelacionado() != null) {
+    stmt.setInt(indice, model.getObjetoRelacionado().getId());
+} else {
+    stmt.setNull(indice, Types.INTEGER);
+}
+```
