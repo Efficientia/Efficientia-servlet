@@ -215,21 +215,97 @@ background: linear-gradient(191deg, rgba(33, 78, 143, 0.90) 0%, rgba(0, 29, 137,
 
 }
 
-.pagina-cadastro .menu-login {
-    min-width: 0;
+.pagina-login {
+    background: linear-gradient(56deg, #0F51AE 62.45%, #56D867 102.78%);
+}
+
+.pagina-login .conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100svh;
+    padding: 32px 24px;
+    gap: 28px;
+}
+
+.pagina-login .lateral-esquerda,
+.pagina-login .direita {
     width: 100%;
-    max-width: 90vh;
-    padding: 24px;
+    background: none;
+    padding: 0;
 }
 
-.pagina-cadastro .titulo-login {
-    font-size: clamp(36px, 6vw, 64px);
+.pagina-login .lateral-esquerda a {
+    display: flex;
+    justify-content: center;
 }
 
-@media (max-width: 860px) {
-    .pagina-cadastro .conteudo { grid-template-columns: 1fr; }
-    .pagina-cadastro .lateral-esquerda { padding: 20px; }
-    .pagina-cadastro .logo-efficientia { width: 220px; max-width: 100%; }
-    .pagina-cadastro .direita { padding: 24px 16px; }
-    .pagina-cadastro .menu-login { min-height: 0; }
+.pagina-login .logo-efficientia {
+    width: 240px;
+    max-width: 100%;
+}
+
+.pagina-login .direita {
+    max-width: 360px;
+}
+
+.pagina-login .menu-login {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 0;
+    background: none;
+}
+
+.pagina-login form {
+    max-width: none;
+    gap: 14px;
+}
+
+.pagina-login .titulo-login {
+    margin-bottom: 8px;
+    background: none;
+    color: #FFF8E1;
+    -webkit-text-fill-color: currentColor;
+    font-size: 32px;
+    line-height: 1.25;
+    font-weight: 700;
+}
+
+.pagina-login .grupo-input {
+    gap: 8px;
+}
+
+.pagina-login .grupo-input label,
+.pagina-login .esqueceu-senha a {
+    color: #FFF8E1;
+    font-size: 16px;
+}
+
+.pagina-login .grupo-input input {
+    min-height: 44px;
+    font-size: 16px;
+    color: #FFF8E1;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.pagina-login .grupo-input input::placeholder {
+    color: rgba(255, 248, 225, 0.75);
+    font-size: 16px;
+}
+
+.pagina-login .esqueceu-senha {
+    margin: 8px auto;
+}
+
+.pagina-login button[type="submit"] {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 18px;
+}
+
+.pagina-login a:focus-visible,
+.pagina-login button:focus-visible {
+    outline: 3px solid #FFF8E1;
+    outline-offset: 4px;
 }
