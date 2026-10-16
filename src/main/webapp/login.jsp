@@ -34,7 +34,7 @@
 
                     <c:if test="${not empty erro}">
                         <div class="alerta-erro">
-                            ${erro}
+                            <c:out value="${erro}" />
                         </div>
                     </c:if>
 
@@ -44,27 +44,19 @@
                         </div>
                     </c:if>
 
-                    <c:if test="${param.msg == 'cadastrado'}">
-                        <div class="alerta-sucesso">
-                            Administrador cadastrado! Faça seu login abaixo.
-                        </div>
-                    </c:if>
-
                     <div class="grupo-input">
                         <label for="email">E-mail</label>
-                        <input type="email" id="email" name="email" value="${emailInformado != null ? emailInformado : ''}" placeholder="Digite seu email" required autocomplete="email">
+                        <input type="email" id="email" name="email" value="<c:out value='${emailInformado}' />" placeholder="Digite seu email" maxlength="254" required autocomplete="email">
                     </div>
 
                     <div class="grupo-input">
                         <label for="senha">Senha</label>
-                        <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required autocomplete="current-password">
+                        <input type="password" id="senha" name="senha" placeholder="Digite sua senha" maxlength="128" required autocomplete="current-password">
                     </div>
                     
                     <div class="esqueceu-senha">
                         <a href="${pageContext.request.contextPath}/esqueci-senha.jsp">Esqueci minha senha</a>
                     </div>
-                    
-                    <p class="link-cadastro">Não possui uma conta?<a href="${pageContext.request.contextPath}/cadastro">Crie uma</a></p>
                     
                     <button type="submit">Entrar</button>
                 </form>

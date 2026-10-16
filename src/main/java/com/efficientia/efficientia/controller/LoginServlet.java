@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import com.efficientia.efficientia.util.ValidadorRegex;
 
 /**
  * Servlet responsável pela autenticação, login e logout de Administradores.
@@ -70,11 +72,29 @@ public class LoginServlet extends HttpServlet {
         String senha = req.getParameter("senha");
 
         // Autentica as credenciais com o AdminDAO
-        AdminModel admin = adminDAO.autenticar(email, senha);
+        req.setAttribute("emailInformado", email);
+        if (!ValidadorRegex.isEmailValido(email) || email.length() > 254
+                || senha == null || senha.isBlank() || senha.length() > 128) {
+            req.setAttribute("erro", "Informe um e-mail válido e sua senha.");
+            req.getRequestDispatcher("/login.jsp").forward(req, resp);
+            return;
+        }
+        AdminModel admin;
+        try {
+            admin = adminDAO.autenticar(email, senha);
+        } catch (SQLException ex) {
+            getServletContext().log("Falha de conexão na autenticação.", ex);
+            resp.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            req.setAttribute("erro", "Não foi possível acessar o banco de dados. Tente novamente mais tarde.");
+            req.getRequestDispatcher("/login.jsp").forward(req, resp);
+            return;
+        }
 
         if (admin != null) {
             // Sucesso: cria ou obtém a sessão HTTP e armazena o objeto do administrador
             HttpSession session = req.getSession(true);
+            req.changeSessionId();
+            session.setMaxInactiveInterval(30 * 60);
             session.setAttribute("adminLogado", admin);
 
             // Redireciona para a área restrita configurada na constante

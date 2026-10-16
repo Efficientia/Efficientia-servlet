@@ -4,6 +4,15 @@ html {
     max-width: 100%;
 }
 
+.alerta-erro, .alerta-sucesso {
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    line-height: 1.4;
+}
+.alerta-erro { color: #8a1c1c; background: #fff0f0; }
+.alerta-sucesso { color: #14532d; background: #eaf8ee; }
+
 * {
     margin: 0;
     padding: 0;
@@ -204,4 +213,23 @@ background: linear-gradient(191deg, rgba(33, 78, 143, 0.90) 0%, rgba(0, 29, 137,
     justify-content: center;
     min-height: 85vh;
 
+}
+
+.pagina-cadastro .menu-login {
+    min-width: 0;
+    width: 100%;
+    max-width: 90vh;
+    padding: 24px;
+}
+
+.pagina-cadastro .titulo-login {
+    font-size: clamp(36px, 6vw, 64px);
+}
+
+@media (max-width: 860px) {
+    .pagina-cadastro .conteudo { grid-template-columns: 1fr; }
+    .pagina-cadastro .lateral-esquerda { padding: 20px; }
+    .pagina-cadastro .logo-efficientia { width: 220px; max-width: 100%; }
+    .pagina-cadastro .direita { padding: 24px 16px; }
+    .pagina-cadastro .menu-login { min-height: 0; }
 }
