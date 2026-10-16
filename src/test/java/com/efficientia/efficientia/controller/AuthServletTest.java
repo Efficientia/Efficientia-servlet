@@ -83,18 +83,6 @@ class AuthServletTest {
         assertEquals("teste@example.invalid", e.attributes.get("emailInformado"));
         assertTrue(e.sessionAttributes.isEmpty());
     }
-    @Test void cadastroRejeitaSenhaCurtaAntesDoBanco() throws Exception {
-        var e = new Exchange();
-        e.params.put("nome", "Teste");
-        e.params.put("email", "teste@example.invalid");
-        e.params.put("senha", "curta");
-        e.params.put("nomeEmpresa", "Empresa de teste");
-        e.params.put("cnpj", "12345678000190");
-        new CadastroServlet().doPost(e.request, e.response);
-        assertEquals("/cadastro.jsp", e.forwarded);
-        assertNotNull(e.attributes.get("erro"));
-        assertFalse(e.attributes.containsKey("senha"));
-    }
     @Test void logoutEncerraSessao() throws Exception {
         var e = new Exchange();
         new LoginServlet().doGet(e.request, e.response);
@@ -102,53 +90,4 @@ class AuthServletTest {
         assertEquals("/Efficientia/login?msg=desconectado", e.redirected);
     }
 
-    @Test void cadastroCriaEmpresaEAdministradorComDadosNormalizados() throws Exception {
-        var servlet = new CadastroServlet();
-        inject(servlet, new AdminDAO() {
-            @Override public boolean emailCadastrado(String email) { return false; }
-            @Override public void cadastrarComEmpresa(String empresa, String cnpj, String nome,
-                                                      String email, String senha) {
-                assertEquals("Empresa de teste", empresa);
-                assertEquals("12345678000190", cnpj);
-                assertEquals("Teste", nome);
-                assertEquals("teste@example.invalid", email);
-            }
-        });
-        var e = cadastroValido();
-        servlet.doPost(e.request, e.response);
-        assertEquals("/Efficientia/login?msg=cadastrado", e.redirected);
-    }
-
-    @Test void cadastroDuplicadoNaoCriaEmpresa() throws Exception {
-        var servlet = new CadastroServlet();
-        inject(servlet, new AdminDAO() {
-            @Override public boolean emailCadastrado(String email) { return true; }
-            @Override public void cadastrarComEmpresa(String a, String b, String c, String d, String f) {
-                fail("Não deve criar empresa quando o e-mail já está cadastrado.");
-            }
-        });
-        var e = cadastroValido();
-        servlet.doPost(e.request, e.response);
-        assertEquals("/cadastro.jsp", e.forwarded);
-        assertNotNull(e.attributes.get("erro"));
-        assertEquals(" Empresa de teste ", e.attributes.get("empresaInformada"));
-    }
-
-    @Test void cadastroRejeitaCnpjInvalidoAntesDoBanco() throws Exception {
-        var e = cadastroValido();
-        e.params.put("cnpj", "123");
-        new CadastroServlet().doPost(e.request, e.response);
-        assertEquals("/cadastro.jsp", e.forwarded);
-        assertNotNull(e.attributes.get("erro"));
-    }
-
-    static Exchange cadastroValido() {
-        var e = new Exchange();
-        e.params.put("nome", " Teste ");
-        e.params.put("nomeEmpresa", " Empresa de teste ");
-        e.params.put("cnpj", "12.345.678/0001-90");
-        e.params.put("email", "TESTE@example.invalid");
-        e.params.put("senha", "Uma senha de teste longa");
-        return e;
-    }
 }

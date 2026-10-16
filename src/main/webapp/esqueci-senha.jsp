@@ -26,7 +26,7 @@
                     <h1 class="titulo-login">Recuperar Senha</h1>
 
                     <p style="text-align: center; color: #0F51AE; font-size: 16px; margin-bottom: 20px;">
-                        Para redefinir sua senha de acesso de administrador, solicite diretamente ao suporte ou cadastre um novo usuário.
+                        Para redefinir sua senha de acesso, entre em contato com o responsável pela administração do sistema.
                     </p>
 
                     <p class="link-cadastro"><a href="${pageContext.request.contextPath}/login">Voltar para o login</a></p>
