@@ -201,28 +201,6 @@ public class AdminDAO {
     // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
 
     /**
-     * Insere um administrador de forma simplificada com os campos essenciais.
-     */
-    public boolean inserirSimples(String nome, String email, String senha, Integer idEmpresa) throws SQLException {
-        String sql = """
-                INSERT INTO adm (id_empresa, email, senha, nome)
-                VALUES (?, ?, ?, ?);
-                """;
-        try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            if (idEmpresa != null && idEmpresa > 0) {
-                stmt.setInt(1, idEmpresa);
-            } else {
-                stmt.setNull(1, Types.INTEGER);
-            }
-            stmt.setString(2, email);
-            stmt.setString(3, PasswordHasher.hash(senha));
-            stmt.setString(4, nome);
-            return stmt.executeUpdate() > 0;
-        }
-    }
-
-    /**
      * Atualiza especificamente o nome de um administrador.
      */
     public boolean atualizarNome(int id, String novoNome) {

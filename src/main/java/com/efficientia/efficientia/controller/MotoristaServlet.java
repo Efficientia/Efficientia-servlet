@@ -169,6 +169,126 @@ public class MotoristaServlet extends HttpServlet {
             return;
         }
 
+        // Inserção simplificada de motorista
+        if ("inserirSimples".equals(acao)) {
+            try {
+                String nome = obterParametro(req, "nome");
+                String email = obterParametro(req, "email");
+                String senha = obterParametro(req, "senha");
+                Integer idEmpresa = parseIntegerNull(obterParametro(req, "idEmpresa", "id_empresa"));
+
+                if (email != null && !email.isBlank() && !ValidadorRegex.isEmailValido(email)) {
+                    resp.sendRedirect(req.getContextPath() + "/motorista?erro=email_invalido");
+                    return;
+                }
+
+                dao.inserirSimples(nome, email, senha, idEmpresa);
+            } catch (Exception e) {
+                System.out.println("Erro ao inserir motorista simples: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o nome do motorista
+        if ("atualizarNome".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoNome = obterParametro(req, "nome", "novoNome");
+                dao.atualizarNome(id, novoNome);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar nome do motorista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o e-mail do motorista com validação REGEX
+        if ("atualizarEmail".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoEmail = obterParametro(req, "email", "novoEmail");
+                if (novoEmail != null && !novoEmail.isBlank() && !ValidadorRegex.isEmailValido(novoEmail)) {
+                    resp.sendRedirect(req.getContextPath() + "/motorista?erro=email_invalido");
+                    return;
+                }
+                dao.atualizarEmail(id, novoEmail);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar email do motorista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o telefone/celular do motorista com validação REGEX
+        if ("atualizarTelefone".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoTelefone = obterParametro(req, "telefone", "novoTelefone");
+                if (novoTelefone != null && !novoTelefone.isBlank() && !ValidadorRegex.isCelularValido(novoTelefone)) {
+                    resp.sendRedirect(req.getContextPath() + "/motorista?erro=telefone_invalido");
+                    return;
+                }
+                dao.atualizarTelefone(id, novoTelefone);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar telefone do motorista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
+        // Atualização específica: modifica a empresa vinculada ao motorista
+        if ("atualizarEmpresa".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                Integer idEmpresa = parseIntegerNull(obterParametro(req, "idEmpresa", "id_empresa"));
+                dao.atualizarEmpresa(id, idEmpresa);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar empresa do motorista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
+        // Atualização específica: modifica a senha do motorista
+        if ("atualizarSenha".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novaSenha = obterParametro(req, "senha", "novaSenha");
+                dao.atualizarSenha(id, novaSenha);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar senha do motorista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
+        // Atualização específica: modifica a data de nascimento do motorista
+        if ("atualizarDataNascimento".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                LocalDate novaData = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento", "novaData"));
+                dao.atualizarDataNascimento(id, novaData);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar data de nascimento do motorista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
+        // Atualização específica: modifica a assinatura digital do motorista
+        if ("atualizarAssinatura".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novaAssinatura = obterParametro(req, "assinatura", "novaAssinatura");
+                dao.atualizarAssinatura(id, novaAssinatura);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar assinatura do motorista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            return;
+        }
+
         // Atualização: modifica os dados do motorista existente
         if ("atualizar".equals(acao)) {
             try {
@@ -322,6 +442,22 @@ public class MotoristaServlet extends HttpServlet {
         } catch (Exception e) {
             System.out.println("Erro ao converter número (" + texto + "): " + e.getMessage());
             return padrao;
+        }
+    }
+
+    /**
+     * Converte com segurança uma string para Integer, retornando null caso nula, vazia ou inválida.
+     *
+     * @param texto texto contendo o número
+     * @return Integer convertido ou null
+     */
+    private Integer parseIntegerNull(String texto) {
+        if (texto == null || texto.isBlank()) return null;
+        try {
+            int val = Integer.parseInt(texto.trim());
+            return val > 0 ? val : null;
+        } catch (Exception e) {
+            return null;
         }
     }
 }
