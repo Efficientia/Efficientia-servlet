@@ -4,6 +4,7 @@ import com.efficientia.efficientia.dao.impl.AdminDAO;
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -147,6 +148,62 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
+        // Atualização específica: modifica somente o nome do administrador
+        if ("atualizarNome".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoNome = obterParametro(req, "nome", "novoNome");
+                dao.atualizarNome(id, novoNome);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar nome do Admin: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/admin"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o e-mail do administrador com validação REGEX
+        if ("atualizarEmail".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoEmail = obterParametro(req, "email", "novoEmail");
+                if (novoEmail != null && !novoEmail.isBlank() && !ValidadorRegex.isEmailValido(novoEmail)) {
+                    resp.sendRedirect(req.getContextPath() + "/admin?erro=email_invalido");
+                    return;
+                }
+                dao.atualizarEmail(id, novoEmail);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar email do Admin: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/admin"));
+            return;
+        }
+
+        // Atualização específica: modifica somente a senha do administrador
+        if ("atualizarSenha".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novaSenha = obterParametro(req, "senha", "novaSenha");
+                dao.atualizarSenha(id, novaSenha);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar senha do Admin: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/admin"));
+            return;
+        }
+
+        // Atualização específica: modifica a empresa vinculada ao administrador
+        if ("atualizarEmpresa".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                Integer idEmpresa = parseIntegerNull(obterParametro(req, "idEmpresa", "id_empresa"));
+                dao.atualizarEmpresa(id, idEmpresa);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar empresa do Admin: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/admin"));
+            return;
+        }
+
         // Atualização: modifica os dados de um administrador existente
         if ("atualizar".equals(acao)) {
             try {
@@ -234,6 +291,22 @@ public class AdminServlet extends HttpServlet {
         } catch (Exception e) {
             System.out.println("Erro parse int: " + e.getMessage());
             return padrao;
+        }
+    }
+
+    /**
+     * Converte com segurança uma string para Integer, retornando null caso nula, vazia ou inválida.
+     *
+     * @param texto texto contendo o número
+     * @return Integer convertido ou null
+     */
+    private Integer parseIntegerNull(String texto) {
+        if (texto == null || texto.isBlank()) return null;
+        try {
+            int val = Integer.parseInt(texto.trim());
+            return val > 0 ? val : null;
+        } catch (Exception e) {
+            return null;
         }
     }
 }

@@ -382,7 +382,49 @@ public class TrajetoServlet extends HttpServlet {
             return;
         }
 
-        // 7. Ação: Exclusão de Trajeto por ID
+        // 7. Ação rápida: Atualização específica do Motorista designado
+        if ("atualizarMotorista".equals(acao)) {
+            try {
+                int id = Integer.parseInt(req.getParameter("id"));
+                Integer idMotorista = parseIntegerNull(obterParametro(req, "idMotorista", "id_motorista"));
+                dao.atualizarMotorista(id, idMotorista);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar motorista do trajeto: " + e.getMessage());
+            }
+
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto"));
+            return;
+        }
+
+        // 8. Ação rápida: Atualização específica do Caminhão designado
+        if ("atualizarCaminhao".equals(acao)) {
+            try {
+                int id = Integer.parseInt(req.getParameter("id"));
+                Integer idCaminhao = parseIntegerNull(obterParametro(req, "idCaminhao", "id_caminhao"));
+                dao.atualizarCaminhao(id, idCaminhao);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar caminhão do trajeto: " + e.getMessage());
+            }
+
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto"));
+            return;
+        }
+
+        // 9. Ação rápida: Atualização específica do Pecuarista remetente
+        if ("atualizarPecuarista".equals(acao)) {
+            try {
+                int id = Integer.parseInt(req.getParameter("id"));
+                Integer idPecuarista = parseIntegerNull(obterParametro(req, "idPecuarista", "id_pecuarista"));
+                dao.atualizarPecuarista(id, idPecuarista);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar pecuarista do trajeto: " + e.getMessage());
+            }
+
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto"));
+            return;
+        }
+
+        // 10. Ação: Exclusão de Trajeto por ID
         if ("excluir".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));

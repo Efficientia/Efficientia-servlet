@@ -164,6 +164,136 @@ public class PecuaristaServlet extends HttpServlet {
             return;
         }
 
+        // Inserção simplificada de pecuarista
+        if ("inserirSimples".equals(acao)) {
+            try {
+                String nome = obterParametro(req, "nome");
+                String cpf = obterParametro(req, "cpf");
+                String email = obterParametro(req, "email");
+                String senha = obterParametro(req, "senha");
+
+                if (!ValidadorRegex.isCpfValido(cpf)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=cpf_invalido");
+                    return;
+                }
+                if (email != null && !email.isBlank() && !ValidadorRegex.isEmailValido(email)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=email_invalido");
+                    return;
+                }
+
+                String cpfSanitizado = ValidadorRegex.apenasDigitos(cpf);
+                dao.inserirSimples(nome, cpfSanitizado, email, senha);
+            } catch (Exception e) {
+                System.out.println("Erro ao inserir pecuarista simples: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o CPF do pecuarista
+        if ("atualizarCpf".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoCpf = obterParametro(req, "cpf", "novoCpf");
+                if (!ValidadorRegex.isCpfValido(novoCpf)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=cpf_invalido");
+                    return;
+                }
+                String cpfSanitizado = ValidadorRegex.apenasDigitos(novoCpf);
+                dao.atualizarCpf(id, cpfSanitizado);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar CPF do pecuarista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o nome do pecuarista
+        if ("atualizarNome".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoNome = obterParametro(req, "nome", "novoNome");
+                dao.atualizarNome(id, novoNome);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar nome do pecuarista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o e-mail do pecuarista com validação REGEX
+        if ("atualizarEmail".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoEmail = obterParametro(req, "email", "novoEmail");
+                if (novoEmail != null && !novoEmail.isBlank() && !ValidadorRegex.isEmailValido(novoEmail)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=email_invalido");
+                    return;
+                }
+                dao.atualizarEmail(id, novoEmail);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar email do pecuarista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
+        // Atualização específica: modifica somente o telefone/celular do pecuarista com validação REGEX
+        if ("atualizarTelefone".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoTelefone = obterParametro(req, "telefone", "novoTelefone");
+                if (novoTelefone != null && !novoTelefone.isBlank() && !ValidadorRegex.isCelularValido(novoTelefone)) {
+                    resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=telefone_invalido");
+                    return;
+                }
+                dao.atualizarTelefone(id, novoTelefone);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar telefone do pecuarista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
+        // Atualização específica: modifica a senha do pecuarista
+        if ("atualizarSenha".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novaSenha = obterParametro(req, "senha", "novaSenha");
+                dao.atualizarSenha(id, novaSenha);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar senha do pecuarista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
+        // Atualização específica: modifica a data de nascimento do pecuarista
+        if ("atualizarDataNascimento".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                LocalDate novaData = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento", "novaData"));
+                dao.atualizarDataNascimento(id, novaData);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar data de nascimento do pecuarista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
+        // Atualização específica: modifica a assinatura digital do pecuarista
+        if ("atualizarAssinatura".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novaAssinatura = obterParametro(req, "assinatura", "novaAssinatura");
+                dao.atualizarAssinatura(id, novaAssinatura);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar assinatura do pecuarista: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            return;
+        }
+
         // Atualização: modifica os dados do pecuarista existente
         if ("atualizar".equals(acao)) {
             try {

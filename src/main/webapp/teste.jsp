@@ -465,6 +465,8 @@
                 </svg>
                 Cadastrar Novo Pecuarista
             </button>
+            <button type="button" id="tabBtnSimples-pecuarista" class="tab-button" onclick="switchTab('pecuarista', 'simples')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Cadastro Simples (inserirSimples)</button>
+            <button type="button" id="tabBtnOperacoes-pecuarista" class="tab-button" onclick="switchTab('pecuarista', 'operacoes')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Atualiza&ccedil;&otilde;es Espec&iacute;ficas (DAO)</button>
             <button type="button" id="tabBtnExcluir-pecuarista" class="tab-button tab-danger" onclick="switchTab('pecuarista', 'excluir')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -529,6 +531,186 @@
                 </form>
             </div>
 
+            <!-- ABA: CADASTRO SIMPLIFICADO (inserirSimples) -->
+            <div id="tabSimples-pecuarista" class="tab-content">
+                <div class="card-header">
+                    <h2>Cadastro R&aacute;pido de Pecuarista (inserirSimples)</h2>
+                    <p>Insere o registro com os campos essenciais via <code>PecuaristaDAO.inserirSimples()</code>.</p>
+                </div>
+                <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'Pecuarista simples cadastrado!')">
+                    <input type="hidden" name="acao" value="inserirSimples">
+                    <div class="form-grid">
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nome *</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Nome completo"  required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>CPF *</label>
+                                <input type="text" name="cpf" class="form-control" placeholder="11 d&iacute;gitos" maxlength="14" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>E-mail *</label>
+                                <input type="email" name="email" class="form-control" placeholder="email@dominio.com"  required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Senha *</label>
+                                <input type="password" name="senha" class="form-control" placeholder="Senha"  required>
+                            </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Inserir Pecuarista Simples</button>
+                    </div>
+                </form>
+            </div>
+            <!-- ABA: ATUALIZACOES ESPECIFICAS (METODOS DAO) -->
+            <div id="tabOperacoes-pecuarista" class="tab-content">
+                <div class="card-header">
+                    <h2>Atualiza&ccedil;&otilde;es Espec&iacute;ficas de Pecuarista (M&eacute;todos PecuaristaDAO)</h2>
+                    <p>Execu&ccedil;&atilde;o direta dos m&eacute;todos especializados de atualiza&ccedil;&atilde;o do <code>PecuaristaDAO</code>.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">1. Atualizar CPF (atualizarCpf)</h4>
+                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'CPF atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarCpf">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${pecuaristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome} (CPF: ${item.cpf})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo CPF *</label>
+                                <input type="text" name="cpf" class="form-control" placeholder="11 d&iacute;gitos" maxlength="14" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar CPF</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">2. Atualizar Nome (atualizarNome)</h4>
+                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'Nome atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarNome">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${pecuaristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome} (CPF: ${item.cpf})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Nome *</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Nome"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Nome</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">3. Atualizar E-mail (atualizarEmail)</h4>
+                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'E-mail atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarEmail">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${pecuaristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome} (CPF: ${item.cpf})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo E-mail *</label>
+                                <input type="email" name="email" class="form-control" placeholder="email@dominio.com"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar E-mail</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">4. Atualizar Telefone (atualizarTelefone)</h4>
+                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'Telefone atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarTelefone">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${pecuaristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome} (CPF: ${item.cpf})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Telefone *</label>
+                                <input type="tel" name="telefone" class="form-control" placeholder="DDD + n&uacute;mero" maxlength="15" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Telefone</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">5. Atualizar Senha (atualizarSenha)</h4>
+                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'Senha atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarSenha">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${pecuaristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome} (CPF: ${item.cpf})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Senha *</label>
+                                <input type="password" name="senha" class="form-control" placeholder="Nova senha"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Senha</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">6. Atualizar Data de Nascimento (atualizarDataNascimento)</h4>
+                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'Data atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarDataNascimento">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${pecuaristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome} (CPF: ${item.cpf})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Data *</label>
+                                <input type="date" name="dataNascimento" class="form-control" placeholder=""  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Data de Nascimento</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">7. Atualizar Assinatura (atualizarAssinatura)</h4>
+                        <form action="${pageContext.request.contextPath}/pecuarista" method="post" onsubmit="return handleFormSubmit(event, 'Assinatura atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarAssinatura">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${pecuaristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome} (CPF: ${item.cpf})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Assinatura *</label>
+                                <input type="text" name="assinatura" class="form-control" placeholder="Assinatura"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Assinatura</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!-- ABA 2: EXCLUSÃO PECUARISTA -->
             <div id="tabExcluir-pecuarista" class="tab-content">
                 <div class="card-header">
@@ -666,6 +848,8 @@
                 </svg>
                 Cadastrar Novo Motorista
             </button>
+            <button type="button" id="tabBtnSimples-motorista" class="tab-button" onclick="switchTab('motorista', 'simples')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Cadastro Simples (inserirSimples)</button>
+            <button type="button" id="tabBtnOperacoes-motorista" class="tab-button" onclick="switchTab('motorista', 'operacoes')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Atualiza&ccedil;&otilde;es Espec&iacute;ficas (DAO)</button>
             <button type="button" id="tabBtnExcluir-motorista" class="tab-button tab-danger" onclick="switchTab('motorista', 'excluir')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -735,6 +919,196 @@
                 </form>
             </div>
 
+            <!-- ABA: CADASTRO SIMPLIFICADO (inserirSimples) -->
+            <div id="tabSimples-motorista" class="tab-content">
+                <div class="card-header">
+                    <h2>Cadastro R&aacute;pido de Motorista (inserirSimples)</h2>
+                    <p>Insere o registro com os campos essenciais via <code>MotoristaDAO.inserirSimples()</code>.</p>
+                </div>
+                <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'Motorista simples cadastrado!')">
+                    <input type="hidden" name="acao" value="inserirSimples">
+                    <div class="form-grid">
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nome *</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Nome completo"  required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>E-mail *</label>
+                                <input type="email" name="email" class="form-control" placeholder="email@dominio.com"  required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Senha *</label>
+                                <input type="password" name="senha" class="form-control" placeholder="Senha"  required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Empresa</label>
+                                <select name="idEmpresa" class="form-control">
+                                    <option value="">Sem empresa</option>
+                                    <c:forEach var="emp" items="${empresas}">
+                                        <option value="${emp.id}"><c:out value="${emp.nome}" /></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Inserir Motorista Simples</button>
+                    </div>
+                </form>
+            </div>
+            <!-- ABA: ATUALIZACOES ESPECIFICAS (METODOS DAO) -->
+            <div id="tabOperacoes-motorista" class="tab-content">
+                <div class="card-header">
+                    <h2>Atualiza&ccedil;&otilde;es Espec&iacute;ficas de Motorista (M&eacute;todos MotoristaDAO)</h2>
+                    <p>Execu&ccedil;&atilde;o direta dos m&eacute;todos especializados de atualiza&ccedil;&atilde;o do <code>MotoristaDAO</code>.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">1. Atualizar Nome (atualizarNome)</h4>
+                        <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'Nome atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarNome">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${motoristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Nome *</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Nome"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Nome</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">2. Atualizar E-mail (atualizarEmail)</h4>
+                        <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'E-mail atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarEmail">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${motoristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo E-mail *</label>
+                                <input type="email" name="email" class="form-control" placeholder="email@dominio.com"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar E-mail</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">3. Atualizar Telefone (atualizarTelefone)</h4>
+                        <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'Telefone atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarTelefone">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${motoristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Telefone *</label>
+                                <input type="tel" name="telefone" class="form-control" placeholder="DDD + n&uacute;mero" maxlength="15" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Telefone</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">4. Atualizar Empresa (atualizarEmpresa)</h4>
+                        <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'Empresa atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarEmpresa">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${motoristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Empresa</label>
+                                <select name="idEmpresa" class="form-control">
+                                    <option value="">Sem empresa</option>
+                                    <c:forEach var="emp" items="${empresas}">
+                                        <option value="${emp.id}"><c:out value="${emp.nome}" /></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Empresa</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">5. Atualizar Senha (atualizarSenha)</h4>
+                        <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'Senha atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarSenha">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${motoristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Senha *</label>
+                                <input type="password" name="senha" class="form-control" placeholder="Nova senha"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Senha</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">6. Atualizar Data de Nascimento (atualizarDataNascimento)</h4>
+                        <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'Data atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarDataNascimento">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${motoristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Data *</label>
+                                <input type="date" name="dataNascimento" class="form-control" placeholder=""  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Data de Nascimento</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">7. Atualizar Assinatura (atualizarAssinatura)</h4>
+                        <form action="${pageContext.request.contextPath}/motorista" method="post" onsubmit="return handleFormSubmit(event, 'Assinatura atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarAssinatura">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${motoristas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Assinatura *</label>
+                                <input type="text" name="assinatura" class="form-control" placeholder="Assinatura"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Assinatura</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!-- ABA 2: EXCLUSÃO MOTORISTA -->
             <div id="tabExcluir-motorista" class="tab-content">
                 <div class="card-header">
@@ -881,6 +1255,8 @@
                 </svg>
                 Cadastrar Novo Caminhão
             </button>
+            <button type="button" id="tabBtnSimples-caminhao" class="tab-button" onclick="switchTab('caminhao', 'simples')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Cadastro Simples (inserirSimples)</button>
+            <button type="button" id="tabBtnOperacoes-caminhao" class="tab-button" onclick="switchTab('caminhao', 'operacoes')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Atualiza&ccedil;&otilde;es Espec&iacute;ficas (DAO)</button>
             <button type="button" id="tabBtnExcluir-caminhao" class="tab-button tab-danger" onclick="switchTab('caminhao', 'excluir')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -946,6 +1322,136 @@
                 </form>
             </div>
 
+            <!-- ABA: CADASTRO SIMPLIFICADO (inserirSimples) -->
+            <div id="tabSimples-caminhao" class="tab-content">
+                <div class="card-header">
+                    <h2>Cadastro R&aacute;pido de Caminh&atilde;o (inserirSimples)</h2>
+                    <p>Insere o registro com os campos essenciais via <code>CaminhaoDAO.inserirSimples()</code>.</p>
+                </div>
+                <form action="${pageContext.request.contextPath}/caminhao" method="post" onsubmit="return handleFormSubmit(event, 'Caminh&atilde;o simples cadastrado!')">
+                    <input type="hidden" name="acao" value="inserirSimples">
+                    <div class="form-grid">
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Placa do Cavalo *</label>
+                                <input type="text" name="placaCavalo" class="form-control" placeholder="ABC1D23" maxlength="8" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Placa da Carreta *</label>
+                                <input type="text" name="placaCarreta" class="form-control" placeholder="ABC1D23" maxlength="8" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Capacidade M&aacute;xima *</label>
+                                <input type="number" name="capacidadeMaxima" class="form-control" placeholder="Animais" min="1" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Empresa</label>
+                                <select name="idEmpresa" class="form-control">
+                                    <option value="">Sem empresa</option>
+                                    <c:forEach var="emp" items="${empresas}">
+                                        <option value="${emp.id}"><c:out value="${emp.nome}" /></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Inserir Caminh&atilde;o Simples</button>
+                    </div>
+                </form>
+            </div>
+            <!-- ABA: ATUALIZACOES ESPECIFICAS (METODOS DAO) -->
+            <div id="tabOperacoes-caminhao" class="tab-content">
+                <div class="card-header">
+                    <h2>Atualiza&ccedil;&otilde;es Espec&iacute;ficas de Caminh&atilde;o (M&eacute;todos CaminhaoDAO)</h2>
+                    <p>Execu&ccedil;&atilde;o direta dos m&eacute;todos especializados de atualiza&ccedil;&atilde;o do <code>CaminhaoDAO</code>.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">1. Atualizar Placa do Cavalo (atualizarPlacaCavalo)</h4>
+                        <form action="${pageContext.request.contextPath}/caminhao" method="post" onsubmit="return handleFormSubmit(event, 'Placa do cavalo atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarPlacaCavalo">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${caminhoes}">
+                                        <option value="${item.id}">#${item.id} - ${item.placaCavalo} / ${item.placaCarreta}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Placa *</label>
+                                <input type="text" name="placaCavalo" class="form-control" placeholder="ABC1D23" maxlength="8" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Placa do Cavalo</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">2. Atualizar Placa da Carreta (atualizarPlacaCarreta)</h4>
+                        <form action="${pageContext.request.contextPath}/caminhao" method="post" onsubmit="return handleFormSubmit(event, 'Placa da carreta atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarPlacaCarreta">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${caminhoes}">
+                                        <option value="${item.id}">#${item.id} - ${item.placaCavalo} / ${item.placaCarreta}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Placa *</label>
+                                <input type="text" name="placaCarreta" class="form-control" placeholder="ABC1D23" maxlength="8" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Placa da Carreta</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">3. Atualizar Capacidade M&aacute;xima (atualizarCapacidadeMaxima)</h4>
+                        <form action="${pageContext.request.contextPath}/caminhao" method="post" onsubmit="return handleFormSubmit(event, 'Capacidade atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarCapacidadeMaxima">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${caminhoes}">
+                                        <option value="${item.id}">#${item.id} - ${item.placaCavalo} / ${item.placaCarreta}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Capacidade *</label>
+                                <input type="number" name="capacidadeMaxima" class="form-control" placeholder="Animais" min="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Capacidade M&aacute;xima</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">4. Atualizar Empresa (atualizarEmpresa)</h4>
+                        <form action="${pageContext.request.contextPath}/caminhao" method="post" onsubmit="return handleFormSubmit(event, 'Empresa atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarEmpresa">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${caminhoes}">
+                                        <option value="${item.id}">#${item.id} - ${item.placaCavalo} / ${item.placaCarreta}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Empresa</label>
+                                <select name="idEmpresa" class="form-control">
+                                    <option value="">Sem empresa</option>
+                                    <c:forEach var="emp" items="${empresas}">
+                                        <option value="${emp.id}"><c:out value="${emp.nome}" /></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Empresa</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!-- ABA 2: EXCLUSÃO CAMINHÃO -->
             <div id="tabExcluir-caminhao" class="tab-content">
                 <div class="card-header">
@@ -1678,6 +2184,83 @@
                             <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Curral</button>
                         </form>
                     </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">5. Atualizar Motorista (atualizarMotorista)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Motorista do trajeto atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarMotorista">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - ${t.motoristaModel.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Motorista *</label>
+                                <select name="idMotorista" class="form-control" required>
+                                    <option value="">Selecione o motorista...</option>
+                                    <c:forEach var="mot" items="${motoristas}">
+                                        <option value="${mot.id}"><c:out value="${mot.nome}" /></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Motorista</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">6. Atualizar Caminh&atilde;o (atualizarCaminhao)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Caminh&atilde;o do trajeto atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarCaminhao">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - ${t.caminhaoModel.placaCavalo}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Caminh&atilde;o *</label>
+                                <select name="idCaminhao" class="form-control" required>
+                                    <option value="">Selecione o caminh&atilde;o...</option>
+                                    <c:forEach var="cam" items="${caminhoes}">
+                                        <option value="${cam.id}"><c:out value="${cam.placaCavalo}" /> / <c:out value="${cam.placaCarreta}" /></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Caminh&atilde;o</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">7. Atualizar Pecuarista (atualizarPecuarista)</h4>
+                        <form action="${pageContext.request.contextPath}/trajeto" method="post" onsubmit="return handleFormSubmit(event, 'Pecuarista do trajeto atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarPecuarista">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Trajeto *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione o trajeto...</option>
+                                    <c:forEach var="t" items="${trajetos}">
+                                        <option value="${t.id}">#${t.id} - ${t.pecuaristaModel.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Pecuarista *</label>
+                                <select name="idPecuarista" class="form-control" required>
+                                    <option value="">Selecione o pecuarista...</option>
+                                    <c:forEach var="pec" items="${pecuaristas}">
+                                        <option value="${pec.id}"><c:out value="${pec.nome}" /> (CPF: <c:out value="${pec.cpf}" />)</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Pecuarista</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1869,6 +2452,8 @@
                 </svg>
                 Cadastrar Nova Empresa
             </button>
+            <button type="button" id="tabBtnSimples-empresa" class="tab-button" onclick="switchTab('empresa', 'simples')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Cadastro Simples (inserirSimples)</button>
+            <button type="button" id="tabBtnOperacoes-empresa" class="tab-button" onclick="switchTab('empresa', 'operacoes')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Atualiza&ccedil;&otilde;es Espec&iacute;ficas (DAO)</button>
             <button type="button" id="tabBtnExcluir-empresa" class="tab-button tab-btn-danger" onclick="switchTab('empresa', 'excluir')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -1902,6 +2487,102 @@
                 </form>
             </div>
 
+            <!-- ABA: CADASTRO SIMPLIFICADO (inserirSimples) -->
+            <div id="tabSimples-empresa" class="tab-content">
+                <div class="card-header">
+                    <h2>Cadastro R&aacute;pido de Empresa (inserirSimples)</h2>
+                    <p>Insere o registro com os campos essenciais via <code>EmpresaDAO.inserirSimples()</code>.</p>
+                </div>
+                <form action="${pageContext.request.contextPath}/empresa" method="post" onsubmit="return handleFormSubmit(event, 'Empresa simples cadastrada!')">
+                    <input type="hidden" name="acao" value="inserirSimples">
+                    <div class="form-grid">
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nome *</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Raz&atilde;o social"  required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>CNPJ *</label>
+                                <input type="text" name="cnpj" class="form-control" placeholder="14 d&iacute;gitos" maxlength="18" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>C&oacute;digo</label>
+                                <input type="text" name="codigo" class="form-control" placeholder="Opcional" >
+                            </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Inserir Empresa Simples</button>
+                    </div>
+                </form>
+            </div>
+            <!-- ABA: ATUALIZACOES ESPECIFICAS (METODOS DAO) -->
+            <div id="tabOperacoes-empresa" class="tab-content">
+                <div class="card-header">
+                    <h2>Atualiza&ccedil;&otilde;es Espec&iacute;ficas de Empresa (M&eacute;todos EmpresaDAO)</h2>
+                    <p>Execu&ccedil;&atilde;o direta dos m&eacute;todos especializados de atualiza&ccedil;&atilde;o do <code>EmpresaDAO</code>.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">1. Atualizar Nome (atualizarNome)</h4>
+                        <form action="${pageContext.request.contextPath}/empresa" method="post" onsubmit="return handleFormSubmit(event, 'Nome atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarNome">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${empresas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Nome *</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Raz&atilde;o social"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Nome</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">2. Atualizar CNPJ (atualizarCnpj)</h4>
+                        <form action="${pageContext.request.contextPath}/empresa" method="post" onsubmit="return handleFormSubmit(event, 'CNPJ atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarCnpj">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${empresas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo CNPJ *</label>
+                                <input type="text" name="cnpj" class="form-control" placeholder="14 d&iacute;gitos" maxlength="18" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar CNPJ</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">3. Atualizar C&oacute;digo (atualizarCodigo)</h4>
+                        <form action="${pageContext.request.contextPath}/empresa" method="post" onsubmit="return handleFormSubmit(event, 'C&oacute;digo atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarCodigo">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${empresas}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo C&oacute;digo *</label>
+                                <input type="text" name="codigo" class="form-control" placeholder="C&oacute;digo"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar C&oacute;digo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!-- ABA 2: EXCLUSÃO -->
             <div id="tabExcluir-empresa" class="tab-content">
                 <div class="card-header">
@@ -2018,6 +2699,7 @@
                 </svg>
                 Cadastrar Novo Administrador
             </button>
+            <button type="button" id="tabBtnOperacoes-admin" class="tab-button" onclick="switchTab('admin', 'operacoes')"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Atualiza&ccedil;&otilde;es Espec&iacute;ficas (DAO)</button>
             <button type="button" id="tabBtnExcluir-admin" class="tab-button tab-btn-danger" onclick="switchTab('admin', 'excluir')">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -2064,6 +2746,100 @@
                 </form>
             </div>
 
+            <!-- ABA: ATUALIZACOES ESPECIFICAS (METODOS DAO) -->
+            <div id="tabOperacoes-admin" class="tab-content">
+                <div class="card-header">
+                    <h2>Atualiza&ccedil;&otilde;es Espec&iacute;ficas de Administrador (M&eacute;todos AdminDAO)</h2>
+                    <p>Execu&ccedil;&atilde;o direta dos m&eacute;todos especializados de atualiza&ccedil;&atilde;o do <code>AdminDAO</code>.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">1. Atualizar Nome (atualizarNome)</h4>
+                        <form action="${pageContext.request.contextPath}/admin" method="post" onsubmit="return handleFormSubmit(event, 'Nome atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarNome">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${admins}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo Nome *</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Nome"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Nome</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">2. Atualizar E-mail (atualizarEmail)</h4>
+                        <form action="${pageContext.request.contextPath}/admin" method="post" onsubmit="return handleFormSubmit(event, 'E-mail atualizado!')">
+                            <input type="hidden" name="acao" value="atualizarEmail">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${admins}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Novo E-mail *</label>
+                                <input type="email" name="email" class="form-control" placeholder="email@dominio.com"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar E-mail</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">3. Atualizar Senha (atualizarSenha)</h4>
+                        <form action="${pageContext.request.contextPath}/admin" method="post" onsubmit="return handleFormSubmit(event, 'Senha atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarSenha">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${admins}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Nova Senha *</label>
+                                <input type="password" name="senha" class="form-control" placeholder="Nova senha"  required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Senha</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin: 0; background: var(--surface-alt); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary-green);">4. Atualizar Empresa (atualizarEmpresa)</h4>
+                        <form action="${pageContext.request.contextPath}/admin" method="post" onsubmit="return handleFormSubmit(event, 'Empresa atualizada!')">
+                            <input type="hidden" name="acao" value="atualizarEmpresa">
+                            <div class="form-group" style="margin-bottom: 0.6rem;">
+                                <label>Registro *</label>
+                                <select name="id" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <c:forEach var="item" items="${admins}">
+                                        <option value="${item.id}">#${item.id} - ${item.nome}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.8rem;">
+                                <label>Empresa</label>
+                                <select name="idEmpresa" class="form-control">
+                                    <option value="">Sem empresa</option>
+                                    <c:forEach var="emp" items="${empresas}">
+                                        <option value="${emp.id}"><c:out value="${emp.nome}" /></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Atualizar Empresa</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!-- ABA 2: EXCLUSÃO -->
             <div id="tabExcluir-admin" class="tab-content">
                 <div class="card-header">

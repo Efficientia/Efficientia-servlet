@@ -2,6 +2,7 @@ package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -139,6 +140,70 @@ public class EmpresaServlet extends HttpServlet {
             }
 
             resp.sendRedirect(req.getContextPath() + "/empresa");
+            return;
+        }
+
+        // Inserção simplificada de empresa
+        if ("inserirSimples".equals(acao)) {
+            try {
+                String nome = obterParametro(req, "nome", "razaoSocial", "razao_social");
+                String cnpj = obterParametro(req, "cnpj");
+                String codigo = obterParametro(req, "codigo");
+
+                if (cnpj != null && !cnpj.isBlank() && !ValidadorRegex.isCnpjValido(cnpj)) {
+                    resp.sendRedirect(req.getContextPath() + "/empresa?erro=cnpj_invalido");
+                    return;
+                }
+                String cnpjNorm = ValidadorRegex.apenasDigitos(cnpj);
+                dao.inserirSimples(nome, cnpjNorm, codigo);
+            } catch (Exception e) {
+                System.out.println("Erro ao inserir empresa simples: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/empresa"));
+            return;
+        }
+
+        // Atualização específica: modifica a razão social / nome da empresa
+        if ("atualizarNome".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoNome = obterParametro(req, "nome", "novoNome", "razaoSocial", "razao_social");
+                dao.atualizarNome(id, novoNome);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar nome da empresa: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/empresa"));
+            return;
+        }
+
+        // Atualização específica: modifica o CNPJ da empresa
+        if ("atualizarCnpj".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoCnpj = obterParametro(req, "cnpj", "novoCnpj");
+                if (novoCnpj != null && !novoCnpj.isBlank() && !ValidadorRegex.isCnpjValido(novoCnpj)) {
+                    resp.sendRedirect(req.getContextPath() + "/empresa?erro=cnpj_invalido");
+                    return;
+                }
+                String cnpjNorm = ValidadorRegex.apenasDigitos(novoCnpj);
+                dao.atualizarCnpj(id, cnpjNorm);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar CNPJ da empresa: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/empresa"));
+            return;
+        }
+
+        // Atualização específica: modifica o código corporativo da empresa
+        if ("atualizarCodigo".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novoCodigo = obterParametro(req, "codigo", "novoCodigo");
+                dao.atualizarCodigo(id, novoCodigo);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar código da empresa: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/empresa"));
             return;
         }
 

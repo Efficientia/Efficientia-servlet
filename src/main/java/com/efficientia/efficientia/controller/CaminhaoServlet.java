@@ -143,6 +143,93 @@ public class CaminhaoServlet extends HttpServlet {
             return;
         }
 
+        // Inserção simplificada de caminhão
+        if ("inserirSimples".equals(acao)) {
+            try {
+                String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
+                String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
+                int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
+                Integer idEmpresa = parseIntegerNull(obterParametro(req, "idEmpresa", "id_empresa"));
+
+                if (placaCavalo != null && !placaCavalo.isBlank() && !ValidadorRegex.isPlacaValida(placaCavalo)) {
+                    resp.sendRedirect(req.getContextPath() + "/caminhao?erro=placa_invalida");
+                    return;
+                }
+                if (placaCarreta != null && !placaCarreta.isBlank() && !ValidadorRegex.isPlacaValida(placaCarreta)) {
+                    resp.sendRedirect(req.getContextPath() + "/caminhao?erro=placa_invalida");
+                    return;
+                }
+
+                String cavaloNorm = ValidadorRegex.normalizarPlaca(placaCavalo);
+                String carretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
+                dao.inserirSimples(cavaloNorm, carretaNorm, capacidadeMaxima, idEmpresa);
+            } catch (Exception e) {
+                System.out.println("Erro ao inserir caminhão simples: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao"));
+            return;
+        }
+
+        // Atualização específica: modifica a placa do cavalo mecânico
+        if ("atualizarPlacaCavalo".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novaPlaca = obterParametro(req, "placaCavalo", "placa_cavalo", "novaPlaca");
+                if (novaPlaca != null && !novaPlaca.isBlank() && !ValidadorRegex.isPlacaValida(novaPlaca)) {
+                    resp.sendRedirect(req.getContextPath() + "/caminhao?erro=placa_invalida");
+                    return;
+                }
+                dao.atualizarPlacaCavalo(id, ValidadorRegex.normalizarPlaca(novaPlaca));
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar placa cavalo: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao"));
+            return;
+        }
+
+        // Atualização específica: modifica a placa da carreta
+        if ("atualizarPlacaCarreta".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                String novaPlaca = obterParametro(req, "placaCarreta", "placa_carreta", "novaPlaca");
+                if (novaPlaca != null && !novaPlaca.isBlank() && !ValidadorRegex.isPlacaValida(novaPlaca)) {
+                    resp.sendRedirect(req.getContextPath() + "/caminhao?erro=placa_invalida");
+                    return;
+                }
+                dao.atualizarPlacaCarreta(id, ValidadorRegex.normalizarPlaca(novaPlaca));
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar placa carreta: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao"));
+            return;
+        }
+
+        // Atualização específica: modifica a capacidade máxima
+        if ("atualizarCapacidadeMaxima".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                int novaCapacidade = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima", "capacidade"), 0);
+                dao.atualizarCapacidadeMaxima(id, novaCapacidade);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar capacidade máxima: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao"));
+            return;
+        }
+
+        // Atualização específica: modifica a empresa vinculada ao caminhão
+        if ("atualizarEmpresa".equals(acao)) {
+            try {
+                int id = parseInt(req.getParameter("id"), 0);
+                Integer idEmpresa = parseIntegerNull(obterParametro(req, "idEmpresa", "id_empresa"));
+                dao.atualizarEmpresa(id, idEmpresa);
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar empresa do caminhão: " + e.getMessage());
+            }
+            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao"));
+            return;
+        }
+
         // Atualização: modifica os dados do veículo existente (empresa, placas, capacidade)
         if ("atualizar".equals(acao)) {
             try {
@@ -253,6 +340,22 @@ public class CaminhaoServlet extends HttpServlet {
         } catch (Exception e) {
             System.out.println("Erro ao converter número (" + texto + "): " + e.getMessage());
             return padrao;
+        }
+    }
+
+    /**
+     * Converte com segurança uma string para Integer, retornando null caso nula, vazia ou inválida.
+     *
+     * @param texto texto contendo o número
+     * @return Integer convertido ou null
+     */
+    private Integer parseIntegerNull(String texto) {
+        if (texto == null || texto.isBlank()) return null;
+        try {
+            int val = Integer.parseInt(texto.trim());
+            return val > 0 ? val : null;
+        } catch (Exception e) {
+            return null;
         }
     }
 }
