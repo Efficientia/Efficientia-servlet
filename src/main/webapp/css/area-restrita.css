@@ -402,6 +402,22 @@ background: linear-gradient(191deg, rgba(33, 78, 143, 0.90) 0%, rgba(0, 29, 137,
     background: #48C458;
 }
 
+.pagina-acesso .voltar-inicio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+    border: 1px solid #FFF8E1;
+    background: transparent;
+    color: #FFF8E1;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.pagina-acesso .voltar-inicio:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
 .aviso-troca-senha {
     position: fixed;
     bottom: 16px;
