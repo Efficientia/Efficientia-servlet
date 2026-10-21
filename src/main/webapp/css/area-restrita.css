@@ -390,6 +390,18 @@ background: linear-gradient(191deg, rgba(33, 78, 143, 0.90) 0%, rgba(0, 29, 137,
     text-align: center;
 }
 
+.pagina-acesso .voltar-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    text-decoration: none;
+}
+
+.pagina-acesso .voltar-login:hover {
+    background: #48C458;
+}
+
 .aviso-troca-senha {
     position: fixed;
     bottom: 16px;
