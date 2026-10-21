@@ -253,6 +253,7 @@ background: linear-gradient(191deg, rgba(33, 78, 143, 0.90) 0%, rgba(0, 29, 137,
 }
 
 .pagina-acesso .menu-login {
+    flex-direction: column;
     width: 100%;
     min-width: 0;
     min-height: 0;

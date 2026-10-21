@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Efficientia - Login de Administrador</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/area-restrita.css?v=login-voltar-inicio-1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/area-restrita.css?v=acesso-retornos-2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
