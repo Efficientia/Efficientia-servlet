@@ -383,6 +383,13 @@ background: linear-gradient(191deg, rgba(33, 78, 143, 0.90) 0%, rgba(0, 29, 137,
     margin-bottom: 20px;
 }
 
+.pagina-acesso .mensagem-recuperacao {
+    color: #FFF8E1;
+    font-size: 20px;
+    line-height: 1.5;
+    text-align: center;
+}
+
 .aviso-troca-senha {
     position: fixed;
     bottom: 16px;
