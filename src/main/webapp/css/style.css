@@ -205,6 +205,8 @@ button {
 
 .menu-links {
     display: flex;
+    flex: 1;
+    min-width: 0;
     align-items: center;
     gap: 40px;
 }
@@ -213,7 +215,7 @@ button {
     font-family: var(--font-heading);
     color: var(--color-cream);
     text-align: center;
-    font-size: var(--font-size-24);
+    font-size: var(--font-size-20);
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-default);
     text-decoration: none;
@@ -224,6 +226,36 @@ button {
 .link-menu:hover {
     opacity: var(--opacity-hover);
     text-decoration: underline;
+}
+
+.menu .menu-entrar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-height: 44px;
+    margin-left: auto;
+    padding: 0 20px;
+    border: 1px solid #FFF8E1;
+    border-radius: 40px;
+    background: transparent;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    text-decoration: none;
+    transform: none;
+    transition: background-color 0.2s ease;
+}
+
+.menu .menu-entrar:hover {
+    background-color: rgba(255, 248, 225, 0.12);
+    opacity: 1;
+}
+
+.menu .menu-entrar:focus-visible {
+    outline: 3px solid #FFF8E1;
+    outline-offset: 3px;
 }
 
 #logo {
@@ -364,6 +396,7 @@ button {
     align-items: center;
     padding: 0 25px;
     min-width: 290px;
+
 }
 
 #mockup-celular-hero {
@@ -934,10 +967,10 @@ button {
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        padding: 10px 40px;
+        padding: 10px 24px;
         height: 56px;
         justify-content: flex-start;
-        gap: 35px;
+        gap: 20px;
         border-radius: var(--radius-20);
     }
 
@@ -946,7 +979,7 @@ button {
     }
 
     .menu-links {
-        gap: 25px;
+        gap: clamp(12px, 1.6vw, 25px);
     }
 
     .link-menu {
@@ -1350,6 +1383,7 @@ button {
 
     .menu-links {
         display: none;
+        flex: 0 0 100%;
         width: 100%;
         flex-direction: column;
         align-items: center;
@@ -1363,6 +1397,12 @@ button {
     .menu.open .menu-links {
         display: flex;
         animation: menuDropdown 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .menu .menu-entrar {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 6px;
     }
 
     @keyframes menuDropdown {

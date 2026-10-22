@@ -1,0 +1,311 @@
+# Guia Técnico Didático: Implementação da Busca por Nome (Completo e Picado)
+
+**Projeto:** Efficientia  
+**Nível:** Estudante / Acadêmico  
+
+---
+
+## 1. Introdução e Objetivo
+
+O objetivo desta implementação foi permitir que o usuário consiga buscar registros pelo nome (ex: pecuaristas, empresas, motoristas, administradores) de forma flexível:
+- Se digitar o nome completo e exato (ex: `"João da Silva"`), o sistema acha.
+- Se digitar letras maiúsculas e minúsculas erradas (ex: `"jOãO"`, `"SILVA"`), o sistema acha.
+- Se digitar o nome "picado" ou partes soltas em ordens diferentes (ex: `"silva joao"`, `"joao silv"`), o sistema acha.
+- Se não digitar nada ou limpar o campo, o sistema lista todos os registros normais.
+
+Para isso funcionar, foram alteradas três partes da arquitetura:
+1. **Banco de Dados e a Camada de Dados (DAOs)**
+2. **Camada de Controle HTTP (Servlets)**
+3. **Camada de Interface (JSP)**
+
+---
+
+## 2. O Problema Anterior: Por que a Busca Comum Falha?
+
+Em bancos de dados relacionais como o PostgreSQL:
+
+1. **Uso de igualdade simples (`=`):**
+   ```sql
+   SELECT * FROM pecuarista WHERE nome = 'João da Silva';
+   ```
+   *Se o usuário digitar `"joão"` (minúsculo) ou apenas `"João"`, o banco retorna 0 linhas.*
+
+2. **Uso apenas de `LIKE` com texto fixo:**
+   ```sql
+   SELECT * FROM pecuarista WHERE nome LIKE '%joao%';
+   ```
+   - O operador `LIKE` no PostgreSQL é sensível a maiúsculas (*Case-Sensitive*). Se no banco estiver `"João"` e você buscar `"joão"`, não vai achar.
+   - Se o usuário digitar `"Silva João"` e no banco estiver `"João Carlos da Silva"`, uma busca com `'%Silva João%'` falharia porque as palavras não estão juntas nessa ordem.
+
+---
+
+## 3. Como Foi Resolvido nos DAOs (Detalhes Técnicos)
+
+Criou-se o método:
+```java
+public List<Modelo> buscarPorNome(String termo)
+```
+
+O passo a passo técnico desse método é o seguinte:
+
+### Passo 3.1: Validação do termo recebido
+No Java, primeiro verificamos se o usuário passou algo nulo ou vazio:
+```java
+if (termo == null || termo.isBlank()) {
+    return listar();
+}
+```
+*Se não digitou nada, nem gastamos processamento de filtro: chamamos direto o `listar()`.*
+
+### Passo 3.2: Quebrando o texto em pedaços ("Tokens")
+Usamos a função `split` com a expressão regular `"\\s+"`:
+```java
+String[] tokens = termo.trim().split("\\s+");
+```
+
+**O que isso faz?**
+- `.trim()`: remove espaços sobrando nas pontas.
+- `.split("\\s+")`: divide o texto em palavras, mesmo que o usuário tenha apertado a barra de espaço 2, 3 ou mais vezes entre uma palavra e outra.
+
+*Exemplo:* Se o usuário digitou `"  joao    silva  "`, o vetor `tokens` terá 2 posições:
+- `tokens[0] = "joao"`
+- `tokens[1] = "silva"`
+
+### Passo 3.3: Construção Dinâmica da Query SQL (`StringBuilder`)
+Para cada palavra que o usuário digitou, precisamos que o nome no banco contenha aquela palavra. Para isso, montamos o SQL usando um `StringBuilder`:
+
+```java
+StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
+for (int i = 0; i < tokens.length; i++) {
+    sql.append(" AND LOWER(nome) LIKE ?");
+}
+sql.append(" ORDER BY nome ASC;");
+```
+
+- **Por que usar `WHERE 1=1`?**  
+  É uma técnica clássica de programação SQL. Como `1=1` é sempre verdadeiro, podemos adicionar livremente cláusulas `AND ...` logo depois em loops sem nos preocuparmos se é a primeira ou a segunda condição.
+- **Por que usar `LOWER(nome)`?**  
+  A função `LOWER()` converte o texto gravado no banco para letras minúsculas antes de comparar. Assim, se o banco tiver `"AMBEV"`, `"Ambev"` ou `"ambev"`, todos viram `"ambev"` na hora do teste. Isso resolve o problema de maiúsculas e minúsculas.
+
+### Passo 3.4: Parametrização Segura (`PreparedStatement`)
+Para evitar **SQL Injection** (ataques onde usuários mal-intencionados digitam comandos SQL no campo de texto para apagar ou roubar dados), **JAMAIS** concatenamos o texto direto na String do SQL. Usamos interrogações (`?`) como marcadores.
+
+Depois, preenchemos cada interrogação no Java:
+```java
+for (int i = 0; i < tokens.length; i++) {
+    stmt.setString(i + 1, "%" + tokens[i].toLowerCase() + "%");
+}
+```
+
+O caractere `%` é o curinga do SQL:
+- `"%" + "joao" + "%"` significa: *"qualquer coisa antes, a palavra joao, e qualquer coisa depois"*.
+- Com `toLowerCase()`, garantimos que o parâmetro enviado também esteja todo minúsculo para casar perfeitamente com a coluna tratada com `LOWER(nome)`.
+
+> **Por que isso acha o nome picado e em qualquer ordem?**  
+> Porque se a query tiver:  
+> `WHERE 1=1 AND LOWER(nome) LIKE '%silva%' AND LOWER(nome) LIKE '%joao%'`  
+> O registro `"João da Silva"` atende tanto à condição de conter `"silva"` quanto à condição de conter `"joao"`, independentemente da ordem em que aparecem.
+
+---
+
+## 4. Como Funciona na Camada Web (Servlets)
+
+Os Servlets são responsáveis por receber a requisição do navegador, chamar o DAO correto e despachar a resposta para a página JSP.
+
+No método `doGet(HttpServletRequest req, HttpServletResponse resp)`:
+
+1. **O Servlet tenta capturar o parâmetro enviado pela URL ou formulário:**
+   ```java
+   String busca = obterParametro(req, "busca", "nome", "q", "pesquisa");
+   ```
+
+2. **Se existir um termo digitado, chama a busca; se não, chama a listagem completa:**
+   ```java
+   List<EmpresaModel> lista;
+   if (busca != null && !busca.isBlank()) {
+       lista = dao.buscarPorNome(busca);
+   } else {
+       lista = dao.listar();
+   }
+   ```
+
+3. **O Servlet devolve dois dados essenciais para o JSP através de atributos do Request:**
+   ```java
+   req.setAttribute("termoBusca", busca != null ? busca : "");
+   req.setAttribute("empresas", lista);
+   ```
+
+**Por que devolver `termoBusca`?**  
+Para que a caixinha de pesquisa na tela não fique vazia depois que a página recarregar. O usuário consegue ver claramente qual palavra ele acabou de pesquisar.
+
+---
+
+## 5. Como Funciona na Interface (JSP / HTML)
+
+Na tela JSP (por exemplo, `pecuarista.jsp`), criamos um formulário com método GET:
+
+```jsp
+<form action="${pageContext.request.contextPath}/pecuarista" method="GET">
+    <input type="text" name="busca" value="${termoBusca}" placeholder="Buscar por nome..." />
+    <button type="submit">Buscar</button>
+</form>
+```
+
+- **Método GET:** Os parâmetros vão pela URL (ex: `/pecuarista?busca=carlos`). Isso permite que o usuário favorite a busca ou dê F5 sem o navegador alertar sobre reenvio de formulário.
+- **`value="${termoBusca}"`:** Preenche o campo com o valor que o Servlet devolveu.
+- **Mensagem de Feedback e Botão Limpar:**  
+  Se `${not empty termoBusca}`, a tela exibe:  
+  `Filtrando por: carlos (Limpar filtro)`  
+  O link *"Limpar filtro"* apenas redireciona para a URL limpa (`/pecuarista`), fazendo o sistema listar tudo novamente.
+
+---
+
+## 6. Fluxo Completo Resumido (Exemplo Prático)
+
+**Cenário:** No banco existe o pecuarista *"Antônio Carlos de Souza"*.
+
+1. O usuário digita no campo de busca: `"sOuZa  ant"` e clica em **Buscar**.
+2. O navegador faz uma requisição: `GET /pecuarista?busca=sOuZa++ant`
+3. O `PecuaristaServlet` recebe a requisição no método `doGet`.
+4. O Servlet lê o parâmetro `"busca"` que vale `"sOuZa  ant"`.
+5. O Servlet chama `dao.buscarPorNome("sOuZa  ant")`.
+6. O `PecuaristaDAO`:
+   - Aplica `trim()` e `split("\\s+")`, obtendo: `["sOuZa", "ant"]`.
+   - Constrói o SQL:
+     ```sql
+     SELECT * FROM pecuarista 
+     WHERE 1=1 
+       AND LOWER(nome) LIKE ? 
+       AND LOWER(nome) LIKE ? 
+     ORDER BY nome ASC;
+     ```
+   - Substitui o 1º `?` por `"%souza%"`.
+   - Substitui o 2º `?` por `"%ant%"`.
+   - Executa no PostgreSQL.
+7. O banco localiza *"Antônio Carlos de Souza"* porque:
+   - `"antônio carlos de souza"` contém `"souza"` (OK)
+   - `"antônio carlos de souza"` contém `"ant"` (OK)
+8. O DAO converte a linha do banco em um objeto `PecuaristaModel` e adiciona na lista.
+9. O Servlet guarda a lista encontrada e o `termoBusca` e faz o forward para o JSP.
+10. O JSP renderiza a tabela contendo a linha do Antônio e mantém a barra de pesquisa preenchida com o que o usuário digitou.
+
+---
+
+## 7. Novas Buscas Específicas Implementadas
+
+Além da busca por nome, foram implementadas buscas especializadas por entidade:
+
+### 7.1. Empresa: Busca por Código (ex: `EMP12345`, `EMP001`)
+- **Método no DAO:** `buscarPorCodigoLista(String codigo)`
+- **Detalhe Técnico:** O código é normalizado com `.toUpperCase()` e pesquisado com `UPPER(codigo) LIKE %CODIGO%`.
+- **No Servlet:** Se o usuário passar `?codigo=EMP001` ou digitar na busca geral um texto que começa com `"EMP"`, o sistema faz o filtro automático pelo código corporativo.
+
+### 7.2. Caminhão: Busca por Placas (Cavalo e Carreta)
+- **Método no DAO:** `buscarPorPlaca(String placa)`
+- **Detalhe Técnico:** Remove hífens com `.replace("-", "")`. No SQL, pesquisa simultaneamente em `placa_cavalo` e `placa_carreta` usando:
+  ```sql
+  REPLACE(UPPER(placa_cavalo), '-', '') LIKE %PLACA%
+  OR REPLACE(UPPER(placa_carreta), '-', '') LIKE %PLACA%
+  ```
+- **Resultado:** O usuário pode digitar tanto `"ABC-1234"`, `"abc1234"` ou padrão Mercosul `"BRA2E19"` que o sistema encontrará o caminhão correspondente.
+
+### 7.3. Motorista: Busca por E-mail, Telefone e Empresa
+- **Métodos no DAO:** `buscarPorEmail(email)`, `buscarPorTelefone(tel)`, `buscarPorEmpresa(id)`
+- **Detalhe Técnico:**
+  - **E-mail:** `LOWER(m.email) LIKE %email%`
+  - **Telefone:** Usa `regexp_replace(m.telefone, '\\D', '', 'g')` no PostgreSQL para ignorar parênteses, espaços e hífens.
+  - **Empresa:** Filtra via chave estrangeira `m.id_empresa = idEmpresa`.
+- **No Servlet:** O Servlet possui detecção inteligente: se o termo tem `"@"`, busca por e-mail; se tiver apenas números de telefone, busca por telefone; senão, busca por nome.
+
+### 7.4. Pecuarista: Busca por CPF, E-mail e Telefone
+- **Métodos no DAO:** `buscarPorCpf(cpf)`, `buscarPorEmail(email)`, `buscarPorTelefone(tel)`
+- **Detalhe Técnico:**
+  - **CPF:** O usuário pode digitar com máscara (`"123.456.789-00"`) ou limpo (`"12345678900"`). O sistema limpa no Java (`.replaceAll("\\D", "")`) e busca com `regexp_replace` no banco.
+
+### 7.5. Admin: Busca por E-mail e Empresa
+- **Métodos no DAO:** `buscarPorEmail(email)` e `buscarPorEmpresa(idEmpresa)`
+- **Detalhe Técnico:** Permite triagem de administradores pelo e-mail funcional ou listagem de quem cuida de determinada empresa parceira.
+
+---
+
+## 8. Integração no Ambiente de Testes (`teste.jsp`)
+
+A página `teste.jsp` funciona como uma central unificada de testes de todos os Servlets e DAOs do sistema. Para contemplar todas as novas buscas:
+
+1. **Processamento Dinâmico no Topo do JSP (Busca Unificada Multi-Campos):**  
+   Ao invés de tentar adivinhar se o usuário digitou nome, código ou documento através de `if/else` rígidos, o sistema executa a busca unificada:
+   - **Empresa:** pesquisa em Código (ex: `'EMP001'` ou `'001'`) E em Nome/Razão Social.
+   - **Pecuarista:** pesquisa em Nome, CPF (completo/parcial/com máscara), E-mail e Telefone.
+   - **Motorista:** pesquisa em Nome, E-mail e Telefone.
+   - **Caminhão:** pesquisa em Placa do Cavalo e Placa da Carreta.
+   - **Admin:** pesquisa em Nome e E-mail.
+   
+   Os resultados são unificados através de um `LinkedHashSet` (por ID), garantindo que qualquer dado digitado encontre o registro imediatamente, sem duplicações.
+
+2. **Seções e Abas Completas no `teste.jsp`:**
+   - **Pecuarista:** Barra de busca inteligente (Nome, CPF com/sem máscara, E-mail, Telefone).
+   - **Motorista:** Barra de busca inteligente (Nome, E-mail, Telefone).
+   - **Caminhão:** Barra de busca por Placas (Placa do Cavalo ou Placa da Carreta, com/sem hífen).
+   - **Empresa:** Nova aba completa com formulário de cadastro, exclusão, modal de edição e barra de busca por Código (ex: `EMP001`) ou Razão Social.
+   - **Admin:** Nova aba completa com formulário de cadastro, exclusão, modal de edição e barra de busca por Nome ou E-mail.
+
+3. **Experiência de Uso (UX):**
+   - Cada tabela exibe o contador de registros encontrados.
+   - Quando um filtro é aplicado, exibe *"Filtrando por: [termo]"* com link direto para *"Limpar filtro"*.
+   - A navegação entre abas (`?servlet=empresa`, `?servlet=admin`, etc.) mantém o estado ativo inclusive após cadastros, edições e exclusões assíncronas via AJAX.
+
+---
+
+## 9. Para que Servem as Novas Importações (`Set`, `LinkedHashSet` e `ArrayList`)
+
+Durante a implementação da busca unificada multi-campos no `teste.jsp` e nos Servlets, foram adicionadas três importações fundamentais da biblioteca `java.util`:
+
+```java
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.ArrayList;
+```
+
+Abaixo está a explicação detalhada do papel de cada uma:
+
+### 9.1. `Set` e `LinkedHashSet` (Garantir Unicidade e Preservar a Ordem)
+
+- **O que é um `Set`?**  
+  No Java, `Set` (conjunto) é uma coleção especial que tem uma regra de ouro: **NÃO ACEITA ELEMENTOS REPETIDOS**.  
+  Se você tentar adicionar duas vezes o mesmo valor em um `Set`, o método `.add()` simplesmente rejeita a segunda inserção e retorna `false`.
+
+- **O que o `LinkedHashSet` tem de diferente do `HashSet` comum?**  
+  O `HashSet` comum não se importa com a ordem em que os itens chegam, deixando os registros embaralhados na memória.  
+  Já o `LinkedHashSet` mantém uma lista duplamente ligada interna, garantindo que os elementos fiquem **EXATAMENTE NA ORDEM** em que foram encontrados no banco.
+
+- **Por que ele foi essencial na nossa Busca Unificada?**  
+  Como a barra de pesquisa agora consulta vários métodos ao mesmo tempo (por exemplo: `buscarPorNome`, `buscarPorCpf`, `buscarPorEmail` e `buscarPorTelefone`), um mesmo pecuarista ou motorista poderia ser retornado mais de uma vez.  
+  Para resolver isso com máxima performance, usamos um `Set` de IDs como filtro de controle:
+
+```java
+Set<Integer> ids = new LinkedHashSet<>();
+pecuaristas = new ArrayList<>();
+
+for (PecuaristaModel p : pecuaristaDAO.buscarPorNome(termo)) {
+    if (ids.add(p.getId())) { 
+        pecuaristas.add(p); 
+    }
+}
+for (PecuaristaModel p : pecuaristaDAO.buscarPorCpf(termo)) {
+    if (ids.add(p.getId())) { 
+        pecuaristas.add(p); 
+    }
+}
+```
+
+**Como funciona o `if (ids.add(p.getId()))`?**
+- Na 1ª vez que o ID aparece: `ids.add(...)` grava o ID no conjunto e devolve `true`. O pecuarista é adicionado na lista da tabela.
+- Se o mesmo pecuarista for encontrado de novo na busca por CPF: o `Set` vê que o ID já existe, recusa a inserção e devolve `false`.
+- **Resultado:** O registro **NUNCA** se repete na tela do usuário.
+
+### 9.2. `ArrayList` (Lista Dinâmica de Resultados para a Visualização)
+
+- **O que é?**  
+  É a estrutura de lista dinâmica mais utilizada no ecossistema Java. Ao contrário de vetores primitivos (arrays normais tipo `String[]`), o `ArrayList` cresce e diminui de tamanho automaticamente conforme novos itens são adicionados.
+- **Por que foi importado?**  
+  No scriptlet do `teste.jsp` e nos métodos `doGet` dos Servlets, nós instanciamos uma nova lista limpa (`new ArrayList<>()`) para armazenar os objetos hidratados únicos que são repassados aos componentes da tela através de `request.setAttribute("pecuaristas", pecuaristas)`.
