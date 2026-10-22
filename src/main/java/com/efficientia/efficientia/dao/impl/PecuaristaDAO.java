@@ -2,6 +2,7 @@ package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.PecuaristaModel;
+import com.efficientia.efficientia.util.PasswordHasher;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -181,7 +182,7 @@ public class PecuaristaDAO {
             stmt.setString(1, nome);
             stmt.setString(2, cpf);
             stmt.setString(3, email);
-            stmt.setString(4, senha);
+            stmt.setString(4, PasswordHasher.hash(senha));
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao inserir pecuarista simples: " + e.getMessage());
@@ -260,7 +261,7 @@ public class PecuaristaDAO {
         String sql = "UPDATE pecuarista SET senha = ? WHERE id = ?;";
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, novaSenha);
+            stmt.setString(1, PasswordHasher.hash(novaSenha));
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -466,6 +467,42 @@ public class PecuaristaDAO {
         return pecuaristas;
     }
 
+    /**
+     * Autentica um pecuarista por e-mail e senha, migrando senhas legadas para hash.
+     *
+     * @return pecuarista autenticado (sem a senha) ou null
+     */
+    public PecuaristaModel autenticar(String email, String senha) throws SQLException {
+        if (email == null || email.isBlank() || senha == null || senha.isBlank()) {
+            return null;
+        }
+
+        String sql = "SELECT * FROM pecuarista WHERE LOWER(email) = ?;";
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, email.trim().toLowerCase(java.util.Locale.ROOT));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    PecuaristaModel pecuarista = extrairPecuarista(rs);
+                    if (!PasswordHasher.verify(senha, pecuarista.getSenha())) return null;
+                    if (!PasswordHasher.isHashed(pecuarista.getSenha())) {
+                        try (PreparedStatement migrate = connection.prepareStatement(
+                                "UPDATE pecuarista SET senha = ? WHERE id = ? AND senha = ?")) {
+                            migrate.setString(1, PasswordHasher.hash(senha));
+                            migrate.setInt(2, pecuarista.getId());
+                            migrate.setString(3, pecuarista.getSenha());
+                            if (migrate.executeUpdate() != 1) return null;
+                        }
+                    }
+                    pecuarista.setSenha(null);
+                    return pecuarista;
+                }
+            }
+        }
+        return null;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
@@ -501,7 +538,8 @@ public class PecuaristaDAO {
         stmt.setString(1, pecuaristaModel.getCpf());
         stmt.setDate(2, pecuaristaModel.getDataNascimento() != null ? Date.valueOf(pecuaristaModel.getDataNascimento()) : null);
         stmt.setString(3, pecuaristaModel.getNome());
-        stmt.setString(4, pecuaristaModel.getSenha());
+        stmt.setString(4, PasswordHasher.isHashed(pecuaristaModel.getSenha())
+                ? pecuaristaModel.getSenha() : PasswordHasher.hash(pecuaristaModel.getSenha()));
         stmt.setString(5, pecuaristaModel.getEmail());
         stmt.setString(6, pecuaristaModel.getTelefone());
     }

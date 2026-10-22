@@ -3,6 +3,7 @@ package com.efficientia.efficientia.dao.impl;
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.model.MotoristaModel;
+import com.efficientia.efficientia.util.PasswordHasher;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -205,7 +206,7 @@ public class MotoristaDAO {
             }
             stmt.setString(2, nome);
             stmt.setString(3, email);
-            stmt.setString(4, senha);
+            stmt.setString(4, PasswordHasher.hash(senha));
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao inserir motorista simples: " + e.getMessage());
@@ -288,7 +289,7 @@ public class MotoristaDAO {
         String sql = "UPDATE motorista SET senha = ? WHERE id = ?;";
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, novaSenha);
+            stmt.setString(1, PasswordHasher.hash(novaSenha));
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -507,6 +508,51 @@ public class MotoristaDAO {
         return motoristas;
     }
 
+    /**
+     * Autentica um motorista por e-mail e senha, migrando senhas legadas para hash.
+     *
+     * @return motorista autenticado (sem a senha) ou null
+     */
+    public MotoristaModel autenticar(String email, String senha) throws SQLException {
+        if (email == null || email.isBlank() || senha == null || senha.isBlank()) {
+            return null;
+        }
+
+        String sql = """
+                SELECT m.*,
+                       e.id AS empresa_id,
+                       e.nome AS empresa_nome,
+                       e.cnpj AS empresa_cnpj,
+                       e.codigo AS empresa_codigo
+                FROM motorista m
+                LEFT JOIN empresa e ON e.id = m.id_empresa
+                WHERE LOWER(m.email) = ?;
+                """;
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, email.trim().toLowerCase(java.util.Locale.ROOT));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    MotoristaModel motorista = extrairMotorista(rs);
+                    if (!PasswordHasher.verify(senha, motorista.getSenha())) return null;
+                    if (!PasswordHasher.isHashed(motorista.getSenha())) {
+                        try (PreparedStatement migrate = connection.prepareStatement(
+                                "UPDATE motorista SET senha = ? WHERE id = ? AND senha = ?")) {
+                            migrate.setString(1, PasswordHasher.hash(senha));
+                            migrate.setInt(2, motorista.getId());
+                            migrate.setString(3, motorista.getSenha());
+                            if (migrate.executeUpdate() != 1) return null;
+                        }
+                    }
+                    motorista.setSenha(null);
+                    return motorista;
+                }
+            }
+        }
+        return null;
+    }
+
     // ==================== MÉTODOS AUXILIARES ====================
 
     /**
@@ -568,7 +614,8 @@ public class MotoristaDAO {
             stmt.setNull(3, Types.DATE);
         }
 
-        stmt.setString(4, motoristaModel.getSenha());
+        stmt.setString(4, PasswordHasher.isHashed(motoristaModel.getSenha())
+                ? motoristaModel.getSenha() : PasswordHasher.hash(motoristaModel.getSenha()));
         stmt.setString(5, motoristaModel.getEmail());
         stmt.setString(6, motoristaModel.getTelefone());
     }
