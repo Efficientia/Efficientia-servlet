@@ -711,6 +711,8 @@ button {
 }
 
 #mockup-celular-proximo-passo {
+    width: auto;
+    height: auto;
     max-height: 750px;
     position: relative;
     z-index: 2;
