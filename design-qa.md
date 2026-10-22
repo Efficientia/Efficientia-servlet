@@ -1,5 +1,18 @@
 # Conferência — seção de funcionalidades
 
+## Atualização da composição — 22/10/2026
+
+- Referência: mesma seção do Figma, após correção baseada na segunda imagem aprovada.
+- HTML/CSS atualizado com fundo orgânico, dashboard horizontal, celular menor, círculos dos ícones e conectores com pontos. Legendas mantêm a disposição individual do Figma.
+- Assets exportados novamente dos mockups atuais; textos continuam em HTML. Onze arquivos locais utilizados, todos carregados e com proporções verificadas.
+- Evidências atuais: `funcionalidades-atualizada-desktop.png`, `funcionalidades-atualizada-390.png` e `funcionalidades-atualizada-preview.png`, na pasta de artefatos abaixo. As capturas e observações das seções seguintes correspondem à entrega anterior.
+- Conferidos desktop em 1440px e celular em 390px; também verificados limites em 360, 430, 860, 862, 1300 e 1920px, sem transbordamento horizontal nem legendas ultrapassando o fim da seção. A solicitação de 861px foi arredondada pelo navegador para 862px.
+- Menu mobile abriu e fechou ao navegar à âncora. Seta seguinte e indicador da terceira etapa do carrossel responderam em 860px. Nenhum erro no console durante a conferência.
+- Breakpoint de 860px preservado; CSS global, demais seções e JavaScript não alterados. Conectores decorativos ficam ocultos no mobile, onde as legendas seguem o fluxo do conteúdo.
+- Comparação visual com a captura atual do Figma: composição conferida, sem sobreposição entre mockups e legendas. Fontes e quebra de texto adaptam-se à largura disponível.
+
+## Registro da entrega anterior
+
 ## Referência e escopo
 
 - Figma: [Desktop 145 / Funcionalidades](https://www.figma.com/design/EBSgjcvj39hdmO1wZNIAr1/Efficientia---inter-2026?node-id=4585-215).
