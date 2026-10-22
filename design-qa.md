@@ -71,3 +71,13 @@ Na comparação, ambas as imagens foram ajustadas para 720 × 496, sem cortar co
 - Problemas preexistentes de outras seções não foram incluídos neste ajuste.
 
 final result: passed
+
+## Mockups PNG — 22/10/2026
+
+- Dois PNGs gerados com fundo transparente: `funcionalidades-iphone-real.png` (907 × 1735) e `mockup-home-motorista-realista-v3.png` (906 × 1736).
+- A carcaça, as câmeras, as laterais e os botões fazem parte das imagens. A perspectiva artificial do celular de Próximo passo foi retirada do CSS.
+- Os mesmos PNGs foram aplicados no Desktop 145 do Figma. As molduras nativas que eu havia criado foram removidas; as telas originais da equipe não foram alteradas e a imagem antiga do CTA foi preservada em uma camada oculta.
+- As imagens são ilustrativas: a geração reinterpretou fotografias de perfil e pequenos ícones, sem substituir as telas originais do app.
+- Conferência visual no navegador em 1440, 970 e 390px. Carregamento e limites horizontais conferidos também em 360, 430, 860 e 862px, sem rolagem horizontal. Em 860px o celular do CTA continua oculto; em 862px reaparece, como antes.
+- Nenhum erro no console durante essa conferência; `git diff --check` sem erros. Autenticação e JavaScript não foram alterados.
+- Evidências: `mockup-realista-proximo-passo-desktop.png`, `mockup-realista-proximo-passo-970.png`, `mockup-iphone-funcionalidades-desktop.png` e `mockup-iphone-funcionalidades-mobile.png`, na pasta de artefatos indicada acima.
