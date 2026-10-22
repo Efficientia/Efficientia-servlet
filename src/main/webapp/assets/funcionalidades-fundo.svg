@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="880" height="674" viewBox="0 0 880 674" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse id="Fundo / Azul suave" cx="440" cy="337" rx="440" ry="337" fill="url(#paint0_radial_0_552)"/>
+<defs>
+<radialGradient id="paint0_radial_0_552" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(440 337) scale(880 674)">
+<stop stop-color="#D6EBFF" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#F0FAFF" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
