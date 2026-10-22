@@ -719,7 +719,12 @@ button {
 }
 
 #dashboard-proximo-passo {
+    width: 450px;
     max-width: 450px;
+    height: auto;
+    aspect-ratio: 494 / 784;
+    object-fit: cover;
+    object-position: left center;
     position: relative;
     z-index: 1;
 }
@@ -1571,7 +1576,8 @@ button {
     /* Seção Próximo Passo */
     .conteudo-proximo-passo {
         padding: 60px 0 55px 20px;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
         justify-content: space-between;
         gap: 20px;
     }
@@ -1605,8 +1611,10 @@ button {
     }
 
     .imagens-proximo-passo {
-        justify-content: flex-end;
-        flex: 1;
+        justify-content: flex-start;
+        flex: none;
+        width: 100%;
+        padding-right: 20px;
         margin-right: 0;
     }
 
@@ -1614,6 +1622,8 @@ button {
         max-width: 370px;
         width: 100%;
         height: auto;
+        aspect-ratio: auto;
+        object-fit: contain;
         margin-right: 0;
         display: block;
     }

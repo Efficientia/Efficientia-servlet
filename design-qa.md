@@ -81,3 +81,10 @@ final result: passed
 - Conferência visual no navegador em 1440, 970 e 390px. Carregamento e limites horizontais conferidos também em 360, 430, 860 e 862px, sem rolagem horizontal. Em 860px o celular do CTA continua oculto; em 862px reaparece, como antes.
 - Nenhum erro no console durante essa conferência; `git diff --check` sem erros. Autenticação e JavaScript não foram alterados.
 - Evidências: `mockup-realista-proximo-passo-desktop.png`, `mockup-realista-proximo-passo-970.png`, `mockup-iphone-funcionalidades-desktop.png` e `mockup-iphone-funcionalidades-mobile.png`, na pasta de artefatos indicada acima.
+
+## Dashboard de Próximo passo — 22/10/2026
+
+- A última seção passou a usar o PNG `funcionalidades-dashboard.png`, com a Visão Geral atual, sem recriar textos ou gráficos por geração de imagem. O dashboard antigo do Figma foi preservado em um grupo oculto.
+- Desktop: recorte lateral proporcional, ao lado do celular. Até 860px: dashboard inteiro abaixo dos botões, evitando sua miniaturização na coluna lateral.
+- Conferência visual em 1440, 970 e 390px. Carregamento confirmado também em 360, 430, 860 e 862px; sem rolagem horizontal e sem erros no console durante a verificação.
+- Evidências: `dashboard-atualizado-ultima-secao-desktop.png` e `dashboard-atualizado-ultima-secao-mobile.png`, na pasta de artefatos indicada acima. Nenhuma alteração no backend ou no carrossel.
