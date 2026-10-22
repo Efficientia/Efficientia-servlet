@@ -716,6 +716,7 @@ button {
     max-height: 750px;
     position: relative;
     z-index: 2;
+    transform: perspective(1000px) rotateY(-18deg) skewX(-5deg) rotate(-4deg);
 }
 
 #dashboard-proximo-passo {
