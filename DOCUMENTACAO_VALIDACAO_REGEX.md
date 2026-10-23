@@ -9,7 +9,7 @@ Este documento apresenta a especificação técnica detalhada, a arquitetura de 
 No sistema **Efficientia**, as expressões regulares são aplicadas principalmente na camada de controle (Servlets) e utilitários (camada Util), com suporte defensivo na camada de persistência (DAOs). A abordagem adotada visa:
 
 1. **Validação Estrita no Backend:** Toda entrada submetida via requisições HTTP (formulários de cadastro, edição e login) passa por validação no servidor Java antes de atingir o banco de dados PostgreSQL.
-2. **Prevenção de Inconsistências e Falhas Relacionais:** Cumprimento rigoroso das restrições de integridade do banco de dados declaradas no arquivo de schema `Efficientia.sql` (por exemplo: `CHECK (length(cpf) = 11)`, `CHECK (length(telefone) >= 10)`, `CHECK (email LIKE '%@%')` e unicidade).
+2. **Prevenção de Inconsistências e Falhas Relacionais:** Cumprimento rigoroso das restrições de integridade do banco de dados declaradas no arquivo de schema `Efficientia/Efficientia.sql` (por exemplo: `CHECK (length(cpf) = 11)`, `CHECK (length(telefone) >= 10)`, `CHECK (email LIKE '%@%')` e unicidade).
 3. **Eficiência de Processamento:** Expressões regulares são pré-compiladas em constantes estáticas (`java.util.regex.Pattern`) para eliminar o custo de recompilação a cada requisição HTTP sob o Apache Tomcat.
 4. **Atendimento aos Requisitos Acadêmicos:**
    * **Sistemas Operacionais (Requisito Extra):** Validação por REGEX para entradas de CPF e Celular/Telefone (sem DDI `+55`).
@@ -20,7 +20,7 @@ No sistema **Efficientia**, as expressões regulares são aplicadas principalmen
 
 ## 2. Resumo das Expressões Regulares Centrais (`ValidadorRegex.java`)
 
-A classe [ValidadorRegex]centraliza os padrões de regex e fornece métodos estáticos auxiliares de teste e sanitização:
+A classe [ValidadorRegex](Efficientia/src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) centraliza os padrões de regex e fornece métodos estáticos auxiliares de teste e sanitização:
 
 | Tipo de Dado | Padrão REGEX | Formatos Aceitos | Formatos Rejeitados |
 | :--- | :--- | :--- | :--- |
@@ -39,31 +39,32 @@ A classe [ValidadorRegex]centraliza os padrões de regex e fornece métodos est�
 Abaixo está o detalhamento de cada classe, indicando o tipo de dado validado, como o regex é executado e o impacto no fluxo da aplicação.
 
 ```
-com.efficientia.efficientia/
-├── util/
-│   ├── ValidadorRegex.java         # Central de padrões Regex, validações e sanitizações
-│   └── PasswordHasher.java         # Tokenização de hash bcrypt/PBKDF2 via split regex
-├── controller/
-│   ├── PecuaristaServlet.java      # Validação de CPF, Telefone e E-mail de pecuaristas
-│   ├── MotoristaServlet.java       # Validação de Telefone e E-mail de motoristas
-│   ├── CaminhaoServlet.java        # Validação sintática e normalização de Placas
-│   ├── TrajetoServlet.java         # Validação de GTA, Nota Fiscal e normalização Unicode
-│   ├── LoginServlet.java           # Validação sintática do E-mail de autenticação
-│   ├── EmpresaServlet.java         # Validação e higienização de CNPJ
-│   └── AdminServlet.java           # Validação de E-mail de Administradores
-├── dao/impl/
-│   ├── PecuaristaDAO.java          # Higienização defensiva de CPF e Telefone (replaceAll \D)
-│   ├── MotoristaDAO.java           # Higienização defensiva de Telefone (replaceAll \D)
-│   ├── EmpresaDAO.java             # Higienização defensiva de CNPJ (replaceAll \D)
-│   ├── EnderecoDAO.java            # Higienização defensiva de CEP (replaceAll \D)
-│   └── *DAO.java (Demais DAOs)     # Tokenização de termos de pesquisa via regex \s+
-└── model/
-    └── StatusTrajeto.java          # Normalização de diacríticos com regex \p{M}
+Efficientia/
+├── src/main/java/com/efficientia/efficientia/
+│   ├── util/
+│   │   ├── ValidadorRegex.java         # Central de padrões Regex, validações e sanitizações
+│   │   └── PasswordHasher.java         # Tokenização de hash bcrypt/PBKDF2 via split regex
+│   ├── controller/
+│   │   ├── PecuaristaServlet.java      # Validação de CPF, Telefone e E-mail de pecuaristas
+│   │   ├── MotoristaServlet.java       # Validação de Telefone e E-mail de motoristas
+│   │   ├── CaminhaoServlet.java        # Validação sintática e normalização de Placas
+│   │   ├── TrajetoServlet.java         # Validação de GTA, Nota Fiscal e normalização Unicode
+│   │   ├── LoginServlet.java           # Validação sintática do E-mail de autenticação
+│   │   ├── EmpresaServlet.java         # Validação e higienização de CNPJ
+│   │   └── AdminServlet.java           # Validação de E-mail de Administradores
+│   ├── dao/impl/
+│   │   ├── PecuaristaDAO.java          # Higienização defensiva de CPF e Telefone (replaceAll \D)
+│   │   ├── MotoristaDAO.java           # Higienização defensiva de Telefone (replaceAll \D)
+│   │   ├── EmpresaDAO.java             # Higienização defensiva de CNPJ (replaceAll \D)
+│   │   ├── EnderecoDAO.java            # Higienização defensiva de CEP (replaceAll \D)
+│   │   └── *DAO.java (Demais DAOs)     # Tokenização de termos de pesquisa via regex \s+
+│   └── model/
+│       └── StatusTrajeto.java          # Normalização de diacríticos com regex \p{M}
 ```
 
 ---
 
-### 3.1. [ValidadorRegex.java]
+### 3.1. [ValidadorRegex.java](Efficientia/src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java)
 * **Pacote:** `com.efficientia.efficientia.util`
 * **Tipo de Dado que Atende:** CPF, Celular/Telefone, Placa de Veículo, E-mail, CNPJ, Guia de Trânsito Animal (GTA) e Nota Fiscal (NF).
 * **Como Usa o REGEX:**
@@ -84,7 +85,7 @@ com.efficientia.efficientia/
 
 ---
 
-### 3.2. [PecuaristaServlet.java]
+### 3.2. [PecuaristaServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Dados cadastrais do pecuarista — **CPF**, **Celular/Telefone** e **E-mail**.
 * **Como Usa o REGEX:**
@@ -102,7 +103,7 @@ com.efficientia.efficientia/
 
 ---
 
-### 3.3. [MotoristaServlet.java]
+### 3.3. [MotoristaServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/MotoristaServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Dados cadastrais do motorista — **Celular/Telefone** e **E-mail**.
 * **Como Usa o REGEX:**
@@ -117,7 +118,7 @@ com.efficientia.efficientia/
 
 ---
 
-### 3.4. [CaminhaoServlet.java]
+### 3.4. [CaminhaoServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Identificadores veiculares — **Placa do Cavalo Mecânico** e **Placa da Carreta**.
 * **Como Usa o REGEX:**
@@ -132,7 +133,7 @@ com.efficientia.efficientia/
 
 ---
 
-### 3.5. [TrajetoServlet.java]
+### 3.5. [TrajetoServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/TrajetoServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Documentos fiscais e sanitários de transporte de carga viva — **Guia de Trânsito Animal (GTA)**, **Nota Fiscal (NF)** e **Status do Trajeto**.
 * **Como Usa o REGEX:**
@@ -145,7 +146,7 @@ com.efficientia.efficientia/
 
 ---
 
-### 3.6. [LoginServlet.java]
+### 3.6. [LoginServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/LoginServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Credencial de autenticação — **E-mail do Administrador / Usuário**.
 * **Como Usa o REGEX:**
@@ -157,11 +158,11 @@ com.efficientia.efficientia/
         return;
     }
     ```
-  * Protege o sistema contra strings maliciosas e formatos absurdos logo na porta de entrada da aplicação.
+  * Protege o sistema contra strings maliciosas e formatos inválidos logo na entrada da aplicação.
 
 ---
 
-### 3.7. [EmpresaServlet.java]
+### 3.7. [EmpresaServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Identificador de pessoa jurídica — **CNPJ da Empresa Transportadora / Frigorífico**.
 * **Como Usa o REGEX:**
@@ -173,7 +174,7 @@ com.efficientia.efficientia/
 
 ---
 
-### 3.8. [AdminServlet.java]
+### 3.8. [AdminServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/AdminServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Cadastro e manutenção de operadores do sistema — **E-mail do Administrador**.
 * **Como Usa o REGEX:**
@@ -191,30 +192,30 @@ com.efficientia.efficientia/
 ### 3.9. Classes da Camada de Persistência (DAOs)
 Além dos Controllers e do utilitário central, classes DAO utilizam expressões regulares nativas em Java (`replaceAll` e `split`) como camada defensiva final de sanitização dos dados antes de executar comandos SQL parametrizados:
 
-1. **[PecuaristaDAO.java]:**
+1. **[PecuaristaDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/PecuaristaDAO.java):**
    * **Dados:** CPF e Telefone.
    * **Regex:** `cpf.replaceAll("\\D", "").trim()` e `telefone.replaceAll("\\D", "").trim()` para expurgar pontuações antes das queries.
    * **Busca:** `termo.trim().split("\\s+")` para quebrar pesquisas multi-palavras em filtros SQL.
-2. **[MotoristaDAO.java]:**
+2. **[MotoristaDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/MotoristaDAO.java):**
    * **Dados:** Telefone e termos de pesquisa.
    * **Regex:** `telefone.replaceAll("\\D", "")` e `termo.trim().split("\\s+")`.
-3. **[EmpresaDAO.java]:**
+3. **[EmpresaDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/EmpresaDAO.java):**
    * **Dados:** CNPJ e termos de pesquisa.
    * **Regex:** `cnpj.replaceAll("\\D", "").trim()` e `termo.trim().split("\\s+")`.
-4. **[EnderecoDAO.java]:**
+4. **[EnderecoDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/EnderecoDAO.java):**
    * **Dados:** CEP (Código de Endereçamento Postal).
    * **Regex:** `cep.replaceAll("\\D", "").trim()` para garantir conformidade estrita de 8 dígitos numéricos.
-5. **[AdminDAO.java][PropriedadeDAO.java][InfoEmbarqueDAO.java]:**
+5. **[AdminDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/AdminDAO.java)**, **[PropriedadeDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/PropriedadeDAO.java)**, **[InfoEmbarqueDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/InfoEmbarqueDAO.java):**
    * **Dados:** Termos de busca fornecidos pelo usuário em campos de pesquisa textual.
    * **Regex:** `termo.trim().split("\\s+")` para segmentar termos separados por um ou múltiplos espaços em branco.
 
 ---
 
 ### 3.10. Classes de Modelo e Segurança
-1. **[StatusTrajeto.java]:**
+1. **[StatusTrajeto.java](Efficientia/src/main/java/com/efficientia/efficientia/model/StatusTrajeto.java):**
    * **Dados:** Status do trajeto informado pelo usuário ou sistema (ex.: "Em Trânsito", "Concluído", "Pendente").
    * **Regex:** `.replaceAll("\\p{M}", "")` que usa propriedades de blocos Unicode para remover marcas de acentuação antes de converter para a enumeração interna.
-2. **[PasswordHasher.java]:**
+2. **[PasswordHasher.java](Efficientia/src/main/java/com/efficientia/efficientia/util/PasswordHasher.java):**
    * **Dados:** Hash e salt de senhas de usuários.
    * **Regex:** `stored.split("\\$", -1)` para decodificar os blocos do algoritmo criptográfico seguro.
 
