@@ -6,6 +6,7 @@ import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
+import com.efficientia.efficientia.util.WebErroUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -173,7 +174,7 @@ public class AdminServlet extends HttpServlet {
                 }
                 dao.atualizarEmail(id, novoEmail);
             } catch (DadoDuplicadoException e) {
-                resp.sendRedirect(req.getContextPath() + "/admin?erro=" + e.getTipoErro());
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/admin");
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar email do Admin: " + e.getMessage());
@@ -219,7 +220,7 @@ public class AdminServlet extends HttpServlet {
                 AdminModel adminModel = new AdminModel(id, empresa, email, senha, nome);
                 dao.atualizar(adminModel, id);
             } catch (DadoDuplicadoException e) {
-                resp.sendRedirect(req.getContextPath() + "/admin?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/admin?acao=editar&id=" + id);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar Admin: " + e.getMessage());
@@ -238,7 +239,7 @@ public class AdminServlet extends HttpServlet {
             AdminModel novoAdmin = new AdminModel(empresa, email, senha, nome);
             dao.inserir(novoAdmin);
         } catch (DadoDuplicadoException e) {
-            resp.sendRedirect(req.getContextPath() + "/admin?erro=" + e.getTipoErro());
+            WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/admin");
             return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar Admin: " + e.getMessage());

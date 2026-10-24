@@ -6,6 +6,7 @@ import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
+import com.efficientia.efficientia.util.WebErroUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -215,7 +216,7 @@ public class MotoristaServlet extends HttpServlet {
                 }
                 dao.atualizarEmail(id, novoEmail);
             } catch (DadoDuplicadoException e) {
-                resp.sendRedirect(req.getContextPath() + "/motorista?erro=" + e.getTipoErro());
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/motorista");
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar email do motorista: " + e.getMessage());
@@ -326,7 +327,7 @@ public class MotoristaServlet extends HttpServlet {
 
                 dao.atualizar(motoristaModel, id);
             } catch (DadoDuplicadoException e) {
-                resp.sendRedirect(req.getContextPath() + "/motorista?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/motorista?acao=editar&id=" + id);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar motorista: " + e.getMessage());
@@ -366,7 +367,7 @@ public class MotoristaServlet extends HttpServlet {
         try {
             dao.inserir(novoMotorista);
         } catch (DadoDuplicadoException e) {
-            resp.sendRedirect(req.getContextPath() + "/motorista?erro=" + e.getTipoErro());
+            WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/motorista");
             return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar motorista: " + e.getMessage());

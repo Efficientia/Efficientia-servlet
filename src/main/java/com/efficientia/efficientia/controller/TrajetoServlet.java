@@ -11,6 +11,7 @@ import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.model.StatusTrajeto;
 import com.efficientia.efficientia.model.TrajetoModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
+import com.efficientia.efficientia.util.WebErroUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -512,7 +513,7 @@ public class TrajetoServlet extends HttpServlet {
             try {
                 dao.atualizar(trajetoModel, id);
             } catch (DadoDuplicadoException e) {
-                resp.sendRedirect(req.getContextPath() + "/trajeto?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/trajeto?acao=editar&id=" + id);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar trajeto: " + e.getMessage());
@@ -597,7 +598,7 @@ public class TrajetoServlet extends HttpServlet {
         try {
             dao.inserir(novoTrajeto);
         } catch (DadoDuplicadoException e) {
-            resp.sendRedirect(req.getContextPath() + "/trajeto?erro=" + e.getTipoErro());
+            WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/trajeto");
             return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar trajeto: " + e.getMessage());
