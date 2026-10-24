@@ -3734,6 +3734,10 @@
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
                 body: params.toString()
             });
+            if (resp.url && (resp.url.includes('/erro.jsp') || resp.url.includes('?erro=') || resp.url.includes('&erro='))) {
+                window.location.href = resp.url;
+                return;
+            }
             if (resp.ok || resp.status === 302 || resp.type === 'opaqueredirect') {
                 showToast('Status do Trajeto #' + id + ' atualizado para ' + novoStatus + ' com sucesso!', 'toast-success');
                 setTimeout(() => {
@@ -3933,6 +3937,18 @@
                 },
                 body: formData.toString()
             });
+
+            // Se o Servlet redirecionou para tela de erro geral (/erro.jsp)
+            if (response.url && response.url.includes('/erro.jsp')) {
+                window.location.href = response.url;
+                return;
+            }
+
+            // Se o Servlet redirecionou com parametro de erro (ex: ?erro=cpf_invalido)
+            if (response.url && (response.url.includes('?erro=') || response.url.includes('&erro='))) {
+                window.location.href = response.url;
+                return;
+            }
 
             // Se o Servlet processou e respondeu (inclusive com redirect 302 seguido de 200)
             if (response.ok || response.status === 302 || response.type === 'opaqueredirect') {
