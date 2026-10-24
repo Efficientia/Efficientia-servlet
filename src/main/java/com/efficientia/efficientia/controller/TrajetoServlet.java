@@ -4,6 +4,7 @@ import com.efficientia.efficientia.dao.impl.CaminhaoDAO;
 import com.efficientia.efficientia.dao.impl.MotoristaDAO;
 import com.efficientia.efficientia.dao.impl.PecuaristaDAO;
 import com.efficientia.efficientia.dao.impl.TrajetoDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.CaminhaoModel;
 import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.model.PecuaristaModel;
@@ -508,7 +509,14 @@ public class TrajetoServlet extends HttpServlet {
                 trajetoModel.setAssinaturaMotorista(assinaturaMotorista);
             }
 
-            dao.atualizar(trajetoModel, id);
+            try {
+                dao.atualizar(trajetoModel, id);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/trajeto?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                return;
+            } catch (Exception e) {
+                System.out.println("Erro ao atualizar trajeto: " + e.getMessage());
+            }
 
             resp.sendRedirect(req.getContextPath() + "/trajeto");
             return;
@@ -586,7 +594,14 @@ public class TrajetoServlet extends HttpServlet {
             novoTrajeto.setAssinaturaMotorista(assinaturaMotorista);
         }
 
-        dao.inserir(novoTrajeto);
+        try {
+            dao.inserir(novoTrajeto);
+        } catch (DadoDuplicadoException e) {
+            resp.sendRedirect(req.getContextPath() + "/trajeto?erro=" + e.getTipoErro());
+            return;
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar trajeto: " + e.getMessage());
+        }
 
         resp.sendRedirect(req.getContextPath() + "/trajeto");
     }
