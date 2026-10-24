@@ -210,8 +210,8 @@ public class AdminServlet extends HttpServlet {
 
         // Atualização: modifica os dados de um administrador existente
         if ("atualizar".equals(acao)) {
+            int id = parseInt(req.getParameter("id"), 0);
             try {
-                int id = parseInt(req.getParameter("id"), 0);
                 String email = obterParametro(req, "email");
                 String senha = obterParametro(req, "senha");
                 String nome = obterParametro(req, "nome");

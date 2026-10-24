@@ -303,9 +303,8 @@ public class PecuaristaServlet extends HttpServlet {
 
         // Atualização: modifica os dados do pecuarista existente
         if ("atualizar".equals(acao)) {
+            int id = parseInt(req.getParameter("id"), 0);
             try {
-                int id = parseInt(req.getParameter("id"), 0);
-
                 String cpf = obterParametro(req, "cpf");
                 LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
                 String nome = obterParametro(req, "nome");

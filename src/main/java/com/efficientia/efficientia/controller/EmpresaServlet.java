@@ -222,9 +222,8 @@ public class EmpresaServlet extends HttpServlet {
 
         // Atualização de empresa existente
         if ("atualizar".equals(acao)) {
+            int id = parseInt(req.getParameter("id"), 0);
             try {
-                int id = parseInt(req.getParameter("id"), 0);
-
                 String nome = obterParametro(req, "nome", "razaoSocial", "razao_social");
                 String cnpj = obterParametro(req, "cnpj");
                 String codigo = obterParametro(req, "codigo");
