@@ -156,8 +156,8 @@ try (Connection connection = ConnectionFactory.getConnection();
 try {
     dao.inserir(novoPecuarista);
 } catch (DadoDuplicadoException e) {
-    // Trata especificamente a duplicidade e fornece feedback preciso
-    resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=" + e.getTipoErro());
+    // Redireciona para a tela de erro geral (/erro.jsp) com os metadados da duplicidade e link de retorno
+    WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/pecuarista");
     return;
 } catch (Exception e) {
     System.out.println("Erro ao cadastrar pecuarista: " + e.getMessage());

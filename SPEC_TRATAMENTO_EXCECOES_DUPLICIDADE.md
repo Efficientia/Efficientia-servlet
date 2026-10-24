@@ -145,19 +145,19 @@ A arquitetura adota exceções não-checadas (*Unchecked Exceptions*, derivadas 
 
 Esta tabela consolida o mapeamento entre a modelagem relacional de [Efficientia.sql](Efficientia/Efficientia.sql) e os controladores HTTP:
 
-| Tabela | Coluna UNIQUE | Constraint Padrão PostgreSQL | Exceção Lançada | Servlet Tratador | Parâmetro de Redirecionamento |
+| Tabela | Coluna UNIQUE | Constraint Padrão PostgreSQL | Exceção Lançada | Servlet Tratador | Destino de Redirecionamento (Tela Geral Centralizada) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`pecuarista`** | `cpf` | `pecuarista_cpf_key` | `CpfDuplicadoException` | [PecuaristaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java) | `?erro=cpf_duplicado` |
-| **`pecuarista`** | `email` | `pecuarista_email_key` | `EmailDuplicadoException` | [PecuaristaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java) | `?erro=email_duplicado` |
-| **`empresa`** | `cnpj` | `empresa_cnpj_key` | `CnpjDuplicadoException` | [EmpresaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java) | `?erro=cnpj_duplicado` |
-| **`empresa`** | `nome` | `empresa_nome_key` | `DadoDuplicadoException` | [EmpresaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java) | `?erro=nome_duplicado` |
-| **`empresa`** | `codigo` | `empresa_codigo_key` | `CodigoDuplicadoException` | [EmpresaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java) | `?erro=codigo_duplicado` |
-| **`motorista`** | `email` | `motorista_email_key` | `EmailDuplicadoException` | [MotoristaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/MotoristaServlet.java) | `?erro=email_duplicado` |
-| **`caminhao`** | `placa_carreta` | `caminhao_placa_carreta_key`| `PlacaDuplicadaException` | [CaminhaoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java) | `?erro=placa_duplicada` |
-| **`caminhao`** | `placa_cavalo` | `caminhao_placa_cavalo_key` | `PlacaDuplicadaException` | [CaminhaoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java) | `?erro=placa_duplicada` |
-| **`trajeto`** | `numero_gta` | `trajeto_numero_gta_key` | `DocumentoFiscalDuplicadoException` | [TrajetoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/TrajetoServlet.java) | `?erro=documento_fiscal_duplicado` |
-| **`trajeto`** | `numero_nota_fiscal`| `trajeto_numero_nota_fiscal_key`| `DocumentoFiscalDuplicadoException`| [TrajetoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/TrajetoServlet.java) | `?erro=documento_fiscal_duplicado` |
-| **`adm`** | `email` | `adm_email_key` | `EmailDuplicadoException` | [AdminServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/AdminServlet.java) | `?erro=email_duplicado` |
+| **`pecuarista`** | `cpf` | `pecuarista_cpf_key` | `CpfDuplicadoException` | [PecuaristaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java) | `/erro.jsp?tipoErro=cpf_duplicado` |
+| **`pecuarista`** | `email` | `pecuarista_email_key` | `EmailDuplicadoException` | [PecuaristaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java) | `/erro.jsp?tipoErro=email_duplicado` |
+| **`empresa`** | `cnpj` | `empresa_cnpj_key` | `CnpjDuplicadoException` | [EmpresaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java) | `/erro.jsp?tipoErro=cnpj_duplicado` |
+| **`empresa`** | `nome` | `empresa_nome_key` | `DadoDuplicadoException` | [EmpresaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java) | `/erro.jsp?tipoErro=nome_duplicado` |
+| **`empresa`** | `codigo` | `empresa_codigo_key` | `CodigoDuplicadoException` | [EmpresaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java) | `/erro.jsp?tipoErro=codigo_duplicado` |
+| **`motorista`** | `email` | `motorista_email_key` | `EmailDuplicadoException` | [MotoristaServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/MotoristaServlet.java) | `/erro.jsp?tipoErro=email_duplicado` |
+| **`caminhao`** | `placa_carreta` | `caminhao_placa_carreta_key`| `PlacaDuplicadaException` | [CaminhaoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java) | `/erro.jsp?tipoErro=placa_duplicada` |
+| **`caminhao`** | `placa_cavalo` | `caminhao_placa_cavalo_key` | `PlacaDuplicadaException` | [CaminhaoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java) | `/erro.jsp?tipoErro=placa_duplicada` |
+| **`trajeto`** | `numero_gta` | `trajeto_numero_gta_key` | `DocumentoFiscalDuplicadoException` | [TrajetoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/TrajetoServlet.java) | `/erro.jsp?tipoErro=documento_fiscal_duplicado` |
+| **`trajeto`** | `numero_nota_fiscal`| `trajeto_numero_nota_fiscal_key`| `DocumentoFiscalDuplicadoException`| [TrajetoServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/TrajetoServlet.java) | `/erro.jsp?tipoErro=documento_fiscal_duplicado` |
+| **`adm`** | `email` | `adm_email_key` | `EmailDuplicadoException` | [AdminServlet](Efficientia/src/main/java/com/efficientia/efficientia/controller/AdminServlet.java) | `/erro.jsp?tipoErro=email_duplicado` |
 | **`analista`** | `cpf`, `codigo`, `email` | `analista_*_key` | `Cpf/Codigo/EmailDuplicadoException`| DAO preparado | — |
 
 ---
