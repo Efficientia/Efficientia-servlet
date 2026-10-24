@@ -161,7 +161,7 @@ public class PecuaristaServlet extends HttpServlet {
                 System.out.println("Erro ao excluir pecuarista: " + e.getMessage());
             }
 
-            resp.sendRedirect(req.getContextPath() + "/pecuarista");
+            resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=excluido");
             return;
         }
 
@@ -347,7 +347,7 @@ public class PecuaristaServlet extends HttpServlet {
                 System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
             }
 
-            resp.sendRedirect(req.getContextPath() + "/pecuarista");
+            resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=atualizado");
             return;
         }
 
@@ -394,7 +394,7 @@ public class PecuaristaServlet extends HttpServlet {
             System.out.println("Erro ao cadastrar pecuarista: " + e.getMessage());
         }
 
-        resp.sendRedirect(req.getContextPath() + "/pecuarista");
+        resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
