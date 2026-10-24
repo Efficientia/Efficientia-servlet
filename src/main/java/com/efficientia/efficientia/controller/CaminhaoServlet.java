@@ -2,6 +2,7 @@ package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.CaminhaoDAO;
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.CaminhaoModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
@@ -180,6 +181,9 @@ public class CaminhaoServlet extends HttpServlet {
                     return;
                 }
                 dao.atualizarPlacaCavalo(id, ValidadorRegex.normalizarPlaca(novaPlaca));
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/caminhao?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar placa cavalo: " + e.getMessage());
             }
@@ -197,6 +201,9 @@ public class CaminhaoServlet extends HttpServlet {
                     return;
                 }
                 dao.atualizarPlacaCarreta(id, ValidadorRegex.normalizarPlaca(novaPlaca));
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/caminhao?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar placa carreta: " + e.getMessage());
             }
@@ -250,6 +257,9 @@ public class CaminhaoServlet extends HttpServlet {
 
                 CaminhaoModel caminhaoModel = new CaminhaoModel(id, empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
                 dao.atualizar(caminhaoModel, id);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/caminhao?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar caminhão: " + e.getMessage());
             }
@@ -274,7 +284,14 @@ public class CaminhaoServlet extends HttpServlet {
         String placaCarretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
 
         CaminhaoModel novoCaminhao = new CaminhaoModel(empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
-        dao.inserir(novoCaminhao);
+        try {
+            dao.inserir(novoCaminhao);
+        } catch (DadoDuplicadoException e) {
+            resp.sendRedirect(req.getContextPath() + "/caminhao?erro=" + e.getTipoErro());
+            return;
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar caminhão: " + e.getMessage());
+        }
 
         resp.sendRedirect(req.getContextPath() + "/caminhao");
     }

@@ -3,6 +3,7 @@ package com.efficientia.efficientia.dao.impl;
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.CaminhaoModel;
 import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,6 +51,7 @@ public class CaminhaoDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Caminhão");
             System.out.println("Erro ao inserir Caminhao: " + e.getMessage());
             return false;
         }
@@ -116,6 +118,7 @@ public class CaminhaoDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Caminhão");
             System.out.println("Erro ao atualizar Caminhao: " + e.getMessage());
             return false;
         }
@@ -204,6 +207,7 @@ public class CaminhaoDAO {
             stmt.setInt(4, capacidadeMaxima);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Caminhão");
             System.out.println("Erro ao inserir caminhão simples: " + e.getMessage());
             return false;
         }
@@ -220,6 +224,7 @@ public class CaminhaoDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Caminhão", "Placa Cavalo", novaPlaca);
             System.out.println("Erro ao atualizar placa cavalo do caminhão: " + e.getMessage());
             return false;
         }
@@ -236,6 +241,7 @@ public class CaminhaoDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Caminhão", "Placa Carreta", novaPlaca);
             System.out.println("Erro ao atualizar placa carreta do caminhão: " + e.getMessage());
             return false;
         }
