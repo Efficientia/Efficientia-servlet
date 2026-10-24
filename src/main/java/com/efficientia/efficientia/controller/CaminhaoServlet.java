@@ -136,9 +136,15 @@ public class CaminhaoServlet extends HttpServlet {
         if ("excluir".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-                dao.excluir(id);
+                boolean excluido = dao.excluir(id);
+                if (!excluido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível excluir o caminhão. Registro não encontrado.", "/caminhao");
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println("Erro ao excluir caminhão: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir caminhão: " + e.getMessage(), "/caminhao");
+                return;
             }
 
             resp.sendRedirect(req.getContextPath() + "/caminhao");
@@ -147,6 +153,7 @@ public class CaminhaoServlet extends HttpServlet {
 
         // Inserção simplificada de caminhão
         if ("inserirSimples".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao";
             try {
                 String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
                 String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
@@ -164,11 +171,20 @@ public class CaminhaoServlet extends HttpServlet {
 
                 String cavaloNorm = ValidadorRegex.normalizarPlaca(placaCavalo);
                 String carretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
-                dao.inserirSimples(cavaloNorm, carretaNorm, capacidadeMaxima, idEmpresa);
+                boolean inserido = dao.inserirSimples(cavaloNorm, carretaNorm, capacidadeMaxima, idEmpresa);
+                if (!inserido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o caminhão simplificado.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao inserir caminhão simples: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar caminhão simples: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -257,12 +273,18 @@ public class CaminhaoServlet extends HttpServlet {
                 String placaCarretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
 
                 CaminhaoModel caminhaoModel = new CaminhaoModel(id, empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
-                dao.atualizar(caminhaoModel, id);
+                boolean atualizado = dao.atualizar(caminhaoModel, id);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o caminhão. Verifique os dados informados.", "/caminhao?acao=editar&id=" + id);
+                    return;
+                }
             } catch (DadoDuplicadoException e) {
                 WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/caminhao?acao=editar&id=" + id);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar caminhão: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar caminhão: " + e.getMessage(), "/caminhao?acao=editar&id=" + id);
+                return;
             }
 
             resp.sendRedirect(req.getContextPath() + "/caminhao");
@@ -286,12 +308,18 @@ public class CaminhaoServlet extends HttpServlet {
 
         CaminhaoModel novoCaminhao = new CaminhaoModel(empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
         try {
-            dao.inserir(novoCaminhao);
+            boolean inserido = dao.inserir(novoCaminhao);
+            if (!inserido) {
+                WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o caminhão. Verifique os dados informados.", "/caminhao");
+                return;
+            }
         } catch (DadoDuplicadoException e) {
             WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/caminhao");
             return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar caminhão: " + e.getMessage());
+            WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar caminhão: " + e.getMessage(), "/caminhao");
+            return;
         }
 
         resp.sendRedirect(req.getContextPath() + "/caminhao");
