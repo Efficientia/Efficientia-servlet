@@ -1,6 +1,7 @@
 package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.PecuaristaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
@@ -201,6 +202,9 @@ public class PecuaristaServlet extends HttpServlet {
                 }
                 String cpfSanitizado = ValidadorRegex.apenasDigitos(novoCpf);
                 dao.atualizarCpf(id, cpfSanitizado);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar CPF do pecuarista: " + e.getMessage());
             }
@@ -231,6 +235,9 @@ public class PecuaristaServlet extends HttpServlet {
                     return;
                 }
                 dao.atualizarEmail(id, novoEmail);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar email do pecuarista: " + e.getMessage());
             }
@@ -334,6 +341,9 @@ public class PecuaristaServlet extends HttpServlet {
                 );
 
                 dao.atualizar(pecuaristaModel, id);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/pecuarista?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
             }
@@ -376,7 +386,14 @@ public class PecuaristaServlet extends HttpServlet {
                 telefone
         );
 
-        dao.inserir(novoPecuarista);
+        try {
+            dao.inserir(novoPecuarista);
+        } catch (DadoDuplicadoException e) {
+            resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=" + e.getTipoErro());
+            return;
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar pecuarista: " + e.getMessage());
+        }
 
         resp.sendRedirect(req.getContextPath() + "/pecuarista");
     }
