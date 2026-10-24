@@ -154,15 +154,21 @@ try (Connection connection = ConnectionFactory.getConnection();
 ### 5.2. Código no Servlet (Exemplo em `PecuaristaServlet`)
 ```java
 try {
-    dao.inserir(novoPecuarista);
+    boolean inserido = dao.inserir(novoPecuarista);
+    if (!inserido) {
+        WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o pecuarista. Verifique os dados informados.", "/pecuarista");
+        return;
+    }
 } catch (DadoDuplicadoException e) {
     // Redireciona para a tela de erro geral (/erro.jsp) com os metadados da duplicidade e link de retorno
     WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/pecuarista");
     return;
 } catch (Exception e) {
     System.out.println("Erro ao cadastrar pecuarista: " + e.getMessage());
+    WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar pecuarista: " + e.getMessage(), "/pecuarista");
+    return;
 }
-resp.sendRedirect(req.getContextPath() + "/pecuarista");
+resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=cadastrado");
 ```
 
 ---
