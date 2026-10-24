@@ -296,6 +296,7 @@ public class TrajetoServlet extends HttpServlet {
 
         // 2. Ação rápida: Inserção Simplificada de Viagem (fluxo ágil de despacho)
         if ("inserirSimples".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto";
             try {
                 Integer idMotorista = parseIntegerNull(req.getParameter("idMotorista"));
                 Integer idCaminhao = parseIntegerNull(req.getParameter("idCaminhao"));
@@ -303,17 +304,27 @@ public class TrajetoServlet extends HttpServlet {
                 StatusTrajeto status = parseStatus(req.getParameter("status"));
                 String numeroGTA = obterParametro(req, "numeroGTA", "numero_gta", "numeroGta");
                 String numeroNotaFiscal = obterParametro(req, "numeroNotaFiscal", "numero_nota_fiscal");
-                dao.inserirSimples(idMotorista, idCaminhao, idPecuarista, status, numeroGTA, numeroNotaFiscal);
+                boolean inserido = dao.inserirSimples(idMotorista, idCaminhao, idPecuarista, status, numeroGTA, numeroNotaFiscal);
+                if (!inserido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o trajeto simplificado.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao inserir trajeto simples: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar trajeto simples: " + e.getMessage(), redirectUrl);
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
         // 3. Ação rápida: Atualização de GTA (Guia de Trânsito Animal)
         if ("atualizarGTA".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto";
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
                 String novoGta = obterParametro(req, "numeroGTA", "numero_gta", "gta");
@@ -324,17 +335,27 @@ public class TrajetoServlet extends HttpServlet {
                     return;
                 }
 
-                dao.atualizarGTA(id, novoGta);
+                boolean atualizado = dao.atualizarGTA(id, novoGta);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar a GTA.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar GTA: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar GTA: " + e.getMessage(), redirectUrl);
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
         // 4. Ação rápida: Atualização de Nota Fiscal
         if ("atualizarNotaFiscal".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto";
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
                 String novaNf = obterParametro(req, "numeroNotaFiscal", "numero_nota_fiscal", "nf");
@@ -345,12 +366,21 @@ public class TrajetoServlet extends HttpServlet {
                     return;
                 }
 
-                dao.atualizarNotaFiscal(id, novaNf);
+                boolean atualizado = dao.atualizarNotaFiscal(id, novaNf);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar a Nota Fiscal.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar Nota Fiscal: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar Nota Fiscal: " + e.getMessage(), redirectUrl);
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/trajeto"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -430,9 +460,15 @@ public class TrajetoServlet extends HttpServlet {
         if ("excluir".equals(acao)) {
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
-                dao.excluir(id);
+                boolean excluido = dao.excluir(id);
+                if (!excluido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível excluir o trajeto. Registro não encontrado.", "/trajeto");
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println("Erro ao excluir trajeto: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir trajeto: " + e.getMessage(), "/trajeto");
+                return;
             }
 
             resp.sendRedirect(req.getContextPath() + "/trajeto");
@@ -511,12 +547,18 @@ public class TrajetoServlet extends HttpServlet {
             }
 
             try {
-                dao.atualizar(trajetoModel, id);
+                boolean atualizado = dao.atualizar(trajetoModel, id);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o trajeto. Verifique os dados informados.", "/trajeto?acao=editar&id=" + id);
+                    return;
+                }
             } catch (DadoDuplicadoException e) {
                 WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/trajeto?acao=editar&id=" + id);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar trajeto: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar trajeto: " + e.getMessage(), "/trajeto?acao=editar&id=" + id);
+                return;
             }
 
             resp.sendRedirect(req.getContextPath() + "/trajeto");
@@ -596,12 +638,18 @@ public class TrajetoServlet extends HttpServlet {
         }
 
         try {
-            dao.inserir(novoTrajeto);
+            boolean inserido = dao.inserir(novoTrajeto);
+            if (!inserido) {
+                WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o trajeto. Verifique os dados informados.", "/trajeto");
+                return;
+            }
         } catch (DadoDuplicadoException e) {
             WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/trajeto");
             return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar trajeto: " + e.getMessage());
+            WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar trajeto: " + e.getMessage(), "/trajeto");
+            return;
         }
 
         resp.sendRedirect(req.getContextPath() + "/trajeto");
