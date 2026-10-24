@@ -157,9 +157,15 @@ public class PecuaristaServlet extends HttpServlet {
         if ("excluir".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-                dao.excluir(id);
+                boolean excluido = dao.excluir(id);
+                if (!excluido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível excluir o pecuarista. Registro não encontrado.", "/pecuarista");
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println("Erro ao excluir pecuarista: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir pecuarista: " + e.getMessage(), "/pecuarista");
+                return;
             }
 
             resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=excluido");
@@ -168,6 +174,7 @@ public class PecuaristaServlet extends HttpServlet {
 
         // Inserção simplificada de pecuarista
         if ("inserirSimples".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista";
             try {
                 String nome = obterParametro(req, "nome");
                 String cpf = obterParametro(req, "cpf");
@@ -184,16 +191,26 @@ public class PecuaristaServlet extends HttpServlet {
                 }
 
                 String cpfSanitizado = ValidadorRegex.apenasDigitos(cpf);
-                dao.inserirSimples(nome, cpfSanitizado, email, senha);
+                boolean inserido = dao.inserirSimples(nome, cpfSanitizado, email, senha);
+                if (!inserido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o pecuarista simplificado.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao inserir pecuarista simples: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar pecuarista simples: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
         // Atualização específica: modifica somente o CPF do pecuarista
         if ("atualizarCpf".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista";
             try {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoCpf = obterParametro(req, "cpf", "novoCpf");
@@ -202,14 +219,20 @@ public class PecuaristaServlet extends HttpServlet {
                     return;
                 }
                 String cpfSanitizado = ValidadorRegex.apenasDigitos(novoCpf);
-                dao.atualizarCpf(id, cpfSanitizado);
+                boolean atualizado = dao.atualizarCpf(id, cpfSanitizado);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o CPF do pecuarista.", redirectUrl);
+                    return;
+                }
             } catch (DadoDuplicadoException e) {
-                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/pecuarista");
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar CPF do pecuarista: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar CPF do pecuarista: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -228,6 +251,7 @@ public class PecuaristaServlet extends HttpServlet {
 
         // Atualização específica: modifica somente o e-mail do pecuarista com validação REGEX
         if ("atualizarEmail".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista";
             try {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoEmail = obterParametro(req, "email", "novoEmail");
@@ -235,14 +259,20 @@ public class PecuaristaServlet extends HttpServlet {
                     resp.sendRedirect(req.getContextPath() + "/pecuarista?erro=email_invalido");
                     return;
                 }
-                dao.atualizarEmail(id, novoEmail);
+                boolean atualizado = dao.atualizarEmail(id, novoEmail);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o e-mail do pecuarista.", redirectUrl);
+                    return;
+                }
             } catch (DadoDuplicadoException e) {
-                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/pecuarista");
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar email do pecuarista: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar email do pecuarista: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/pecuarista"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -340,12 +370,18 @@ public class PecuaristaServlet extends HttpServlet {
                         telefone
                 );
 
-                dao.atualizar(pecuaristaModel, id);
+                boolean atualizado = dao.atualizar(pecuaristaModel, id);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o pecuarista. Verifique os dados informados.", "/pecuarista?acao=editar&id=" + id);
+                    return;
+                }
             } catch (DadoDuplicadoException e) {
                 WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/pecuarista?acao=editar&id=" + id);
                 return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar pecuarista: " + e.getMessage(), "/pecuarista?acao=editar&id=" + id);
+                return;
             }
 
             resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=atualizado");
@@ -387,12 +423,18 @@ public class PecuaristaServlet extends HttpServlet {
         );
 
         try {
-            dao.inserir(novoPecuarista);
+            boolean inserido = dao.inserir(novoPecuarista);
+            if (!inserido) {
+                WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o pecuarista. Verifique os dados informados.", "/pecuarista");
+                return;
+            }
         } catch (DadoDuplicadoException e) {
             WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/pecuarista");
             return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar pecuarista: " + e.getMessage());
+            WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar pecuarista: " + e.getMessage(), "/pecuarista");
+            return;
         }
 
         resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=cadastrado");
