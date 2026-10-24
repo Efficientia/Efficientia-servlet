@@ -1,6 +1,7 @@
 package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
 import jakarta.servlet.ServletException;
@@ -156,6 +157,9 @@ public class EmpresaServlet extends HttpServlet {
                 }
                 String cnpjNorm = ValidadorRegex.apenasDigitos(cnpj);
                 dao.inserirSimples(nome, cnpjNorm, codigo);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/empresa?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao inserir empresa simples: " + e.getMessage());
             }
@@ -169,6 +173,9 @@ public class EmpresaServlet extends HttpServlet {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoNome = obterParametro(req, "nome", "novoNome", "razaoSocial", "razao_social");
                 dao.atualizarNome(id, novoNome);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/empresa?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar nome da empresa: " + e.getMessage());
             }
@@ -187,6 +194,9 @@ public class EmpresaServlet extends HttpServlet {
                 }
                 String cnpjNorm = ValidadorRegex.apenasDigitos(novoCnpj);
                 dao.atualizarCnpj(id, cnpjNorm);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/empresa?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar CNPJ da empresa: " + e.getMessage());
             }
@@ -200,6 +210,9 @@ public class EmpresaServlet extends HttpServlet {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoCodigo = obterParametro(req, "codigo", "novoCodigo");
                 dao.atualizarCodigo(id, novoCodigo);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/empresa?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar código da empresa: " + e.getMessage());
             }
@@ -218,6 +231,9 @@ public class EmpresaServlet extends HttpServlet {
 
                 EmpresaModel empresaModel = new EmpresaModel(id, nome, cnpj, codigo);
                 dao.atualizar(empresaModel, id);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/empresa?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar empresa: " + e.getMessage());
             }
@@ -233,6 +249,9 @@ public class EmpresaServlet extends HttpServlet {
 
             EmpresaModel novaEmpresa = new EmpresaModel(nome, cnpj);
             dao.inserir(novaEmpresa);
+        } catch (DadoDuplicadoException e) {
+            resp.sendRedirect(req.getContextPath() + "/empresa?erro=" + e.getTipoErro());
+            return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar empresa: " + e.getMessage());
         }
