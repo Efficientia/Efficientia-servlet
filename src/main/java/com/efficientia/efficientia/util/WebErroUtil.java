@@ -49,10 +49,51 @@ public final class WebErroUtil {
             sb.append("&mensagem=").append(encode(e.getMessage()));
         }
         if (urlVoltar != null && !urlVoltar.isBlank()) {
-            sb.append("&voltar=").append(encode(req.getContextPath() + urlVoltar));
+            sb.append("&voltar=").append(encode(resolverUrlVoltar(req, urlVoltar)));
         }
 
         resp.sendRedirect(sb.toString());
+    }
+
+    /**
+     * Redireciona a requisição para a página de erro geral (/erro.jsp) informando
+     * uma mensagem explicativa do erro ocorrido (dados inválidos, falha de persistência, etc.).
+     *
+     * @param req       requisição HTTP atual
+     * @param resp      resposta HTTP para redirecionamento
+     * @param mensagem  mensagem de erro explicativa para o usuário
+     * @param urlVoltar caminho de retorno para o formulário
+     * @throws IOException em caso de falha de I/O no sendRedirect
+     */
+    public static void redirecionarErroGeral(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem,
+            String urlVoltar
+    ) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(req.getContextPath()).append("/erro.jsp");
+        boolean primeiro = true;
+
+        if (mensagem != null && !mensagem.isBlank()) {
+            sb.append(primeiro ? "?" : "&").append("mensagem=").append(encode(mensagem));
+            primeiro = false;
+        }
+        if (urlVoltar != null && !urlVoltar.isBlank()) {
+            sb.append(primeiro ? "?" : "&").append("voltar=").append(encode(resolverUrlVoltar(req, urlVoltar)));
+        }
+
+        resp.sendRedirect(sb.toString());
+    }
+
+    private static String resolverUrlVoltar(HttpServletRequest req, String urlVoltar) {
+        if (urlVoltar.startsWith("http://") || urlVoltar.startsWith("https://")) {
+            return urlVoltar;
+        }
+        if (urlVoltar.startsWith(req.getContextPath())) {
+            return urlVoltar;
+        }
+        return req.getContextPath() + (urlVoltar.startsWith("/") ? urlVoltar : "/" + urlVoltar);
     }
 
     private static String encode(String valor) {
