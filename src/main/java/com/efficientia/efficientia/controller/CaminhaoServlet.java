@@ -240,8 +240,8 @@ public class CaminhaoServlet extends HttpServlet {
         // Atualização: modifica os dados do veículo existente (empresa, placas, capacidade)
         if ("atualizar".equals(acao)) {
             int id = parseInt(req.getParameter("id"), 0);
+            EmpresaModel empresaModel = buscarEmpresa(req);
             try {
-                EmpresaModel empresaModel = buscarEmpresa(req);
                 String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
                 String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
                 int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);

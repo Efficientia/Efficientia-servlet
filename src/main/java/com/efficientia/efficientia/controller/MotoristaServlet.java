@@ -296,8 +296,8 @@ public class MotoristaServlet extends HttpServlet {
         // Atualização: modifica os dados do motorista existente
         if ("atualizar".equals(acao)) {
             int id = parseInt(req.getParameter("id"), 0);
+            EmpresaModel empresaModel = buscarEmpresa(req);
             try {
-                EmpresaModel empresaModel = buscarEmpresa(req);
                 String nome = obterParametro(req, "nome");
                 LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
                 String senha = obterParametro(req, "senha");

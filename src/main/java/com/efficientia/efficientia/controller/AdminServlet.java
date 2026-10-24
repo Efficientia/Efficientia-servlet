@@ -211,11 +211,11 @@ public class AdminServlet extends HttpServlet {
         // Atualização: modifica os dados de um administrador existente
         if ("atualizar".equals(acao)) {
             int id = parseInt(req.getParameter("id"), 0);
+            EmpresaModel empresa = buscarEmpresa(req);
             try {
                 String email = obterParametro(req, "email");
                 String senha = obterParametro(req, "senha");
                 String nome = obterParametro(req, "nome");
-                EmpresaModel empresa = buscarEmpresa(req);
                 AdminModel adminModel = new AdminModel(id, empresa, email, senha, nome);
                 dao.atualizar(adminModel, id);
             } catch (DadoDuplicadoException e) {
