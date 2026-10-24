@@ -2,6 +2,7 @@ package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.AdminDAO;
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
@@ -171,6 +172,9 @@ public class AdminServlet extends HttpServlet {
                     return;
                 }
                 dao.atualizarEmail(id, novoEmail);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/admin?erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar email do Admin: " + e.getMessage());
             }
@@ -214,6 +218,9 @@ public class AdminServlet extends HttpServlet {
                 EmpresaModel empresa = buscarEmpresa(req);
                 AdminModel adminModel = new AdminModel(id, empresa, email, senha, nome);
                 dao.atualizar(adminModel, id);
+            } catch (DadoDuplicadoException e) {
+                resp.sendRedirect(req.getContextPath() + "/admin?acao=editar&id=" + id + "&erro=" + e.getTipoErro());
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar Admin: " + e.getMessage());
             }
@@ -230,6 +237,9 @@ public class AdminServlet extends HttpServlet {
 
             AdminModel novoAdmin = new AdminModel(empresa, email, senha, nome);
             dao.inserir(novoAdmin);
+        } catch (DadoDuplicadoException e) {
+            resp.sendRedirect(req.getContextPath() + "/admin?erro=" + e.getTipoErro());
+            return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar Admin: " + e.getMessage());
         }

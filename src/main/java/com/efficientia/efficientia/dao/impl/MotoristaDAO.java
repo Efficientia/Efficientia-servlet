@@ -4,6 +4,7 @@ import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.util.PasswordHasher;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -53,6 +54,7 @@ public class MotoristaDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista");
             System.out.println("Erro ao inserir Motorista: " + e.getMessage());
             return false;
         }
@@ -121,6 +123,7 @@ public class MotoristaDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista");
             System.out.println("Erro ao atualizar Motorista: " + e.getMessage());
             return false;
         }
@@ -209,6 +212,7 @@ public class MotoristaDAO {
             stmt.setString(4, PasswordHasher.hash(senha));
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista");
             System.out.println("Erro ao inserir motorista simples: " + e.getMessage());
             return false;
         }
@@ -241,6 +245,7 @@ public class MotoristaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista", "E-mail", novoEmail);
             System.out.println("Erro ao atualizar email do motorista: " + e.getMessage());
             return false;
         }

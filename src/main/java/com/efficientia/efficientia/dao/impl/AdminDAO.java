@@ -4,6 +4,7 @@ import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.PasswordHasher;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,6 +49,7 @@ public class AdminDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Administrador");
             System.out.println("Erro ao inserir Admin: " + e.getMessage());
             return false;
         }
@@ -124,6 +126,7 @@ public class AdminDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Administrador");
             System.out.println("Erro ao atualizar Admin: " + e.getMessage());
             return false;
         }
@@ -227,6 +230,7 @@ public class AdminDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Administrador", "E-mail", novoEmail);
             System.out.println("Erro ao atualizar email do administrador: " + e.getMessage());
             return false;
         }
