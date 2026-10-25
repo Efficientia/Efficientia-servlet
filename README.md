@@ -113,6 +113,7 @@ Toda a documentação técnica, normas arquiteturais, registros de IA e guias pa
 | **[docs/passo-a-passo-servlet.md](docs/passo-a-passo-servlet.md)** | Tutorial didático de implementação de Jakarta Servlets. |
 | **[docs/EXEMPLO_IA_BD.md](docs/EXEMPLO_IA_BD.md)** | Evidência de uso crítico e estratégico de IA em Banco de Dados. |
 | **[docs/EXEMPLO_IA_SOP.md](docs/EXEMPLO_IA_SOP.md)** | Evidência de auditoria e validação humana de IA em Sistemas Operacionais. |
+| **[docs/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](docs/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md)** | Metodologia de geração com IA e protocolo de validação humana (sintaxe, conteúdo e organização). |
 
 ---
 

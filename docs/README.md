@@ -48,6 +48,7 @@ Manuais práticos para desenvolvimento e manutenção contínua da aplicação:
 
 ### 6. Evidências de Uso e Pensamento Crítico em IA
 Documentação comprobatória da utilização estratégica e responsável de Inteligência Artificial:
+* **[Metodologia de Documentação com IA e Protocolo de Validação Humana](METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md):** Processo de geração, justificativa de necessidade e o protocolo de validação crítica em 3 passos do usuário (sintaxe, conteúdo e organização).
 * **[Registro de Uso de IA: Banco de Dados e Naming Convention](EXEMPLO_IA_BD.md):** Evidência de interação com IA para ideação, estruturação e refinamento crítico das regras do banco de dados PostgreSQL.
 * **[Registro de Uso de IA: Validação por REGEX e Sistemas Operacionais](EXEMPLO_IA_SOP.md):** Evidência do processo de auditoria de código, varredura de dependências e validação crítica humana no utilitário de expressões regulares.
 
