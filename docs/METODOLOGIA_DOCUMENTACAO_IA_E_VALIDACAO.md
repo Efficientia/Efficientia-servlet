@@ -131,7 +131,23 @@ A validação de organização garante que o documento se encaixe de forma harm�
 
 ---
 
-## 5. Matriz Resumo: O Ciclo de Vida da Documentação
+---
+
+## 5. Postura Técnica e Domínio Tecnológico: Foco no "O Que Faz" e "Para Que Serve"
+
+Reconhece-se com transparência e maturidade acadêmica que, por se tratar de um projeto interdisciplinar de 1º Ano, **parte das tecnologias empregadas no ecossistema da aplicação (como as especificações internas do Jakarta EE/Servlets, o protocolo wire do driver PostgreSQL JDBC, os motores de Expressões Regulares e os algoritmos criptográficos de hashing com salting) não é de domínio pleno e exaustivo do desenvolvedor**.
+
+Para contornar essa curva de aprendizado sem comprometer a robustez técnica do projeto, o desenvolvedor adota uma postura pragmática orientada à arquitetura de software:
+
+* **Priorizar "O Que a Tecnologia Faz":** Compreender com clareza conceitual as capacidades da ferramenta, suas entradas, saídas esperadas, contratos de métodos e garantias operacionais (ex.: saber que o `PreparedStatement` parametriza valores para neutralizar injeções de SQL, ou que o `ValidadorRegex` rejeita qualquer string que fuja ao padrão pré-compilado).
+* **Priorizar "Para Que Serve no Projeto":** Compreender o papel contextual e a justificativa arquitetural de cada tecnologia — qual problema real da cadeia logística pecuária ela resolve e a qual requisito do edital ela atende (ex.: garantir conformidade com a LGPD via anonimização de CPF, ou proteger credenciais de produção via variáveis de ambiente `.env`).
+* **Desacoplar do "Como Faz de Forma Detalhada":** Evitar o desgaste cognitivo desnecessário de tentar dissecar o código-fonte interno de baixo nível de bibliotecas de terceiros, drivers de banco ou servidores de aplicação, focando o esforço nos fluxos de negócio, na integração limpa entre as camadas e na escrita de testes automatizados.
+
+Nesse contexto, a Inteligência Artificial desempenha o papel de **ponte pedagógica e aceleradora**: ela traduz documentações densas e termos de baixo nível em conceitos funcionais objetivos, permitindo que o desenvolvedor domine a finalidade de cada componente e tome decisões arquiteturais conscientes, sem operar de maneira cega nem se sobrecarregar com detalhes internos de infraestrutura.
+
+---
+
+## 6. Matriz Resumo: O Ciclo de Vida da Documentação
 
 A tabela a seguir consolida a responsabilidade de cada ator durante o ciclo documental do projeto:
 
@@ -146,8 +162,9 @@ A tabela a seguir consolida a responsabilidade de cada ator durante o ciclo docu
 
 ---
 
-## 6. Conclusão
+## 7. Conclusão
 
 A documentação assistida por Inteligência Artificial no projeto **Efficientia** não substitui o julgamento técnico do desenvolvedor; ao contrário, eleva o papel do aluno de mero digitador de texto para um **auditor crítico de arquitetura e qualidade**.
 
-Graças ao rigoroso processo de **Validação de Sintaxe**, **Validação de Conteúdo** e **Validação de Organização**, a equipe assegura que 100% dos documentos técnicos presentes em `/docs` refletem a realidade exata da aplicação Java e do banco de dados PostgreSQL, demonstrando domínio pleno da solução e conformidade exemplar com a ementa de Introdução à Inteligência Artificial.
+Graças ao rigoroso processo de **Validação de Sintaxe**, **Validação de Conteúdo** e **Validação de Organização**, somado ao foco estratégico em compreender o propósito e a função de cada tecnologia no sistema, a equipe assegura que 100% dos documentos técnicos presentes em `/docs` refletem a realidade exata da aplicação Java e do banco de dados PostgreSQL, demonstrando domínio pleno da solução e conformidade exemplar com a ementa de Introdução à Inteligência Artificial.
+
