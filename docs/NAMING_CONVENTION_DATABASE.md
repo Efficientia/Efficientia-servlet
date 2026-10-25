@@ -3,7 +3,7 @@
 > **SGBD Alvo:** PostgreSQL 14+  
 > **Versão do Documento:** 1.0  
 > **Status:** Aprovado  
-> **Arquivo de Referência DDL:** [Efficientia.sql](Efficientia/Efficientia.sql)
+> **Arquivo de Referência DDL:** [Efficientia.sql](../Efficientia.sql)
 
 ---
 

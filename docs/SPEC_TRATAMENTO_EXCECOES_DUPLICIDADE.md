@@ -45,7 +45,7 @@ A tabela a seguir consolida as tecnologias, bibliotecas e versões aplicadas na 
 ### 3.1. Hierarquia de Exceções Unchecked
 A arquitetura adota exceções não-checadas (*Unchecked Exceptions*, derivadas de `RuntimeException`).
 
-* **Vantagem de Design:** Não obriga a alteração da assinatura dos métodos públicos nos DAOs (`throws SQLException` violaria o contrato arquitetural do [GUIA_PADRONIZACAO.md](Efficientia/GUIA_PADRONIZACAO.md)), mantendo a compatibilidade retroativa e permitindo que as camadas de controle interceptem apenas quando julgarem necessário.
+* **Vantagem de Design:** Não obriga a alteração da assinatura dos métodos públicos nos DAOs (`throws SQLException` violaria o contrato arquitetural do [GUIA_PADRONIZACAO.md](GUIA_PADRONIZACAO.md)), mantendo a compatibilidade retroativa e permitindo que as camadas de controle interceptem apenas quando julgarem necessário.
 
 ```
                             ┌────────────────────────┐
