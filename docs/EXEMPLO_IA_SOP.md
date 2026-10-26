@@ -34,7 +34,7 @@ A IA atuou de maneira analítica e autônoma diretamente no repositório do proj
   * DAOs (`MotoristaDAO`, `PecuaristaDAO`, `EmpresaDAO`, `EnderecoDAO`): para identificar a camada defensiva de tratamento de dados.
 
 ### 2.3. Síntese e Geração do Documento Técnico
-* Gerou e salvou o arquivo [DOCUMENTACAO_VALIDACAO_REGEX.md](Efficientia/DOCUMENTACAO_VALIDACAO_REGEX.md) contendo:
+* Gerou e salvou o arquivo [DOCUMENTACAO_VALIDACAO_REGEX.md](DOCUMENTACAO_VALIDACAO_REGEX.md) contendo:
   1. O enquadramento acadêmico interdisciplinar (Sistemas Operacionais, Lógica de Programação, Banco de Dados 1 e POO).
   2. A tabela de padrões de expressões regulares (CPF, Celular sem +55, Placa Mercosul/antiga, E-mail, CNPJ, GTA, Nota Fiscal).
   3. O mapeamento detalhado de cada classe, indicando o tipo de dado tratado e a lógica aplicada.
@@ -57,7 +57,7 @@ A geração pela IA não foi aceita passivamente; o desenvolvedor realizou um pr
    * Verificou nos DAOs (`MotoristaDAO`, `PecuaristaDAO`, `EmpresaDAO`, `EnderecoDAO`) se as sanitizações via regex nativa `replaceAll("\\D", "")` e divisão de palavras via `split("\\s+")` de fato ocorriam como camada defensiva antes do SQL.
 
 ### 3.2. Ajustes e Refinamento Manual no Arquivo Gerado
-* O usuário inspecionou diretamente o arquivo [DOCUMENTACAO_VALIDACAO_REGEX.md](Efficientia/DOCUMENTACAO_VALIDACAO_REGEX.md).
+* O usuário inspecionou diretamente o arquivo [DOCUMENTACAO_VALIDACAO_REGEX.md](DOCUMENTACAO_VALIDACAO_REGEX.md).
 * Realizou modificações pontuais para adequar o formato do documento aos padrões desejados para entrega acadêmica (substituindo caminhos absolutos locais do computador por referências a partir de `Efficientia/`).
 
 ---

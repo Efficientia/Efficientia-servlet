@@ -258,6 +258,34 @@
                         border-color: var(--text-muted);
                     }
 
+                    /* Alertas de Feedback */
+                    .alerta-box {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.85rem;
+                        padding: 1rem 1.25rem;
+                        border-radius: var(--radius-md);
+                        margin-bottom: 1.5rem;
+                        font-size: 0.95rem;
+                        animation: fadeIn 0.3s ease;
+                    }
+
+                    .alerta-erro {
+                        background-color: rgba(239, 68, 68, 0.12);
+                        border: 1px solid rgba(239, 68, 68, 0.35);
+                        color: #fca5a5;
+                    }
+
+                    .alerta-erro svg {
+                        color: #ef4444;
+                        flex-shrink: 0;
+                    }
+
+                    @keyframes fadeIn {
+                        from { opacity: 0; transform: translateY(-6px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+
                     .empty-card {
                         text-align: center;
                         padding: 3rem 1.5rem;
@@ -324,6 +352,37 @@
                                     <h2>Editar Pecuarista</h2>
                                     <span class="badge-id">ID #${pecuaristaModel.id}</span>
                                 </div>
+
+                                <c:if test="${not empty param.erro}">
+                                    <div class="alerta-box alerta-erro" role="alert">
+                                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <div class="alerta-conteudo">
+                                            <strong>Erro ao atualizar:</strong>
+                                            <c:choose>
+                                                <c:when test="${param.erro == 'cpf_duplicado'}">
+                                                    Já existe outro pecuarista cadastrado com este <strong>CPF</strong>.
+                                                </c:when>
+                                                <c:when test="${param.erro == 'email_duplicado'}">
+                                                    Já existe outro pecuarista cadastrado com este <strong>E-mail</strong>.
+                                                </c:when>
+                                                <c:when test="${param.erro == 'cpf_invalido'}">
+                                                    O CPF informado é inválido. Digite os 11 números corretamente.
+                                                </c:when>
+                                                <c:when test="${param.erro == 'email_invalido'}">
+                                                    O e-mail informado possui formato inválido.
+                                                </c:when>
+                                                <c:when test="${param.erro == 'telefone_invalido'}">
+                                                    O telefone informado deve conter DDD e de 10 a 11 dígitos numéricos.
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Não foi possível salvar as alterações (<c:out value="${param.erro}" />).
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </c:if>
 
                                 <form action="${pageContext.request.contextPath}/pecuarista" method="post"
                                     id="formEditarPecuarista">

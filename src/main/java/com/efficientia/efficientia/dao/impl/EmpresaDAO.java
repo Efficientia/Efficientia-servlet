@@ -2,6 +2,7 @@ package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.EmpresaModel;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,6 +43,7 @@ public class EmpresaDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Empresa");
             System.out.println("Erro ao inserir empresaModel: " + e.getMessage());
             return false;
         }
@@ -100,6 +102,7 @@ public class EmpresaDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Empresa");
             System.out.println("Erro ao atualizar empresaModel: " + e.getMessage());
             return false;
         }
@@ -178,6 +181,7 @@ public class EmpresaDAO {
             stmt.setString(3, codigo != null && !codigo.isBlank() ? codigo.trim().toUpperCase() : null);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Empresa");
             System.out.println("Erro ao inserir empresa simples: " + e.getMessage());
             return false;
         }
@@ -194,6 +198,7 @@ public class EmpresaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Empresa", "Nome / Razão Social", novoNome);
             System.out.println("Erro ao atualizar nome da empresa: " + e.getMessage());
             return false;
         }
@@ -210,6 +215,7 @@ public class EmpresaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Empresa", "CNPJ", novoCnpj);
             System.out.println("Erro ao atualizar CNPJ da empresa: " + e.getMessage());
             return false;
         }
@@ -226,6 +232,7 @@ public class EmpresaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Empresa", "Código", novoCodigo);
             System.out.println("Erro ao atualizar código da empresa: " + e.getMessage());
             return false;
         }

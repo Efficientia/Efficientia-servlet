@@ -7,6 +7,7 @@ import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.model.StatusTrajeto;
 import com.efficientia.efficientia.model.TrajetoModel;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -137,6 +138,7 @@ public class TrajetoDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Trajeto");
             System.out.println("Erro ao inserir trajeto: " + e.getMessage());
             return false;
         }
@@ -234,6 +236,7 @@ public class TrajetoDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Trajeto");
             System.out.println("Erro ao atualizar trajeto: " + e.getMessage());
             return false;
         }

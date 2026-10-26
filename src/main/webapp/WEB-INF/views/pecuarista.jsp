@@ -108,6 +108,45 @@
             color: var(--primary-green);
         }
 
+        /* Alertas de Feedback */
+        .alerta-box {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .alerta-erro {
+            background-color: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+        }
+
+        .alerta-erro svg {
+            color: #ef4444;
+            flex-shrink: 0;
+        }
+
+        .alerta-sucesso {
+            background-color: rgba(86, 216, 103, 0.12);
+            border: 1px solid rgba(86, 216, 103, 0.35);
+            color: #86efac;
+        }
+
+        .alerta-sucesso svg {
+            color: var(--primary-green);
+            flex-shrink: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Abas (Tabs) */
         .tabs-header {
             display: flex;
@@ -598,6 +637,62 @@
             &larr; Página Principal
         </a>
     </header>
+
+    <!-- Alertas de Feedback (Erros de Validação/Duplicidade e Sucesso) -->
+    <c:if test="${not empty param.erro}">
+        <div class="alerta-box alerta-erro" role="alert">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="alerta-conteudo">
+                <strong>Atenção:</strong>
+                <c:choose>
+                    <c:when test="${param.erro == 'cpf_duplicado'}">
+                        Já existe um pecuarista cadastrado com este <strong>CPF</strong>.
+                    </c:when>
+                    <c:when test="${param.erro == 'email_duplicado'}">
+                        Já existe um pecuarista cadastrado com este <strong>E-mail</strong>.
+                    </c:when>
+                    <c:when test="${param.erro == 'cpf_invalido'}">
+                        O CPF informado é inválido. Digite os 11 números corretamente.
+                    </c:when>
+                    <c:when test="${param.erro == 'email_invalido'}">
+                        O e-mail informado possui formato inválido.
+                    </c:when>
+                    <c:when test="${param.erro == 'telefone_invalido'}">
+                        O telefone informado deve conter DDD e de 10 a 11 dígitos numéricos.
+                    </c:when>
+                    <c:otherwise>
+                        Não foi possível concluir a operação (<c:out value="${param.erro}" />).
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+    </c:if>
+
+    <c:if test="${not empty param.sucesso}">
+        <div class="alerta-box alerta-sucesso" role="status">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="alerta-conteudo">
+                <c:choose>
+                    <c:when test="${param.sucesso == 'cadastrado'}">
+                        Pecuarista cadastrado com sucesso!
+                    </c:when>
+                    <c:when test="${param.sucesso == 'atualizado'}">
+                        Dados do pecuarista atualizados com sucesso!
+                    </c:when>
+                    <c:when test="${param.sucesso == 'excluido'}">
+                        Pecuarista removido com sucesso!
+                    </c:when>
+                    <c:otherwise>
+                        Operação realizada com sucesso!
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+    </c:if>
 
     <!-- Cabeçalho das Abas -->
     <div class="tabs-header">

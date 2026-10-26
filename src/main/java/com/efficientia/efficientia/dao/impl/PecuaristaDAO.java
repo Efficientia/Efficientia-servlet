@@ -3,6 +3,7 @@ package com.efficientia.efficientia.dao.impl;
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.util.PasswordHasher;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -48,6 +49,7 @@ public class PecuaristaDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Pecuarista");
             System.out.println("Erro ao inserir pecuarista: " + e.getMessage());
             return false;
         }
@@ -108,6 +110,7 @@ public class PecuaristaDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Pecuarista");
             System.out.println("Erro ao atualizar pecuarista: " + e.getMessage());
             return false;
         }
@@ -185,6 +188,7 @@ public class PecuaristaDAO {
             stmt.setString(4, PasswordHasher.hash(senha));
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Pecuarista");
             System.out.println("Erro ao inserir pecuarista simples: " + e.getMessage());
             return false;
         }
@@ -201,6 +205,7 @@ public class PecuaristaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Pecuarista", "CPF", novoCpf);
             System.out.println("Erro ao atualizar CPF do pecuarista: " + e.getMessage());
             return false;
         }
@@ -233,6 +238,7 @@ public class PecuaristaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Pecuarista", "E-mail", novoEmail);
             System.out.println("Erro ao atualizar email do pecuarista: " + e.getMessage());
             return false;
         }
