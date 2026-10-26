@@ -15,9 +15,9 @@
   </form>
 
   <div class="top-actions">
-    <a class="circle-action-btn" href="${pageContext.request.contextPath}/teste.jsp" title="Dashboard" aria-label="Dashboard">
+    <span class="circle-action-btn" title="Configurações" aria-label="Configurações">
       <img src="${pageContext.request.contextPath}/assets/icons/configuracoes.svg" alt="">
-    </a>
+    </span>
     <span class="circle-action-btn profile-btn" title="Perfil" aria-label="Perfil de usuário">
       <img src="${pageContext.request.contextPath}/assets/icons/perfil.svg" alt="">
     </span>
