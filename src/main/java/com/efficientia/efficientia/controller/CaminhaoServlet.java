@@ -69,11 +69,6 @@ public class CaminhaoServlet extends HttpServlet {
                 if (caminhaoModel != null) {
                     req.setAttribute("caminhaoModel", caminhaoModel);
                     req.setAttribute("caminhao", caminhaoModel);
-                    req.setAttribute("empresaModels", empresaDAO.listar());
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-caminhao.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar caminhão para edição: " + e.getMessage());
@@ -147,7 +142,7 @@ public class CaminhaoServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/caminhao");
+            resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=excluido");
             return;
         }
 
@@ -287,7 +282,7 @@ public class CaminhaoServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/caminhao");
+            resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=atualizado");
             return;
         }
 
@@ -322,7 +317,7 @@ public class CaminhaoServlet extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/caminhao");
+        resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
