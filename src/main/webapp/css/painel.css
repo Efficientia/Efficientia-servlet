@@ -1147,3 +1147,30 @@ html, body {
     display: none;
   }
 }
+
+/* ==========================================================================
+   Integração JSP (links como botões, formulários inline e busca server-side)
+   ========================================================================== */
+a.logout-btn,
+a.btn-action-edit,
+a.btn-action-delete,
+a.btn-table-search,
+a.btn-secondary-outline {
+  text-decoration: none;
+}
+
+.inline-form {
+  display: inline-flex;
+  margin: 0;
+}
+
+.top-search-form,
+.table-search-form {
+  display: contents;
+}
+
+.table-search-group .btn-table-search {
+  display: inline-flex;
+  align-items: center;
+}
+

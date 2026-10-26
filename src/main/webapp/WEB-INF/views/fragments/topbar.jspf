@@ -1,0 +1,25 @@
+<%-- Barra superior compartilhada. Requer: variável de página "paginaServlet" (rota do Servlet, ex.: /pecuarista). --%>
+<header class="top-header">
+  <form class="top-search-form" action="${pageContext.request.contextPath}${paginaServlet}" method="get">
+    <div class="search-bar-wrapper">
+      <img src="${pageContext.request.contextPath}/assets/icons/buscar.svg" alt="" class="search-icon">
+      <input
+        type="text"
+        class="top-search-input"
+        name="busca"
+        id="topSearchInput"
+        value="<c:out value='${termoBusca}' />"
+        placeholder="Buscar nesta lista..."
+        aria-label="Buscar nesta lista">
+    </div>
+  </form>
+
+  <div class="top-actions">
+    <a class="circle-action-btn" href="${pageContext.request.contextPath}/teste.jsp" title="Dashboard" aria-label="Dashboard">
+      <img src="${pageContext.request.contextPath}/assets/icons/configuracoes.svg" alt="">
+    </a>
+    <span class="circle-action-btn profile-btn" title="Perfil" aria-label="Perfil de usuário">
+      <img src="${pageContext.request.contextPath}/assets/icons/perfil.svg" alt="">
+    </span>
+  </div>
+</header>
