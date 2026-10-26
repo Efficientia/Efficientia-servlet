@@ -38,7 +38,7 @@
             <button type="button" class="btn-voltar" onclick="window.print()">
                 🖨️ Imprimir / PDF
             </button>
-            <a href="${pageContext.request.contextPath}/teste.jsp?servlet=trajeto" class="btn-voltar">
+            <a href="${pageContext.request.contextPath}/trajeto" class="btn-voltar">
                 ⚡ Painel de Testes
             </a>
             <a href="${pageContext.request.contextPath}/trajeto" class="btn-voltar">
