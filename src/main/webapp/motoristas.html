@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Motoristas | Sistema de Gestão</title>
+
+  <!-- Fonte IBM Plex Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+    rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app-layout">
+
+    <!-- Sidebar Esquerda -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand-logo">
+          <img src="assets/icons/logo.svg" alt="Logo" class="brand-icon">
+          <span class="brand-name">Efficient<span class="brand-ia">ia</span></span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#" class="nav-item">
+            <img src="assets/icons/dashboard.svg" alt="Dashboard" class="nav-icon">
+            <span>Dashboard</span>
+          </a>
+          <a href="caminhoes.html" class="nav-item">
+            <img src="assets/icons/caminhoes.svg" alt="Caminhões" class="nav-icon">
+            <span>Caminhões</span>
+          </a>
+          <a href="empresas.html" class="nav-item">
+            <img src="assets/icons/empresas.svg" alt="Empresas" class="nav-icon">
+            <span>Empresas</span>
+          </a>
+          <a href="motoristas.html" class="nav-item active">
+            <img src="assets/icons/motoristas.svg" alt="Motoristas" class="nav-icon">
+            <span>Motoristas</span>
+          </a>
+          <a href="pecuaristas.html" class="nav-item">
+            <img src="assets/icons/pecuaristas.svg" alt="Pecuaristas" class="nav-icon">
+            <span>Pecuaristas</span>
+          </a>
+          <a href="administradores.html" class="nav-item">
+            <img src="assets/icons/administradores.svg" alt="Administradores" class="nav-icon">
+            <span>Administradores</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Rodapé do Usuário na Sidebar -->
+      <div class="sidebar-user-footer">
+        <div class="user-info-wrapper">
+          <div class="user-avatar-circle">
+            <img src="assets/icons/usuario-avatar.svg" alt="Usuário">
+          </div>
+          <div class="user-text-details">
+            <strong class="user-greeting">Olá, Elisabeth</strong>
+            <span class="user-role">Administrador</span>
+          </div>
+        </div>
+        <button class="logout-btn" title="Sair do sistema" aria-label="Sair">
+          <img src="assets/icons/sair.svg" alt="">
+        </button>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <main class="main-content">
+
+      <!-- Linhas de Onda de Fundo Decorativas (SVG) -->
+      <div class="background-wave-decorations" aria-hidden="true">
+        <svg viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M-100 200 C300 120, 800 50, 1540 180" stroke="rgba(0, 217, 255, 0.22)" stroke-width="2" />
+          <path d="M-80 280 C350 180, 850 90, 1540 250" stroke="rgba(0, 217, 255, 0.18)" stroke-width="1.8" />
+          <path d="M-50 360 C400 240, 900 130, 1540 320" stroke="rgba(0, 217, 255, 0.15)" stroke-width="1.5" />
+          <path d="M-30 440 C450 300, 950 180, 1540 400" stroke="rgba(0, 217, 255, 0.12)" stroke-width="1.2" />
+          <path d="M0 540 C500 370, 1000 240, 1540 500" stroke="rgba(0, 217, 255, 0.1)" stroke-width="1" />
+
+          <!-- Ondas inferiores -->
+          <path d="M-100 700 C400 600, 900 750, 1540 680" stroke="rgba(0, 217, 255, 0.12)" stroke-width="1.5" />
+          <path d="M-50 820 C450 720, 950 850, 1540 800" stroke="rgba(0, 217, 255, 0.08)" stroke-width="1.2" />
+        </svg>
+      </div>
+
+      <!-- Barra de Navegação Superior (Header) -->
+      <header class="top-header">
+        <div class="search-bar-wrapper">
+          <img src="assets/icons/buscar.svg" alt="" class="search-icon">
+          <input type="text" class="top-search-input" placeholder="Buscar viagens, funcionários..."
+            id="topSearchInput">
+        </div>
+
+        <div class="top-actions">
+          <button class="circle-action-btn" title="Configurações" aria-label="Configurações">
+            <img src="assets/icons/configuracoes.svg" alt="">
+          </button>
+
+          <button class="circle-action-btn" title="Notificações" aria-label="Notificações">
+            <img src="assets/icons/notificacoes.svg" alt="">
+            <span class="notification-indicator"></span>
+          </button>
+
+          <button class="circle-action-btn profile-btn" title="Perfil" aria-label="Perfil de usuário">
+            <img src="assets/icons/perfil.svg" alt="">
+          </button>
+        </div>
+      </header>
+
+      <!-- Conteúdo da Página -->
+      <div class="content-container">
+
+        <!-- Cabeçalho de Navegação e Título -->
+        <section class="page-title-section">
+          <nav class="breadcrumb-trail" aria-label="Breadcrumb">
+            <span>Gestão de transporte</span>
+            <span class="separator">/</span>
+            <span>Motoristas</span>
+          </nav>
+
+          <div class="category-badge">GESTÃO DE CADASTROS</div>
+
+          <h1 class="page-title">Motorista</h1>
+          <p class="page-subtitle">Preencha os dados abaixo para cadastrar um novo motorista no sistema.</p>
+        </section>
+
+        <!-- Formulário: Cadastrar Novo Motorista -->
+        <section class="card-form-section">
+          <div class="form-card">
+
+            <div class="card-header-styled">
+              <div class="card-title-bar"></div>
+              <div>
+                <h2 class="card-title" id="formCardTitle">Cadastrar Novo Motorista</h2>
+                <p class="card-subtitle">Preencha os dados abaixo para cadastrar um novo motorista.</p>
+              </div>
+            </div>
+
+            <form id="motoristaForm" class="motorista-form" novalidate>
+              <input type="hidden" id="editingId" value="">
+
+              <!-- Linha 1: Nome Completo -->
+              <div class="form-group full-width">
+                <label for="nomeInput">Nome Completo <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <input type="text" id="nomeInput" name="nome" placeholder="Ex: Raíssa Marconato Marques" required>
+                </div>
+              </div>
+
+              <!-- Linha 2: CPF e Data de Nascimento -->
+              <div class="form-row two-cols">
+                <div class="form-group">
+                  <div class="label-with-hint">
+                    <label for="cpfInput">CPF <span class="required-star">*</span></label>
+                    <span class="field-hint">11 dígitos (apenas números)</span>
+                  </div>
+                  <div class="input-wrapper">
+                    <input type="text" id="cpfInput" name="cpf" placeholder="Ex: 12345678901" maxlength="14" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="nascimentoInput">Data de Nascimento <span class="required-star">*</span></label>
+                  <div class="input-wrapper has-icon-right">
+                    <input type="text" id="nascimentoInput" name="nascimento" placeholder="DD/MM/AAAA" maxlength="10"
+                      required>
+                    <span class="input-icon-right" aria-hidden="true">
+                      <img src="assets/icons/calendario.svg" alt="">
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Linha 3: E-mail e Telefone -->
+              <div class="form-row two-cols">
+                <div class="form-group">
+                  <label for="emailInput">E-mail <span class="required-star">*</span></label>
+                  <div class="input-wrapper">
+                    <input type="email" id="emailInput" name="email" placeholder="roberto@fazenda.com" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="label-with-hint">
+                    <label for="telefoneInput">Telefone / Celular <span class="required-star">*</span></label>
+                    <span class="field-hint">Até 11 dígitos com DDD</span>
+                  </div>
+                  <div class="input-wrapper has-icon-right">
+                    <input type="tel" id="telefoneInput" name="telefone" placeholder="Ex: 11987654321" maxlength="15"
+                      required>
+                    <span class="input-icon-right" aria-hidden="true">
+                      <img src="assets/icons/telefone.svg" alt="">
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Linha 4: Senha de Acesso (com Olho) -->
+              <div class="form-group full-width">
+                <label for="senhaInput">Senha de Acesso <span class="required-star">*</span></label>
+                <div class="input-wrapper has-icon-right">
+                  <input type="password" id="senhaInput" name="senha" placeholder="Crie uma senha de acesso" required>
+                  <span class="input-icon-right eye-toggle" id="togglePasswordBtn" role="button"
+                    aria-label="Mostrar ou ocultar senha" tabindex="0">
+                    <img src="assets/icons/olho.svg" alt="">
+                  </span>
+                </div>
+              </div>
+
+              <!-- Botões de Ação do Formulário -->
+              <div class="form-actions-row">
+                <button type="button" class="btn btn-secondary-outline" id="btnLimpar">
+                  Limpar Formulário
+                </button>
+                <button type="submit" class="btn btn-primary-green" id="btnSubmit">
+                  Cadastrar motorista
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </section>
+
+        <!-- Seção: Motoristas Cadastrados -->
+        <section class="table-section">
+
+          <!-- Barra Superior da Tabela -->
+          <div class="table-header-controls">
+            <h2 class="section-title-white">Motoristas Cadastrados</h2>
+
+            <div class="table-search-group">
+              <div class="table-search-input-wrapper">
+                <input type="text" id="tableSearchInput" class="table-search-input"
+                  placeholder="Buscar por Nome, CPF, Email ou Tel...">
+              </div>
+              <button type="button" class="btn-table-search" id="btnBuscarTabela">
+                Buscar
+              </button>
+              <div class="badge-total-records" id="totalRecordsBadge">
+                10 registros
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabela de Motoristas -->
+          <div class="table-card">
+            <div class="table-responsive">
+              <table class="custom-data-table" id="motoristasTable">
+                <thead>
+                  <tr>
+                    <th scope="col" class="th-id">ID</th>
+                    <th scope="col" class="th-nome">NOME</th>
+                    <th scope="col" class="th-cpf">CPF</th>
+                    <th scope="col" class="th-email">E-MAIL</th>
+                    <th scope="col" class="th-telefone">TELEFONE</th>
+                    <th scope="col" class="th-nasc">DATA DE NASC.</th>
+                    <th scope="col" class="th-acoes">AÇÕES</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <!-- Linhas populadas via Javascript -->
+                </tbody>
+              </table>
+            </div>
+            <div class="table-empty-state" id="tableEmptyState" style="display: none;">
+              <p>Nenhum motorista encontrado com os critérios de busca informados.</p>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Toast de Notificação -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="motoristas.js"></script>
+</body>
+
+</html>
