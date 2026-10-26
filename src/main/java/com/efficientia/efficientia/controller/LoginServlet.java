@@ -24,10 +24,10 @@ public class LoginServlet extends HttpServlet {
 
     // =========================================================================
     // [ALTERAÇÃO FUTURA]: Caso o arquivo ou a rota da área restrita mude
-    // (por exemplo: de /teste.jsp para /dashboard.jsp, /painel ou outra JSP/Servlet),
+    // (por exemplo: de /pecuarista para um futuro /dashboard ou outra JSP/Servlet),
     // altere a constante abaixo para o novo caminho de destino:
     // =========================================================================
-    public static final String ROTA_AREA_RESTRITA = "/teste.jsp";
+    public static final String ROTA_AREA_RESTRITA = "/pecuarista";
 
     @Override
     public void init() {

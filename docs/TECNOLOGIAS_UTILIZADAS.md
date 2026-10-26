@@ -110,7 +110,7 @@ Abaixo é apresentada a arquitetura técnica em camadas e onde cada tecnologia a
 | **Tecnologia** | **Jakarta Filter API** (`jakarta.servlet.Filter`) |
 | **Contexto no Projeto** | Interceptador global de segurança e autorização de requisições web. |
 | **Motivo da Utilização** | 1. Proteção de rotas administrativas contra acesso anônimo não autorizado.<br>2. Verificação prévia da existência de sessão ativa com `session.getAttribute("adminLogado") != null`.<br>3. Configuração de cabeçalhos de segurança HTTP (`resp.setHeader("Cache-Control", "no-store")`) para impedir que páginas restritas fiquem salvas no cache do navegador após o logout.<br>4. Redirecionamento amigável para `/login?erro=nao_autorizado` quando o usuário tenta burlar a autenticação. |
-| **Onde é Utilizada** | Na classe `com.efficientia.efficientia.filter.AuthFilter`, protegendo as rotas `/teste.jsp`, `/admin`, `/empresa`, `/motorista`, `/caminhao`, `/pecuarista` e `/trajeto`. |
+| **Onde é Utilizada** | Na classe `com.efficientia.efficientia.filter.AuthFilter`, protegendo as rotas `/admin`, `/empresa`, `/motorista`, `/caminhao`, `/pecuarista` e `/trajeto`. |
 
 ---
 

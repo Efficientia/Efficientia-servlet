@@ -31,7 +31,8 @@ A solução converte cada tela em uma **JSP renderizada no servidor**, protegida
 | Remoção de dados mockados e CRUD em memória | ✅ | Arquivos `*.html` e `*.js` de mock removidos |
 | Modo de edição integrado ao formulário | ✅ | Substitui as telas `editar*.jsp` separadas |
 | Ajustes mínimos nos Servlets (edição, senha, feedback) | ✅ | Ver seção 5 |
-| Tela de Trajetos e Dashboard | ❌ | Mantidos em `trajeto.jsp`/`teste.jsp` (fora do design entregue) |
+| Tela de Trajetos | ❌ | Sem design entregue; a UI antes hospedada em `teste.jsp` deixa de existir (ver nota abaixo) |
+| Descarte de `teste.jsp` e Dashboard | ✅ | Rota pós-login passa a `/pecuarista`; item Dashboard removido da sidebar |
 | Redesenho da tela `erro.jsp` | ❌ | Mantida como está |
 
 ---
@@ -116,6 +117,8 @@ Eliminam a duplicação de ~100 linhas de layout presentes em cada HTML do desig
 | `sidebar.jspf` | Logo, menu lateral (item ativo via `paginaAtiva`), saudação com `${sessionScope.adminLogado.nome}` e botão de logout (`/logout`) |
 | `topbar.jspf` | Barra superior com busca global (`GET` para `paginaServlet` com parâmetro `busca`) |
 | `toasts.jspf` | Converte os parâmetros `sucesso` e `erro` da URL em toasts estilizados |
+| `head.jspf` | `<head>` comum: metadados, título (`tituloPagina`), fonte IBM Plex Sans e `css/painel.css` |
+| `waves.jspf` | Linhas de onda decorativas de fundo |
 
 ### 4.3. Utilitário de Interface: [painel.js](../src/main/webapp/js/painel.js)
 Responsabilidades **exclusivamente visuais** (nenhum dado de negócio):
@@ -144,6 +147,10 @@ Responsabilidades **exclusivamente visuais** (nenhum dado de negócio):
 | **S-01** | No `GET ?acao=editar`, **não** fazer `forward` para `editar*.jsp`; apenas definir o atributo `*Model` e **seguir o fluxo normal de listagem** | Os 5 | Habilita o modo de edição integrado (seção 3.3). |
 | **S-02** | Em `atualizar`, **senha vazia mantém a senha atual** (`dao.buscar(id).getSenha()`) | Pecuarista, Motorista, Admin | O DAO grava `senha = ?` sempre; sem o ajuste, editar sem redigitar a senha a apagaria. A tela não pré-carrega a senha (segurança). |
 | **S-03** | Redirecionamentos de sucesso passam a incluir `?sucesso=cadastrado\|atualizado\|excluido` | Caminhão, Empresa, Motorista, Admin | Padroniza o feedback já existente em `PecuaristaServlet` e alimenta `toasts.jspf`. |
+| **S-04** | `ROTA_AREA_RESTRITA` (`LoginServlet`) passa de `/teste.jsp` para `/pecuarista`; `/teste.jsp` sai dos `urlPatterns` do `AuthFilter`; `AuthServletTest` atualizado | LoginServlet, AuthFilter | `teste.jsp` foi descartado; o login precisa de um destino válido. |
+
+> [!WARNING]
+> `teste.jsp` era a única tela que consumia o `TrajetoServlet` (que encaminha para `/WEB-INF/views/trajeto.jsp`, inexistente). Sem design de Trajetos entregue, a rota `/trajeto` fica sem interface até que essa tela seja desenhada e convertida seguindo este mesmo padrão.
 
 > [!NOTE]
 > Os fluxos de erro de duplicidade continuam redirecionando para [erro.jsp](../src/main/webapp/erro.jsp) via [WebErroUtil](../src/main/java/com/efficientia/efficientia/util/WebErroUtil.java), conforme [SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md](SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md). Erros de formato (`cpf_invalido`, `email_invalido`, `telefone_invalido`, `placa_invalida`, `cnpj_invalido`) voltam à própria tela como toast.
@@ -210,7 +217,7 @@ $env:JAVA_HOME = "C:\Users\20260095-ieg\.jdks\openjdk-25.0.2"
 | :---: | :--- | :--- |
 | **ST-01** | Suíte JUnit existente (`ValidadorRegexTest`, `TratadorExcecaoBancoTest`) | Todos **PASS** (nenhum Servlet testado foi alterado em assinatura) |
 | **ST-02** | `grep` por `pecuaristas.js`, `let pecuaristas`, `.html"` nos JSPs | Nenhuma ocorrência |
-| **ST-03** | Nenhum arquivo de gestão fora de `/WEB-INF/views/` | Somente `login.jsp`, `erro.jsp`, `teste.jsp` e `index.html` na raiz |
+| **ST-03** | Nenhum arquivo de gestão fora de `/WEB-INF/views/` | Somente `login.jsp`, `erro.jsp`, `esqueci-senha.jsp` e `index.html` na raiz |
 
 ### Fase 2: Teste de Integração (Servlet × DAO × PostgreSQL)
 
