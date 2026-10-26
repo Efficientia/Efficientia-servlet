@@ -75,10 +75,6 @@ public class MotoristaServlet extends HttpServlet {
                     req.setAttribute("motoristaModel", motoristaModel);
                     req.setAttribute("motorista", motoristaModel);
                     req.setAttribute("empresaModels", empresaDAO.listar());
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-motorista.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar motorista para edição: " + e.getMessage());
@@ -173,7 +169,7 @@ public class MotoristaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/motorista");
+            resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=excluido");
             return;
         }
 
@@ -328,6 +324,12 @@ public class MotoristaServlet extends HttpServlet {
                 String email = obterParametro(req, "email");
                 String telefone = obterParametro(req, "telefone");
 
+                // Senha em branco: mantém a senha atual (a tela de edição não pré-carrega a senha)
+                if (senha == null) {
+                    MotoristaModel atual = dao.buscar(id);
+                    senha = atual != null ? atual.getSenha() : null;
+                }
+
                 // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
                 if (telefone != null && !telefone.isBlank() && !ValidadorRegex.isCelularValido(telefone)) {
                     resp.sendRedirect(req.getContextPath() + "/motorista?acao=editar&id=" + id + "&erro=telefone_invalido");
@@ -362,7 +364,7 @@ public class MotoristaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/motorista");
+            resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=atualizado");
             return;
         }
 
@@ -408,7 +410,7 @@ public class MotoristaServlet extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/motorista");
+        resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

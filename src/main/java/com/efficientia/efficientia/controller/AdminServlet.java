@@ -70,9 +70,6 @@ public class AdminServlet extends HttpServlet {
                     req.setAttribute("adminModel", adminModel);
                     req.setAttribute("admin", adminModel);
                     req.setAttribute("empresas", empresaDAO.listar());
-                    req.getRequestDispatcher("/WEB-INF/views/editarAdmin.jsp")
-                            .forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar Admin para edição: " + e.getMessage());
@@ -152,7 +149,7 @@ public class AdminServlet extends HttpServlet {
                 WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir Administrador: " + e.getMessage(), "/admin");
                 return;
             }
-            resp.sendRedirect(req.getContextPath() + "/admin");
+            resp.sendRedirect(req.getContextPath() + "/admin?sucesso=excluido");
             return;
         }
 
@@ -230,6 +227,12 @@ public class AdminServlet extends HttpServlet {
                 String email = obterParametro(req, "email");
                 String senha = obterParametro(req, "senha");
                 String nome = obterParametro(req, "nome");
+
+                // Senha em branco: mantém a senha atual (a tela de edição não pré-carrega a senha)
+                if (senha == null) {
+                    AdminModel atual = dao.buscar(id);
+                    senha = atual != null ? atual.getSenha() : null;
+                }
                 AdminModel adminModel = new AdminModel(id, empresa, email, senha, nome);
                 boolean atualizado = dao.atualizar(adminModel, id);
                 if (!atualizado) {
@@ -244,7 +247,7 @@ public class AdminServlet extends HttpServlet {
                 WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar Administrador: " + e.getMessage(), "/admin?acao=editar&id=" + id);
                 return;
             }
-            resp.sendRedirect(req.getContextPath() + "/admin");
+            resp.sendRedirect(req.getContextPath() + "/admin?sucesso=atualizado");
             return;
         }
 
@@ -269,7 +272,7 @@ public class AdminServlet extends HttpServlet {
             WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar Administrador: " + e.getMessage(), "/admin");
             return;
         }
-        resp.sendRedirect(req.getContextPath() + "/admin");
+        resp.sendRedirect(req.getContextPath() + "/admin?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
