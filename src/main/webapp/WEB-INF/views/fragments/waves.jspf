@@ -1,0 +1,12 @@
+<%-- Linhas de onda decorativas de fundo do Design System --%>
+<div class="background-wave-decorations" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M-100 200 C300 120, 800 50, 1540 180" stroke="rgba(0, 217, 255, 0.22)" stroke-width="2"/>
+    <path d="M-80 280 C350 180, 850 90, 1540 250" stroke="rgba(0, 217, 255, 0.18)" stroke-width="1.8"/>
+    <path d="M-50 360 C400 240, 900 130, 1540 320" stroke="rgba(0, 217, 255, 0.15)" stroke-width="1.5"/>
+    <path d="M-30 440 C450 300, 950 180, 1540 400" stroke="rgba(0, 217, 255, 0.12)" stroke-width="1.2"/>
+    <path d="M0 540 C500 370, 1000 240, 1540 500" stroke="rgba(0, 217, 255, 0.1)" stroke-width="1"/>
+    <path d="M-100 700 C400 600, 900 750, 1540 680" stroke="rgba(0, 217, 255, 0.12)" stroke-width="1.5"/>
+    <path d="M-50 820 C450 720, 950 850, 1540 800" stroke="rgba(0, 217, 255, 0.08)" stroke-width="1.2"/>
+  </svg>
+</div>

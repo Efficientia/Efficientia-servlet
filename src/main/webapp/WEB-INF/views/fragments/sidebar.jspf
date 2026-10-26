@@ -8,10 +8,6 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a href="${ctx}/teste.jsp" class="nav-item">
-        <img src="${ctx}/assets/icons/dashboard.svg" alt="" class="nav-icon">
-        <span>Dashboard</span>
-      </a>
       <a href="${ctx}/caminhao" class="nav-item ${paginaAtiva eq 'caminhao' ? 'active' : ''}">
         <img src="${ctx}/assets/icons/caminhoes.svg" alt="" class="nav-icon">
         <span>Caminhões</span>
