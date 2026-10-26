@@ -67,10 +67,6 @@ public class EmpresaServlet extends HttpServlet {
                 if (empresaModel != null) {
                     req.setAttribute("empresaModel", empresaModel);
                     req.setAttribute("empresa", empresaModel);
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-empresa.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar empresa para edição: " + e.getMessage());
@@ -147,7 +143,7 @@ public class EmpresaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/empresa");
+            resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=excluido");
             return;
         }
 
@@ -257,7 +253,7 @@ public class EmpresaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/empresa");
+            resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=atualizado");
             return;
         }
 
@@ -281,7 +277,7 @@ public class EmpresaServlet extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/empresa");
+        resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
