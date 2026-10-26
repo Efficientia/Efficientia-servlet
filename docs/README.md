@@ -54,6 +54,12 @@ Documentação comprobatória da utilização estratégica e responsável de Int
 
 ---
 
+### 7. Interface Web e Integração Front-End × Back-End
+Especificação da camada de visão da área restrita:
+* **[Especificação de Integração Front-End × Back-End](SPEC_INTEGRACAO_FRONTEND_BACKEND.md):** Conversão das telas do Design System (PR #37) em JSPs protegidas e dinâmicas, mapeamento campo × parâmetro × banco, ajustes nos Servlets, estratégia de branches e roteiro de testes.
+
+---
+
 ## 🔗 Navegação Rápida
 * [Voltar para a Raiz do Projeto](../README.md)
 * [Script SQL do Banco de Dados](../Efficientia.sql)
