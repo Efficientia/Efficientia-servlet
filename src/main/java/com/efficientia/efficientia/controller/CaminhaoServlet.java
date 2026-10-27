@@ -85,9 +85,25 @@ public class CaminhaoServlet extends HttpServlet {
             int idEmpresa = parseInt(idEmpresaStr, 0);
             caminhaoModels = dao.buscarPorEmpresa(idEmpresa);
             req.setAttribute("termoBusca", "Empresa #" + idEmpresa);
-        // 2. Busca por placa do veículo (cavalo mecânico ou carreta)
+        // 2. Busca por placa do veículo ou ID direto (#ID)
         } else if (busca != null && !busca.isBlank()) {
-            caminhaoModels = dao.buscarPorPlaca(busca);
+            String termo = busca.trim();
+            java.util.Set<Integer> ids = new java.util.LinkedHashSet<>();
+            caminhaoModels = new java.util.ArrayList<>();
+
+            try {
+                int idNum = Integer.parseInt(termo);
+                CaminhaoModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    caminhaoModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            for (CaminhaoModel c : dao.buscarPorPlaca(termo)) {
+                if (ids.add(c.getId())) {
+                    caminhaoModels.add(c);
+                }
+            }
             req.setAttribute("termoBusca", busca);
         // 3. Listagem geral de todos os caminhões cadastrados
         } else {

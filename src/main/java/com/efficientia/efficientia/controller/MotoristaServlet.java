@@ -107,6 +107,15 @@ public class MotoristaServlet extends HttpServlet {
             Set<Integer> ids = new LinkedHashSet<>();
             motoristaModels = new ArrayList<>();
 
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                MotoristaModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    motoristaModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
             for (MotoristaModel m : dao.buscarPorNome(termo)) {
                 if (ids.add(m.getId())) motoristaModels.add(m);
             }

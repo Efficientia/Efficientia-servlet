@@ -97,6 +97,15 @@ public class AdminServlet extends HttpServlet {
             Set<Integer> ids = new LinkedHashSet<>();
             adminModels = new ArrayList<>();
 
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                AdminModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    adminModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
             for (AdminModel a : dao.buscarPorNome(termo)) {
                 if (ids.add(a.getId())) adminModels.add(a);
             }

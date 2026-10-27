@@ -101,6 +101,15 @@ public class PecuaristaServlet extends HttpServlet {
             Set<Integer> ids = new LinkedHashSet<>();
             pecuaristaModels = new ArrayList<>();
 
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                PecuaristaModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    pecuaristaModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
             for (PecuaristaModel p : dao.buscarPorNome(termo)) {
                 if (ids.add(p.getId())) pecuaristaModels.add(p);
             }
