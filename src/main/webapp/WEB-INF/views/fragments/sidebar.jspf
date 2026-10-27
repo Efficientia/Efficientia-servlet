@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <%-- Sidebar compartilhada da área restrita. Requer: variável de página "paginaAtiva". --%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <aside class="sidebar">
