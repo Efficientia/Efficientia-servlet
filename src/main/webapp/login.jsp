@@ -23,8 +23,6 @@
         <div class="direita">
             <div class="menu-login">
                 <form action="${pageContext.request.contextPath}/login" method="post">
-                    <h1 class="titulo-login">Entrar</h1>
-
                     <!-- Mensagens de validação e segurança -->
                     <c:if test="${param.erro == 'nao_autorizado'}">
                         <div class="alerta-erro" role="alert">
