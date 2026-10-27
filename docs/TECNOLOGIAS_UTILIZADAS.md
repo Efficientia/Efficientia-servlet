@@ -54,7 +54,7 @@ Abaixo é apresentada a arquitetura técnica em camadas e onde cada tecnologia a
                                          ▼
 ┌──────────────────────────────────────────────────────────────────────────────────┐
 │                   INFRAESTRUTURA & CONFIGURAÇÃO (DOTENV & JDBC)                  │
-│  [ConnectionFactory] Singleton de Conexão + [dotenv-java] (.env)                 │
+│  [ConnectionFactory] Pool HikariCP (6.2.0) + [dotenv-java] (.env)                │
 │  Driver JDBC: [org.postgresql.Driver 42.7.5]                                     │
 └────────────────────────────────────────┬─────────────────────────────────────────┘
                                          │ Protocolo TCP / Porta 5432
@@ -202,6 +202,17 @@ Abaixo é apresentada a arquitetura técnica em camadas e onde cada tecnologia a
 
 ---
 
+### 2.13. Pool de Conexões de Alta Performance: HikariCP
+
+| Aspecto | Descrição Detalhada |
+| :--- | :--- |
+| **Tecnologia** | **HikariCP** (`com.zaxxer:HikariCP:6.2.0`) e ponte de log `org.slf4j:slf4j-jdk14:1.7.36` |
+| **Contexto no Projeto** | Gerenciador de pool de conexões JDBC com o banco remoto na nuvem (Aiven PostgreSQL). |
+| **Motivo da Utilização** | 1. Elimina a sobrecarga crítica de múltiplos segundos de negociação TCP, TLS/SSL e autenticação SCRAM a cada requisição HTTP.<br>2. Mantém conexões pré-aquecidas prontas para uso imediato em memória (`minimumIdle = 2`, `maximumPoolSize = 10`), reduzindo o tempo de obtenção de conexão para menos de 5 ms.<br>3. Totalmente transparente para a camada DAO, que continua utilizando o padrão idiomático `try (Connection c = ConnectionFactory.getConnection())`.<br>4. Mecanismo de heartbeat preventivo (`keepaliveTime = 60000`) para evitar quedas por inatividade impostas por firewalls ou NATs da nuvem. |
+| **Onde é Utilizada** | - `com.efficientia.efficientia.factory.ConnectionFactory.java`<br>- `src/test/java/com/efficientia/efficientia/factory/ConnectionFactoryTest.java`<br>- Declaração em `pom.xml` |
+
+---
+
 ## 3. Matriz de Rastreabilidade: Disciplinas × Tecnologias
 
 A tabela a seguir demonstra formalmente a aderência de cada tecnologia às solicitações das disciplinas do Projeto Interdisciplinar:
@@ -212,6 +223,7 @@ A tabela a seguir demonstra formalmente a aderência de cada tecnologia às soli
 | **Programação Orientada a Objetos** | Separação em pacotes `servlet`, `dao` e `model` | Arquitetura MVC com pacotes padronizados | `controller/`, `dao/`, `model/`, `factory/`, `util/`, `exception/` |
 | **Programação Orientada a Objetos** | CRUD em mais 3 tabelas (Extra 10,0 - Total de 6 tabelas) | Java, Servlets, DAOs para 6 entidades | `pecuarista`, `caminhao`, `motorista`, `adm`, `empresa`, `trajeto` |
 | **Programação Orientada a Objetos** | Acessar BD Postgres usando JDBC | JDBC Puro (`PreparedStatement`), PostgreSQL Driver | `com.efficientia.efficientia.dao.impl.*`, `ConnectionFactory.java` |
+| **Programação Orientada a Objetos** | Pool de conexões e performance de persistência | HikariCP (`HikariDataSource`), alta performance JDBC | `ConnectionFactory.java`, `ConnectionFactoryTest.java` |
 | **Programação Orientada a Objetos** | Diversificar métodos para alterar e excluir | Métodos específicos de atualização e exclusão | DAOs e Servlets (`atualizar*`, `excluir*`) |
 | **Programação Orientada a Objetos** | Filtros diversos correlacionando tabelas | DAOs com INNER JOINs, filtros dinâmicos e busca | `TrajetoDAO.buscar`, `TrajetoServlet.doGet`, busca insensível a acentos |
 | **Banco de Dados 1** | Modelo Lógico e Script SQL de criação | PostgreSQL DDL | `Efficientia.sql` |
