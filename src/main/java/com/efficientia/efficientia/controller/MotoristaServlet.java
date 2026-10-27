@@ -75,10 +75,6 @@ public class MotoristaServlet extends HttpServlet {
                     req.setAttribute("motoristaModel", motoristaModel);
                     req.setAttribute("motorista", motoristaModel);
                     req.setAttribute("empresaModels", empresaDAO.listar());
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-motorista.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar motorista para edição: " + e.getMessage());
@@ -110,6 +106,15 @@ public class MotoristaServlet extends HttpServlet {
             String termo = busca.trim();
             Set<Integer> ids = new LinkedHashSet<>();
             motoristaModels = new ArrayList<>();
+
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                MotoristaModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    motoristaModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
 
             for (MotoristaModel m : dao.buscarPorNome(termo)) {
                 if (ids.add(m.getId())) motoristaModels.add(m);
@@ -173,7 +178,7 @@ public class MotoristaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/motorista");
+            resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=excluido");
             return;
         }
 
@@ -328,6 +333,12 @@ public class MotoristaServlet extends HttpServlet {
                 String email = obterParametro(req, "email");
                 String telefone = obterParametro(req, "telefone");
 
+                // Senha em branco: mantém a senha atual (a tela de edição não pré-carrega a senha)
+                if (senha == null) {
+                    MotoristaModel atual = dao.buscar(id);
+                    senha = atual != null ? atual.getSenha() : null;
+                }
+
                 // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
                 if (telefone != null && !telefone.isBlank() && !ValidadorRegex.isCelularValido(telefone)) {
                     resp.sendRedirect(req.getContextPath() + "/motorista?acao=editar&id=" + id + "&erro=telefone_invalido");
@@ -362,7 +373,7 @@ public class MotoristaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/motorista");
+            resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=atualizado");
             return;
         }
 
@@ -408,7 +419,7 @@ public class MotoristaServlet extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/motorista");
+        resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

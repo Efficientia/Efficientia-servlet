@@ -60,7 +60,8 @@ public class PecuaristaServlet extends HttpServlet {
 
         String acao = req.getParameter("acao");
 
-        // Edição: busca o pecuarista pelo ID e despacha para a página de edição
+        // Edição: busca o pecuarista pelo ID e o disponibiliza para o formulário em modo de edição,
+        // seguindo o fluxo normal de listagem (a mesma JSP exibe formulário + tabela)
         if ("editar".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
@@ -69,10 +70,6 @@ public class PecuaristaServlet extends HttpServlet {
                 if (pecuaristaModel != null) {
                     req.setAttribute("pecuaristaModel", pecuaristaModel);
                     req.setAttribute("pecuarista", pecuaristaModel);
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar pecuarista para edição: " + e.getMessage());
@@ -103,6 +100,15 @@ public class PecuaristaServlet extends HttpServlet {
             String termo = busca.trim();
             Set<Integer> ids = new LinkedHashSet<>();
             pecuaristaModels = new ArrayList<>();
+
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                PecuaristaModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    pecuaristaModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
 
             for (PecuaristaModel p : dao.buscarPorNome(termo)) {
                 if (ids.add(p.getId())) pecuaristaModels.add(p);
@@ -342,6 +348,12 @@ public class PecuaristaServlet extends HttpServlet {
                 String senha = obterParametro(req, "senha");
                 String email = obterParametro(req, "email");
                 String telefone = obterParametro(req, "telefone");
+
+                // Senha em branco: mantém a senha atual (a tela de edição não pré-carrega a senha)
+                if (senha == null) {
+                    PecuaristaModel atual = dao.buscar(id);
+                    senha = atual != null ? atual.getSenha() : null;
+                }
 
                 // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
                 if (!ValidadorRegex.isCpfValido(cpf)) {

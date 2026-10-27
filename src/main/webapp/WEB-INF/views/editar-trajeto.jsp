@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="com.efficientia.efficientia.model.TrajetoModel" %>
@@ -38,7 +38,7 @@
             <button type="button" class="btn-voltar" onclick="window.print()">
                 🖨️ Imprimir / PDF
             </button>
-            <a href="${pageContext.request.contextPath}/teste.jsp?servlet=trajeto" class="btn-voltar">
+            <a href="${pageContext.request.contextPath}/trajeto" class="btn-voltar">
                 ⚡ Painel de Testes
             </a>
             <a href="${pageContext.request.contextPath}/trajeto" class="btn-voltar">

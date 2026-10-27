@@ -1,0 +1,49 @@
+<%@ page pageEncoding="UTF-8" %>
+<%-- Sidebar compartilhada da área restrita. Requer: variável de página "paginaAtiva". --%>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <div class="brand-logo">
+      <img src="${ctx}/assets/icons/logo.svg" alt="Logo" class="brand-icon">
+      <span class="brand-name">Efficient<span class="brand-ia">ia</span></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="${ctx}/caminhao" class="nav-item ${paginaAtiva eq 'caminhao' ? 'active' : ''}">
+        <img src="${ctx}/assets/icons/caminhoes.svg" alt="" class="nav-icon">
+        <span>Caminhões</span>
+      </a>
+      <a href="${ctx}/empresa" class="nav-item ${paginaAtiva eq 'empresa' ? 'active' : ''}">
+        <img src="${ctx}/assets/icons/empresas.svg" alt="" class="nav-icon">
+        <span>Empresas</span>
+      </a>
+      <a href="${ctx}/motorista" class="nav-item ${paginaAtiva eq 'motorista' ? 'active' : ''}">
+        <img src="${ctx}/assets/icons/motoristas.svg" alt="" class="nav-icon">
+        <span>Motoristas</span>
+      </a>
+      <a href="${ctx}/pecuarista" class="nav-item ${paginaAtiva eq 'pecuarista' ? 'active' : ''}">
+        <img src="${ctx}/assets/icons/pecuaristas.svg" alt="" class="nav-icon">
+        <span>Pecuaristas</span>
+      </a>
+      <a href="${ctx}/admin" class="nav-item ${paginaAtiva eq 'admin' ? 'active' : ''}">
+        <img src="${ctx}/assets/icons/administradores.svg" alt="" class="nav-icon">
+        <span>Administradores</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-user-footer">
+    <div class="user-info-wrapper">
+      <div class="user-avatar-circle">
+        <img src="${ctx}/assets/icons/usuario-avatar.svg" alt="">
+      </div>
+      <div class="user-text-details">
+        <strong class="user-greeting">Olá, <c:out value="${sessionScope.adminLogado.nome}" default="Administrador" /></strong>
+        <span class="user-role">Administrador</span>
+      </div>
+    </div>
+    <a href="${ctx}/logout" class="logout-btn" title="Sair do sistema" aria-label="Sair">
+      <img src="${ctx}/assets/icons/sair.svg" alt="">
+    </a>
+  </div>
+</aside>

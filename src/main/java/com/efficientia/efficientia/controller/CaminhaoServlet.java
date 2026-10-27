@@ -69,11 +69,6 @@ public class CaminhaoServlet extends HttpServlet {
                 if (caminhaoModel != null) {
                     req.setAttribute("caminhaoModel", caminhaoModel);
                     req.setAttribute("caminhao", caminhaoModel);
-                    req.setAttribute("empresaModels", empresaDAO.listar());
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-caminhao.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar caminhão para edição: " + e.getMessage());
@@ -90,9 +85,25 @@ public class CaminhaoServlet extends HttpServlet {
             int idEmpresa = parseInt(idEmpresaStr, 0);
             caminhaoModels = dao.buscarPorEmpresa(idEmpresa);
             req.setAttribute("termoBusca", "Empresa #" + idEmpresa);
-        // 2. Busca por placa do veículo (cavalo mecânico ou carreta)
+        // 2. Busca por placa do veículo ou ID direto (#ID)
         } else if (busca != null && !busca.isBlank()) {
-            caminhaoModels = dao.buscarPorPlaca(busca);
+            String termo = busca.trim();
+            java.util.Set<Integer> ids = new java.util.LinkedHashSet<>();
+            caminhaoModels = new java.util.ArrayList<>();
+
+            try {
+                int idNum = Integer.parseInt(termo);
+                CaminhaoModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    caminhaoModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            for (CaminhaoModel c : dao.buscarPorPlaca(termo)) {
+                if (ids.add(c.getId())) {
+                    caminhaoModels.add(c);
+                }
+            }
             req.setAttribute("termoBusca", busca);
         // 3. Listagem geral de todos os caminhões cadastrados
         } else {
@@ -147,7 +158,7 @@ public class CaminhaoServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/caminhao");
+            resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=excluido");
             return;
         }
 
@@ -287,7 +298,7 @@ public class CaminhaoServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/caminhao");
+            resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=atualizado");
             return;
         }
 
@@ -322,7 +333,7 @@ public class CaminhaoServlet extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/caminhao");
+        resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

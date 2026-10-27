@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -282,6 +283,9 @@ public class EnderecoDAO {
         }
 
         String cepLimpo = cep.replaceAll("\\D", "").trim();
+        if (cepLimpo.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         String sql = """
                 SELECT * FROM endereco

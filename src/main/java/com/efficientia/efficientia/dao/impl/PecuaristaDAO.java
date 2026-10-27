@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -369,6 +370,10 @@ public class PecuaristaDAO {
         }
 
         String cpfLimpo = cpf.replaceAll("\\D", "").trim();
+        // Se a busca for por termo puramente textual (sem nenhum dígito), não há como corresponder a CPF
+        if (cpfLimpo.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         String sql = """
                 SELECT * FROM pecuarista
@@ -445,6 +450,10 @@ public class PecuaristaDAO {
         }
 
         String telefoneLimpo = telefone.replaceAll("\\D", "").trim();
+        // Se a busca for por termo puramente textual (sem nenhum dígito), não há como corresponder a telefone
+        if (telefoneLimpo.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         String sql = """
                 SELECT * FROM pecuarista

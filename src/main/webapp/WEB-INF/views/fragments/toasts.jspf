@@ -1,0 +1,26 @@
+<%@ page pageEncoding="UTF-8" %>
+<%-- Converte os parâmetros ?sucesso= e ?erro= (padrão PRG dos Servlets) em toasts. --%>
+<div class="toast-container" id="toastContainer" aria-live="polite">
+  <c:if test="${not empty param.sucesso}">
+    <div class="toast toast-success" role="status">
+      <c:choose>
+        <c:when test="${param.sucesso eq 'cadastrado'}">Registro cadastrado com sucesso!</c:when>
+        <c:when test="${param.sucesso eq 'atualizado'}">Registro atualizado com sucesso!</c:when>
+        <c:when test="${param.sucesso eq 'excluido'}">Registro excluído com sucesso!</c:when>
+        <c:otherwise>Operação realizada com sucesso!</c:otherwise>
+      </c:choose>
+    </div>
+  </c:if>
+  <c:if test="${not empty param.erro}">
+    <div class="toast toast-error" role="alert">
+      <c:choose>
+        <c:when test="${param.erro eq 'cpf_invalido'}">CPF inválido. Informe 11 dígitos.</c:when>
+        <c:when test="${param.erro eq 'cnpj_invalido'}">CNPJ inválido. Informe 14 dígitos.</c:when>
+        <c:when test="${param.erro eq 'email_invalido'}">E-mail inválido.</c:when>
+        <c:when test="${param.erro eq 'telefone_invalido'}">Telefone inválido. Informe DDD + número.</c:when>
+        <c:when test="${param.erro eq 'placa_invalida'}">Placa inválida. Use o formato ABC1D23 ou ABC-1234.</c:when>
+        <c:otherwise>Não foi possível concluir a operação. Verifique os dados.</c:otherwise>
+      </c:choose>
+    </div>
+  </c:if>
+</div>

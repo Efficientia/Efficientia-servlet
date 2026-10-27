@@ -67,10 +67,6 @@ public class EmpresaServlet extends HttpServlet {
                 if (empresaModel != null) {
                     req.setAttribute("empresaModel", empresaModel);
                     req.setAttribute("empresa", empresaModel);
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-empresa.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar empresa para edição: " + e.getMessage());
@@ -92,11 +88,26 @@ public class EmpresaServlet extends HttpServlet {
             Set<Integer> ids = new LinkedHashSet<>();
             empresaModels = new ArrayList<>();
 
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                EmpresaModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    empresaModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
             for (EmpresaModel e : dao.buscarPorCodigoLista(termo)) {
                 if (ids.add(e.getId())) empresaModels.add(e);
             }
             for (EmpresaModel e : dao.buscarPorNome(termo)) {
                 if (ids.add(e.getId())) empresaModels.add(e);
+            }
+            if (termo.replaceAll("\\D", "").length() >= 8) {
+                EmpresaModel porCnpj = dao.buscarPorCnpj(termo);
+                if (porCnpj != null && ids.add(porCnpj.getId())) {
+                    empresaModels.add(porCnpj);
+                }
             }
             req.setAttribute("termoBusca", busca);
         // 3. Listagem geral de todas as empresas cadastradas
@@ -147,7 +158,7 @@ public class EmpresaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/empresa");
+            resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=excluido");
             return;
         }
 
@@ -257,7 +268,7 @@ public class EmpresaServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/empresa");
+            resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=atualizado");
             return;
         }
 
@@ -281,7 +292,7 @@ public class EmpresaServlet extends HttpServlet {
             return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/empresa");
+        resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
