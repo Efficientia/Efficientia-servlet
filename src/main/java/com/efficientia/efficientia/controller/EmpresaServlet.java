@@ -1,8 +1,10 @@
 package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
+import com.efficientia.efficientia.util.WebErroUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -65,10 +67,6 @@ public class EmpresaServlet extends HttpServlet {
                 if (empresaModel != null) {
                     req.setAttribute("empresaModel", empresaModel);
                     req.setAttribute("empresa", empresaModel);
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-empresa.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar empresa para edição: " + e.getMessage());
@@ -90,11 +88,26 @@ public class EmpresaServlet extends HttpServlet {
             Set<Integer> ids = new LinkedHashSet<>();
             empresaModels = new ArrayList<>();
 
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                EmpresaModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    empresaModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
             for (EmpresaModel e : dao.buscarPorCodigoLista(termo)) {
                 if (ids.add(e.getId())) empresaModels.add(e);
             }
             for (EmpresaModel e : dao.buscarPorNome(termo)) {
                 if (ids.add(e.getId())) empresaModels.add(e);
+            }
+            if (termo.replaceAll("\\D", "").length() >= 8) {
+                EmpresaModel porCnpj = dao.buscarPorCnpj(termo);
+                if (porCnpj != null && ids.add(porCnpj.getId())) {
+                    empresaModels.add(porCnpj);
+                }
             }
             req.setAttribute("termoBusca", busca);
         // 3. Listagem geral de todas as empresas cadastradas
@@ -134,17 +147,24 @@ public class EmpresaServlet extends HttpServlet {
         if ("excluir".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-                dao.excluir(id);
+                boolean excluido = dao.excluir(id);
+                if (!excluido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível excluir a empresa. Registro não encontrado.", "/empresa");
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println("Erro ao excluir empresa: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir empresa: " + e.getMessage(), "/empresa");
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/empresa");
+            resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=excluido");
             return;
         }
 
         // Inserção simplificada de empresa
         if ("inserirSimples".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/empresa";
             try {
                 String nome = obterParametro(req, "nome", "razaoSocial", "razao_social");
                 String cnpj = obterParametro(req, "cnpj");
@@ -155,11 +175,20 @@ public class EmpresaServlet extends HttpServlet {
                     return;
                 }
                 String cnpjNorm = ValidadorRegex.apenasDigitos(cnpj);
-                dao.inserirSimples(nome, cnpjNorm, codigo);
+                boolean inserido = dao.inserirSimples(nome, cnpjNorm, codigo);
+                if (!inserido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar a empresa simplificada.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao inserir empresa simples: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar empresa simples: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/empresa"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -169,6 +198,9 @@ public class EmpresaServlet extends HttpServlet {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoNome = obterParametro(req, "nome", "novoNome", "razaoSocial", "razao_social");
                 dao.atualizarNome(id, novoNome);
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/empresa");
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar nome da empresa: " + e.getMessage());
             }
@@ -187,6 +219,9 @@ public class EmpresaServlet extends HttpServlet {
                 }
                 String cnpjNorm = ValidadorRegex.apenasDigitos(novoCnpj);
                 dao.atualizarCnpj(id, cnpjNorm);
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/empresa");
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar CNPJ da empresa: " + e.getMessage());
             }
@@ -200,6 +235,9 @@ public class EmpresaServlet extends HttpServlet {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoCodigo = obterParametro(req, "codigo", "novoCodigo");
                 dao.atualizarCodigo(id, novoCodigo);
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/empresa");
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar código da empresa: " + e.getMessage());
             }
@@ -209,20 +247,28 @@ public class EmpresaServlet extends HttpServlet {
 
         // Atualização de empresa existente
         if ("atualizar".equals(acao)) {
+            int id = parseInt(req.getParameter("id"), 0);
             try {
-                int id = parseInt(req.getParameter("id"), 0);
-
                 String nome = obterParametro(req, "nome", "razaoSocial", "razao_social");
                 String cnpj = obterParametro(req, "cnpj");
                 String codigo = obterParametro(req, "codigo");
 
                 EmpresaModel empresaModel = new EmpresaModel(id, nome, cnpj, codigo);
-                dao.atualizar(empresaModel, id);
+                boolean atualizado = dao.atualizar(empresaModel, id);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar a empresa. Verifique os dados informados.", "/empresa?acao=editar&id=" + id);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/empresa?acao=editar&id=" + id);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar empresa: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar empresa: " + e.getMessage(), "/empresa?acao=editar&id=" + id);
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/empresa");
+            resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=atualizado");
             return;
         }
 
@@ -232,12 +278,21 @@ public class EmpresaServlet extends HttpServlet {
             String cnpj = obterParametro(req, "cnpj");
 
             EmpresaModel novaEmpresa = new EmpresaModel(nome, cnpj);
-            dao.inserir(novaEmpresa);
+            boolean inserido = dao.inserir(novaEmpresa);
+            if (!inserido) {
+                WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar a empresa. Verifique os dados informados.", "/empresa");
+                return;
+            }
+        } catch (DadoDuplicadoException e) {
+            WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/empresa");
+            return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar empresa: " + e.getMessage());
+            WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar empresa: " + e.getMessage(), "/empresa");
+            return;
         }
 
-        resp.sendRedirect(req.getContextPath() + "/empresa");
+        resp.sendRedirect(req.getContextPath() + "/empresa?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

@@ -4,6 +4,7 @@ import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.AnalistaModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.PasswordHasher;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -55,6 +56,7 @@ public class AnalistaDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Analista");
             System.out.println("Erro ao inserir Analista: " + e.getMessage());
             return false;
         }
@@ -118,6 +120,7 @@ public class AnalistaDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Analista");
             System.out.println("Erro ao atualizar Analista: " + e.getMessage());
             return false;
         }
@@ -197,6 +200,7 @@ public class AnalistaDAO {
             stmt.setString(4, PasswordHasher.hash(senha));
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Analista");
             System.out.println("Erro ao inserir analista simples: " + e.getMessage());
             return false;
         }
@@ -229,6 +233,7 @@ public class AnalistaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Analista", "E-mail", novoEmail);
             System.out.println("Erro ao atualizar email do analista: " + e.getMessage());
             return false;
         }

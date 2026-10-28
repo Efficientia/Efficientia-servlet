@@ -2,9 +2,11 @@ package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.AdminDAO;
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
+import com.efficientia.efficientia.util.WebErroUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -68,9 +70,6 @@ public class AdminServlet extends HttpServlet {
                     req.setAttribute("adminModel", adminModel);
                     req.setAttribute("admin", adminModel);
                     req.setAttribute("empresas", empresaDAO.listar());
-                    req.getRequestDispatcher("/WEB-INF/views/editarAdmin.jsp")
-                            .forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar Admin para edição: " + e.getMessage());
@@ -97,6 +96,15 @@ public class AdminServlet extends HttpServlet {
             String termo = busca.trim();
             Set<Integer> ids = new LinkedHashSet<>();
             adminModels = new ArrayList<>();
+
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                AdminModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    adminModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
 
             for (AdminModel a : dao.buscarPorNome(termo)) {
                 if (ids.add(a.getId())) adminModels.add(a);
@@ -140,11 +148,17 @@ public class AdminServlet extends HttpServlet {
         if ("excluir".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-                dao.excluir(id);
+                boolean excluido = dao.excluir(id);
+                if (!excluido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível excluir o administrador. Registro não encontrado.", "/admin");
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println("Erro ao excluir Admin: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir Administrador: " + e.getMessage(), "/admin");
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + "/admin");
+            resp.sendRedirect(req.getContextPath() + "/admin?sucesso=excluido");
             return;
         }
 
@@ -163,6 +177,7 @@ public class AdminServlet extends HttpServlet {
 
         // Atualização específica: modifica somente o e-mail do administrador com validação REGEX
         if ("atualizarEmail".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/admin";
             try {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoEmail = obterParametro(req, "email", "novoEmail");
@@ -170,11 +185,20 @@ public class AdminServlet extends HttpServlet {
                     resp.sendRedirect(req.getContextPath() + "/admin?erro=email_invalido");
                     return;
                 }
-                dao.atualizarEmail(id, novoEmail);
+                boolean atualizado = dao.atualizarEmail(id, novoEmail);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o e-mail do administrador.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar email do Admin: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar email do Administrador: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/admin"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -206,18 +230,33 @@ public class AdminServlet extends HttpServlet {
 
         // Atualização: modifica os dados de um administrador existente
         if ("atualizar".equals(acao)) {
+            int id = parseInt(req.getParameter("id"), 0);
+            EmpresaModel empresa = buscarEmpresa(req);
             try {
-                int id = parseInt(req.getParameter("id"), 0);
                 String email = obterParametro(req, "email");
                 String senha = obterParametro(req, "senha");
                 String nome = obterParametro(req, "nome");
-                EmpresaModel empresa = buscarEmpresa(req);
+
+                // Senha em branco: mantém a senha atual (a tela de edição não pré-carrega a senha)
+                if (senha == null) {
+                    AdminModel atual = dao.buscar(id);
+                    senha = atual != null ? atual.getSenha() : null;
+                }
                 AdminModel adminModel = new AdminModel(id, empresa, email, senha, nome);
-                dao.atualizar(adminModel, id);
+                boolean atualizado = dao.atualizar(adminModel, id);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o administrador. Verifique os dados informados.", "/admin?acao=editar&id=" + id);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/admin?acao=editar&id=" + id);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar Admin: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar Administrador: " + e.getMessage(), "/admin?acao=editar&id=" + id);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + "/admin");
+            resp.sendRedirect(req.getContextPath() + "/admin?sucesso=atualizado");
             return;
         }
 
@@ -229,11 +268,20 @@ public class AdminServlet extends HttpServlet {
             EmpresaModel empresa = buscarEmpresa(req);
 
             AdminModel novoAdmin = new AdminModel(empresa, email, senha, nome);
-            dao.inserir(novoAdmin);
+            boolean inserido = dao.inserir(novoAdmin);
+            if (!inserido) {
+                WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o administrador. Verifique os dados informados.", "/admin");
+                return;
+            }
+        } catch (DadoDuplicadoException e) {
+            WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/admin");
+            return;
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar Admin: " + e.getMessage());
+            WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar Administrador: " + e.getMessage(), "/admin");
+            return;
         }
-        resp.sendRedirect(req.getContextPath() + "/admin");
+        resp.sendRedirect(req.getContextPath() + "/admin?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

@@ -4,6 +4,7 @@ import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.util.PasswordHasher;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,6 +55,7 @@ public class MotoristaDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista");
             System.out.println("Erro ao inserir Motorista: " + e.getMessage());
             return false;
         }
@@ -121,6 +124,7 @@ public class MotoristaDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista");
             System.out.println("Erro ao atualizar Motorista: " + e.getMessage());
             return false;
         }
@@ -209,6 +213,7 @@ public class MotoristaDAO {
             stmt.setString(4, PasswordHasher.hash(senha));
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista");
             System.out.println("Erro ao inserir motorista simples: " + e.getMessage());
             return false;
         }
@@ -241,6 +246,7 @@ public class MotoristaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Motorista", "E-mail", novoEmail);
             System.out.println("Erro ao atualizar email do motorista: " + e.getMessage());
             return false;
         }
@@ -439,6 +445,11 @@ public class MotoristaDAO {
         }
 
         String digitos = telefone.replaceAll("\\D", "");
+        // Se a busca for por termo puramente textual (sem nenhum dígito), não há como corresponder a telefone
+        if (digitos.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         String sql = """
                 SELECT m.*,
                        e.id AS empresa_id,
@@ -456,7 +467,7 @@ public class MotoristaDAO {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, "%" + (digitos.isEmpty() ? telefone.trim() : digitos) + "%");
+            stmt.setString(1, "%" + digitos + "%");
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

@@ -2,9 +2,11 @@ package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.CaminhaoDAO;
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.CaminhaoModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
+import com.efficientia.efficientia.util.WebErroUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -67,11 +69,6 @@ public class CaminhaoServlet extends HttpServlet {
                 if (caminhaoModel != null) {
                     req.setAttribute("caminhaoModel", caminhaoModel);
                     req.setAttribute("caminhao", caminhaoModel);
-                    req.setAttribute("empresaModels", empresaDAO.listar());
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-caminhao.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar caminhão para edição: " + e.getMessage());
@@ -88,9 +85,25 @@ public class CaminhaoServlet extends HttpServlet {
             int idEmpresa = parseInt(idEmpresaStr, 0);
             caminhaoModels = dao.buscarPorEmpresa(idEmpresa);
             req.setAttribute("termoBusca", "Empresa #" + idEmpresa);
-        // 2. Busca por placa do veículo (cavalo mecânico ou carreta)
+        // 2. Busca por placa do veículo ou ID direto (#ID)
         } else if (busca != null && !busca.isBlank()) {
-            caminhaoModels = dao.buscarPorPlaca(busca);
+            String termo = busca.trim();
+            java.util.Set<Integer> ids = new java.util.LinkedHashSet<>();
+            caminhaoModels = new java.util.ArrayList<>();
+
+            try {
+                int idNum = Integer.parseInt(termo);
+                CaminhaoModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    caminhaoModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            for (CaminhaoModel c : dao.buscarPorPlaca(termo)) {
+                if (ids.add(c.getId())) {
+                    caminhaoModels.add(c);
+                }
+            }
             req.setAttribute("termoBusca", busca);
         // 3. Listagem geral de todos os caminhões cadastrados
         } else {
@@ -134,17 +147,24 @@ public class CaminhaoServlet extends HttpServlet {
         if ("excluir".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-                dao.excluir(id);
+                boolean excluido = dao.excluir(id);
+                if (!excluido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível excluir o caminhão. Registro não encontrado.", "/caminhao");
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println("Erro ao excluir caminhão: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir caminhão: " + e.getMessage(), "/caminhao");
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/caminhao");
+            resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=excluido");
             return;
         }
 
         // Inserção simplificada de caminhão
         if ("inserirSimples".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao";
             try {
                 String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
                 String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
@@ -162,11 +182,20 @@ public class CaminhaoServlet extends HttpServlet {
 
                 String cavaloNorm = ValidadorRegex.normalizarPlaca(placaCavalo);
                 String carretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
-                dao.inserirSimples(cavaloNorm, carretaNorm, capacidadeMaxima, idEmpresa);
+                boolean inserido = dao.inserirSimples(cavaloNorm, carretaNorm, capacidadeMaxima, idEmpresa);
+                if (!inserido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o caminhão simplificado.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao inserir caminhão simples: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar caminhão simples: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/caminhao"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -180,6 +209,9 @@ public class CaminhaoServlet extends HttpServlet {
                     return;
                 }
                 dao.atualizarPlacaCavalo(id, ValidadorRegex.normalizarPlaca(novaPlaca));
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/caminhao");
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar placa cavalo: " + e.getMessage());
             }
@@ -197,6 +229,9 @@ public class CaminhaoServlet extends HttpServlet {
                     return;
                 }
                 dao.atualizarPlacaCarreta(id, ValidadorRegex.normalizarPlaca(novaPlaca));
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/caminhao");
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar placa carreta: " + e.getMessage());
             }
@@ -232,9 +267,9 @@ public class CaminhaoServlet extends HttpServlet {
 
         // Atualização: modifica os dados do veículo existente (empresa, placas, capacidade)
         if ("atualizar".equals(acao)) {
+            int id = parseInt(req.getParameter("id"), 0);
+            EmpresaModel empresaModel = buscarEmpresa(req);
             try {
-                int id = parseInt(req.getParameter("id"), 0);
-                EmpresaModel empresaModel = buscarEmpresa(req);
                 String placaCavalo = obterParametro(req, "placaCavalo", "placa_cavalo");
                 String placaCarreta = obterParametro(req, "placaCarreta", "placa_carreta");
                 int capacidadeMaxima = parseInt(obterParametro(req, "capacidadeMaxima", "capacidade_maxima"), 0);
@@ -249,12 +284,21 @@ public class CaminhaoServlet extends HttpServlet {
                 String placaCarretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
 
                 CaminhaoModel caminhaoModel = new CaminhaoModel(id, empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
-                dao.atualizar(caminhaoModel, id);
+                boolean atualizado = dao.atualizar(caminhaoModel, id);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o caminhão. Verifique os dados informados.", "/caminhao?acao=editar&id=" + id);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/caminhao?acao=editar&id=" + id);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar caminhão: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar caminhão: " + e.getMessage(), "/caminhao?acao=editar&id=" + id);
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/caminhao");
+            resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=atualizado");
             return;
         }
 
@@ -274,9 +318,22 @@ public class CaminhaoServlet extends HttpServlet {
         String placaCarretaNorm = ValidadorRegex.normalizarPlaca(placaCarreta);
 
         CaminhaoModel novoCaminhao = new CaminhaoModel(empresaModel, placaCavaloNorm, placaCarretaNorm, capacidadeMaxima);
-        dao.inserir(novoCaminhao);
+        try {
+            boolean inserido = dao.inserir(novoCaminhao);
+            if (!inserido) {
+                WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o caminhão. Verifique os dados informados.", "/caminhao");
+                return;
+            }
+        } catch (DadoDuplicadoException e) {
+            WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/caminhao");
+            return;
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar caminhão: " + e.getMessage());
+            WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar caminhão: " + e.getMessage(), "/caminhao");
+            return;
+        }
 
-        resp.sendRedirect(req.getContextPath() + "/caminhao");
+        resp.sendRedirect(req.getContextPath() + "/caminhao?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================

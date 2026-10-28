@@ -23,10 +23,10 @@ import java.io.IOException;
 @WebFilter(filterName = "AuthFilter", urlPatterns = {
         // =========================================================================
         // [ALTERAÇÃO FUTURA]: Caso o arquivo ou a rota da área restrita mude
-        // (por exemplo: de teste.jsp para dashboard.jsp, painel.jsp ou outra rota),
+        // (por exemplo: de /pecuarista para um futuro /dashboard ou outra rota),
         // altere ou adicione o caminho do arquivo na linha abaixo:
         // =========================================================================
-        "/teste.jsp", "/admin", "/empresa", "/motorista", "/caminhao", "/pecuarista", "/trajeto"
+        "/admin", "/empresa", "/motorista", "/caminhao", "/pecuarista", "/trajeto"
 })
 public class AuthFilter implements Filter {
 

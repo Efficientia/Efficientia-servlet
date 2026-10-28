@@ -2,9 +2,11 @@ package com.efficientia.efficientia.controller;
 
 import com.efficientia.efficientia.dao.impl.EmpresaDAO;
 import com.efficientia.efficientia.dao.impl.MotoristaDAO;
+import com.efficientia.efficientia.exception.DadoDuplicadoException;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.model.MotoristaModel;
 import com.efficientia.efficientia.util.ValidadorRegex;
+import com.efficientia.efficientia.util.WebErroUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -73,10 +75,6 @@ public class MotoristaServlet extends HttpServlet {
                     req.setAttribute("motoristaModel", motoristaModel);
                     req.setAttribute("motorista", motoristaModel);
                     req.setAttribute("empresaModels", empresaDAO.listar());
-                    req.getRequestDispatcher(
-                            "/WEB-INF/views/editar-motorista.jsp"
-                    ).forward(req, resp);
-                    return;
                 }
             } catch (Exception e) {
                 System.out.println("Erro ao buscar motorista para edição: " + e.getMessage());
@@ -108,6 +106,15 @@ public class MotoristaServlet extends HttpServlet {
             String termo = busca.trim();
             Set<Integer> ids = new LinkedHashSet<>();
             motoristaModels = new ArrayList<>();
+
+            // Se o usuário digitou um identificador numérico direto (#ID)
+            try {
+                int idNum = Integer.parseInt(termo);
+                MotoristaModel porId = dao.buscar(idNum);
+                if (porId != null && ids.add(porId.getId())) {
+                    motoristaModels.add(porId);
+                }
+            } catch (NumberFormatException ignored) {}
 
             for (MotoristaModel m : dao.buscarPorNome(termo)) {
                 if (ids.add(m.getId())) motoristaModels.add(m);
@@ -160,17 +167,24 @@ public class MotoristaServlet extends HttpServlet {
         if ("excluir".equals(acao)) {
             try {
                 int id = parseInt(req.getParameter("id"), 0);
-                dao.excluir(id);
+                boolean excluido = dao.excluir(id);
+                if (!excluido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível excluir o motorista. Registro não encontrado.", "/motorista");
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println("Erro ao excluir motorista: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao excluir motorista: " + e.getMessage(), "/motorista");
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/motorista");
+            resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=excluido");
             return;
         }
 
         // Inserção simplificada de motorista
         if ("inserirSimples".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista";
             try {
                 String nome = obterParametro(req, "nome");
                 String email = obterParametro(req, "email");
@@ -182,11 +196,20 @@ public class MotoristaServlet extends HttpServlet {
                     return;
                 }
 
-                dao.inserirSimples(nome, email, senha, idEmpresa);
+                boolean inserido = dao.inserirSimples(nome, email, senha, idEmpresa);
+                if (!inserido) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o motorista simplificado.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao inserir motorista simples: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar motorista: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -205,6 +228,7 @@ public class MotoristaServlet extends HttpServlet {
 
         // Atualização específica: modifica somente o e-mail do motorista com validação REGEX
         if ("atualizarEmail".equals(acao)) {
+            String redirectUrl = req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista";
             try {
                 int id = parseInt(req.getParameter("id"), 0);
                 String novoEmail = obterParametro(req, "email", "novoEmail");
@@ -212,11 +236,20 @@ public class MotoristaServlet extends HttpServlet {
                     resp.sendRedirect(req.getContextPath() + "/motorista?erro=email_invalido");
                     return;
                 }
-                dao.atualizarEmail(id, novoEmail);
+                boolean atualizado = dao.atualizarEmail(id, novoEmail);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o e-mail do motorista.", redirectUrl);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, redirectUrl);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar email do motorista: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar email do motorista: " + e.getMessage(), redirectUrl);
+                return;
             }
-            resp.sendRedirect(req.getContextPath() + (req.getParameter("redirect") != null ? req.getParameter("redirect") : "/motorista"));
+            resp.sendRedirect(req.getContextPath() + redirectUrl);
             return;
         }
 
@@ -291,15 +324,20 @@ public class MotoristaServlet extends HttpServlet {
 
         // Atualização: modifica os dados do motorista existente
         if ("atualizar".equals(acao)) {
+            int id = parseInt(req.getParameter("id"), 0);
+            EmpresaModel empresaModel = buscarEmpresa(req);
             try {
-                int id = parseInt(req.getParameter("id"), 0);
-
-                EmpresaModel empresaModel = buscarEmpresa(req);
                 String nome = obterParametro(req, "nome");
                 LocalDate dataNascimento = parseLocalDate(obterParametro(req, "dataNascimento", "data_nascimento"));
                 String senha = obterParametro(req, "senha");
                 String email = obterParametro(req, "email");
                 String telefone = obterParametro(req, "telefone");
+
+                // Senha em branco: mantém a senha atual (a tela de edição não pré-carrega a senha)
+                if (senha == null) {
+                    MotoristaModel atual = dao.buscar(id);
+                    senha = atual != null ? atual.getSenha() : null;
+                }
 
                 // Validação defensiva com REGEX (Demanda de Sistemas Operacionais & Lógica)
                 if (telefone != null && !telefone.isBlank() && !ValidadorRegex.isCelularValido(telefone)) {
@@ -321,12 +359,21 @@ public class MotoristaServlet extends HttpServlet {
                         telefone
                 );
 
-                dao.atualizar(motoristaModel, id);
+                boolean atualizado = dao.atualizar(motoristaModel, id);
+                if (!atualizado) {
+                    WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível atualizar o motorista. Verifique os dados informados.", "/motorista?acao=editar&id=" + id);
+                    return;
+                }
+            } catch (DadoDuplicadoException e) {
+                WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/motorista?acao=editar&id=" + id);
+                return;
             } catch (Exception e) {
                 System.out.println("Erro ao atualizar motorista: " + e.getMessage());
+                WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao atualizar motorista: " + e.getMessage(), "/motorista?acao=editar&id=" + id);
+                return;
             }
 
-            resp.sendRedirect(req.getContextPath() + "/motorista");
+            resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=atualizado");
             return;
         }
 
@@ -357,9 +404,22 @@ public class MotoristaServlet extends HttpServlet {
                 telefone
         );
 
-        dao.inserir(novoMotorista);
+        try {
+            boolean inserido = dao.inserir(novoMotorista);
+            if (!inserido) {
+                WebErroUtil.redirecionarErroGeral(req, resp, "Não foi possível cadastrar o motorista. Verifique os dados informados.", "/motorista");
+                return;
+            }
+        } catch (DadoDuplicadoException e) {
+            WebErroUtil.redirecionarErroDuplicidade(req, resp, e, "/motorista");
+            return;
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar motorista: " + e.getMessage());
+            WebErroUtil.redirecionarErroGeral(req, resp, "Erro ao cadastrar motorista: " + e.getMessage(), "/motorista");
+            return;
+        }
 
-        resp.sendRedirect(req.getContextPath() + "/motorista");
+        resp.sendRedirect(req.getContextPath() + "/motorista?sucesso=cadastrado");
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
