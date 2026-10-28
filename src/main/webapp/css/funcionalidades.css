@@ -1,0 +1,353 @@
+/* Seção aprovada no Figma: Desktop 145 / 05 — Funcionalidades.
+   Escopo isolado para preservar o layout das demais seções. */
+.funcionalidades {
+    position: relative;
+    z-index: 2;
+    background: var(--color-white);
+    color: var(--color-primary);
+    scroll-margin-top: 100px;
+}
+
+.conteudo-funcionalidades {
+    display: grid;
+    grid-template-columns: minmax(0, 432fr) minmax(0, 896fr);
+    align-items: center;
+    gap: 32px;
+    max-width: 1440px;
+    min-height: 992px;
+    margin-inline: auto;
+    padding: 64px 40px;
+}
+
+.funcionalidades-texto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+    min-width: 0;
+}
+
+.funcionalidades-badge {
+    min-width: 190px;
+    padding: 7px 25px;
+    border-radius: var(--radius-pill);
+    background: rgb(15 81 174 / 6%);
+    font-size: var(--font-size-14);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+    line-height: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.funcionalidades h2 {
+    font-size: clamp(28px, 3.3333vw, var(--font-size-48));
+    font-weight: var(--font-weight-extrabold);
+    line-height: 1.22;
+}
+
+.funcionalidades h2 span {
+    font-family: inherit;
+}
+
+.funcionalidades-linha {
+    display: block;
+}
+
+.funcionalidades-destaque {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+}
+
+.funcionalidades-introducao {
+    max-width: 415px;
+    font-size: var(--font-size-20);
+    line-height: 1.45;
+}
+
+.funcionalidades-lista {
+    width: 100%;
+    list-style: none;
+}
+
+.funcionalidades-lista li {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 116px;
+    padding-block: 20px;
+}
+
+.funcionalidades-lista li + li {
+    border-top: 1px solid rgb(15 81 174 / 12%);
+}
+
+.funcionalidades-lista li > img {
+    flex: 0 0 64px;
+}
+
+.funcionalidades-lista li > div {
+    min-width: 0;
+    max-width: 315px;
+}
+
+.funcionalidades h3 {
+    font-size: var(--font-size-20);
+    font-weight: var(--font-weight-extrabold);
+    line-height: 1.2;
+}
+
+.funcionalidades-lista p {
+    margin-top: 8px;
+    font-size: 18px;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.35;
+}
+
+/* As posições proporcionais mantêm os mockups e legendas juntos ao reduzir. */
+.funcionalidades-mockups {
+    position: relative;
+    min-width: 0;
+    aspect-ratio: 896 / 864;
+}
+
+.funcionalidades-fundo {
+    position: absolute;
+    left: -2.2321%;
+    top: 0;
+    width: 102.2321%;
+    height: auto;
+    pointer-events: none;
+}
+
+.funcionalidades-mockups figure {
+    margin: 0;
+}
+
+.funcionalidades-produto {
+    position: absolute;
+    display: block;
+    height: auto;
+}
+
+.funcionalidades-dashboard > .funcionalidades-produto {
+    left: -2.6786%;
+    top: 11.5741%;
+    width: 95.3125%;
+}
+
+.funcionalidades-app > .funcionalidades-produto {
+    left: 73.6607%;
+    top: 35.3009%;
+    width: 26.8973%;
+}
+
+.funcionalidades-guia,
+.funcionalidades-ponto {
+    position: absolute;
+    pointer-events: none;
+}
+
+.funcionalidades-guia-dashboard {
+    left: 17.8013%;
+    top: 73.6111%;
+    width: 1px;
+    height: 9.2593%;
+}
+
+.funcionalidades-guia-chat {
+    left: 69.5871%;
+    top: 81.4236%;
+    width: 6.306%;
+    height: 8.3912%;
+}
+
+.funcionalidades-ponto {
+    width: 0.6696%;
+    height: auto;
+}
+
+.funcionalidades-ponto-dashboard-inicio,
+.funcionalidades-ponto-dashboard-fim {
+    left: 17.5223%;
+}
+
+.funcionalidades-ponto-dashboard-inicio { top: 73.2639%; }
+.funcionalidades-ponto-dashboard-fim { top: 82.5231%; }
+.funcionalidades-ponto-chat-inicio { left: 75.558%; top: 81.1343%; }
+.funcionalidades-ponto-chat-fim { left: 69.308%; top: 89.4676%; }
+
+.funcionalidades-mockups figcaption > div {
+    min-width: 0;
+}
+
+.funcionalidades-mockups figcaption {
+    position: absolute;
+    display: flex;
+    gap: 12px;
+}
+
+.funcionalidades-dashboard figcaption {
+    left: 14.2857%;
+    top: 84.2593%;
+    width: 46.875%;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.funcionalidades-app figcaption {
+    left: 65.1786%;
+    top: 91.6667%;
+    width: 34.8214%;
+    align-items: center;
+    gap: 16px;
+}
+
+.funcionalidades-mockups figcaption > img {
+    flex-shrink: 0;
+}
+
+.funcionalidades-mockups figcaption p {
+    margin-top: 8px;
+    font-size: var(--font-size-16);
+    line-height: 1.45;
+}
+
+.funcionalidades-app figcaption p {
+    max-width: 216px;
+}
+
+@media (max-width: 1200px) {
+    .conteudo-funcionalidades {
+        min-height: 0;
+        padding-inline: 32px;
+        gap: 24px;
+    }
+
+    .funcionalidades-introducao {
+        font-size: var(--font-size-16);
+    }
+
+    .funcionalidades-lista li {
+        gap: 12px;
+    }
+
+    .funcionalidades-lista li > img {
+        width: 48px;
+        height: 48px;
+        flex-basis: 48px;
+    }
+
+    .funcionalidades h3 {
+        font-size: var(--font-size-16);
+    }
+
+    .funcionalidades-dashboard figcaption > img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .funcionalidades-app figcaption > img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .funcionalidades-app figcaption {
+        gap: 12px;
+    }
+
+    .funcionalidades-lista p,
+    .funcionalidades-mockups figcaption p {
+        font-size: var(--font-size-14);
+    }
+}
+
+@media (max-width: 860px) {
+    .conteudo-funcionalidades {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 40px;
+        padding: 56px 20px 64px;
+    }
+
+    .funcionalidades-texto,
+    .funcionalidades-mockups {
+        width: 100%;
+        max-width: 640px;
+        margin-inline: auto;
+    }
+
+    .funcionalidades h2 {
+        font-size: clamp(28px, 6vw, var(--font-size-48));
+    }
+
+    .funcionalidades-introducao {
+        max-width: 100%;
+    }
+
+    .funcionalidades-lista li {
+        min-height: 104px;
+    }
+
+    .funcionalidades-mockups {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+        align-items: start;
+        gap: 24px 16px;
+        aspect-ratio: auto;
+    }
+
+    .funcionalidades-mockups::before {
+        content: "";
+        grid-column: 1 / -1;
+        width: 100%;
+        aspect-ratio: 896 / 792;
+    }
+
+    .funcionalidades-guia,
+    .funcionalidades-ponto {
+        display: none;
+    }
+
+    .funcionalidades-dashboard > .funcionalidades-produto {
+        top: 0;
+    }
+
+    .funcionalidades-app > .funcionalidades-produto {
+        top: 0;
+        transform: translateY(58%);
+    }
+
+    .funcionalidades-mockups figcaption {
+        position: static;
+        width: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .funcionalidades-mockups figcaption > img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .funcionalidades h3 {
+        font-size: var(--font-size-20);
+    }
+
+    .funcionalidades-lista p,
+    .funcionalidades-mockups figcaption p {
+        font-size: var(--font-size-16);
+    }
+}
+
+@media (max-width: 390px) {
+    .conteudo-funcionalidades {
+        padding-inline: 16px;
+    }
+
+    .funcionalidades h3 {
+        font-size: var(--font-size-16);
+    }
+}
