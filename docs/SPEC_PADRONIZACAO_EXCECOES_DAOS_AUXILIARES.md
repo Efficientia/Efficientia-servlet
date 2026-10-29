@@ -31,7 +31,7 @@ Esse comportamento gerava três deficiências graves:
 
 ## 2. Fundamentação no Banco de Dados (PostgreSQL)
 
-O esquema relacional do banco de dados ([`Efficientia.sql`](../Efficientia.sql)) estabelece restrições de unicidade explícitas para as tabelas envolvidas:
+O esquema relacional do banco de dados (`Efficientia.sql`) estabelece restrições de unicidade explícitas para as tabelas envolvidas:
 
 | Tabela | Coluna com Restrição | Tipo de Restrição no DDL | Impacto de Negócio ao Duplicar |
 | :--- | :--- | :--- | :--- |

@@ -65,5 +65,3 @@ Especificação da camada de visão da área restrita:
 
 ## 🔗 Navegação Rápida
 * [Voltar para a Raiz do Projeto](../README.md)
-* [Script SQL do Banco de Dados](../Efficientia.sql)
-* [Modelo Conceitual (DER)](../EfficientiaDER.pdf)

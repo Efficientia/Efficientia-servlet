@@ -11,7 +11,7 @@ Este documento responde às diretrizes de segurança da informação, privacidad
 
 ## 6.1. O projeto utiliza ou poderá utilizar dados pessoais?
 
-**Sim.** O sistema **Efficientia** armazena e processa dados pessoais necessários para a operação logística do transporte pecuário e para o controle de acesso de usuários. Conforme mapeado no esquema relacional ([Efficientia.sql](../Efficientia.sql)), os dados pessoais ativos no sistema são:
+**Sim.** O sistema **Efficientia** armazena e processa dados pessoais necessários para a operação logística do transporte pecuário e para o controle de acesso de usuários. Conforme mapeado no esquema relacional (`Efficientia.sql`), os dados pessoais ativos no sistema são:
 
 | Tabela | Dados Pessoais Coletados e Armazenados | Finalidade Operacional |
 | :--- | :--- | :--- |
@@ -48,7 +48,7 @@ Todas as medidas abaixo estão **efetivamente implementadas e em funcionamento n
   - **CEP:** Validação de formato de 8 dígitos numéricos.
 
 ### 6.2.4. Integridade e Restrições Nativas no Banco de Dados
-- **Constraints em PostgreSQL:** O arquivo [Efficientia.sql](../Efficientia.sql) implementa travas estruturais com `CHECK` e `UNIQUE`:
+- **Constraints em PostgreSQL:** O esquema relacional do banco de dados (`Efficientia.sql`) implementa travas estruturais com `CHECK` e `UNIQUE`:
   - `CHECK (email LIKE '%@%')` em todas as tabelas de usuários.
   - `CHECK (length(telefone) >= 10)` para impedir números incompletos.
   - `UNIQUE` em campos identificadores (CPF, e-mail, CNPJ) para impedir cadastros duplicados.
