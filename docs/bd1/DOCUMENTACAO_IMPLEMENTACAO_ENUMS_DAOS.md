@@ -16,11 +16,11 @@ Foram identificadas falhas de fluxo onde o status não podia ser alterado pelo o
 
 ## 2. Diagnóstico dos Problemas Corrigidos
 
-### 🔴 Erro 2: Impossibilidade Operacional de Concluir Viagens
+### [Erro 2] Impossibilidade Operacional de Concluir Viagens
 - **Causa**: O formulário de edição (`editar-trajeto.jsp`) e o modal de edição (`teste.jsp`) possuíam o campo de status estritamente como `<input type="hidden">`, impossibilitando o usuário de alterar para `CONCLUIDA`.
 - **Efeito**: Viagens com desembarque, quilometragem e assinaturas concluídas permaneciam indefinidamente como `EM_ANDAMENTO`.
 
-### 🔴 Erro 3: Risco de Violação de Constraint `NOT NULL` no `TrajetoDAO`
+### [Erro 3] Risco de Violação de Constraint `NOT NULL` no `TrajetoDAO`
 - **Causa**: No método `TrajetoDAO.preencherStatement()`, a linha 746 passava `null` caso `trajeto.getStatus()` fosse nulo, enquanto a tabela no banco impõe `status status_trajeto NOT NULL`.
 - **Efeito**: Tentativas de persistência sem status explícito disparavam `SQLException` no PostgreSQL.
 

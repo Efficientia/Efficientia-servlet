@@ -36,10 +36,10 @@
         </div>
         <div style="display: flex; gap: 0.8rem;">
             <button type="button" class="btn-voltar" onclick="window.print()">
-                🖨️ Imprimir / PDF
+                Imprimir / PDF
             </button>
             <a href="${pageContext.request.contextPath}/trajeto" class="btn-voltar">
-                ⚡ Painel de Testes
+                Painel de Testes
             </a>
             <a href="${pageContext.request.contextPath}/trajeto" class="btn-voltar">
                 &larr; Voltar para Lista
@@ -91,7 +91,7 @@
                         </select>
                     </div>
                     <span style="font-size: 0.8rem; color: #475569; font-style: italic;">
-                        ${trajetoModel.status == 'CONCLUIDA' ? '✓ Viagem finalizada no frigorífico' : '⚡ Caminhão em rota de transporte'}
+                        ${trajetoModel.status == 'CONCLUIDA' ? 'Viagem finalizada no frigorífico' : 'Caminhão em rota de transporte'}
                     </span>
                 </div>
 
@@ -427,10 +427,10 @@
             </a>
             <div style="display: flex; gap: 0.8rem;">
                 <button type="button" class="btn btn-secondary" onclick="window.print()">
-                    🖨️ Imprimir Documento
+                    Imprimir Documento
                 </button>
                 <button type="submit" class="btn btn-primary">
-                    💾 Salvar Alterações do Relatório
+                    Salvar Alterações do Relatório
                 </button>
             </div>
         </div>
