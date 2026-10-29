@@ -2,6 +2,7 @@ package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.EnderecoModel;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,6 +49,7 @@ public class EnderecoDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço");
             System.out.println("Erro ao inserir Endereco: " + e.getMessage());
             return false;
         }
@@ -107,6 +109,7 @@ public class EnderecoDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço");
             System.out.println("Erro ao atualizar Endereco: " + e.getMessage());
             return false;
         }
@@ -184,6 +187,7 @@ public class EnderecoDAO {
             stmt.setString(5, cep);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço");
             System.out.println("Erro ao inserir endereço simples: " + e.getMessage());
             return false;
         }
@@ -200,6 +204,7 @@ public class EnderecoDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço", "CEP", novoCep);
             System.out.println("Erro ao atualizar CEP do endereço: " + e.getMessage());
             return false;
         }
@@ -216,6 +221,7 @@ public class EnderecoDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço", "Cidade", novaCidade);
             System.out.println("Erro ao atualizar cidade do endereço: " + e.getMessage());
             return false;
         }
@@ -232,6 +238,7 @@ public class EnderecoDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço", "Bairro", novoBairro);
             System.out.println("Erro ao atualizar bairro do endereço: " + e.getMessage());
             return false;
         }
@@ -248,6 +255,7 @@ public class EnderecoDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço", "Rua", novaRua);
             System.out.println("Erro ao atualizar rua do endereço: " + e.getMessage());
             return false;
         }
@@ -264,6 +272,7 @@ public class EnderecoDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Endereço", "Número", String.valueOf(novoNumero));
             System.out.println("Erro ao atualizar número do endereço: " + e.getMessage());
             return false;
         }

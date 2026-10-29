@@ -217,6 +217,7 @@ public class AnalistaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Analista", "Nome", novoNome);
             System.out.println("Erro ao atualizar nome do analista: " + e.getMessage());
             return false;
         }
@@ -250,6 +251,7 @@ public class AnalistaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Analista");
             System.out.println("Erro ao atualizar senha do analista: " + e.getMessage());
             return false;
         }
@@ -270,6 +272,7 @@ public class AnalistaDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Analista", "Empresa", String.valueOf(idEmpresa));
             System.out.println("Erro ao atualizar empresa do analista: " + e.getMessage());
             return false;
         }

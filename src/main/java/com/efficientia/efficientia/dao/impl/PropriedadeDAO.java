@@ -4,6 +4,7 @@ import com.efficientia.efficientia.factory.ConnectionFactory;
 import com.efficientia.efficientia.model.EnderecoModel;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.model.PropriedadeModel;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -77,6 +78,7 @@ public class PropriedadeDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Propriedade");
             System.out.println("Erro ao inserir Propriedade: " + e.getMessage());
             return false;
         }
@@ -156,6 +158,7 @@ public class PropriedadeDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Propriedade");
             System.out.println("Erro ao atualizar Propriedade: " + e.getMessage());
             return false;
         }
@@ -202,6 +205,7 @@ public class PropriedadeDAO {
             stmt.setString(3, nome);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Propriedade");
             System.out.println("Erro ao inserir propriedade simples: " + e.getMessage());
             return false;
         }
@@ -218,6 +222,7 @@ public class PropriedadeDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Propriedade", "Nome", novoNome);
             System.out.println("Erro ao atualizar nome da propriedade: " + e.getMessage());
             return false;
         }
@@ -234,6 +239,7 @@ public class PropriedadeDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Propriedade", "Pecuarista Vinculado", String.valueOf(idPecuarista));
             System.out.println("Erro ao atualizar pecuarista da propriedade: " + e.getMessage());
             return false;
         }
@@ -250,6 +256,7 @@ public class PropriedadeDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Propriedade", "Endereço Vinculado", String.valueOf(idEndereco));
             System.out.println("Erro ao atualizar endereço da propriedade: " + e.getMessage());
             return false;
         }
