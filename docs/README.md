@@ -43,6 +43,7 @@ Mecanismos de validação textual via expressões regulares e integração com a
 
 ### 5. Inteligência Artificial (IA) (`docs/ia/`)
 Documentação comprobatória da utilização estratégica, metodologia de validação humana e pensamento crítico no uso de IA:
+* **[Ferramentas Utilizadas (ChatGPT e GitHub)](ia/FERRAMENTAS_UTILIZADAS.md):** Apresentação das ferramentas de apoio (ChatGPT e GitHub), suas finalidades técnicas e etapas em que foram aplicadas.
 * **[Metodologia de Documentação com IA e Protocolo de Validação Humana](ia/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md):** Processo de geração, justificativa de necessidade e o protocolo de validação crítica em 3 passos do usuário (sintaxe, conteúdo e organização).
 * **[Limitações Percebidas no Uso da IA](ia/LIMITACOES_USO_IA.md):** Análise detalhada das limitações cognitivas, riscos de ilusão de competência/falha de aprendizado, alucinações técnicas e perda de visão global do sistema.
 * **[Refinamento de Prompts e Riscos da Implementação Sem Plano](ia/REFINAMENTO_PROMPTS_E_PLANEJAMENTO_IA.md):** Análise da necessidade real de correções e complementações, técnicas de engenharia de prompt iterativa e problemas da codificação sem planejamento prévio.
