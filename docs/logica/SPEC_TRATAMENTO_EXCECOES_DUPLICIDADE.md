@@ -143,7 +143,7 @@ A arquitetura adota exceções não-checadas (*Unchecked Exceptions*, derivadas 
 
 ## 5. Matriz de Mapeamento: Banco de Dados x Exceção x Servlet
 
-Esta tabela consolida o mapeamento entre a modelagem relacional de [Efficientia.sql](Efficientia/Efficientia.sql) e os controladores HTTP:
+Esta tabela consolida o mapeamento entre a modelagem relacional de `Efficientia.sql` e os controladores HTTP:
 
 | Tabela | Coluna UNIQUE | Constraint Padrão PostgreSQL | Exceção Lançada | Servlet Tratador | Destino de Redirecionamento (Tela Geral Centralizada) |
 | :--- | :--- | :--- | :--- | :--- | :--- |

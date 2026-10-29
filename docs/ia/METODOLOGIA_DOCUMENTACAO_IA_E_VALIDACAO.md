@@ -106,7 +106,7 @@ A validação de conteúdo é a auditoria mais aprofundada, na qual o desenvolve
 
 * **Conferência Cruzada com o Repositório Real:**
   * O desenvolvedor abre as classes citadas e confere se os métodos realmente existem e possuem as assinaturas descritas (ex.: checar em [ValidadorRegex.java](ValidadorRegex.java) se `isCelularValido()` de fato rejeita o prefixo internacional `+55` conforme o edital de Sistemas Operacionais).
-  * Verifica se as constraints do banco de dados citadas na documentação (`pecuarista_cpf_key`, `chk_periodo_trajeto`) existem identicamente no arquivo [Efficientia.sql](../Efficientia.sql).
+  * Verifica se as constraints do banco de dados citadas na documentação (`pecuarista_cpf_key`, `chk_periodo_trajeto`) existem identicamente no script de banco (`Efficientia.sql`).
 * **Detecção e Eliminação de Alucinações da IA:**
   * Modelos de IA podem "inventar" bibliotecas, anotações ou métodos plausíveis mas inexistentes (por exemplo, assumir que o projeto usa Spring Boot ou Hibernate quando na realidade utiliza Servlets nativos e JDBC puro). O desenvolvedor identifica e remove qualquer presunção incorreta.
 * **Validação de Regras de Domínio e Conformidade Legal (LGPD):**

@@ -213,6 +213,19 @@ Abaixo é apresentada a arquitetura técnica em camadas e onde cada tecnologia a
 
 ---
 
+### 2.14. Inteligência Artificial: Ferramentas de Assistência, Automação e Documentação
+
+O desenvolvimento do sistema **Efficientia** incorporou ferramentas de Inteligência Artificial Generativa sob uma metodologia de *Pair Programming* e engenharia assistida por agentes, com validação humana em três etapas (sintaxe, conteúdo e organização).
+
+| Aspecto | Descrição Detalhada |
+| :--- | :--- |
+| **Tecnologias Utilizadas** | **Antigravity AI Agent** (Google DeepMind / Gemini 2.5 e 3.8), **Google Gemini** (Gemini Pro/Advanced), **dbdiagram.io AI** (Prompt-to-DBML) e **GitHub Copilot** |
+| **Contexto no Projeto** | Atuou transversalmente ao longo do ciclo de vida da aplicação: ideação de arquitetura, alinhamento de decisões por entrevistas interativas, refatoração de código Java e SQL, conformidade com a LGPD e geração de documentação viva. |
+| **Motivo da Utilização** | 1. **Antigravity AI Agent:** Autonomia para varredura da AST e arquivos do projeto, formulação de perguntas interativas de alinhamento antes de alterações estruturais sensíveis (CPF, telefone, CEP) e geração de documentação técnica com rastreabilidade cruzada entre disciplinas.<br>2. **Google Gemini:** Consulta teórica, validação de compatibilidade com Jakarta EE 11 e definição da estratégia de segurança defensiva (hashing com salt/pepper e anonimização/pseudonimização LGPD).<br>3. **dbdiagram.io AI:** Geração de código DBML e validação estrutural de relacionamentos, integridade referencial e tipos do DER.<br>4. **GitHub Copilot:** Aceleração na escrita de código repetitivo (*boilerplate* JDBC, getters/setters e templates de testes JUnit 5). |
+| **Onde é Utilizada** | - Documentações técnicas em `docs/` (`EXEMPLO_IA_BD.md`, `METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md`, `NAMING_CONVENTION_DATABASE.md`, etc.).<br>- Refatoração de DAOs, Servlets, Models e Utilitários (`CpfHasher.java`, `TratadorExcecaoBanco.java`, `ValidadorRegex.java`).<br>- Refatoração do script de banco `Efficientia.sql` e modelo DBML do DER.<br>- Configuração de testes automatizados e suíte de testes unitários. |
+
+---
+
 ## 3. Matriz de Rastreabilidade: Disciplinas × Tecnologias
 
 A tabela a seguir demonstra formalmente a aderência de cada tecnologia às solicitações das disciplinas do Projeto Interdisciplinar:

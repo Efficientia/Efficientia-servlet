@@ -3,7 +3,7 @@
  *
  * Os dados vêm do banco via Servlets/JSP. Este script cuida apenas de experiência de uso:
  * máscaras, olho de senha, conversão de data DD/MM/AAAA <-> AAAA-MM-DD, confirmação de
- * exclusão e toasts. Veja docs/SPEC_INTEGRACAO_FRONTEND_BACKEND.md.
+ * exclusão e toasts. Veja docs/poo/SPEC_INTEGRACAO_FRONTEND_BACKEND.md.
  */
 document.addEventListener('DOMContentLoaded', () => {
   const toastContainer = document.getElementById('toastContainer');

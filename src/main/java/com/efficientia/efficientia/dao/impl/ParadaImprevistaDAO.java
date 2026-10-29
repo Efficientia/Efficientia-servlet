@@ -8,6 +8,7 @@ import com.efficientia.efficientia.model.ParadaImprevistaModel;
 import com.efficientia.efficientia.model.PecuaristaModel;
 import com.efficientia.efficientia.model.StatusTrajeto;
 import com.efficientia.efficientia.model.TrajetoModel;
+import com.efficientia.efficientia.util.TratadorExcecaoBanco;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -116,6 +117,7 @@ public class ParadaImprevistaDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "ParadaImprevista");
             System.out.println("Erro ao inserir parada imprevista: " + e.getMessage());
             return false;
         }
@@ -197,6 +199,7 @@ public class ParadaImprevistaDAO {
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
         } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "ParadaImprevista");
             System.out.println("Erro ao atualizar parada imprevista: " + e.getMessage());
             return false;
         }

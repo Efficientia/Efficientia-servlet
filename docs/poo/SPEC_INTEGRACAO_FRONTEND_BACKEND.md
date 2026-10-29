@@ -26,14 +26,14 @@ A solução converte cada tela em uma **JSP renderizada no servidor**, protegida
 
 | Item | Dentro do escopo | Observação |
 | :--- | :---: | :--- |
-| Conversão das 5 telas de cadastro para JSP + JSTL | ✅ | Pecuarista, Motorista, Caminhão, Empresa, Administrador |
-| Reaproveitamento de `style.css` e ícones SVG | ✅ | Folha movida para `css/painel.css` |
-| Remoção de dados mockados e CRUD em memória | ✅ | Arquivos `*.html` e `*.js` de mock removidos |
-| Modo de edição integrado ao formulário | ✅ | Substitui as telas `editar*.jsp` separadas |
-| Ajustes mínimos nos Servlets (edição, senha, feedback) | ✅ | Ver seção 5 |
-| Tela de Trajetos | ❌ | Sem design entregue; a UI antes hospedada em `teste.jsp` deixa de existir (ver nota abaixo) |
-| Descarte de `teste.jsp` e Dashboard | ✅ | Rota pós-login passa a `/pecuarista`; item Dashboard removido da sidebar |
-| Redesenho da tela `erro.jsp` | ❌ | Mantida como está |
+| Conversão das 5 telas de cadastro para JSP + JSTL | Sim | Pecuarista, Motorista, Caminhão, Empresa, Administrador |
+| Reaproveitamento de `style.css` e ícones SVG | Sim | Folha movida para `css/painel.css` |
+| Remoção de dados mockados e CRUD em memória | Sim | Arquivos `*.html` e `*.js` de mock removidos |
+| Modo de edição integrado ao formulário | Sim | Substitui as telas `editar*.jsp` separadas |
+| Ajustes mínimos nos Servlets (edição, senha, feedback) | Sim | Ver seção 5 |
+| Tela de Trajetos | Não | Sem design entregue; a UI antes hospedada em `teste.jsp` deixa de existir (ver nota abaixo) |
+| Descarte de `teste.jsp` e Dashboard | Sim | Rota pós-login passa a `/pecuarista`; item Dashboard removido da sidebar |
+| Redesenho da tela `erro.jsp` | Não | Mantida como está |
 
 ---
 
@@ -153,7 +153,7 @@ Responsabilidades **exclusivamente visuais** (nenhum dado de negócio):
 > `teste.jsp` era a única tela que consumia o `TrajetoServlet` (que encaminha para `/WEB-INF/views/trajeto.jsp`, inexistente). Sem design de Trajetos entregue, a rota `/trajeto` fica sem interface até que essa tela seja desenhada e convertida seguindo este mesmo padrão.
 
 > [!NOTE]
-> Os fluxos de erro de duplicidade continuam redirecionando para [erro.jsp](../src/main/webapp/erro.jsp) via [WebErroUtil](../src/main/java/com/efficientia/efficientia/util/WebErroUtil.java), conforme [SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md](SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md). Erros de formato (`cpf_invalido`, `email_invalido`, `telefone_invalido`, `placa_invalida`, `cnpj_invalido`) voltam à própria tela como toast.
+> Os fluxos de erro de duplicidade continuam redirecionando para [erro.jsp](../../src/main/webapp/erro.jsp) via [WebErroUtil](../../src/main/java/com/efficientia/efficientia/util/WebErroUtil.java), conforme [SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md](../logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md). Erros de formato (`cpf_invalido`, `email_invalido`, `telefone_invalido`, `placa_invalida`, `cnpj_invalido`) voltam à própria tela como toast.
 
 ---
 

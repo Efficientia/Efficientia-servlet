@@ -98,22 +98,25 @@ Utilize o Maven Wrapper para validar a compilação e rodar a suíte de testes:
 
 Toda a documentação técnica, normas arquiteturais, registros de IA e guias passo a passo estão centralizados na pasta [docs/](docs/README.md):
 
-| Documento | Descrição |
-| :--- | :--- |
-| **[docs/TECNOLOGIAS_UTILIZADAS.md](docs/TECNOLOGIAS_UTILIZADAS.md)** | Lista exaustiva das tecnologias utilizadas, contexto, justificativa e localização no código. |
-| **[docs/ANALISE_E_CHECKLIST_ENTREGAS.md](docs/ANALISE_E_CHECKLIST_ENTREGAS.md)** | Análise completa dos requisitos das disciplinas (POO, BD1, Lógica, SO) e o que falta na aplicação Java. |
-| **[docs/GUIA_PADRONIZACAO.md](docs/GUIA_PADRONIZACAO.md)** | Guia normativo de boas práticas, arquitetura em camadas e estilo de código Java. |
-| **[docs/NAMING_CONVENTION_DATABASE.md](docs/NAMING_CONVENTION_DATABASE.md)** | Convenção oficial de nomenclatura de tabelas, colunas, constraints e ENUMs no PostgreSQL. |
-| **[docs/DOCUMENTACAO_VALIDACAO_REGEX.md](docs/DOCUMENTACAO_VALIDACAO_REGEX.md)** | Especificação de expressões regulares para CPF, celular nacional sem +55, placas, etc. |
-| **[docs/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md](docs/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md)** | Arquitetura de captura de duplicidade (SQLState 23505) e hierarquia de exceções customizadas. |
-| **[docs/DOCUMENTACAO_BUSCA_POR_NOME.md](docs/DOCUMENTACAO_BUSCA_POR_NOME.md)** | Mecanismo de busca flexível, particionada e insensível a acentuação. |
-| **[docs/DOCUMENTACAO_HASH_CPF_LGPD.md](docs/DOCUMENTACAO_HASH_CPF_LGPD.md)** | Pseudonimização de CPF com SHA-256 e salting para conformidade com a LGPD. |
-| **[docs/DOCUMENTACAO_IMPLEMENTACAO_ENUMS_DAOS.md](docs/DOCUMENTACAO_IMPLEMENTACAO_ENUMS_DAOS.md)** | Integração de ENUMs nativos do PostgreSQL com JDBC puro. |
-| **[docs/passo-a-passo-dao.md](docs/passo-a-passo-dao.md)** | Tutorial didático de implementação de Data Access Objects. |
-| **[docs/passo-a-passo-servlet.md](docs/passo-a-passo-servlet.md)** | Tutorial didático de implementação de Jakarta Servlets. |
-| **[docs/EXEMPLO_IA_BD.md](docs/EXEMPLO_IA_BD.md)** | Evidência de uso crítico e estratégico de IA em Banco de Dados. |
-| **[docs/EXEMPLO_IA_SOP.md](docs/EXEMPLO_IA_SOP.md)** | Evidência de auditoria e validação humana de IA em Sistemas Operacionais. |
-| **[docs/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](docs/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md)** | Metodologia de geração com IA e protocolo de validação humana (sintaxe, conteúdo e organização). |
+| Documento | Disciplina | Descrição |
+| :--- | :---: | :--- |
+| **[docs/geral/TECNOLOGIAS_UTILIZADAS.md](docs/geral/TECNOLOGIAS_UTILIZADAS.md)** | Geral | Lista exaustiva das tecnologias utilizadas, contexto, justificativa e localização no código. |
+| **[docs/geral/ANALISE_E_CHECKLIST_ENTREGAS.md](docs/geral/ANALISE_E_CHECKLIST_ENTREGAS.md)** | Geral | Análise completa dos requisitos das disciplinas (POO, BD1, Lógica, SO) e o que falta na aplicação Java. |
+| **[docs/geral/GUIA_PADRONIZACAO.md](docs/geral/GUIA_PADRONIZACAO.md)** | Geral | Guia normativo de boas práticas, arquitetura em camadas e estilo de código Java. |
+| **[docs/poo/passo-a-passo-dao.md](docs/poo/passo-a-passo-dao.md)** | POO | Tutorial didático de implementação de Data Access Objects. |
+| **[docs/poo/passo-a-passo-servlet.md](docs/poo/passo-a-passo-servlet.md)** | POO | Tutorial didático de implementação de Jakarta Servlets. |
+| **[docs/poo/DOCUMENTACAO_BUSCA_POR_NOME.md](docs/poo/DOCUMENTACAO_BUSCA_POR_NOME.md)** | POO | Mecanismo de busca flexível, particionada e insensível a acentuação. |
+| **[docs/poo/SPEC_INTEGRACAO_FRONTEND_BACKEND.md](docs/poo/SPEC_INTEGRACAO_FRONTEND_BACKEND.md)** | POO | Especificação de integração das telas e JSPs à camada de controle. |
+| **[docs/bd1/NAMING_CONVENTION_DATABASE.md](docs/bd1/NAMING_CONVENTION_DATABASE.md)** | BD1 | Convenção oficial de nomenclatura de tabelas, colunas, constraints e ENUMs no PostgreSQL. |
+| **[docs/bd1/DOCUMENTACAO_HASH_CPF_LGPD.md](docs/bd1/DOCUMENTACAO_HASH_CPF_LGPD.md)** | BD1 | Pseudonimização de CPF com SHA-256 e salting para conformidade com a LGPD. |
+| **[docs/bd1/DOCUMENTACAO_IMPLEMENTACAO_ENUMS_DAOS.md](docs/bd1/DOCUMENTACAO_IMPLEMENTACAO_ENUMS_DAOS.md)** | BD1 | Integração de ENUMs nativos do PostgreSQL com JDBC puro. |
+| **[docs/logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md](docs/logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md)** | Lógica | Arquitetura de captura de duplicidade (SQLState 23505) e hierarquia de exceções customizadas. |
+| **[docs/logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md](docs/logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md)** | Lógica | Especificação técnica do mapeamento e fluxo de erros de duplicidade. |
+| **[docs/so/DOCUMENTACAO_VALIDACAO_REGEX.md](docs/so/DOCUMENTACAO_VALIDACAO_REGEX.md)** | SO | Especificação de expressões regulares para CPF, celular nacional sem +55, placas, etc. |
+| **[docs/ia/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](docs/ia/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md)** | IA | Metodologia de geração com IA e protocolo de validação humana (sintaxe, conteúdo e organização). |
+| **[docs/ia/LIMITACOES_USO_IA.md](docs/ia/LIMITACOES_USO_IA.md)** | IA | Análise crítica das limitações, riscos e salvaguardas cognitivas no uso de IA. |
+| **[docs/ia/EXEMPLO_IA_BD.md](docs/ia/EXEMPLO_IA_BD.md)** | IA / BD1 | Evidência de uso crítico e estratégico de IA em Banco de Dados. |
+| **[docs/ia/EXEMPLO_IA_SOP.md](docs/ia/EXEMPLO_IA_SOP.md)** | IA / SO | Evidência de auditoria e validação humana de IA em Sistemas Operacionais. |
 
 ---
 
