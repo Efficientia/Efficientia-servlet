@@ -177,8 +177,8 @@
                     <tr>
                       <td class="td-id">#${c.id}</td>
                       <td class="td-empresa"><c:out value="${c.empresa.nome}" default="Sem empresa" /></td>
-                      <td class="td-cavalo"><c:out value="${c.placaCavalo}" /></td>
-                      <td class="td-carreta"><c:out value="${c.placaCarreta}" /></td>
+                      <td class="td-cavalo"><span class="plate-badge"><c:out value="${c.placaCavalo}" /></span></td>
+                      <td class="td-carreta"><span class="plate-badge"><c:out value="${c.placaCarreta}" /></span></td>
                       <td class="td-capacidade"><c:out value="${c.capacidadeMaxima}" /></td>
                       <td class="td-acoes">
                         <div class="action-buttons-cell">
