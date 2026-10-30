@@ -215,8 +215,10 @@
 
           </section>
 
-          <!-- Espaço livre na lateral direita (exibindo ondas decorativas e gradiente de fundo) -->
-          <div class="home-right-spacer" aria-hidden="true"></div>
+          <!-- Palco 3D na lateral direita (visível em desktop, oculto em telas menores) -->
+          <aside class="home-right-spacer home-3d-stage-wrapper" aria-hidden="true">
+            <div id="home3dCanvasContainer" class="home-3d-canvas-container"></div>
+          </aside>
 
         </div>
 
@@ -225,6 +227,15 @@
   </div>
 
   <%@ include file="/WEB-INF/views/fragments/toasts.jspf" %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
   <script src="${ctx}/js/painel.js?v=20261030"></script>
+  <script type="module" src="${ctx}/js/home-animacao-3d.js?v=20261030"></script>
 </body>
 </html>
