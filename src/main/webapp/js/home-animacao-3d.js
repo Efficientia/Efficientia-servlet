@@ -438,7 +438,7 @@ import * as THREE from 'three';
     group.rotation.y = -0.18;
     group.rotation.x = 0.12;
 
-    // Helper interno: constrói estação de trabalho (mesa + monitor + base)
+    // Helper interno: constrói estação de trabalho (mesa + monitor + base + UI interna)
     function createWorkstation(isAnalyst = false) {
       const station = new THREE.Group();
 
@@ -480,6 +480,29 @@ import * as THREE from 'three';
       innerDisplay.position.set(0, 0, 0.035);
       monitorGroup.add(innerDisplay);
 
+      // Conteúdo interno da tela:
+      // - No remetente: linhas horizontais simulando digitação de relatório
+      // - No analista: gráfico de barras wireframe que pulsa ao receber o envelope
+      const screenContentGroup = new THREE.Group();
+      screenContentGroup.position.set(0, 0, 0.04);
+      monitorGroup.add(screenContentGroup);
+
+      if (!isAnalyst) {
+        for (let i = 0; i < 3; i++) {
+          const y = 0.11 - i * 0.11;
+          const lineW = i === 2 ? 0.12 : 0.26;
+          const pts = [new THREE.Vector3(-0.26, y, 0), new THREE.Vector3(lineW, y, 0)];
+          screenContentGroup.add(createLineFromPoints(pts, PALETTE.bright, 0.8));
+        }
+      } else {
+        const barHeights = [0.14, 0.24, 0.32];
+        barHeights.forEach((bh, idx) => {
+          const bar = createWireframe(new THREE.BoxGeometry(0.11, bh, 0.01), PALETTE.bright, 0.9);
+          bar.position.set(-0.18 + idx * 0.18, -0.18 + bh / 2, 0);
+          screenContentGroup.add(bar);
+        });
+      }
+
       // Halo de pulso no monitor do analista
       const pulseHalo = createWireframe(new THREE.BoxGeometry(1.06, 0.76, 0.08), PALETTE.bright, 0.8);
       pulseHalo.scale.set(0.85, 0.85, 0.85);
@@ -499,7 +522,7 @@ import * as THREE from 'three';
       keyboard.position.set(0, -0.3, 0.26);
       station.add(keyboard);
 
-      return { station, monitorGroup, pulseHalo };
+      return { station, monitorGroup, pulseHalo, screenContentGroup };
     }
 
     // Estação Esquerda: Remetente (Operador / Motorista)
@@ -532,7 +555,7 @@ import * as THREE from 'three';
     analystChar.rightShoulder.rotation.x = -0.55;
     group.add(analystChar.rig);
 
-    // Arco guia pontilhado conectando os dois monitores
+    // Arco guia conectando os dois monitores (Curva Parabólica QuadraticBezierCurve3)
     const flightCurve = new THREE.QuadraticBezierCurve3(
       new THREE.Vector3(-1.85, 0.35, 0.25),
       new THREE.Vector3(0, 1.85, 0.45),
@@ -542,30 +565,26 @@ import * as THREE from 'three';
     const trajectoryLine = createLineFromPoints(arcPoints, PALETTE.secondary, 0.35);
     group.add(trajectoryLine);
 
-    // Envelope Vetorial Estilizado (Retângulo wireframe + Aba triangular superior)
+    // Envelope Vetorial Estilizado (Retângulo wireframe + Triângulos da aba e dobras)
     const envelopeGroup = new THREE.Group();
-    const envRect = createWireframe(new THREE.BoxGeometry(0.56, 0.36, 0.03), PALETTE.bright, 1);
+    const envRect = createWireframe(new THREE.BoxGeometry(0.58, 0.38, 0.03), PALETTE.bright, 1);
     envelopeGroup.add(envRect);
 
-    // Triângulo da aba do envelope (Vector Line-Art)
+    // Triângulo da aba superior do envelope (Vector Line-Art)
     const flapPoints = [
-      new THREE.Vector3(-0.28, 0.18, 0.02),
+      new THREE.Vector3(-0.29, 0.19, 0.02),
       new THREE.Vector3(0, -0.04, 0.02),
-      new THREE.Vector3(0.28, 0.18, 0.02)
+      new THREE.Vector3(0.29, 0.19, 0.02)
     ];
     envelopeGroup.add(createLineFromPoints(flapPoints, PALETTE.accent, 1));
 
-    // Linhas diagonais inferiores do envelope
-    const bottomLeftFold = [
-      new THREE.Vector3(-0.28, -0.18, 0.02),
-      new THREE.Vector3(-0.08, -0.01, 0.02)
+    // Triângulo/dobras diagonais inferiores do envelope
+    const bottomFoldPts = [
+      new THREE.Vector3(-0.29, -0.19, 0.02),
+      new THREE.Vector3(0, 0.03, 0.02),
+      new THREE.Vector3(0.29, -0.19, 0.02)
     ];
-    const bottomRightFold = [
-      new THREE.Vector3(0.28, -0.18, 0.02),
-      new THREE.Vector3(0.08, -0.01, 0.02)
-    ];
-    envelopeGroup.add(createLineFromPoints(bottomLeftFold, PALETTE.primary, 0.85));
-    envelopeGroup.add(createLineFromPoints(bottomRightFold, PALETTE.primary, 0.85));
+    envelopeGroup.add(createLineFromPoints(bottomFoldPts, PALETTE.primary, 0.85));
 
     group.add(envelopeGroup);
 
@@ -574,7 +593,7 @@ import * as THREE from 'three';
     function updateEnvelopePosition() {
       const pos = flightCurve.getPoint(flightState.progress);
       envelopeGroup.position.copy(pos);
-      // Inclina o envelope acompanhando a tangente da parábola
+      // Inclina o envelope acompanhando a tangente da curva parabólica
       const tangent = flightCurve.getTangent(flightState.progress);
       envelopeGroup.rotation.z = Math.atan2(tangent.y, tangent.x) * 0.55;
       envelopeGroup.rotation.y = Math.sin(flightState.progress * Math.PI) * 0.35;
@@ -586,6 +605,7 @@ import * as THREE from 'three';
       envelopeGroup.scale.set(0.001, 0.001, 0.001);
       analystStation.monitorGroup.scale.set(1, 1, 1);
       analystStation.pulseHalo.scale.set(0.88, 0.88, 0.88);
+      analystStation.screenContentGroup.scale.set(0.6, 0.6, 1);
     }
 
     resetAct3();
@@ -813,6 +833,14 @@ import * as THREE from 'three';
       ease: 'power2.out'
     }, 'ato3_arrive+=0.1');
 
+    masterTimeline.to(ato3.analystStation.screenContentGroup.scale, {
+      x: 1,
+      y: 1,
+      z: 1,
+      duration: 0.45,
+      ease: 'back.out(2)'
+    }, 'ato3_arrive+=0.1');
+
     masterTimeline.to(ato3.analystStation.pulseHalo.scale, {
       x: 1.48,
       y: 1.48,
@@ -847,12 +875,30 @@ import * as THREE from 'three';
   }
 
   // ============================================================================
-  // Responsividade e Pausa Inteligente quando Oculto em Telas Menores (<= 1100px)
+  // Responsividade, Limpeza de Memória e Pausa Inteligente (<= 1100px)
   // ============================================================================
   const mediaQuery = window.matchMedia('(max-width: 1100px)');
   let isActive = !mediaQuery.matches;
   let rafId = null;
   const clock = new THREE.Clock();
+
+  function disposeSceneResources() {
+    stopLoop();
+    if (masterTimeline) masterTimeline.kill();
+    scene.traverse((obj) => {
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        if (Array.isArray(obj.material)) {
+          obj.material.forEach((m) => m.dispose());
+        } else {
+          obj.material.dispose();
+        }
+      }
+    });
+    renderer.dispose();
+  }
+
+  window.addEventListener('pagehide', disposeSceneResources);
 
   function updateSize() {
     if (mediaQuery.matches) {
