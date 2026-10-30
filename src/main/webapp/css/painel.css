@@ -1089,7 +1089,7 @@ html, body {
   justify-content: flex-start;
   gap: 32px;
   padding: 6px 0 14px;
-  max-width: 980px;
+  max-width: 1200px;
   width: 100%;
 }
 
@@ -1226,41 +1226,43 @@ html, body {
   display: block;
 }
 
-/* Layout Principal da Home: Cards à Esquerda com Lateral Direita Livre */
+/* Layout Principal da Home: Cards com Grande Destaque e Animação 3D Reduzida */
 .home-main-layout {
   display: flex;
   width: 100%;
   align-items: flex-start;
-  gap: 24px;
+  gap: 32px;
 }
 
 .home-cards-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
   width: 100%;
-  max-width: 580px; /* Largura exata mantendo a lateral direita aberta */
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
+  max-width: 840px; /* Protagonismo e destaque máximo aos módulos na Home */
 }
 
 .home-right-spacer {
-  flex: 1;
-  min-height: 200px;
+  flex-shrink: 0;
 }
 
 .home-3d-stage-wrapper {
-  flex: 1;
-  min-width: 300px;
-  height: calc(100vh - 180px);
-  min-height: 460px;
-  max-height: 640px;
+  flex: 0 0 340px;
+  width: 340px;
+  max-width: 340px;
+  height: 380px;
+  max-height: 380px;
+  min-height: 300px;
   position: sticky;
-  top: 88px;
+  top: 96px;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
   z-index: 2;
+  margin-left: auto;
 }
 
 .home-3d-canvas-container {
@@ -1276,6 +1278,21 @@ html, body {
   display: block;
 }
 
+@media (max-width: 1280px) {
+  .home-3d-stage-wrapper {
+    flex: 0 0 290px;
+    width: 290px;
+    max-width: 290px;
+    height: 330px;
+    max-height: 330px;
+  }
+
+  .card-image-slot {
+    width: 200px;
+    min-width: 200px;
+  }
+}
+
 @media (max-width: 1100px) {
   .home-3d-stage-wrapper {
     display: none !important;
@@ -1289,27 +1306,28 @@ html, body {
 /* Cards de Acesso com Espaço de Imagem à Esquerda */
 .home-card {
   background: var(--bg-card);
-  border-radius: var(--radius-card);
-  box-shadow: 0 8px 24px rgba(0, 18, 64, 0.16);
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 18, 64, 0.16);
   display: flex;
   flex-direction: row;
   align-items: stretch;
   overflow: hidden;
   position: relative;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  min-height: 124px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  min-height: 154px;
 }
 
 .home-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(0, 22, 80, 0.22);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 22, 80, 0.22);
+  border-color: rgba(255, 255, 255, 1);
 }
 
 /* Espaço Reservado para a Imagem do Card (lado esquerdo) */
 .card-image-slot {
-  width: 180px;
-  min-width: 180px;
+  width: 230px;
+  min-width: 230px;
   background: linear-gradient(135deg, #eef4fc 0%, #dbe8f8 100%);
   position: relative;
   overflow: hidden;
@@ -1365,26 +1383,26 @@ html, body {
 .home-card-content {
   flex: 1;
   min-width: 0;
-  padding: 12px 16px;
+  padding: 18px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
 }
 
 .home-card-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 16px;
 }
 
 .home-card-title {
-  font-size: 16.5px;
+  font-size: 19.5px;
   font-weight: 700;
   color: #0F51AE;
-  line-height: 1.22;
-  letter-spacing: -0.2px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
   margin: 0;
 }
 
@@ -1395,14 +1413,14 @@ html, body {
 .home-card-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   background: #eef5ff;
   border: 1px solid rgba(15, 81, 174, 0.22);
   border-radius: 9999px;
-  padding: 3px 8px;
-  font-size: 9px;
+  padding: 4px 10px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   color: #0F51AE;
   text-transform: uppercase;
   white-space: nowrap;
@@ -1410,8 +1428,8 @@ html, body {
 }
 
 .home-card-badge .badge-icon {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   object-fit: contain;
 }
 
@@ -1419,46 +1437,46 @@ html, body {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
 .home-card-desc {
-  font-size: 11.5px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.45;
   color: var(--text-muted);
-  max-width: 250px;
+  max-width: 440px;
   margin: 0;
 }
 
 .btn-ver-agora {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   background-color: var(--color-green-primary);
   color: var(--text-white);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 8px 18px;
   border-radius: 9999px;
   text-decoration: none;
   border: none;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 10px rgba(68, 207, 83, 0.32);
+  box-shadow: 0 4px 12px rgba(68, 207, 83, 0.35);
   flex-shrink: 0;
 }
 
 .btn-ver-agora:hover {
   background-color: var(--color-green-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(68, 207, 83, 0.42);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(68, 207, 83, 0.45);
   color: var(--text-white);
 }
 
 .btn-ver-agora svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   stroke-width: 2.5;
   transition: transform var(--transition-fast);
 }
@@ -1571,9 +1589,17 @@ html, body {
   .card-image-slot {
     width: 100%;
     min-width: 100%;
-    height: 130px;
+    height: 160px;
     border-right: none;
     border-bottom: 1px solid #e3eef9;
+  }
+
+  .home-card-content {
+    padding: 16px;
+  }
+
+  .home-card-title {
+    font-size: 17.5px;
   }
 
   .home-card-desc {
