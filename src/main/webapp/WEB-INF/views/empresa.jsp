@@ -181,6 +181,6 @@
   </div>
 
   <%@ include file="/WEB-INF/views/fragments/toasts.jspf" %>
-  <script src="${ctx}/js/painel.js"></script>
+  <script src="${ctx}/js/painel.js?v=20261030"></script>
 </body>
 </html>

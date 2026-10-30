@@ -1571,3 +1571,12 @@ a.btn-secondary-outline {
   display: inline-flex;
   align-items: center;
 }
+
+.td-empresa,
+.td-razao,
+.td-cnpj,
+.td-data,
+.td-capacidade {
+  font-weight: 700;
+  color: #1e293b;
+}
