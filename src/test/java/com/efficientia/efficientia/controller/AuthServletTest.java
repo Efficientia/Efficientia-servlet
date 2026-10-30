@@ -68,7 +68,7 @@ class AuthServletTest {
         assertTrue(e.rotated);
         assertEquals(1800, e.timeout);
         assertSame(admin, e.sessionAttributes.get("adminLogado"));
-        assertEquals("/Efficientia/pecuarista", e.redirected);
+        assertEquals("/Efficientia/home", e.redirected);
     }
     @Test void loginInvalidoMantemEmailSemCriarAutenticacao() throws Exception {
         var servlet = new LoginServlet();

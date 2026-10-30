@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
     // (por exemplo: de /pecuarista para um futuro /dashboard ou outra JSP/Servlet),
     // altere a constante abaixo para o novo caminho de destino:
     // =========================================================================
-    public static final String ROTA_AREA_RESTRITA = "/pecuarista";
+    public static final String ROTA_AREA_RESTRITA = "/home";
 
     @Override
     public void init() {
