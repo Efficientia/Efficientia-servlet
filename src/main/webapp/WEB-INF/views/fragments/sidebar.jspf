@@ -9,6 +9,10 @@
     </div>
 
     <nav class="sidebar-nav">
+      <a href="${ctx}/home" class="nav-item ${paginaAtiva eq 'home' ? 'active' : ''}">
+        <img src="${ctx}/assets/icons/dashboard.svg" alt="" class="nav-icon">
+        <span>Visão geral</span>
+      </a>
       <a href="${ctx}/caminhao" class="nav-item ${paginaAtiva eq 'caminhao' ? 'active' : ''}">
         <img src="${ctx}/assets/icons/caminhoes.svg" alt="" class="nav-icon">
         <span>Caminhões</span>

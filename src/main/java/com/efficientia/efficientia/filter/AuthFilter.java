@@ -26,7 +26,7 @@ import java.io.IOException;
         // (por exemplo: de /pecuarista para um futuro /dashboard ou outra rota),
         // altere ou adicione o caminho do arquivo na linha abaixo:
         // =========================================================================
-        "/admin", "/empresa", "/motorista", "/caminhao", "/pecuarista", "/trajeto"
+        "/home", "/admin", "/empresa", "/motorista", "/caminhao", "/pecuarista", "/trajeto"
 })
 public class AuthFilter implements Filter {
 

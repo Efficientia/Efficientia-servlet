@@ -32,7 +32,7 @@ A solução converte cada tela em uma **JSP renderizada no servidor**, protegida
 | Modo de edição integrado ao formulário | Sim | Substitui as telas `editar*.jsp` separadas |
 | Ajustes mínimos nos Servlets (edição, senha, feedback) | Sim | Ver seção 5 |
 | Tela de Trajetos | Não | Sem design entregue; a UI antes hospedada em `teste.jsp` deixa de existir (ver nota abaixo) |
-| Descarte de `teste.jsp` e Dashboard | Sim | Rota pós-login passa a `/pecuarista`; item Dashboard removido da sidebar |
+| Implementação da Visão Geral (Home / Dashboard) | Sim | Nova tela `home.jsp` servida por `HomeServlet` (`/home`), tornando-se a rota inicial pós-login |
 | Redesenho da tela `erro.jsp` | Não | Mantida como está |
 
 ---
@@ -114,8 +114,8 @@ Eliminam a duplicação de ~100 linhas de layout presentes em cada HTML do desig
 
 | Fragmento | Responsabilidade |
 | :--- | :--- |
-| `sidebar.jspf` | Logo, menu lateral (item ativo via `paginaAtiva`), saudação com `${sessionScope.adminLogado.nome}` e botão de logout (`/logout`) |
-| `topbar.jspf` | Barra superior com busca global (`GET` para `paginaServlet` com parâmetro `busca`) |
+| `sidebar.jspf` | Logo, menu lateral com item 'Visão geral' (`/home`) e módulos administrativos (item ativo via `paginaAtiva`), saudação com `${sessionScope.adminLogado.nome}` e botão de logout (`/logout`) |
+| `topbar.jspf` | Barra superior com busca contextual (local na Home, server-side `GET` nos cadastros) e botões de ação (Configurações, Notificações com indicador e Perfil) |
 | `toasts.jspf` | Converte os parâmetros `sucesso` e `erro` da URL em toasts estilizados |
 | `head.jspf` | `<head>` comum: metadados, título (`tituloPagina`), fonte IBM Plex Sans e `css/painel.css` |
 | `waves.jspf` | Linhas de onda decorativas de fundo |
@@ -132,6 +132,7 @@ Responsabilidades **exclusivamente visuais** (nenhum dado de negócio):
 
 | Tela de Design (removida) | JSP Protegida | Rota (Servlet) | Atributos consumidos |
 | :--- | :--- | :--- | :--- |
+| `home.html` | `/WEB-INF/views/home.jsp` | `/home` ([HomeServlet](../src/main/java/com/efficientia/efficientia/controller/HomeServlet.java)) | `sessionScope.adminLogado` |
 | `pecuaristas.html` | `/WEB-INF/views/pecuarista.jsp` | `/pecuarista` ([PecuaristaServlet](../src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java)) | `pecuaristaModels`, `pecuaristaModel` (edição), `termoBusca` |
 | `caminhoes.html` | `/WEB-INF/views/caminhao.jsp` | `/caminhao` ([CaminhaoServlet](../src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java)) | `caminhaoModels`, `empresaModels`, `caminhaoModel` |
 | `empresas.html` | `/WEB-INF/views/empresa.jsp` | `/empresa` ([EmpresaServlet](../src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java)) | `empresaModels`, `empresaModel` |
@@ -147,7 +148,7 @@ Responsabilidades **exclusivamente visuais** (nenhum dado de negócio):
 | **S-01** | No `GET ?acao=editar`, **não** fazer `forward` para `editar*.jsp`; apenas definir o atributo `*Model` e **seguir o fluxo normal de listagem** | Os 5 | Habilita o modo de edição integrado (seção 3.3). |
 | **S-02** | Em `atualizar`, **senha vazia mantém a senha atual** (`dao.buscar(id).getSenha()`) | Pecuarista, Motorista, Admin | O DAO grava `senha = ?` sempre; sem o ajuste, editar sem redigitar a senha a apagaria. A tela não pré-carrega a senha (segurança). |
 | **S-03** | Redirecionamentos de sucesso passam a incluir `?sucesso=cadastrado\|atualizado\|excluido` | Caminhão, Empresa, Motorista, Admin | Padroniza o feedback já existente em `PecuaristaServlet` e alimenta `toasts.jspf`. |
-| **S-04** | `ROTA_AREA_RESTRITA` (`LoginServlet`) passa de `/teste.jsp` para `/pecuarista`; `/teste.jsp` sai dos `urlPatterns` do `AuthFilter`; `AuthServletTest` atualizado | LoginServlet, AuthFilter | `teste.jsp` foi descartado; o login precisa de um destino válido. |
+| **S-04** | `ROTA_AREA_RESTRITA` (`LoginServlet`) configurada para `/home`; `/home` incluído nos `urlPatterns` do `AuthFilter`; `AuthServletTest` atualizado | LoginServlet, AuthFilter | A tela Visão Geral (`home.jsp`) centraliza o acesso a todos os módulos como destino inicial pós-login. |
 
 > [!WARNING]
 > `teste.jsp` era a única tela que consumia o `TrajetoServlet` (que encaminha para `/WEB-INF/views/trajeto.jsp`, inexistente). Sem design de Trajetos entregue, a rota `/trajeto` fica sem interface até que essa tela seja desenhada e convertida seguindo este mesmo padrão.

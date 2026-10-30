@@ -1,26 +1,45 @@
 <%@ page pageEncoding="UTF-8" %>
 <%-- Barra superior compartilhada. Requer: variável de página "paginaServlet" (rota do Servlet, ex.: /pecuarista). --%>
 <header class="top-header">
-  <form class="top-search-form" action="${pageContext.request.contextPath}${paginaServlet}" method="get">
-    <div class="search-bar-wrapper">
-      <img src="${pageContext.request.contextPath}/assets/icons/buscar.svg" alt="" class="search-icon">
-      <input
-        type="text"
-        class="top-search-input"
-        name="busca"
-        id="topSearchInput"
-        value="<c:out value='${termoBusca}' />"
-        placeholder="Buscar nesta lista..."
-        aria-label="Buscar nesta lista">
-    </div>
-  </form>
+  <c:choose>
+    <c:when test="${paginaAtiva eq 'home'}">
+      <div class="search-bar-wrapper">
+        <img src="${pageContext.request.contextPath}/assets/icons/buscar.svg" alt="" class="search-icon">
+        <input
+          type="text"
+          class="top-search-input"
+          id="topSearchInput"
+          placeholder="Buscar relatórios, viagens, funcionários..."
+          aria-label="Buscar relatórios, viagens, funcionários">
+      </div>
+    </c:when>
+    <c:otherwise>
+      <form class="top-search-form" action="${pageContext.request.contextPath}${paginaServlet}" method="get">
+        <div class="search-bar-wrapper">
+          <img src="${pageContext.request.contextPath}/assets/icons/buscar.svg" alt="" class="search-icon">
+          <input
+            type="text"
+            class="top-search-input"
+            name="busca"
+            id="topSearchInput"
+            value="<c:out value='${termoBusca}' />"
+            placeholder="Buscar nesta lista..."
+            aria-label="Buscar nesta lista">
+        </div>
+      </form>
+    </c:otherwise>
+  </c:choose>
 
   <div class="top-actions">
-    <span class="circle-action-btn" title="Configurações" aria-label="Configurações">
+    <button type="button" class="circle-action-btn" title="Configurações" aria-label="Configurações">
       <img src="${pageContext.request.contextPath}/assets/icons/configuracoes.svg" alt="">
-    </span>
-    <span class="circle-action-btn profile-btn" title="Perfil" aria-label="Perfil de usuário">
+    </button>
+    <button type="button" class="circle-action-btn" title="Notificações" aria-label="Notificações">
+      <img src="${pageContext.request.contextPath}/assets/icons/notificacoes.svg" alt="">
+      <span class="notification-indicator"></span>
+    </button>
+    <button type="button" class="circle-action-btn profile-btn" title="Perfil" aria-label="Perfil de usuário">
       <img src="${pageContext.request.contextPath}/assets/icons/perfil.svg" alt="">
-    </span>
+    </button>
   </div>
 </header>
