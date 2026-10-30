@@ -914,6 +914,12 @@ import * as THREE from 'three';
     }
 
     camera.aspect = width / height;
+    // Ajusta o FOV dinamicamente para enquadrar perfeitamente a cena no palco reduzido
+    if (camera.aspect < 1.0) {
+      camera.fov = 42 / camera.aspect;
+    } else {
+      camera.fov = 42;
+    }
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
 
