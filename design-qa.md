@@ -1,4 +1,34 @@
-# Conferência — seção de funcionalidades
+# Conferência — seção Sobre Nós (30/10/2026)
+
+## Referência e estado da implementação
+
+- Direção visual aprovada inicialmente: proposta 04 (editorial/premium). Depois, o usuário orientou a disposição atual: Missão e Visão lado a lado, Valores em largura total abaixo e Equipe/foto em uma seção separada; badges foram removidas e os quatro cards passaram a usar o mesmo azul-claro. A imagem raster da proposta fica em `output/`, ignorada pelo Git. Os padrões oficiais da marca estão no [Figma Efficientia, frame desktop V2](https://www.figma.com/design/EBSgjcvj39hdmO1wZNIAr1/Efficientia---inter-2026?node-id=4697-604).
+- Implementação em página própria: `src/main/webapp/sobre-nos.html` e `src/main/webapp/css/sobre-nos.css`; `src/main/webapp/index.html` mantém só o link para `sobre-nos.html` no menu e rodapé.
+- A foto original tem 1600 × 1200 pixels (4:3); o SHA-256 da cópia no site coincide com o arquivo fornecido em `../imagem_time.jpg`.
+- A prévia estática local responde em `http://127.0.0.1:4173/sobre-nos.html`: HTTP 200 para HTML, CSS e foto.
+- A página usa navegação compartilhada, introdução/história, cards de Missão e Visão em duas colunas, Valores ocupando a linha inteira e Equipe/foto em seção separada. Até 700px, os cards empilham em uma coluna.
+- Tipografia usa os tokens globais Manrope e IBM Plex Sans; o fundo é branco, os quatro cards usam azul-claro uniforme e os textos usam azul escuro.
+- O texto identifica a equipe como alunos do primeiro e do segundo ano. Não lista nomes/cargos nem afirma lançamento de funcionalidades ou parceria comercial.
+
+## Evidência visual e limites
+
+- A proposta raster usada na aprovação tem 1487 × 1058 e fica fora do repositório por estar em `output/`. A implementação usa a foto real da equipe, mantida integralmente em proporção 4:3.
+- Capturas de desktop enviadas pelo usuário orientaram os últimos ajustes. A validação do portal reportou os quatro cards com a mesma cor em 900px e sem overflow horizontal em 390px; a foto permaneceu proporcional.
+- Não foi possível salvar screenshot automatizada da última revisão porque a janela do portal estava minimizada. Foco por teclado e console não foram verificados nesta rodada.
+
+## Verificações executadas
+
+- `mvnw.cmd -B -ntp package`: BUILD SUCCESS; 9 testes, 0 falhas e 0 erros.
+- Revalidação em 30/10/2026: `mvnw.cmd -B -ntp test`, com JDK 25: BUILD SUCCESS; 38 testes, 0 falhas, 0 erros e 0 ignorados.
+- O WAR contém `index.html`, `css/sobre-nos.css` e `assets/equipe-efficientia.jpg`.
+- HTTP local: HTML, CSS e foto retornaram 200; o HTML contém a legenda atualizada.
+- `git diff --check`: sem erros.
+
+## Resultado desta revisão
+
+O usuário aprovou a página após revisar capturas de desktop. O código e a suíte automatizada foram revalidados nesta rodada; a captura automatizada final, o foco por teclado e o console continuam sem verificação.
+
+## Histórico — seção de funcionalidades
 
 ## Atualização da composição — 22/10/2026
 
