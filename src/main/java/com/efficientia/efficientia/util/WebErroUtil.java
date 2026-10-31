@@ -49,7 +49,7 @@ public final class WebErroUtil {
             sb.append("&mensagem=").append(encode(e.getMessage()));
         }
         if (urlVoltar != null && !urlVoltar.isBlank()) {
-            sb.append("&voltar=").append(encode(resolverUrlVoltar(req, urlVoltar)));
+            sb.append("&voltar=").append(encode(RetornoSeguroUtil.resolver(req.getContextPath(), urlVoltar)));
         }
 
         resp.sendRedirect(sb.toString());

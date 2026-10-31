@@ -26,9 +26,6 @@
     <div class="error-decoration error-decoration--bottom-small" aria-hidden="true">
         <img src="${pageContext.request.contextPath}/assets/error-glow-ellipse-161.svg" alt="">
     </div>
-    <div class="error-decoration error-decoration--bottom-small" aria-hidden="true">
-        <img src="${pageContext.request.contextPath}/assets/error-glow-ellipse-161.svg" alt="">
-    </div>
 
     <div class="error-content">
         <h1 id="titulo-erro">Ops, algo deu errado!</h1>

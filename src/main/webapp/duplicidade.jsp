@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page import="com.efficientia.efficientia.util.RetornoSeguroUtil" %>
+<% request.setAttribute("urlVoltarSegura", RetornoSeguroUtil.resolver(request.getContextPath(), request.getParameter("voltar"))); %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -350,18 +352,9 @@
         </div>
 
         <div class="actions-group">
-            <c:choose>
-                <c:when test="${not empty param.voltar}">
-                    <a href="<c:out value='${param.voltar}' />" class="btn btn-primary">
-                        &larr; Voltar e Corrigir
-                    </a>
-                </c:when>
-                <c:otherwise>
-                    <button type="button" class="btn btn-primary" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '${pageContext.request.contextPath}/'; }">
-                        &larr; Voltar e Corrigir
-                    </button>
-                </c:otherwise>
-            </c:choose>
+            <a href="<c:out value='${urlVoltarSegura}' />" class="btn btn-primary">
+                &larr; Voltar e Corrigir
+            </a>
 
             <a href="${pageContext.request.contextPath}/" class="btn btn-secondary">
                 Página Inicial

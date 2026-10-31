@@ -52,6 +52,7 @@ class ErrorPageTest {
         assertTrue(page.contains("Ops, algo deu errado!"));
         assertTrue(page.contains("tente novamente mais tarde"));
         assertTrue(page.contains("/css/erro.css"));
+        assertEquals(1, page.split("error-decoration--bottom-small", -1).length - 1);
         for (String asset : Set.of(
                 "error-glow-top-large.svg",
                 "error-glow-bottom-large.svg",
