@@ -235,7 +235,7 @@
       }
     }
   </script>
-  <script src="${ctx}/js/painel.js?v=20261030"></script>
-  <script type="module" src="${ctx}/js/home-animacao-3d.js?v=20261030"></script>
+  <script src="${ctx}/js/painel.js?v=20261030b"></script>
+  <script type="module" src="${ctx}/js/home-animacao-3d.js?v=20261030b"></script>
 </body>
 </html>

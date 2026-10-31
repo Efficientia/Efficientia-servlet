@@ -9,8 +9,8 @@
           type="text"
           class="top-search-input"
           id="topSearchInput"
-          placeholder="Buscar relatórios, viagens, funcionários..."
-          aria-label="Buscar relatórios, viagens, funcionários">
+          placeholder="Buscar por Motoristas, Caminhões, Pecuaristas..."
+          aria-label="Buscar por Motoristas, Caminhões, Pecuaristas">
       </div>
     </c:when>
     <c:otherwise>
