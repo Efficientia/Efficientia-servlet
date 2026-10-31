@@ -6,6 +6,15 @@
 
     <display-name>Efficientia</display-name>
 
+    <error-page>
+        <error-code>404</error-code>
+        <location>/erro.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/erro.jsp</location>
+    </error-page>
+
     <!-- Configuração global de codificação e JSP -->
     <jsp-config>
         <jsp-property-group>
