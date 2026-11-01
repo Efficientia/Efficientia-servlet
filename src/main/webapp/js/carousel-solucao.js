@@ -42,6 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnNext = wrapper.querySelector('.btn-next');
     const dots = Array.from(document.querySelectorAll('.dot-solucao'));
 
+    wrapper.querySelectorAll('.controles-previa button').forEach(button => {
+        button.addEventListener('click', () => {
+            const preview = document.getElementById(button.getAttribute('aria-controls'));
+            if (!preview) return;
+            const direction = button.dataset.pan;
+            preview.scrollBy({
+                left: direction === 'right' ? preview.clientWidth * 0.75 : direction === 'left' ? -preview.clientWidth * 0.75 : 0,
+                top: direction === 'down' ? preview.clientHeight * 0.75 : direction === 'up' ? -preview.clientHeight * 0.75 : 0,
+                behavior: 'auto'
+            });
+        });
+    });
+
     if (cards.length === 0) return;
 
     let currentIndex = 0;
@@ -142,16 +155,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Suporte a swipe no touch (telas touch/mobile)
-    let touchStartX = 0;
+    let touchStartX = null;
     let touchEndX = 0;
 
     wrapper.addEventListener('touchstart', (e) => {
+        if (e.target.closest('.imagem-card-solucao, .controles-previa')) {
+            touchStartX = null;
+            return;
+        }
         touchStartX = e.changedTouches[0].screenX;
     }, { passive: true });
 
     wrapper.addEventListener('touchend', (e) => {
+        if (touchStartX === null) return;
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
+        touchStartX = null;
     }, { passive: true });
 
     function handleSwipe() {

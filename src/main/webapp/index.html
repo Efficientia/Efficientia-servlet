@@ -34,6 +34,9 @@
     <video autoplay loop muted playsinline class="video-fundo">
         <source src="assets/background-hero.webm" type="video/webm">
     </video>
+    <div class="linhas-organicas linhas-hero" aria-hidden="true">
+        <img src="assets/linhas_organicas.svg" alt="">
+    </div>
 
 
     <div class="conteudo-hero">
@@ -73,10 +76,6 @@
 
     </div>
 </section>
-
-<div class="linhas-organicas">
-    <img src="assets/linhas_organicas.svg" alt="linhas orgânicas">
-</div>
 
 <section class="problema" id="problema">
 
@@ -145,9 +144,18 @@
             <div class="cards-solucao">
 
                 <div class="card-solucao active" data-index="0">
-                    <div class="imagem-card-solucao">
-                        <img src="assets/mockup_celular_etapa1.png"
-                             alt="mockup de celular mostrando a primeira etapa do processo digital">
+                    <div id="previa-documentos" class="imagem-card-solucao" tabindex="0" role="region" aria-label="Prévia de documentos e embarque; role para os lados e para baixo">
+                        <picture>
+                            <source media="(max-width: 659px)" srcset="assets/tela-v3-documentos-mobile.png">
+                            <img src="assets/fluxo-v3-documentos.png" alt="Tela do Diário de rota para documentos e embarque">
+                        </picture>
+                    </div>
+                    <p class="dica-tela-solucao">Deslize para os lados ↔ e para baixo ↓</p>
+                    <div class="controles-previa" aria-label="Mover a prévia de documentos e embarque">
+                        <button type="button" data-pan="left" aria-controls="previa-documentos">← Esquerda</button>
+                        <button type="button" data-pan="right" aria-controls="previa-documentos">Direita →</button>
+                        <button type="button" data-pan="up" aria-controls="previa-documentos">↑ Acima</button>
+                        <button type="button" data-pan="down" aria-controls="previa-documentos">↓ Abaixo</button>
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icone_arquivotxt.svg" alt="icone de arquivo de texto">
@@ -161,9 +169,18 @@
                 <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
 
                 <div class="card-solucao" data-index="1">
-                    <div class="imagem-card-solucao">
-                        <img src="assets/mockup_celular_etapa2.png"
-                             alt="mockup de celular mostrando a segunda etapa do processo digital">
+                    <div id="previa-chegada" class="imagem-card-solucao" tabindex="0" role="region" aria-label="Prévia de chegada e desembarque; role para os lados e para baixo">
+                        <picture>
+                            <source media="(max-width: 659px)" srcset="assets/tela-v3-chegada-mobile.png">
+                            <img src="assets/fluxo-v3-chegada.png" alt="Tela do Diário de rota para chegada e desembarque">
+                        </picture>
+                    </div>
+                    <p class="dica-tela-solucao">Deslize para os lados ↔ e para baixo ↓</p>
+                    <div class="controles-previa" aria-label="Mover a prévia de chegada e desembarque">
+                        <button type="button" data-pan="left" aria-controls="previa-chegada">← Esquerda</button>
+                        <button type="button" data-pan="right" aria-controls="previa-chegada">Direita →</button>
+                        <button type="button" data-pan="up" aria-controls="previa-chegada">↑ Acima</button>
+                        <button type="button" data-pan="down" aria-controls="previa-chegada">↓ Abaixo</button>
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icone_checklist.svg" alt="icone de checklist">
@@ -177,15 +194,24 @@
                 <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
 
                 <div class="card-solucao" data-index="2">
-                    <div class="imagem-card-solucao">
-                        <img src="assets/mockup_celular_etapa3.png"
-                             alt="mockup de celular mostrando a terceira etapa do processo digital">
+                    <div id="previa-assinatura" class="imagem-card-solucao" tabindex="0" role="region" aria-label="Prévia de assinatura digital; role para os lados e para baixo">
+                        <picture>
+                            <source media="(max-width: 659px)" srcset="assets/tela-v3-assinatura-mobile.png">
+                            <img src="assets/fluxo-v3-assinatura.png" alt="Tela do aplicativo para assinatura digital">
+                        </picture>
+                    </div>
+                    <p class="dica-tela-solucao">Deslize para os lados ↔ e para baixo ↓</p>
+                    <div class="controles-previa" aria-label="Mover a prévia de assinatura">
+                        <button type="button" data-pan="left" aria-controls="previa-assinatura">← Esquerda</button>
+                        <button type="button" data-pan="right" aria-controls="previa-assinatura">Direita →</button>
+                        <button type="button" data-pan="up" aria-controls="previa-assinatura">↑ Acima</button>
+                        <button type="button" data-pan="down" aria-controls="previa-assinatura">↓ Abaixo</button>
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icon_marcador.svg" alt="icone de marcador">
                         <div class="conteudo-texto-card-solucao">
-                            <h3 class="titulo-card-solucao">Gestão conectada</h3>
-                            <p>Registros prontos para consulta da operação.</p>
+                            <h3 class="titulo-card-solucao">Assinatura digital</h3>
+                            <p>Assine para finalizar o registro.</p>
                         </div>
                     </div>
                 </div>
@@ -219,8 +245,17 @@
         <h2>Da prancheta de papel <br> ao <span class="destaque">controle</span> em um toque</h2>
         <p class="impacto-texto">O Efficientia digitaliza os registros de embarque e desembarque, reduzindo falhas, <br>
             organizando os dados da viagem e apoiando o controle operacional.</p>
-        <img class="img-impacto" src="assets/mockup_pc_impacto.svg"
-             alt="Mockup de computador mostrando o impacto do Efficientia">
+        <div class="impacto-visual">
+            <span class="impacto-chamada impacto-dados">Dados organizados</span>
+            <figure class="impacto-figura">
+                <img class="img-impacto" src="assets/impacto-laptop-dashboard-v2.png"
+                     alt="Prévia ilustrativa da tela inicial da área restrita Efficientia">
+                <figcaption>Prévia ilustrativa da área restrita</figcaption>
+            </figure>
+            <span class="impacto-chamada impacto-dashboard">Dashboard</span>
+            <span class="impacto-chamada impacto-registros">Registros seguros</span>
+            <span class="impacto-chamada impacto-retrabalho">Menos retrabalho</span>
+        </div>
     </div>
 </section>
 
