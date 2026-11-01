@@ -201,13 +201,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmar = modal.querySelector('.modal-exclusao-confirmar');
 
     const formulariosAutorizados = new WeakSet();
+    let formulariosEnviados = new WeakSet();
+    let eventoConfirmado = null;
 
     let formularioPendente = null;
     let botaoPendente = null;
 
     formulariosExclusao.forEach(formulario => {
       formulario.addEventListener('submit', evento => {
-        if (formulariosAutorizados.has(formulario) || evento.defaultPrevented) {
+        if (formulariosEnviados.has(formulario)) {
+          evento.preventDefault();
+          return;
+        }
+        if (formulariosAutorizados.has(formulario)) {
+          eventoConfirmado = evento;
+          return;
+        }
+        if (evento.defaultPrevented) {
           return;
         }
 
@@ -243,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
       botaoPendente = null;
 
       formulariosAutorizados.add(formulario);
+      eventoConfirmado = null;
 
       try {
         if (botao && botao.form === formulario) {
@@ -252,7 +263,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } finally {
         formulariosAutorizados.delete(formulario);
+        if (eventoConfirmado && !eventoConfirmado.defaultPrevented) {
+          formulariosEnviados.add(formulario);
+        }
+        eventoConfirmado = null;
       }
+    });
+
+    window.addEventListener('pageshow', () => {
+      formulariosEnviados = new WeakSet();
     });
   }
 
