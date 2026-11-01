@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Efficientia</title>
-    <link rel="stylesheet" href="css/style.css?v=8">
+    <link rel="stylesheet" href="css/style.css?v=9">
     <link rel="stylesheet" href="css/funcionalidades.css?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -144,18 +144,8 @@
             <div class="cards-solucao">
 
                 <div class="card-solucao active" data-index="0">
-                    <div id="previa-documentos" class="imagem-card-solucao" tabindex="0" role="region" aria-label="Prévia de documentos e embarque; role para os lados e para baixo">
-                        <picture>
-                            <source media="(max-width: 659px)" srcset="assets/tela-v3-documentos-mobile.png">
-                            <img src="assets/fluxo-v3-documentos.png" alt="Tela do Diário de rota para documentos e embarque">
-                        </picture>
-                    </div>
-                    <p class="dica-tela-solucao">Deslize para os lados ↔ e para baixo ↓</p>
-                    <div class="controles-previa" aria-label="Mover a prévia de documentos e embarque">
-                        <button type="button" data-pan="left" aria-controls="previa-documentos">← Esquerda</button>
-                        <button type="button" data-pan="right" aria-controls="previa-documentos">Direita →</button>
-                        <button type="button" data-pan="up" aria-controls="previa-documentos">↑ Acima</button>
-                        <button type="button" data-pan="down" aria-controls="previa-documentos">↓ Abaixo</button>
+                    <div class="imagem-card-solucao">
+                        <img src="assets/mockup-v3-documentos.png" alt="Mockup ilustrativo baseado na tela V3 do Figma para documentos e embarque">
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icone_arquivotxt.svg" alt="icone de arquivo de texto">
@@ -169,18 +159,8 @@
                 <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
 
                 <div class="card-solucao" data-index="1">
-                    <div id="previa-chegada" class="imagem-card-solucao" tabindex="0" role="region" aria-label="Prévia de chegada e desembarque; role para os lados e para baixo">
-                        <picture>
-                            <source media="(max-width: 659px)" srcset="assets/tela-v3-chegada-mobile.png">
-                            <img src="assets/fluxo-v3-chegada.png" alt="Tela do Diário de rota para chegada e desembarque">
-                        </picture>
-                    </div>
-                    <p class="dica-tela-solucao">Deslize para os lados ↔ e para baixo ↓</p>
-                    <div class="controles-previa" aria-label="Mover a prévia de chegada e desembarque">
-                        <button type="button" data-pan="left" aria-controls="previa-chegada">← Esquerda</button>
-                        <button type="button" data-pan="right" aria-controls="previa-chegada">Direita →</button>
-                        <button type="button" data-pan="up" aria-controls="previa-chegada">↑ Acima</button>
-                        <button type="button" data-pan="down" aria-controls="previa-chegada">↓ Abaixo</button>
+                    <div class="imagem-card-solucao">
+                        <img src="assets/mockup-v3-chegada.png" alt="Mockup ilustrativo baseado na tela V3 do Figma para chegada e desembarque">
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icone_checklist.svg" alt="icone de checklist">
@@ -194,18 +174,8 @@
                 <img src="assets/icone_seta_branca.svg" class="seta-separadora" alt="Seta indicando próximo passo">
 
                 <div class="card-solucao" data-index="2">
-                    <div id="previa-assinatura" class="imagem-card-solucao" tabindex="0" role="region" aria-label="Prévia de assinatura digital; role para os lados e para baixo">
-                        <picture>
-                            <source media="(max-width: 659px)" srcset="assets/tela-v3-assinatura-mobile.png">
-                            <img src="assets/fluxo-v3-assinatura.png" alt="Tela do aplicativo para assinatura digital">
-                        </picture>
-                    </div>
-                    <p class="dica-tela-solucao">Deslize para os lados ↔ e para baixo ↓</p>
-                    <div class="controles-previa" aria-label="Mover a prévia de assinatura">
-                        <button type="button" data-pan="left" aria-controls="previa-assinatura">← Esquerda</button>
-                        <button type="button" data-pan="right" aria-controls="previa-assinatura">Direita →</button>
-                        <button type="button" data-pan="up" aria-controls="previa-assinatura">↑ Acima</button>
-                        <button type="button" data-pan="down" aria-controls="previa-assinatura">↓ Abaixo</button>
+                    <div class="imagem-card-solucao">
+                        <img src="assets/mockup-v3-assinatura.png" alt="Mockup ilustrativo baseado na tela V3 do Figma para assinatura digital">
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icon_marcador.svg" alt="icone de marcador">
@@ -245,17 +215,10 @@
         <h2>Da prancheta de papel <br> ao <span class="destaque">controle</span> em um toque</h2>
         <p class="impacto-texto">O Efficientia digitaliza os registros de embarque e desembarque, reduzindo falhas, <br>
             organizando os dados da viagem e apoiando o controle operacional.</p>
-        <div class="impacto-visual">
-            <span class="impacto-chamada impacto-dados">Dados organizados</span>
-            <figure class="impacto-figura">
-                <img class="img-impacto" src="assets/impacto-laptop-dashboard-v2.png"
-                     alt="Prévia ilustrativa da tela inicial da área restrita Efficientia">
-                <figcaption>Prévia ilustrativa da área restrita</figcaption>
-            </figure>
-            <span class="impacto-chamada impacto-dashboard">Dashboard</span>
-            <span class="impacto-chamada impacto-registros">Registros seguros</span>
-            <span class="impacto-chamada impacto-retrabalho">Menos retrabalho</span>
-        </div>
+        <figure class="impacto-figura">
+            <img class="img-impacto" src="assets/mockup_pc_impacto.svg"
+                 alt="Mockup do dashboard Efficientia em um laptop, com chamadas sobre dados organizados, dashboard, registros seguros e menos retrabalho">
+        </figure>
     </div>
 </section>
 
@@ -375,6 +338,6 @@
     <p>Projeto Interdisciplinar <br> Germinare TECH, 2026</p>
 </section>
 
-<script src="js/carousel-solucao.js?v=2" defer></script>
+<script src="js/carousel-solucao.js?v=3" defer></script>
 </body>
 </html>
