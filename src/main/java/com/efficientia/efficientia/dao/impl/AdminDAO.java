@@ -1,6 +1,7 @@
 package com.efficientia.efficientia.dao.impl;
 
 import com.efficientia.efficientia.factory.ConnectionFactory;
+import com.efficientia.efficientia.exception.EmailDuplicadoException;
 import com.efficientia.efficientia.model.AdminModel;
 import com.efficientia.efficientia.model.EmpresaModel;
 import com.efficientia.efficientia.util.PasswordHasher;
@@ -202,6 +203,50 @@ public class AdminDAO {
     }
 
     // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
+
+    /** Atualiza os campos editáveis do perfil em uma única operação, preservando senha e empresa. */
+    public boolean atualizarPerfil(int id, String nome, String email) throws SQLException {
+        try (Connection connection = ConnectionFactory.getConnection()) {
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            connection.setAutoCommit(false);
+            try {
+                // O login ignora caixa. Serializa alterações de Perfil para o mesmo e-mail de destino.
+                try (PreparedStatement lock = connection.prepareStatement(
+                        "SELECT pg_advisory_xact_lock(51193255, hashtext(lower(?)))")) {
+                    lock.setString(1, email);
+                    lock.execute();
+                }
+                try (PreparedStatement consulta = connection.prepareStatement(
+                        "SELECT 1 FROM adm WHERE lower(email) = lower(?) AND id <> ?")) {
+                    consulta.setString(1, email);
+                    consulta.setInt(2, id);
+                    try (ResultSet rs = consulta.executeQuery()) {
+                        if (rs.next()) throw new EmailDuplicadoException(email);
+                    }
+                }
+                boolean atualizado;
+                try (PreparedStatement stmt = connection.prepareStatement(
+                        "UPDATE adm SET nome = ?, email = ? WHERE id = ?")) {
+                    stmt.setString(1, nome);
+                    stmt.setString(2, email);
+                    stmt.setInt(3, id);
+                    atualizado = stmt.executeUpdate() == 1;
+                }
+                connection.commit();
+                return atualizado;
+            } catch (SQLException | RuntimeException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollback) {
+                    e.addSuppressed(rollback);
+                }
+                throw e;
+            }
+        } catch (SQLException e) {
+            TratadorExcecaoBanco.tratarSeDuplicado(e, "Administrador", "email", email);
+            throw e;
+        }
+    }
 
     /**
      * Atualiza especificamente o nome de um administrador.

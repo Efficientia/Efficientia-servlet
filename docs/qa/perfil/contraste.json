@@ -1,0 +1,30 @@
+[
+  {
+    "largura": 1440,
+    "texto": "#FFFFFF",
+    "razaoMinima": 6.24,
+    "atendeAA": true,
+    "metodo": "Pixels do fundo na linha imediatamente acima de cada linha do subtitulo; WCAG luminancia relativa sRGB"
+  },
+  {
+    "largura": 1024,
+    "texto": "#FFFFFF",
+    "razaoMinima": 5.12,
+    "atendeAA": true,
+    "metodo": "Pixels do fundo na linha imediatamente acima de cada linha do subtitulo; WCAG luminancia relativa sRGB"
+  },
+  {
+    "largura": 768,
+    "texto": "#FFFFFF",
+    "razaoMinima": 6.33,
+    "atendeAA": true,
+    "metodo": "Pixels do fundo na linha imediatamente acima de cada linha do subtitulo; WCAG luminancia relativa sRGB"
+  },
+  {
+    "largura": 390,
+    "texto": "#FFFFFF",
+    "razaoMinima": 5.07,
+    "atendeAA": true,
+    "metodo": "Pixels do fundo na linha imediatamente acima de cada linha do subtitulo; WCAG luminancia relativa sRGB"
+  }
+]
