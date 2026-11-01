@@ -2589,12 +2589,6 @@ button {
 }
 
 .impacto-figura picture { display: block; }
-.impacto-figura figcaption {
-    margin-top: 12px;
-    color: var(--color-primary);
-    font: 500 14px/1.5 var(--font-body);
-    text-align: center;
-}
 .impacto-mobile-chamadas { display: none; }
 
 @media (max-width: 767px) {
