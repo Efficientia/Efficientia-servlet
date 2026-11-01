@@ -174,11 +174,87 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------- Confirmação de exclusão
-  document.querySelectorAll('form[data-confirm]').forEach(f => {
-    f.addEventListener('submit', e => {
-      if (!window.confirm(f.getAttribute('data-confirm'))) e.preventDefault();
+  const formulariosExclusao = document.querySelectorAll('form[data-confirm]');
+
+  if (formulariosExclusao.length > 0) {
+    const modal = document.createElement('dialog');
+    modal.className = 'modal-confirmacao-exclusao';
+    modal.setAttribute('aria-labelledby', 'titulo-modal-exclusao');
+    modal.setAttribute('aria-describedby', 'mensagem-modal-exclusao');
+
+    modal.innerHTML = `
+      <div class="modal-exclusao-conteudo">
+        <div class="modal-exclusao-icone" aria-hidden="true"></div>
+        <h2 id="titulo-modal-exclusao">Confirmar exclusão</h2>
+        <p id="mensagem-modal-exclusao"></p>
+        <div class="modal-exclusao-acoes">
+          <button type="button" class="modal-exclusao-cancelar">Cancelar</button>
+          <button type="button" class="modal-exclusao-confirmar">Excluir</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const mensagem = modal.querySelector('#mensagem-modal-exclusao');
+    const cancelar = modal.querySelector('.modal-exclusao-cancelar');
+    const confirmar = modal.querySelector('.modal-exclusao-confirmar');
+
+    const formulariosAutorizados = new WeakSet();
+
+    let formularioPendente = null;
+    let botaoPendente = null;
+
+    formulariosExclusao.forEach(formulario => {
+      formulario.addEventListener('submit', evento => {
+        if (formulariosAutorizados.has(formulario) || evento.defaultPrevented) {
+          return;
+        }
+
+        evento.preventDefault();
+
+        formularioPendente = formulario;
+        botaoPendente = evento.submitter;
+
+        mensagem.textContent = formulario.dataset.confirm ||
+          'Deseja realmente excluir este registro?';
+
+        modal.showModal();
+        cancelar.focus();
+      });
     });
-  });
+
+    cancelar.addEventListener('click', () => modal.close());
+
+    modal.addEventListener('close', () => {
+      formularioPendente = null;
+      botaoPendente = null;
+    });
+
+    confirmar.addEventListener('click', () => {
+      if (!formularioPendente) return;
+
+      const formulario = formularioPendente;
+      const botao = botaoPendente;
+
+      modal.close();
+
+      formularioPendente = null;
+      botaoPendente = null;
+
+      formulariosAutorizados.add(formulario);
+
+      try {
+        if (botao && botao.form === formulario) {
+          formulario.requestSubmit(botao);
+        } else {
+          formulario.requestSubmit();
+        }
+      } finally {
+        formulariosAutorizados.delete(formulario);
+      }
+    });
+  }
 
   // Em modo edição, leva o usuário até o formulário
   const editando = document.querySelector('form.cadastro-form[data-modo="edicao"]');

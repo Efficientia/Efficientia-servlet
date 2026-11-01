@@ -1645,3 +1645,117 @@ a.btn-secondary-outline {
   font-weight: 700;
   color: #1e293b;
 }
+
+/* ==========================================================================
+   Modal de confirmação de exclusão
+   ========================================================================== */
+.modal-confirmacao-exclusao {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(420px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  background: #ffffff;
+  color: var(--text-body-dark);
+  box-shadow: 0 20px 60px rgba(0, 18, 64, 0.3);
+}
+
+.modal-confirmacao-exclusao::backdrop {
+  background: rgba(4, 26, 74, 0.65);
+}
+
+.modal-exclusao-conteudo {
+  padding: 28px;
+}
+
+.modal-exclusao-icone {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: #fee2e2;
+}
+
+.modal-exclusao-icone::before {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 26px;
+  background-color: #dc2626;
+  -webkit-mask: url("../assets/icons/icone-lixeira.svg") center / contain no-repeat;
+  mask: url("../assets/icons/icone-lixeira.svg") center / contain no-repeat;
+}
+
+.modal-exclusao-conteudo h2 {
+  margin-bottom: 12px;
+  color: var(--text-title-dark);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.modal-exclusao-conteudo p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.modal-exclusao-acoes {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.modal-exclusao-acoes button {
+  min-height: 42px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-exclusao-cancelar {
+  border: 1px solid var(--border-input);
+  background: #ffffff;
+  color: var(--text-body-dark);
+}
+
+.modal-exclusao-cancelar:hover {
+  background: #f1f5f9;
+}
+
+.modal-exclusao-confirmar {
+  border: 1px solid var(--color-red-delete-hover);
+  background: var(--color-red-delete-hover);
+  color: #ffffff;
+}
+
+.modal-exclusao-confirmar:hover {
+  background: #c73535;
+}
+
+.modal-exclusao-acoes button:focus-visible {
+  outline: 3px solid var(--color-blue-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .modal-exclusao-conteudo {
+    padding: 22px;
+  }
+
+  .modal-exclusao-acoes {
+    flex-direction: column-reverse;
+  }
+
+  .modal-exclusao-acoes button {
+    width: 100%;
+  }
+}
