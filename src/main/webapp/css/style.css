@@ -2585,6 +2585,7 @@ button {
 
     .card-solucao .imagem-card-solucao img {
         max-width: none;
+        transform: translateY(4.5%);
     }
 }
 
@@ -2618,7 +2619,16 @@ button {
     .controles-previa button:focus-visible, .imagem-card-solucao:focus-visible {
         outline: 3px solid var(--color-accent); outline-offset: 3px;
     }
-    .card-solucao .conteudo-card-solucao { margin-top: 12px; }
+    .card-solucao .conteudo-card-solucao {
+        margin-top: 15px;
+        min-height: 122px;
+        padding: 24px;
+        gap: 18px;
+    }
+    .card-solucao .conteudo-texto-card-solucao h3 { font-size: 18.817px; font-weight: 500; }
+    .card-solucao .conteudo-texto-card-solucao p { font-size: 13.172px; font-weight: 500; }
+    .card-solucao .conteudo-card-solucao img { width: 44px; max-height: 52px; padding: 0; }
+    .card-solucao .imagem-card-solucao { margin-top: 8px; }
     .btn-carousel-solucao { top: auto; bottom: -55px; transform: none; }
     .btn-carousel-solucao:hover { transform: scale(1.08); }
     .btn-carousel-solucao:active { transform: scale(.95); }
