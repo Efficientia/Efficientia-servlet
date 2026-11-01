@@ -2647,16 +2647,6 @@ button {
         height: auto;
     }
 
-    .card-solucao .conteudo-card-solucao {
-        width: 100%;
-        max-width: 320px;
-        margin-top: -42px;
-        min-height: 112px;
-        padding: 18px 22px;
-        gap: 16px;
-        border-radius: 18px;
-    }
-
     .card-solucao .conteudo-card-solucao img {
         width: 42px;
         max-height: 48px;
@@ -2675,7 +2665,6 @@ button {
     .carousel-solucao-wrapper { max-width: 390px; padding: 0 40px; }
     .cards-solucao { max-width: 310px; }
     .card-solucao { max-width: 310px; }
-    .card-solucao .imagem-card-solucao img { width: 152%; }
     .card-solucao .conteudo-card-solucao {
         max-width: 310px;
         min-height: 100px;
