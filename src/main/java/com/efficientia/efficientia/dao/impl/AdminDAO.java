@@ -205,7 +205,7 @@ public class AdminDAO {
     // ==================== INSERÇÃO E ATUALIZAÇÃO ESPECÍFICAS ====================
 
     /** Atualiza os campos editáveis do perfil em uma única operação, preservando senha e empresa. */
-    public boolean atualizarPerfil(int id, String nome, String email) throws SQLException {
+    public boolean atualizarPerfil(int id, String nome, String email) {
         try (Connection connection = ConnectionFactory.getConnection()) {
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             connection.setAutoCommit(false);
@@ -244,7 +244,8 @@ public class AdminDAO {
             }
         } catch (SQLException e) {
             TratadorExcecaoBanco.tratarSeDuplicado(e, "Administrador", "email", email);
-            throw e;
+            System.err.println("Não foi possível atualizar o perfil do administrador.");
+            return false;
         }
     }
 

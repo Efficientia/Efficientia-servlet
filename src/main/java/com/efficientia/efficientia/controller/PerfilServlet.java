@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Locale;
 
@@ -105,11 +104,6 @@ public class PerfilServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
                 req.setAttribute("erroPerfil", "Não foi possível salvar as alterações. Revise o e-mail informado.");
                 req.setAttribute("erroEmail", "Este e-mail já está em uso por outra conta.");
-                exibir(req, resp, session);
-                return;
-            } catch (SQLException e) {
-                resp.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                req.setAttribute("erroPerfil", "Não foi possível acessar o banco de dados. Tente novamente mais tarde.");
                 exibir(req, resp, session);
                 return;
             }

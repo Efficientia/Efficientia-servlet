@@ -25,8 +25,8 @@ class PerfilServletTest {
         boolean duplicado, indisponivel, removido;
 
         @Override public AdminModel buscar(int id) { return id == 7 && !removido ? registro : null; }
-        @Override public boolean atualizarPerfil(int id, String nome, String email) throws SQLException {
-            if (indisponivel) throw new SQLException("detalhe interno do banco");
+        @Override public boolean atualizarPerfil(int id, String nome, String email) {
+            if (indisponivel) return false;
             if (duplicado) throw TratadorExcecaoBanco.traduzir(
                     new SQLException("duplicate key adm_email_key", "23505"), "Administrador", "email", email);
             if (id != 7 || removido) return false;
