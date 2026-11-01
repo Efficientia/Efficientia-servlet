@@ -1,0 +1,133 @@
+{
+  "largura": 390,
+  "altura": 844,
+  "larguraDocumento": 390,
+  "alturaDocumento": 1175,
+  "overflow": [],
+  "elementos": [
+    {
+      "selector": ".perfil-card",
+      "x": 20,
+      "y": 503.09375,
+      "largura": 350,
+      "altura": 612,
+      "cor": "rgb(255, 255, 255)",
+      "fundo": "rgb(9, 51, 120)",
+      "fonte": "\"IBM Plex Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+    },
+    {
+      "selector": ".perfil-avatar",
+      "x": 41,
+      "y": 528.09375,
+      "largura": 76,
+      "altura": 76,
+      "cor": "rgb(255, 255, 255)",
+      "fundo": "rgb(23, 97, 189)",
+      "fonte": "Manrope, sans-serif"
+    },
+    {
+      "selector": "#perfil-nome",
+      "x": 41,
+      "y": 733.09375,
+      "largura": 308,
+      "altura": 50,
+      "cor": "rgb(51, 74, 107)",
+      "fundo": "rgb(247, 250, 255)",
+      "fonte": "\"IBM Plex Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+    },
+    {
+      "selector": "#perfil-email",
+      "x": 41,
+      "y": 835.09375,
+      "largura": 308,
+      "altura": 50,
+      "cor": "rgb(51, 74, 107)",
+      "fundo": "rgb(247, 250, 255)",
+      "fonte": "\"IBM Plex Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+    },
+    {
+      "selector": "#perfil-empresa",
+      "x": 41,
+      "y": 937.09375,
+      "largura": 308,
+      "altura": 50,
+      "cor": "rgb(186, 207, 240)",
+      "fundo": "rgb(26, 66, 125)",
+      "fonte": "\"IBM Plex Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+    },
+    {
+      "selector": ".perfil-salvar",
+      "x": 41,
+      "y": 1042.09375,
+      "largura": 308,
+      "altura": 48,
+      "cor": "rgb(4, 23, 61)",
+      "fundo": "rgb(79, 217, 89)",
+      "fonte": "\"IBM Plex Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+    }
+  ],
+  "assets": [
+    {
+      "src": "/Efficientia/assets/icons/logo.svg",
+      "carregado": true,
+      "largura": 39,
+      "altura": 38
+    },
+    {
+      "src": "/Efficientia/assets/icons/dashboard.svg",
+      "carregado": true,
+      "largura": 18,
+      "altura": 18
+    },
+    {
+      "src": "/Efficientia/assets/icons/caminhoes.svg",
+      "carregado": true,
+      "largura": 18,
+      "altura": 18
+    },
+    {
+      "src": "/Efficientia/assets/icons/empresas.svg",
+      "carregado": true,
+      "largura": 18,
+      "altura": 18
+    },
+    {
+      "src": "/Efficientia/assets/icons/motoristas.svg",
+      "carregado": true,
+      "largura": 18,
+      "altura": 18
+    },
+    {
+      "src": "/Efficientia/assets/icons/pecuaristas.svg",
+      "carregado": true,
+      "largura": 18,
+      "altura": 18
+    },
+    {
+      "src": "/Efficientia/assets/icons/administradores.svg",
+      "carregado": true,
+      "largura": 18,
+      "altura": 18
+    },
+    {
+      "src": "/Efficientia/assets/icons/usuario-avatar.svg",
+      "carregado": true,
+      "largura": 22,
+      "altura": 22
+    },
+    {
+      "src": "/Efficientia/assets/icons/sair.svg",
+      "carregado": true,
+      "largura": 17,
+      "altura": 17
+    },
+    {
+      "src": "/Efficientia/assets/icons/perfil.svg",
+      "carregado": true,
+      "largura": 16,
+      "altura": 16
+    }
+  ],
+  "controlesRemovidos": true,
+  "linkPerfil": "/Efficientia/perfil"
+}
