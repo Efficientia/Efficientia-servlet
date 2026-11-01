@@ -2588,6 +2588,34 @@ button {
     margin: 30px auto 0;
 }
 
+.impacto-figura picture { display: block; }
+.impacto-figura figcaption {
+    margin-top: 12px;
+    color: var(--color-primary);
+    font: 500 14px/1.5 var(--font-body);
+    text-align: center;
+}
+.impacto-mobile-chamadas { display: none; }
+
+@media (max-width: 767px) {
+    .impacto-mobile-chamadas {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 20px 0 0;
+        padding: 0;
+        list-style: none;
+    }
+    .impacto-mobile-chamadas li {
+        padding: 14px 10px;
+        border-left: 3px solid var(--color-accent);
+        border-radius: 10px;
+        background: var(--color-cream);
+        color: var(--color-primary);
+        font: 600 16px/1.4 var(--font-body);
+    }
+}
+
 .conteudo-impacto .impacto-figura img.img-impacto {
     display: block;
     width: 100%;
