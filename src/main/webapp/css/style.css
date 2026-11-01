@@ -534,7 +534,7 @@ button {
 
 .solucao {
     border-radius: var(--radius-30);
-    background: linear-gradient(to bottom right, var(--color-primary) 0%, var(--color-primary-dark) 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, var(--color-primary) 0%, var(--color-primary-dark) 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, var(--color-primary) 0%, var(--color-primary-dark) 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, var(--color-primary) 0%, var(--color-primary-dark) 50%) top right / 50% 50% no-repeat;
+    background: radial-gradient(ellipse 65% 65% at center, var(--color-primary), var(--color-primary-dark));
     overflow: visible;
 }
 
@@ -2539,4 +2539,174 @@ button {
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* As linhas pertencem ao hero e ficam entre o vídeo e seu conteúdo. */
+.hero .linhas-hero {
+    bottom: 0;
+    z-index: 0;
+    transform: none;
+}
+
+.imagem-card-solucao {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    overflow: visible;
+}
+
+.imagem-card-solucao img {
+    display: block;
+    width: 152%;
+    max-width: none;
+    height: auto;
+}
+
+.cards-solucao { transform: none; }
+.conteudo-solucao,
+.conteudo-impacto {
+    position: relative;
+    z-index: 2;
+}
+
+.card-solucao .conteudo-card-solucao {
+    width: 100%;
+    max-width: 320px;
+    min-height: 112px;
+    margin-top: -42px;
+    padding: 18px 22px;
+    gap: 16px;
+    border-radius: 18px;
+    position: relative;
+    z-index: 2;
+}
+
+.impacto-figura {
+    width: 100%;
+    max-width: 1397px;
+    margin: 30px auto 0;
+}
+
+.impacto-figura picture { display: block; }
+.impacto-mobile-chamadas { display: none; }
+
+@media (max-width: 767px) {
+    .impacto-mobile-chamadas {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 20px 0 0;
+        padding: 0;
+        list-style: none;
+    }
+    .impacto-mobile-chamadas li {
+        padding: 14px 10px;
+        border-left: 3px solid var(--color-accent);
+        border-radius: 10px;
+        background: var(--color-cream);
+        color: var(--color-primary);
+        font: 600 16px/1.4 var(--font-body);
+    }
+}
+
+.conteudo-impacto .impacto-figura img.img-impacto {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    transform: none;
+}
+
+@media (max-width: 1300px) {
+    .impacto-figura { max-width: 100%; }
+}
+
+@media (max-width: 860px) {
+    .carousel-solucao-wrapper {
+        max-width: 400px;
+        padding: 0 44px;
+    }
+
+    .cards-solucao {
+        width: 100%;
+        max-width: 320px;
+        min-height: 0;
+        overflow: visible;
+    }
+
+    .card-solucao {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .card-solucao .imagem-card-solucao img {
+        width: 152%;
+        max-width: none;
+        height: auto;
+    }
+
+    .card-solucao .conteudo-card-solucao {
+        width: 100%;
+        max-width: 320px;
+        margin-top: -42px;
+        min-height: 112px;
+        padding: 18px 22px;
+        gap: 16px;
+        border-radius: 18px;
+    }
+
+    .card-solucao .conteudo-card-solucao img {
+        width: 42px;
+        max-height: 48px;
+        padding: 0;
+    }
+
+    .card-solucao .conteudo-texto-card-solucao h3 { font-size: 18px; }
+    .card-solucao .conteudo-texto-card-solucao p { font-size: 13px; line-height: 1.35; }
+
+    .btn-carousel-solucao { top: 42%; }
+    .carousel-solucao-dots { min-height: 38px; margin-top: 22px; }
+}
+
+@media (max-width: 659px) {
+    #solucao { scroll-margin-top: 90px; }
+    .carousel-solucao-wrapper { max-width: 390px; padding: 0 40px; }
+    .cards-solucao { max-width: 310px; }
+    .card-solucao { max-width: 310px; }
+    .card-solucao .imagem-card-solucao img { width: 152%; }
+    .card-solucao .conteudo-card-solucao {
+        max-width: 310px;
+        min-height: 100px;
+        margin-top: -36px;
+        padding: 16px 18px;
+        gap: 12px;
+    }
+    .card-solucao .conteudo-card-solucao img { width: 38px; max-height: 42px; }
+    .card-solucao .conteudo-texto-card-solucao h3 { font-size: 17px; }
+    .card-solucao .conteudo-texto-card-solucao p { font-size: 12.5px; }
+    .btn-carousel-solucao { top: 40%; }
+    .btn-carousel-solucao.btn-prev { left: 0; }
+    .btn-carousel-solucao.btn-next { right: 0; }
+}
+
+@media (max-width: 390px) {
+    .carousel-solucao-wrapper { padding-inline: 32px; }
+    .btn-carousel-solucao { width: 36px; height: 36px; }
+}
+
+.links-rodape {
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.links-rodape a {
+    white-space: nowrap;
+}
+
+@media (min-width: 637px) {
+    .rodape { gap: clamp(16px, 2vw, 40px); padding-inline: clamp(20px, 3vw, 50px); }
+    .links-rodape { gap: clamp(12px, 2vw, 32px); }
+    .links-rodape a { font-size: clamp(14px, 1.35vw, 20px); }
 }

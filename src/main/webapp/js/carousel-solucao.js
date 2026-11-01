@@ -1,6 +1,6 @@
 /**
  * Carrossel Interativo da Seção Solução - Efficientia
- * Controla a exibição de 1 celular por vez em telas menores (<= 860px)
+ * Controla a exibição de 1 mockup por vez em telas menores (<= 860px)
  * com animação de slide direcional, setas de navegação, loop infinito e dots.
  */
 
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Suporte a swipe no touch (telas touch/mobile)
-    let touchStartX = 0;
+    let touchStartX = null;
     let touchEndX = 0;
 
     wrapper.addEventListener('touchstart', (e) => {
@@ -150,8 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     wrapper.addEventListener('touchend', (e) => {
+        if (touchStartX === null) return;
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
+        touchStartX = null;
     }, { passive: true });
 
     function handleSwipe() {

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Efficientia</title>
-    <link rel="stylesheet" href="css/style.css?v=8">
+    <link rel="stylesheet" href="css/style.css?v=9">
     <link rel="stylesheet" href="css/funcionalidades.css?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
         <img src="assets/icone_menu.svg" alt="Ícone de menu">
     </button>
     <nav class="menu-links">
-        <a class="link-menu" href="#inicio">Inicio</a>
+        <a class="link-menu" href="#inicio">Início</a>
         <a class="link-menu" href="#problema">Problema</a>
         <a class="link-menu" href="#solucao">Solução</a>
         <a class="link-menu" href="#impacto">Impacto</a>
@@ -34,6 +34,9 @@
     <video autoplay loop muted playsinline class="video-fundo">
         <source src="assets/background-hero.webm" type="video/webm">
     </video>
+    <div class="linhas-organicas linhas-hero" aria-hidden="true">
+        <img src="assets/linhas_organicas.svg" alt="">
+    </div>
 
 
     <div class="conteudo-hero">
@@ -62,7 +65,7 @@
                 </li>
                 <li>
                     <img src="assets/icone_escudo_check_verde.svg" alt="ícone de segurança">
-                    <span>Registro padronizados</span>
+                    <span>Registros padronizados</span>
                 </li>
                 <li>
                     <img src="assets/icone_pasta.svg" alt="ícone de pasta">
@@ -73,10 +76,6 @@
 
     </div>
 </section>
-
-<div class="linhas-organicas">
-    <img src="assets/linhas_organicas.svg" alt="linhas orgânicas">
-</div>
 
 <section class="problema" id="problema">
 
@@ -146,8 +145,7 @@
 
                 <div class="card-solucao active" data-index="0">
                     <div class="imagem-card-solucao">
-                        <img src="assets/mockup_celular_etapa1.png"
-                             alt="mockup de celular mostrando a primeira etapa do processo digital">
+                        <img src="assets/mockup-v3-documentos.png" alt="Mockup ilustrativo baseado na tela V3 do Figma para documentos e embarque">
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icone_arquivotxt.svg" alt="icone de arquivo de texto">
@@ -162,8 +160,7 @@
 
                 <div class="card-solucao" data-index="1">
                     <div class="imagem-card-solucao">
-                        <img src="assets/mockup_celular_etapa2.png"
-                             alt="mockup de celular mostrando a segunda etapa do processo digital">
+                        <img src="assets/mockup-v3-chegada.png" alt="Mockup ilustrativo baseado na tela V3 do Figma para chegada e desembarque">
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icone_checklist.svg" alt="icone de checklist">
@@ -178,14 +175,13 @@
 
                 <div class="card-solucao" data-index="2">
                     <div class="imagem-card-solucao">
-                        <img src="assets/mockup_celular_etapa3.png"
-                             alt="mockup de celular mostrando a terceira etapa do processo digital">
+                        <img src="assets/mockup-v3-assinatura.png" alt="Mockup ilustrativo baseado na tela V3 do Figma para assinatura digital">
                     </div>
                     <div class="conteudo-card-solucao">
                         <img src="assets/icon_marcador.svg" alt="icone de marcador">
                         <div class="conteudo-texto-card-solucao">
-                            <h3 class="titulo-card-solucao">Gestão conectada</h3>
-                            <p>Registros prontos para consulta da operação.</p>
+                            <h3 class="titulo-card-solucao">Assinatura digital</h3>
+                            <p>Assine para finalizar o registro.</p>
                         </div>
                     </div>
                 </div>
@@ -219,8 +215,19 @@
         <h2>Da prancheta de papel <br> ao <span class="destaque">controle</span> em um toque</h2>
         <p class="impacto-texto">O Efficientia digitaliza os registros de embarque e desembarque, reduzindo falhas, <br>
             organizando os dados da viagem e apoiando o controle operacional.</p>
-        <img class="img-impacto" src="assets/mockup_pc_impacto.svg"
-             alt="Mockup de computador mostrando o impacto do Efficientia">
+        <figure class="impacto-figura">
+            <picture>
+                <source media="(max-width: 767px)" srcset="assets/mockup_pc_impacto-mobile.svg">
+            <img class="img-impacto" src="assets/mockup_pc_impacto.svg"
+                 alt="Mockup do dashboard Efficientia em um laptop, com chamadas sobre dados organizados, dashboard, registros seguros e menos retrabalho">
+            </picture>
+        </figure>
+        <ul class="impacto-mobile-chamadas" aria-label="Benefícios apresentados na prévia">
+            <li>Dados organizados</li>
+            <li>Dashboard</li>
+            <li>Registros seguros</li>
+            <li>Menos retrabalho</li>
+        </ul>
     </div>
 </section>
 
@@ -340,6 +347,6 @@
     <p>Projeto Interdisciplinar <br> Germinare TECH, 2026</p>
 </section>
 
-<script src="js/carousel-solucao.js?v=2" defer></script>
+<script src="js/carousel-solucao.js?v=3" defer></script>
 </body>
 </html>
