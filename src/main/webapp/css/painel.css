@@ -411,15 +411,6 @@ html, body {
   transform: translateY(-1px);
 }
 
-.notification-indicator {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 5px;
-  height: 5px;
-  background-color: var(--color-green-primary);
-  border-radius: 50%;
-}
 
 /* Conteúdo Principal */
 .content-container {
