@@ -56,13 +56,12 @@ public final class WebErroUtil {
     }
 
     /**
-     * Redireciona a requisição para a página de erro geral (/erro.jsp) informando
-     * uma mensagem explicativa do erro ocorrido (dados inválidos, falha de persistência, etc.).
+     * Redireciona para a tela geral sem transportar detalhes internos na URL.
      *
      * @param req       requisição HTTP atual
      * @param resp      resposta HTTP para redirecionamento
-     * @param mensagem  mensagem de erro explicativa para o usuário
-     * @param urlVoltar caminho de retorno para o formulário
+     * @param mensagem  mantido por compatibilidade com os chamadores; não é enviado ao navegador
+     * @param urlVoltar mantido por compatibilidade; a tela geral não oferece retorno ao formulário
      * @throws IOException em caso de falha de I/O no sendRedirect
      */
     public static void redirecionarErroGeral(
@@ -71,29 +70,7 @@ public final class WebErroUtil {
             String mensagem,
             String urlVoltar
     ) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(req.getContextPath()).append("/erro.jsp");
-        boolean primeiro = true;
-
-        if (mensagem != null && !mensagem.isBlank()) {
-            sb.append(primeiro ? "?" : "&").append("mensagem=").append(encode(mensagem));
-            primeiro = false;
-        }
-        if (urlVoltar != null && !urlVoltar.isBlank()) {
-            sb.append(primeiro ? "?" : "&").append("voltar=").append(encode(resolverUrlVoltar(req, urlVoltar)));
-        }
-
-        resp.sendRedirect(sb.toString());
-    }
-
-    private static String resolverUrlVoltar(HttpServletRequest req, String urlVoltar) {
-        if (urlVoltar.startsWith("http://") || urlVoltar.startsWith("https://")) {
-            return urlVoltar;
-        }
-        if (urlVoltar.startsWith(req.getContextPath())) {
-            return urlVoltar;
-        }
-        return req.getContextPath() + (urlVoltar.startsWith("/") ? urlVoltar : "/" + urlVoltar);
+        resp.sendRedirect(req.getContextPath() + "/erro.jsp");
     }
 
     private static String encode(String valor) {

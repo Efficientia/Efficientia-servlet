@@ -44,6 +44,16 @@ class WebErroUtilTest {
         assertEquals("/Efficientia/erro.jsp", redirect[0]);
     }
 
+    @Test
+    void falhaGeralNaoIncluiDetalhesInternosOuDestinosNaUrl() throws Exception {
+        for (String contexto : new String[]{"", "/Efficientia"}) {
+            String[] redirect = new String[1];
+            WebErroUtil.redirecionarErroGeral(request(contexto), response(redirect),
+                    "Falha SQL: dado-pessoal@example.invalid", "https://externo.example/retorno");
+            assertEquals(contexto + "/erro.jsp", redirect[0]);
+        }
+    }
+
     private HttpServletRequest request(String context) {
         return (HttpServletRequest) Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class<?>[]{HttpServletRequest.class}, (proxy, method, args) ->
