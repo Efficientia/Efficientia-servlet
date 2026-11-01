@@ -64,6 +64,9 @@ Sem `-Dperfil.db.test=true`, os quatro testes de persistência do Perfil são ig
 
 ## Limites e atenção na integração
 
+O risco de unicidade entre escritores administrativos e a proposta de implantação
+do índice estão documentados em [Unicidade do e-mail do administrador](UNICIDADE_EMAIL_ADMINISTRADOR.md).
+
 - Os fluxos administrativos antigos de gravação de e-mail não participam do advisory lock. Uma garantia universal de unicidade sem distinguir caixa exige avaliar e migrar para um índice único em `lower(email)`, com tratamento prévio de conflitos existentes; nenhuma migration foi introduzida neste escopo.
 - O banco descartável usa somente o schema de conta documentado no repositório. Não foi testado o schema de produção nem a totalidade dos fluxos CRUD preexistentes.
 - Manrope e IBM Plex Sans carregaram durante a validação e seguem a estratégia existente de Google Fonts. Ambientes sem acesso externo usam os fallbacks declarados.
