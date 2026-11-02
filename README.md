@@ -140,7 +140,7 @@ cd Efficientia
    ```sql
    CREATE DATABASE efficientia_db;
    ```
-2. Execute a cópia local do script de criação de tabelas, tipos ENUM, triggers e carga inicial (`Efficientia.sql`). O script está fora do controle de versão deste repositório; use a cópia disponibilizada para o ambiente do projeto:
+2. Execute uma cópia local do script de criação de tabelas, tipos ENUM, triggers e carga inicial (`Efficientia.sql`). O script não está versionado neste repositório; obtenha uma cópia local antes de executar os comandos abaixo:
    ```bash
    # Via terminal (Linux / macOS / Git Bash / PowerShell):
    psql -U postgres -d efficientia_db -f Efficientia.sql
