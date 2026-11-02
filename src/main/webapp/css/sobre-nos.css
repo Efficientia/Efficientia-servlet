@@ -1,0 +1,31 @@
+.sobre-nos{min-height:100vh;padding:118px 24px 72px;color:var(--color-primary-dark);background:var(--color-white);font-family:var(--font-body);scroll-margin-top:90px}
+.sobre-nos-conteudo{max-width:1310px;margin-inline:auto}
+.sobre-nos-introducao,.sobre-nos-equipe{position:relative;isolation:isolate;overflow:hidden;border-radius:var(--radius-20);background:transparent;color:var(--color-primary-dark)}
+.sobre-nos-introducao{margin-bottom:24px;padding:22px 0 8px}
+.sobre-nos-linhas{position:absolute;z-index:-1;inset:0;width:100%;height:100%;object-fit:cover;opacity:.18;pointer-events:none}
+.sobre-nos h1,.sobre-nos h2{font-family:var(--font-heading);color:var(--color-primary-dark)}
+.sobre-nos-introducao h1,.sobre-nos-equipe h2{position:relative;z-index:1;color:var(--color-primary-dark)}
+.sobre-nos-introducao h1{margin:0 0 20px;font-size:clamp(42px,4.2vw,62px);font-weight:var(--font-weight-extrabold);line-height:1.1;letter-spacing:-.04em}
+.sobre-nos h1 span{color:var(--color-primary)}
+.sobre-nos-historia{position:relative;z-index:1;max-width:860px}
+.sobre-nos-historia h2{margin:0 0 10px;color:var(--color-primary-dark);font-size:clamp(24px,2vw,29px);font-weight:var(--font-weight-extrabold);line-height:1.18}
+.sobre-nos-historia p{color:var(--color-primary-dark);font-size:clamp(18px,1.45vw,21px);line-height:1.52}
+.sobre-nos-principios{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"missao visao" "valores valores";gap:16px;align-items:stretch}
+.sobre-nos-card{min-width:0;padding:18px 22px 20px;border:1px solid rgb(15 81 174 / 14%);border-radius:var(--radius-16);box-shadow:var(--shadow-card)}
+.sobre-nos-missao{grid-area:missao}.sobre-nos-visao{grid-area:visao}.sobre-nos-valores-card{grid-area:valores}
+.sobre-nos-card,.sobre-nos-equipe{background:rgb(15 81 174 / 6%)}
+.sobre-nos-card-cabecalho{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.sobre-nos-icone{display:grid;width:48px;height:48px;flex:0 0 48px;place-items:center;border:1px solid rgb(15 81 174 / 10%);border-radius:var(--radius-10);background:var(--color-white)}
+.sobre-nos-icone img{display:block;max-width:36px;max-height:40px}
+.sobre-nos-card h2{margin:0;font-size:clamp(24px,2vw,29px);font-weight:var(--font-weight-extrabold);line-height:1.18}
+.sobre-nos-card>p,.sobre-nos-valores,.sobre-nos-foto figcaption{font-size:17px;line-height:1.48}
+.sobre-nos-valores{padding:0;list-style:none}
+.sobre-nos-valores li{padding:11px 0;border-bottom:1px solid rgb(15 81 174 / 13%)}
+.sobre-nos-valores li:first-child{padding-top:0}.sobre-nos-valores li:last-child{padding-bottom:0;border-bottom:0}
+.sobre-nos-valores strong{display:block;font-family:var(--font-heading);color:var(--color-primary-dark);font-weight:var(--font-weight-extrabold)}
+.sobre-nos-equipe{margin-top:22px;padding:22px 24px 24px;border:1px solid rgb(15 81 174 / 14%);box-shadow:var(--shadow-card)}
+.sobre-nos-equipe h2{margin:0 0 14px;font-size:clamp(24px,2vw,29px);font-weight:var(--font-weight-extrabold);line-height:1.18}
+.sobre-nos-foto{position:relative;z-index:1;margin:0}.sobre-nos-foto img{display:block;width:100%;height:auto;border-radius:var(--radius-16)}
+.sobre-nos-foto figcaption{margin-top:10px;color:var(--color-primary-dark)}
+.pagina-sobre-nos .menu-links a[aria-current="page"]{text-decoration:underline;text-underline-offset:6px}
+@media(max-width:700px){.sobre-nos{padding:108px 18px 52px}.sobre-nos-introducao{margin-bottom:20px;padding:12px 0 8px}.sobre-nos-principios{grid-template-columns:minmax(0,1fr);grid-template-areas:"missao" "visao" "valores";gap:12px}.sobre-nos-card{padding:16px 18px 18px}.sobre-nos-card>p,.sobre-nos-valores,.sobre-nos-foto figcaption{font-size:16px}.sobre-nos-equipe{margin-top:16px;padding:18px 16px 18px}.sobre-nos-linhas{opacity:.15}}
