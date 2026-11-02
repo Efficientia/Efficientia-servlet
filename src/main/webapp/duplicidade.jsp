@@ -62,8 +62,11 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 600px;
+            max-width: 100%;
             height: 600px;
             background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+            background-size: 600px 600px;
+            background-position: center;
             pointer-events: none;
             z-index: 0;
         }
