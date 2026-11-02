@@ -25,7 +25,7 @@ Ao longo do projeto, as respostas iniciais da IA apresentaram dois tipos recorre
 ### 2.1. Alucinações Técnicas e Presunções Incorretas
 Modelos de IA tendem a completar lacunas estatisticamente com base nos padrões mais comuns da web. No ecossistema Java, isso provocou:
 * **Presunção indevida de frameworks:** Supor que o projeto utilizava Spring Boot, Hibernate ou JPA, quando o escopo acadêmico do edital de POO exige explicitamente **Jakarta EE Servlets nativos (Servlet 6.0) e persistência via JDBC puro**.
-* **Divergência de algoritmos criptográficos:** A IA mencionou o uso de "BCrypt com Pepper", enquanto a implementação real do repositório ([PasswordHasher.java](../src/main/java/com/efficientia/efficientia/util/PasswordHasher.java)) utiliza **PBKDF2 com HMAC-SHA-256 em 600.000 iterações e salt criptográfico individual**.
+* **Divergência de algoritmos criptográficos:** A IA mencionou o uso de "BCrypt com Pepper", enquanto a implementação real do repositório ([PasswordHasher.java](../../src/main/java/com/efficientia/efficientia/util/PasswordHasher.java)) utiliza **PBKDF2 com HMAC-SHA-256 em 600.000 iterações e salt criptográfico individual**.
 * **Incompatibilidade de sintaxe SQL:** Proposta de constraints ou tipos de dados específicos de outros SGBDs (como MySQL ou Oracle) incompatíveis com a sintaxe rigorosa do **PostgreSQL 14+**.
 
 ### 2.2. Confusão entre Código Existente e Código Planejado
@@ -96,7 +96,7 @@ Sem planejamento do fluxo HTTP nos Servlets:
 ### 4.3. Dispersão e Duplicação de Regras de Validação
 Sem um plano centralizador:
 - Cada Servlet passou a implementar sua própria validação com expressões regulares incompletas, gerando comportamentos divergentes entre o cadastro de pecuaristas e o de motoristas.
-- A solução planejada foi isolar todas as regras de validação sintática em um componente único e reutilizável: a classe [ValidadorRegex.java](../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java), coberta por suíte completa de testes unitários.
+- A solução planejada foi isolar todas as regras de validação sintática em um componente único e reutilizável: a classe [ValidadorRegex.java](../../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java), coberta por suíte completa de testes unitários.
 
 ### 4.4. O Efeito "Castelo de Cartas" e Retrabalho em Cascata
 Implementar sem plano gera código descartável. Quando uma alteração estrutural no banco de dados precisava ser feita (como a introdução de novas constraints `CHECK` ou enums), todo o código implementado "às cegas" quebrava em cascata, demandando refatorações integrais de DAOs, Servlets e testes.
@@ -105,9 +105,9 @@ Implementar sem plano gera código descartável. Quando uma alteração estrutur
 
 ## 5. A Metodologia Adotada: "Plano Primeiro, Código Depois"
 
-Para superar as armadilhas da implementação desordenada, o projeto **Efficientia** instituiu a obrigatoriedade de documentos de especificação e planos técnicos antes de qualquer alteração de código:
+Para superar as armadilhas da implementação desordenada, durante este ciclo do projeto **Efficientia** a equipe recorreu a especificações e planos técnicos antes de certas alterações de código:
 
-1. **Especificação Técnica Prévia:** Criação de artefatos de planejamento (como [SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md](SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md) e [SPEC_INTEGRACAO_FRONTEND_BACKEND.md](SPEC_INTEGRACAO_FRONTEND_BACKEND.md)), definindo de antemão contratos de métodos, parâmetros esperados, rotas e códigos de erro.
+1. **Especificação Técnica Prévia:** Artefatos temporários ajudaram a definir contratos de métodos, parâmetros, rotas e códigos de erro. Os comportamentos implementados que continuam úteis estão descritos em [Tratamento de Exceções de Duplicidade](../logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md) e [Perfil](../poo/PERFIL.md).
 2. **Prompts Amparados em Arquivos Reais:** A IA só recebe autorização para codificar ou documentar após a leitura estática das classes existentes, schemas e dependências.
 3. **Auditoria Humana Rigorosa em 3 Etapas:** Conforme normatizado em [METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md), todo código ou texto passa pela validação de **Sintaxe**, **Conteúdo** (fidelidade com o código-fonte) e **Organização**.
 

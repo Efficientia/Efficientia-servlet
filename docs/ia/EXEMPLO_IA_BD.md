@@ -4,7 +4,7 @@
 > **Arquivo Gerado:** `EXEMPLO_IA_BD.md`  
 > **Data:** 14/10/2026  
 > **Artefatos Produzidos/Atualizados:**
-> - [NAMING_CONVENTION_DATABASE.md](NAMING_CONVENTION_DATABASE.md)
+> - [NAMING_CONVENTION_DATABASE.md](../bd1/NAMING_CONVENTION_DATABASE.md)
 > - `Efficientia.sql` (schema local)
 > - Modelo DBML para **dbdiagram.io**
 

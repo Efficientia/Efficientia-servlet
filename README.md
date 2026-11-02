@@ -140,7 +140,7 @@ cd Efficientia
    ```sql
    CREATE DATABASE efficientia_db;
    ```
-2. Execute o script de criação de tabelas, tipos ENUM, triggers e carga inicial de dados ([`Efficientia.sql`](Efficientia.sql)):
+2. Execute a cópia local do script de criação de tabelas, tipos ENUM, triggers e carga inicial (`Efficientia.sql`). O script está fora do controle de versão deste repositório; use a cópia disponibilizada para o ambiente do projeto:
    ```bash
    # Via terminal (Linux / macOS / Git Bash / PowerShell):
    psql -U postgres -d efficientia_db -f Efficientia.sql
@@ -287,17 +287,14 @@ Toda a documentação técnica por disciplina, normas arquiteturais, registros d
 | :--- | :---: | :--- |
 | **[docs/ds/GUIA_DEPLOY_E_HOSPEDAGEM_CLOUD.md](docs/ds/GUIA_DEPLOY_E_HOSPEDAGEM_CLOUD.md)** | DS | Guia de containerização Docker (Tomcat 11), configuração do `.env` e deploy gratuito na nuvem (Render + Aiven PostgreSQL). |
 | **[docs/geral/TECNOLOGIAS_UTILIZADAS.md](docs/geral/TECNOLOGIAS_UTILIZADAS.md)** | Geral | Lista exaustiva das tecnologias utilizadas, contexto, justificativa e localização no código-fonte. |
-| **[docs/geral/ANALISE_E_CHECKLIST_ENTREGAS.md](docs/geral/ANALISE_E_CHECKLIST_ENTREGAS.md)** | Geral | Análise completa dos requisitos do edital interdisciplinar (POO, BD1, Lógica, SO) e matriz de conformidade. |
 | **[docs/geral/GUIA_PADRONIZACAO.md](docs/geral/GUIA_PADRONIZACAO.md)** | Geral | Guia normativo de boas práticas, arquitetura em camadas e estilo de código Java. |
 | **[docs/poo/passo-a-passo-dao.md](docs/poo/passo-a-passo-dao.md)** | POO | Tutorial didático de implementação de Data Access Objects com JDBC puro. |
 | **[docs/poo/passo-a-passo-servlet.md](docs/poo/passo-a-passo-servlet.md)** | POO | Tutorial didático de implementação de Jakarta Servlets e padrão Post-Redirect-Get. |
 | **[docs/poo/DOCUMENTACAO_BUSCA_POR_NOME.md](docs/poo/DOCUMENTACAO_BUSCA_POR_NOME.md)** | POO | Mecanismo de busca flexível, particionada e insensível a acentuação. |
-| **[docs/poo/SPEC_INTEGRACAO_FRONTEND_BACKEND.md](docs/poo/SPEC_INTEGRACAO_FRONTEND_BACKEND.md)** | POO | Especificação de integração das telas e JSPs à camada de controle. |
 | **[docs/bd1/NAMING_CONVENTION_DATABASE.md](docs/bd1/NAMING_CONVENTION_DATABASE.md)** | BD1 | Convenção oficial de nomenclatura de tabelas, colunas, constraints e ENUMs no PostgreSQL. |
 | **[docs/bd1/DOCUMENTACAO_HASH_CPF_LGPD.md](docs/bd1/DOCUMENTACAO_HASH_CPF_LGPD.md)** | BD1 | Pseudonimização de CPF com SHA-256 e salting para conformidade com a LGPD. |
 | **[docs/bd1/DOCUMENTACAO_IMPLEMENTACAO_ENUMS_DAOS.md](docs/bd1/DOCUMENTACAO_IMPLEMENTACAO_ENUMS_DAOS.md)** | BD1 | Integração de ENUMs nativos do PostgreSQL com JDBC puro (`Types.OTHER`). |
 | **[docs/logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md](docs/logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md)** | Lógica | Arquitetura de captura de duplicidade (SQLState `23505`) e hierarquia de exceções customizadas. |
-| **[docs/logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md](docs/logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md)** | Lógica | Especificação técnica do mapeamento e fluxo de erros de duplicidade. |
 | **[docs/so/DOCUMENTACAO_VALIDACAO_REGEX.md](docs/so/DOCUMENTACAO_VALIDACAO_REGEX.md)** | SO | Especificação analítica de expressões regulares para CPF, celular nacional sem +55, placas, etc. |
 | **[docs/ia/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](docs/ia/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md)** | IA | Metodologia de geração com IA e protocolo de validação humana (sintaxe, conteúdo e organização). |
 | **[docs/ia/LIMITACOES_USO_IA.md](docs/ia/LIMITACOES_USO_IA.md)** | IA | Análise crítica das limitações, riscos e salvaguardas cognitivas no uso de IA. |

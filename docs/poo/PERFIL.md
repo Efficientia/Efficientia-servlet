@@ -64,12 +64,9 @@ Sem `-Dperfil.db.test=true`, os quatro testes de persistência do Perfil são ig
 
 ## Limites e atenção na integração
 
-O risco de unicidade entre escritores administrativos e a proposta de implantação
-do índice estão documentados em [Unicidade do e-mail do administrador](UNICIDADE_EMAIL_ADMINISTRADOR.md).
-A migração global foi retirada explicitamente do escopo desta entrega; essa
-documentação permanece como referência futura, sem mudança de índices ou constraints.
+- A constraint atual `UNIQUE(email)` diferencia maiúsculas e minúsculas, enquanto o login compara e-mails sem diferenciar caixa. Variantes de caixa podem, portanto, representar a mesma identidade de login.
 
-- Os fluxos administrativos antigos de gravação de e-mail não participam do advisory lock. Uma garantia universal de unicidade sem distinguir caixa exige avaliar e migrar para um índice único em `lower(email)`, com tratamento prévio de conflitos existentes; nenhuma migration foi introduzida neste escopo.
+- `AdminDAO.atualizarPerfil` serializa e verifica conflitos apenas no fluxo do Perfil. Os outros métodos administrativos de gravação e SQL externo não compartilham esse lock, portanto não há garantia global de unicidade sem diferenciar caixa. Uma garantia global exige demanda aprovada, análise de colisões e migração própria; nenhum índice ou constraint foi alterado nesta entrega.
 - O banco descartável usa somente o schema de conta documentado no repositório. Não foi testado o schema de produção nem a totalidade dos fluxos CRUD preexistentes.
 - Manrope e IBM Plex Sans carregaram durante a validação e seguem a estratégia existente de Google Fonts. Ambientes sem acesso externo usam os fallbacks declarados.
 - Não houve validação manual com leitor de tela nem execução em múltiplos navegadores; a evidência visual é do Chrome e do frame desktop fornecido.

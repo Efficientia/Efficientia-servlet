@@ -105,14 +105,14 @@ A validação de sintaxe é a auditoria externa da estrutura formal do documento
 A validação de conteúdo é a auditoria mais aprofundada, na qual o desenvolvedor confronta linha por linha o texto gerado pela IA com a realidade do código-fonte e as regras do domínio:
 
 * **Conferência Cruzada com o Repositório Real:**
-  * O desenvolvedor abre as classes citadas e confere se os métodos realmente existem e possuem as assinaturas descritas (ex.: checar em [ValidadorRegex.java](ValidadorRegex.java) se `isCelularValido()` de fato rejeita o prefixo internacional `+55` conforme o edital de Sistemas Operacionais).
+  * O desenvolvedor abre as classes citadas e confere se os métodos realmente existem e possuem as assinaturas descritas (ex.: checar em [ValidadorRegex.java](../../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) se `isCelularValido()` de fato rejeita o prefixo internacional `+55` conforme o edital de Sistemas Operacionais).
   * Verifica se as constraints do banco de dados citadas na documentação (`pecuarista_cpf_key`, `chk_periodo_trajeto`) existem identicamente no script de banco (`Efficientia.sql`).
 * **Detecção e Eliminação de Alucinações da IA:**
   * Modelos de IA podem "inventar" bibliotecas, anotações ou métodos plausíveis mas inexistentes (por exemplo, assumir que o projeto usa Spring Boot ou Hibernate quando na realidade utiliza Servlets nativos e JDBC puro). O desenvolvedor identifica e remove qualquer presunção incorreta.
 * **Validação de Regras de Domínio e Conformidade Legal (LGPD):**
-  * O desenvolvedor confirma se a explicação sobre pseudonimização de CPF em [DOCUMENTACAO_HASH_CPF_LGPD.md](DOCUMENTACAO_HASH_CPF_LGPD.md) descreve fielmente a implementação de SHA-256 com salting/pepper estático de [CpfHasher.java](CpfHasher.java), assegurando que o fundamento jurídico da LGPD está bem embasado.
+  * O desenvolvedor confirma se a explicação sobre pseudonimização de CPF em [DOCUMENTACAO_HASH_CPF_LGPD.md](../bd1/DOCUMENTACAO_HASH_CPF_LGPD.md) descreve fielmente a implementação de SHA-256 com salting/pepper estático de [CpfHasher.java](../../src/main/java/com/efficientia/efficientia/util/CpfHasher.java), assegurando que o fundamento jurídico da LGPD está bem embasado.
 * **Auditoria de Tratamento de Erros:**
-  * Checa se as subclasses de [DadoDuplicadoException](DadoDuplicadoException.java) documentadas cobrem exatamente os cenários disparados pelo [TratadorExcecaoBanco.java](TratadorExcecaoBanco.java).
+  * Checa se as subclasses de [DadoDuplicadoException](../../src/main/java/com/efficientia/efficientia/exception/DadoDuplicadoException.java) documentadas cobrem exatamente os cenários disparados pelo [TratadorExcecaoBanco.java](../../src/main/java/com/efficientia/efficientia/util/TratadorExcecaoBanco.java).
 
 ---
 
@@ -123,11 +123,11 @@ A validação de organização garante que o documento se encaixe de forma harm�
 * **Hierarquia Lógica e Escaneabilidade:**
   * O desenvolvedor avalia se os títulos (`#`, `##`, `###`) seguem uma ordem didática: Contexto $\rightarrow$ Problema $\rightarrow$ Solução Técnica $\rightarrow$ Código/Exemplo $\rightarrow$ Conclusão.
 * **Padronização e Estrutura de Diretórios:**
-  * **Ação Crítica Realizada:** Constatando que mais de 10 arquivos `.md` estavam dispersos de forma desorganizada na raiz do projeto, o usuário comandou a organização de uma pasta centralizada [docs/](README.md), preservando o histórico do Git via `git mv` e criando índices centralizados.
+  * **Ação Crítica Realizada:** Constatando que mais de 10 arquivos `.md` estavam dispersos de forma desorganizada na raiz do projeto, o usuário comandou a organização de uma pasta centralizada [docs/](../README.md), preservando o histórico do Git via `git mv` e criando índices centralizados.
 * **Indexação e Navegabilidade no `README.md`:**
-  * Verificação de que todo novo documento criado é devidamente catalogado no índice geral [docs/README.md](README.md) e referenciado no sumário executivo da raiz [README.md](../README.md).
+  * Verificação de que todo novo documento criado é devidamente catalogado no índice geral [docs/README.md](../README.md) e referenciado no sumário executivo da raiz [README.md](../../README.md).
 * **Gestão de Controle de Versão e Confidencialidade (.gitignore):**
-  * **Ação Crítica Realizada:** Quando foi gerado o arquivo de análise interna de tarefas e checklist, o usuário validou seu valor de acompanhamento, mas exigiu imediatamente sua inclusão no [.gitignore](../.gitignore), evitando expor checklists de pendências internas na entrega pública do repositório.
+  * **Ação Crítica Realizada:** Quando foi gerado o arquivo de análise interna de tarefas e checklist, o usuário validou seu valor de acompanhamento, mas exigiu imediatamente sua inclusão no [.gitignore](../../.gitignore), evitando expor checklists de pendências internas na entrega pública do repositório.
 
 ---
 
