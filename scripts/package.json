@@ -1,0 +1,8 @@
+{
+  "name": "efficientia-visual-qa",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": { "qa:landing": "node qa-landing.mjs after" },
+  "devDependencies": { "playwright": "1.56.1" }
+}

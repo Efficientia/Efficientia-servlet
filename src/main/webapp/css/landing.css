@@ -1,0 +1,212 @@
+/* Canvas de referência: Figma 2411:71, 1440 × 6144.
+   As superfícies ficam abaixo das curvas; o conteúdo fica acima delas. */
+.pagina-landing { --landing-unit: min(1px, 0.069444444vw); }
+.landing-canvas {
+    --curve-unit: clamp(.5px, .069444444vw, 1px);
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: clip;
+}
+.landing-canvas > section { grid-column: 1; isolation: auto; z-index: auto; overflow: visible; }
+.landing-canvas > .hero { grid-row: 1; }
+.landing-canvas > .problema { grid-row: 2; }
+.landing-canvas > .solucao { grid-row: 3; }
+.landing-canvas > .impacto { grid-row: 4; }
+.landing-decoration {
+    grid-column: 1;
+    grid-row: 1 / 5;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: subgrid;
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    pointer-events: none;
+}
+.landing-curve { grid-column: 1; position: relative; min-height: 0; }
+.landing-curve img { position: absolute; display: block; height: auto; max-width: none; pointer-events: none; }
+.landing-curve-hero { grid-row: 1 / 3; }
+.landing-curve-hero img {
+    width: calc(2526.23 * var(--curve-unit));
+    left: calc(50% - 1356.559 * var(--curve-unit));
+    top: calc(-270.085 * var(--curve-unit));
+}
+.landing-curve-problema { grid-row: 2 / 4; }
+.landing-curve-problema img {
+    width: calc(2049.15 * var(--curve-unit));
+    left: calc(50% - 875.785 * var(--curve-unit));
+    top: calc(350.531 * var(--curve-unit));
+    transform: scaleX(-1);
+}
+.landing-curve-impacto { grid-row: 3 / 5; }
+.landing-curve-impacto img {
+    width: calc(2389.72 * var(--curve-unit));
+    left: calc(50% - 1227.192 * var(--curve-unit));
+    top: calc(389.152 * var(--curve-unit));
+    transform: scaleX(-1);
+}
+.pagina-landing .conteudo-hero,
+.pagina-landing .conteudo-problema,
+.pagina-landing .conteudo-solucao,
+.pagina-landing .conteudo-impacto,
+.pagina-landing .conteudo-proximo-passo { position: relative; z-index: 2; }
+.pagina-landing .botao-ativo { color: var(--color-primary); }
+.pagina-landing .botao-desativado { color: var(--color-white); }
+.pagina-landing .botoes-proximo-passo .botao-ativo { color: var(--color-primary-dark); }
+.pagina-landing .botoes-proximo-passo .botao-desativado { background-color: rgb(255 248 225 / 30%); }
+.pagina-landing .botoes-proximo-passo .botao-desativado:hover { background-color: rgb(255 248 225 / 36%); }
+.pagina-landing .video-fundo { z-index: 0; }
+.pagina-landing .botao-ativo:active,
+.pagina-landing .botao-desativado:active { filter: brightness(.94); }
+.pagina-landing section[id] { scroll-margin-top: 110px; }
+
+@media (min-width: 861px) {
+    .pagina-landing .menu {
+        left: 50%;
+        width: min(calc(100% - 52px), 1380px);
+        max-width: none;
+        height: 85px;
+        margin: 20.815px 0 0;
+        padding: 15px 30px;
+        transform: translateX(-50%);
+        gap: clamp(18px, 3vw, 50px);
+    }
+    .pagina-landing .menu-links { gap: clamp(14px, 1.55vw, 24px); }
+    .pagina-landing .link-menu { font-size: clamp(14px, 1.388889vw, 20px); white-space: nowrap; }
+    .pagina-landing #logo { height: clamp(32px, 3.125vw, 45px); }
+    .pagina-landing .hero { display: block; min-height: 0; padding: 0; }
+    .pagina-landing .conteudo-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 460fr) minmax(0, 362fr) minmax(0, 510fr);
+        gap: calc(25 * var(--landing-unit));
+        align-items: start;
+        width: 100%;
+        max-width: 1440px;
+        min-height: calc(1024 * var(--landing-unit));
+        padding: 0 calc(26 * var(--landing-unit));
+        margin-inline: auto;
+    }
+    .pagina-landing .hero-texto-botoes { max-width: none; padding-top: calc(276 * var(--landing-unit)); }
+    .pagina-landing .conteudo-hero h1 {
+        font-size: calc(48 * var(--landing-unit));
+        font-weight: 800;
+        line-height: 1.375;
+        margin: 0 0 calc(30.139 * var(--landing-unit));
+    }
+    .pagina-landing .conteudo-hero h1 .destaque { white-space: nowrap; font-family: inherit; }
+    .pagina-landing #hero-texto {
+        width: calc(380 * var(--landing-unit));
+        max-width: 100%;
+        margin: 0 0 calc(50 * var(--landing-unit));
+        font-size: calc(24 * var(--landing-unit));
+        line-height: calc(31 * var(--landing-unit));
+    }
+    .pagina-landing #hero-texto br { display: none; }
+    .pagina-landing .botoes-hero { width: calc(460 * var(--landing-unit)); max-width: none; gap: calc(20.278 * var(--landing-unit)); }
+    .pagina-landing .botoes-hero a,
+    .pagina-landing .botoes-proximo-passo a {
+        width: 100%;
+        min-height: calc(80 * var(--landing-unit));
+        padding: calc(16 * var(--landing-unit));
+        border-radius: 40px;
+        font-size: clamp(20px, calc(28 * var(--landing-unit)), 28px);
+        line-height: 1.3;
+    }
+    .pagina-landing .hero-imagem {
+        position: relative;
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        height: calc(1024 * var(--landing-unit));
+        padding: 0;
+        margin: 0;
+    }
+    .pagina-landing #mockup-celular-hero {
+        display: block;
+        position: absolute;
+        top: calc(126 * var(--landing-unit));
+        width: calc(620 * var(--landing-unit));
+        max-width: none;
+        min-width: 0;
+        height: auto;
+        transform: translateX(calc(-50 * var(--landing-unit)));
+    }
+    .pagina-landing .hero-lista { width: 100%; max-width: none; padding-top: calc(383.965 * var(--landing-unit)); }
+    .pagina-landing .lista-funcionalidades-hero { gap: calc(30 * var(--landing-unit)); }
+    .pagina-landing .lista-funcionalidades-hero li { gap: calc(20 * var(--landing-unit)); }
+    .pagina-landing .lista-funcionalidades-hero li span { font-size: calc(32 * var(--landing-unit)); font-weight: 500; line-height: 1.3; }
+    .pagina-landing .lista-funcionalidades-hero li img { flex: none; width: calc(70 * var(--landing-unit)); height: calc(70 * var(--landing-unit)); padding: calc(14 * var(--landing-unit)); }
+    .pagina-landing .conteudo-problema,
+    .pagina-landing .conteudo-impacto {
+        width: 100%;
+        max-width: 1440px;
+        min-height: calc(1024 * var(--landing-unit));
+        margin: 0 auto;
+        padding: calc(85 * var(--landing-unit)) calc(26 * var(--landing-unit)) calc(57 * var(--landing-unit));
+    }
+    .pagina-landing .badge { width: calc(150 * var(--landing-unit)); max-width: none; height: calc(45 * var(--landing-unit)); align-items: center; }
+    .pagina-landing .badge p { padding: 0; font-size: calc(16 * var(--landing-unit)); }
+    .pagina-landing .problema-titulo,
+    .pagina-landing .conteudo-impacto h2 { font-size: calc(48 * var(--landing-unit)); font-weight: 800; line-height: 1.375; margin: calc(15 * var(--landing-unit)) 0; }
+    .pagina-landing .problema-texto,
+    .pagina-landing .impacto-texto { font-size: calc(24 * var(--landing-unit)); line-height: calc(31 * var(--landing-unit)); margin: 0; }
+    .pagina-landing .mockup-desktop { position: absolute; display: block; top: calc(270 * var(--landing-unit)); left: 50%; width: calc(1133 * var(--landing-unit)); max-width: 100%; height: auto; margin: 0; transform: translateX(-50%); }
+    .pagina-landing .cards-problema { max-width: 1375px; margin: calc(548.983 * var(--landing-unit)) auto 0; padding: 0; gap: calc(20 * var(--landing-unit)); transform: none; }
+    .pagina-landing .card-problema { min-width: 0; max-width: none; height: calc(130 * var(--landing-unit)); min-height: 0; padding: calc(25 * var(--landing-unit)); gap: calc(20 * var(--landing-unit)); }
+    .pagina-landing .card-problema img { width: calc(65 * var(--landing-unit)); max-width: 65px; flex: none; }
+    .pagina-landing .card-problema h3 { font-size: calc(24 * var(--landing-unit)); }
+    .pagina-landing .card-problema p { font-size: calc(16 * var(--landing-unit)); line-height: 1.3; }
+    .pagina-landing .conteudo-impacto { padding-top: calc(100 * var(--landing-unit)); padding-bottom: 0; }
+    .pagina-landing .impacto-figura { position: relative; width: calc(1396.552 * var(--landing-unit)); max-width: none; margin: calc(-88.677 * var(--landing-unit)) 0 0 calc(-4.276 * var(--landing-unit)); }
+    .pagina-landing .conteudo-impacto .impacto-figura .img-impacto { width: 100%; max-width: none; margin: 0; transform: none; }
+    .pagina-landing .conteudo-proximo-passo { display: grid; grid-template-columns: calc(536 * var(--landing-unit)) minmax(0, 1fr); gap: 0; width: 100%; max-width: 1440px; min-height: calc(956 * var(--landing-unit)); padding: calc(132 * var(--landing-unit)) calc(26 * var(--landing-unit)) 0; margin: 0 auto; overflow: visible; }
+    .pagina-landing .esquerda-proximo-passo { width: 100%; max-width: none; gap: calc(15 * var(--landing-unit)); }
+    .pagina-landing #badge-proximo-passo { width: calc(150 * var(--landing-unit)); }
+    .pagina-landing .texto-proximo-passo h2 { font-size: calc(48 * var(--landing-unit)); font-weight: 800; line-height: 1.375; margin: 0; }
+    .pagina-landing .texto-proximo-passo p { font-size: calc(24 * var(--landing-unit)); line-height: calc(31 * var(--landing-unit)); margin-top: calc(22.866 * var(--landing-unit)); }
+    .pagina-landing .texto-proximo-passo p br { display: none; }
+    .pagina-landing .botoes-proximo-passo { max-width: none; margin-top: calc(27.157 * var(--landing-unit)); gap: calc(30.513 * var(--landing-unit)); }
+    .pagina-landing .botoes-proximo-passo a { min-height: calc(82.45 * var(--landing-unit)); }
+    .pagina-landing .imagens-proximo-passo { display: block; position: relative; min-width: 0; margin: calc(61.713 * var(--landing-unit)) 0 0; }
+    .pagina-landing #mockup-celular-proximo-passo { display: block; width: calc(350 * var(--landing-unit)); max-width: none; max-height: none; height: auto; margin-left: calc(52 * var(--landing-unit)); }
+    .pagina-landing #dashboard-proximo-passo { position: absolute; top: calc(-79.713 * var(--landing-unit)); left: calc(384 * var(--landing-unit)); width: calc(494 * var(--landing-unit)); max-width: none; height: calc(784 * var(--landing-unit)); object-fit: cover; object-position: left center; margin: 0; }
+    .pagina-landing .proximo-passo { overflow: clip; }
+    .pagina-landing .rodape { margin-top: 0; background: #000f48; }
+}
+
+@media (min-width: 861px) and (max-width: 1100px) {
+    .pagina-landing .menu { height: 64px; padding-inline: 18px; gap: 16px; }
+    .pagina-landing .menu-links { gap: 12px; }
+    .pagina-landing .menu .menu-entrar { padding-inline: 12px; }
+}
+@media (max-width: 860px) {
+    .pagina-landing .hero { min-height: 0; }
+    .pagina-landing .conteudo-problema,
+    .pagina-landing .conteudo-impacto { margin-inline: 0; }
+    .pagina-landing .mockup-desktop { width: 100%; max-width: 700px; transform: none; margin: 24px auto 0; }
+    .pagina-landing .cards-problema { transform: none; }
+    .pagina-landing .botoes-hero a,
+    .pagina-landing .botoes-proximo-passo a { min-height: 48px; font-size: 20px; }
+    .pagina-landing .botao-desativado { background-color: rgb(255 248 225 / 16%); }
+    .pagina-landing #mockup-celular-hero { max-width: 280px; min-width: 0; }
+    .pagina-landing #mockup-celular-proximo-passo { display: block; width: 40%; max-width: 260px; height: auto; max-height: none; }
+    .pagina-landing #dashboard-proximo-passo { width: 56%; max-width: 450px; }
+    .pagina-landing .imagens-proximo-passo { align-items: center; gap: 18px; padding-right: 0; }
+}
+@media (max-width: 480px) {
+    .pagina-landing .hero-imagem { max-width: 54%; }
+    .pagina-landing #mockup-celular-hero { width: 145%; max-width: none; transform: translateX(-10%); }
+    .pagina-landing .hero-lista { position: relative; z-index: 1; }
+    .pagina-landing .lista-funcionalidades-hero li span { font-size: 13px; }
+    .pagina-landing .conteudo-proximo-passo { flex-direction: column; padding: 48px 20px 40px; gap: 28px; overflow: visible; }
+    .pagina-landing .esquerda-proximo-passo { max-width: none; width: 100%; }
+    .pagina-landing .texto-proximo-passo h2 { font-size: 32px; }
+    .pagina-landing .texto-proximo-passo p { font-size: 16px; line-height: 1.45; }
+    .pagina-landing .texto-proximo-passo p br { display: none; }
+    .pagina-landing .imagens-proximo-passo { width: 100%; justify-content: flex-start; align-items: center; gap: 18px; }
+    .pagina-landing #mockup-celular-proximo-passo { display: block; width: 40%; max-width: none; max-height: none; height: auto; }
+    .pagina-landing #dashboard-proximo-passo { width: 56%; max-width: none; margin: 0; }
+}

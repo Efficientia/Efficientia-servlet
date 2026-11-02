@@ -5,22 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Efficientia</title>
-    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/style.css?v=13">
     <link rel="stylesheet" href="css/funcionalidades.css?v=2">
-    <link rel="stylesheet" href="css/solucao.css?v=1">
+    <link rel="stylesheet" href="css/solucao.css?v=2">
+    <link rel="stylesheet" href="css/landing.css?v=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Manrope:wght@200..800&display=swap"
           rel="stylesheet">
     <link rel="icon" href="assets/Favicon_64x64.png" type="image/x-icon">
 </head>
-<body>
-<section class="menu">
+<body class="pagina-landing">
+<header class="menu">
     <img src="assets/logo_efficientia.png" alt="Logo da Efficientia" id="logo">
     <button class="btn-menu-hamburguer" aria-label="Abrir menu" aria-expanded="false" type="button">
         <img src="assets/icone_menu.svg" alt="Ícone de menu">
     </button>
-    <nav class="menu-links">
+    <nav class="menu-links" aria-label="Navegação principal">
         <a class="link-menu" href="#inicio">Início</a>
         <a class="link-menu" href="#problema">Problema</a>
         <a class="link-menu" href="#solucao">Solução</a>
@@ -29,16 +30,21 @@
         <a class="link-menu" href="sobre-nos.html">Sobre Nós</a>
         <a class="link-menu menu-entrar" href="login">Entrar</a>
     </nav>
-</section>
+</header>
+
+<main>
+<div class="landing-canvas">
+    <div class="landing-decoration" aria-hidden="true">
+        <div class="landing-curve landing-curve-hero"><img data-curve="hero" src="assets/landing-linhas-hero.svg" alt="" width="2526" height="1952"></div>
+        <div class="landing-curve landing-curve-problema"><img data-curve="problema-solucao" src="assets/landing-linhas-problema-solucao.svg" alt="" width="2049" height="1607"></div>
+        <div class="landing-curve landing-curve-impacto"><img data-curve="solucao-impacto" src="assets/landing-linhas-solucao-impacto.svg" alt="" width="2390" height="1854"></div>
+    </div>
 
 <section id="inicio" class="hero">
 
     <video autoplay loop muted playsinline class="video-fundo">
         <source src="assets/background-hero.webm" type="video/webm">
     </video>
-    <div class="linhas-organicas linhas-hero" aria-hidden="true">
-        <img src="assets/linhas_organicas.svg" alt="">
-    </div>
 
 
     <div class="conteudo-hero">
@@ -56,7 +62,7 @@
 
 
         <div class="hero-imagem">
-            <img src="assets/mockup-home-mobile-real-hero.png" alt="Mockup de iPhone com a tela Home do aplicativo Efficientia" id="mockup-celular-hero">
+            <img src="assets/mockup_celular_hero.png" alt="Mockup de iPhone com a tela Home do aplicativo Efficientia" id="mockup-celular-hero">
         </div>
 
         <div class="hero-lista">
@@ -94,7 +100,7 @@
         <p class="problema-texto">Relatórios manuais aumentam o retrabalho, geram falhas e <br> dificultam o controle
             diário da operação.</p>
 
-        <img class="mockup-desktop" src="assets/mockup-comparativo-dashboard-atual.png"
+        <img class="mockup-desktop" src="assets/mockup_problema.png"
              alt="Comparação entre o relatório em papel e metade de um computador com o dashboard atual da Efficientia">
 
         <div class="cards-problema">
@@ -122,10 +128,6 @@
         </div>
     </div>
 </section>
-
-<div class="linhas-organicas">
-    <img id="linha2" src="assets/linhas_organicas2.svg" alt="linhas orgânicas">
-</div>
 
 <section id="solucao" class="solucao">
     <div class="conteudo-solucao">
@@ -204,10 +206,6 @@
     </div>
 </section>
 
-<div class="linhas-organicas">
-    <img src="assets/linhas_organicas.svg" alt="linhas orgânicas" id="linha3">
-</div>
-
 <section class="impacto" id="impacto">
     <div class="conteudo-impacto">
         <div class="badge">
@@ -224,6 +222,8 @@
         </figure>
     </div>
 </section>
+
+</div>
 
 <section class="funcionalidades" id="funcionalidades" aria-labelledby="titulo-funcionalidades">
     <div class="conteudo-funcionalidades">
@@ -328,7 +328,9 @@
 
 </section>
 
-<section class="rodape">
+</main>
+
+<footer class="rodape">
     <img src="assets/logo_com_slogan.png" alt="logo da Efficientia com slogan" id="logo-rodape">
     <div class="links-rodape">
         <a href="#inicio">Inicio</a>
@@ -340,7 +342,7 @@
 
     </div>
     <p>Projeto Interdisciplinar <br> Germinare TECH, 2026</p>
-</section>
+</footer>
 
 <script src="js/carousel-solucao.js?v=3" defer></script>
 </body>

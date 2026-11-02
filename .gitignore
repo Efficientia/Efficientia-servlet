@@ -56,6 +56,7 @@ docs/geral/ANALISE_E_CHECKLIST_ENTREGAS.md
 /.maestri/
 /graphify-out/
 /output/
+/scripts/node_modules/
 /docs/superpowers/
 /docs/qa/
 /design-qa.md
