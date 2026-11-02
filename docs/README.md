@@ -53,7 +53,13 @@ Documentação comprobatória da utilização estratégica, metodologia de valid
 
 ---
 
-### 6. Governança e Arquitetura Geral (`docs/geral/`)
+### 6. Desenvolvimento de Sistemas (DS) (`docs/ds/`)
+Infraestrutura de publicação web, containerização Docker e hospedagem em nuvem (PaaS + DBaaS):
+* **[Guia de Deploy, Containerização e Hospedagem em Nuvem](ds/GUIA_DEPLOY_E_HOSPEDAGEM_CLOUD.md):** Análise arquitetural de hospedagem (incompatibilidade do GitHub Pages com Jakarta EE/Servlets/JSP), comparativo de plataformas Cloud gratuitas (Render + Aiven PostgreSQL), especificação do `Dockerfile` multi-stage com Tomcat 11 e gestão segura de variáveis de ambiente (`.env` / `ConnectionFactory`).
+
+---
+
+### 7. Governança e Arquitetura Geral (`docs/geral/`)
 Visão holística, conformidade curricular e padronização global do projeto:
 * **[Tecnologias Utilizadas](geral/TECNOLOGIAS_UTILIZADAS.md):** Especificação completa das tecnologias empregadas (Java, Jakarta Servlet, JSP/JSTL, JDBC, PostgreSQL, Dotenv, Regex, JUnit), contexto, justificativa técnica e localização no código.
 * **[Guia de Padronização de Código](geral/GUIA_PADRONIZACAO.md):** Normas de arquitetura MVC, separação em pacotes, padrões de nomenclatura, estilo de código Java e boas práticas.

@@ -113,6 +113,7 @@ Toda a documentação técnica, normas arquiteturais, registros de IA e guias pa
 | **[docs/logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md](docs/logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md)** | Lógica | Arquitetura de captura de duplicidade (SQLState 23505) e hierarquia de exceções customizadas. |
 | **[docs/logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md](docs/logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md)** | Lógica | Especificação técnica do mapeamento e fluxo de erros de duplicidade. |
 | **[docs/so/DOCUMENTACAO_VALIDACAO_REGEX.md](docs/so/DOCUMENTACAO_VALIDACAO_REGEX.md)** | SO | Especificação de expressões regulares para CPF, celular nacional sem +55, placas, etc. |
+| **[docs/ds/GUIA_DEPLOY_E_HOSPEDAGEM_CLOUD.md](docs/ds/GUIA_DEPLOY_E_HOSPEDAGEM_CLOUD.md)** | DS | Guia de containerização Docker (Tomcat 11), configuração segura do `.env` e deploy gratuito em nuvem (Render + Aiven PostgreSQL). |
 | **[docs/ia/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](docs/ia/METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md)** | IA | Metodologia de geração com IA e protocolo de validação humana (sintaxe, conteúdo e organização). |
 | **[docs/ia/LIMITACOES_USO_IA.md](docs/ia/LIMITACOES_USO_IA.md)** | IA | Análise crítica das limitações, riscos e salvaguardas cognitivas no uso de IA. |
 | **[docs/ia/EXEMPLO_IA_BD.md](docs/ia/EXEMPLO_IA_BD.md)** | IA / BD1 | Evidência de uso crítico e estratégico de IA em Banco de Dados. |
