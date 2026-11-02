@@ -2,6 +2,7 @@
 <%-- Barra superior compartilhada. Requer: variável de página "paginaServlet" (rota do Servlet, ex.: /pecuarista). --%>
 <header class="top-header">
   <c:choose>
+    <c:when test="${paginaAtiva eq 'perfil'}" />
     <c:when test="${paginaAtiva eq 'home'}">
       <div class="search-bar-wrapper">
         <img src="${pageContext.request.contextPath}/assets/icons/buscar.svg" alt="" class="search-icon">
@@ -31,8 +32,8 @@
   </c:choose>
 
   <div class="top-actions">
-    <button type="button" class="circle-action-btn profile-btn" title="Perfil" aria-label="Perfil de usuário">
+    <a href="${pageContext.request.contextPath}/perfil" class="circle-action-btn profile-btn" title="Meu perfil" aria-label="Meu perfil" ${paginaAtiva eq 'perfil' ? 'aria-current="page"' : ''}>
       <img src="${pageContext.request.contextPath}/assets/icons/perfil.svg" alt="">
-    </button>
+    </a>
   </div>
 </header>
