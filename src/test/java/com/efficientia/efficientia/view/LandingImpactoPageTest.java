@@ -46,7 +46,7 @@ class LandingImpactoPageTest {
         assertTrue(decoracao.contains("<path"));
         assertFalse(decoracao.contains("<image"));
         assertFalse(decoracao.contains("data:image"));
-        assertFalse(decoracao.contains("<filter"));
+        assertFalse(decoracao.contains("<pattern"));
 
         String pagina = Files.readString(WEBAPP.resolve("index.html"));
         for (String beneficio : new String[]{"Dados organizados", "Dashboard", "Registros seguros", "Menos retrabalho"}) {
