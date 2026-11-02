@@ -121,32 +121,6 @@ button {
     position: relative;
 }
 
-/* Linhas Orgânicas (Elementos Decorativos) */
-.linhas-organicas {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    transform: translateY(-50%);
-    z-index: 1;
-    pointer-events: none;
-    opacity: var(--opacity-subtle);
-}
-
-.linhas-organicas img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-}
-
-.linhas-organicas #linha2 {
-    transform: translateY(7%);
-}
-
-#linha3 {
-    transform: scaleX(-1);
-    transform: scaleY(-1);
-}
-
 /* Badges */
 .badge {
     display: flex;
@@ -874,11 +848,6 @@ button {
     .conteudo-problema, .conteudo-solucao, .conteudo-impacto, .conteudo-proximo-passo {
         margin-left: 0;
         padding: 60px 30px;
-    }
-
-    .linhas-organicas {
-        max-width: 100%;
-        overflow: hidden;
     }
 
     /* Seção Problema */
@@ -2020,12 +1989,6 @@ button {
     }
 }
 
-/* As linhas pertencem ao hero e ficam entre o vídeo e seu conteúdo. */
-.hero .linhas-hero {
-    bottom: 0;
-    z-index: 0;
-    transform: none;
-}
 .conteudo-solucao,
 .conteudo-impacto {
     position: relative;
