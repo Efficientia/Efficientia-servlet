@@ -91,8 +91,29 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   padding: 24px 0;
-  z-index: 20;
+  z-index: 100;
   box-shadow: 4px 0 24px rgba(0, 10, 40, 0.35);
+  /* Fixa a barra lateral permanentemente na tela */
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  flex-shrink: 0;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
 }
 
 .sidebar-top {
@@ -284,6 +305,8 @@ html, body {
   position: relative;
   min-width: 0;
   padding-bottom: 60px;
+  margin-left: 200px;
+  width: calc(100% - 200px);
 }
 
 /* Linhas Decorativas de Fundo */
@@ -1374,11 +1397,11 @@ html, body {
 .home-card-content {
   flex: 1;
   min-width: 0;
-  padding: 18px 24px;
+  padding: 14px 24px 18px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 10px;
 }
 
 .home-card-header {
@@ -1389,7 +1412,7 @@ html, body {
 }
 
 .home-card-title {
-  font-size: 19.5px;
+  font-size: 23px;
   font-weight: 700;
   color: #0F51AE;
   line-height: 1.25;
@@ -1408,8 +1431,8 @@ html, body {
   background: #eef5ff;
   border: 1px solid rgba(15, 81, 174, 0.22);
   border-radius: 9999px;
-  padding: 4px 10px;
-  font-size: 10px;
+  padding: 4px 12px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.5px;
   color: #0F51AE;
@@ -1419,24 +1442,29 @@ html, body {
 }
 
 .home-card-badge .badge-icon {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   object-fit: contain;
 }
 
 .home-card-footer {
+  flex: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
 }
 
 .home-card-desc {
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 16px;
+  line-height: 1.4;
   color: var(--text-muted);
-  max-width: 440px;
+  max-width: 500px;
   margin: 0;
+}
+
+.home-card-footer .btn-ver-agora {
+  align-self: flex-end;
 }
 
 .btn-ver-agora {
@@ -1445,9 +1473,9 @@ html, body {
   gap: 6px;
   background-color: var(--color-green-primary);
   color: var(--text-white);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  padding: 8px 18px;
+  padding: 9px 20px;
   border-radius: 9999px;
   text-decoration: none;
   border: none;
@@ -1466,8 +1494,8 @@ html, body {
 }
 
 .btn-ver-agora svg {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   stroke-width: 2.5;
   transition: transform var(--transition-fast);
 }
@@ -1485,11 +1513,18 @@ html, body {
   }
 
   .sidebar {
+    position: static;
     width: 100%;
     min-width: 100%;
+    height: auto;
     flex-direction: row;
     align-items: center;
     padding: 14px 20px;
+    overflow-y: visible;
+    box-shadow: none;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    align-self: stretch;
   }
 
   .sidebar-top {
@@ -1506,6 +1541,11 @@ html, body {
   .sidebar-user-footer {
     margin: 0;
     padding: 8px 12px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
   }
 
   .content-container {
@@ -1586,14 +1626,29 @@ html, body {
   }
 
   .home-card-content {
-    padding: 16px;
+    padding: 14px 16px 16px;
   }
 
   .home-card-title {
-    font-size: 17.5px;
+    font-size: 20px;
+  }
+
+  .home-card-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .home-card-badge {
+    font-size: 11px;
+  }
+
+  .home-card-footer {
+    flex-direction: column;
+    gap: 12px;
   }
 
   .home-card-desc {
+    font-size: 14px;
     max-width: 100%;
   }
 
