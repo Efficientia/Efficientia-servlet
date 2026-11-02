@@ -31,13 +31,6 @@
   </c:choose>
 
   <div class="top-actions">
-    <button type="button" class="circle-action-btn" title="Configurações" aria-label="Configurações">
-      <img src="${pageContext.request.contextPath}/assets/icons/configuracoes.svg" alt="">
-    </button>
-    <button type="button" class="circle-action-btn" title="Notificações" aria-label="Notificações">
-      <img src="${pageContext.request.contextPath}/assets/icons/notificacoes.svg" alt="">
-      <span class="notification-indicator"></span>
-    </button>
     <button type="button" class="circle-action-btn profile-btn" title="Perfil" aria-label="Perfil de usuário">
       <img src="${pageContext.request.contextPath}/assets/icons/perfil.svg" alt="">
     </button>
