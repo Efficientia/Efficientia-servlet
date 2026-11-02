@@ -52,3 +52,24 @@ EfficientiaDER.pdf
 ### Documentos internos / Checklist de Entregas ###
 docs/geral/ANALISE_E_CHECKLIST_ENTREGAS.md
 
+### Artefatos locais de ferramentas de IA e conferência visual ###
+/.maestri/
+/graphify-out/
+/output/
+/docs/superpowers/
+/docs/qa/
+/design-qa.md
+
+### Recursos locais de referência e protótipos sem integração com o produto ###
+/src/main/webapp/assets/phosphor-icons/
+/src/main/webapp/modelos/
+
+### Arquivos temporários do Codex; configurações e instruções continuam permitidas ###
+/.codex/tmp/
+/.codex/cache/
+/.codex/logs/
+/.codex/sessions/
+/.codex/traces/
+/.codex/visualizations/
+/.codex/shell_snapshots/
+
