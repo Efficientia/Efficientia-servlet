@@ -19,10 +19,13 @@ A garantia deve existir no PostgreSQL para cobrir todos os escritores. Alterar
 apenas a consulta do Perfil ou o nível de isolamento não resolve o contrato dos
 demais escritores.
 
-## Proposta de implantação — requer autorização
+## Referência para uma demanda futura — fora do escopo atual
 
-Nenhuma migração de produção foi aplicada. Antes da integração, o responsável
-pelo banco deve confirmar o schema efetivo e autorizar a estratégia abaixo.
+Em 02/11/2026, o responsável retirou explicitamente a migração de unicidade
+global do escopo da finalização atual. Nenhum índice, constraint ou regra global
+será alterado nesta entrega. A referência abaixo permanece como conhecimento
+técnico para uma demanda futura, que exigirá autorização própria e confirmação
+do schema efetivo.
 
 1. Confirmar que o domínio e o login usam a mesma normalização, inclusive a
    política para espaços. O índice proposto usa `lower(email)`, como o login
@@ -66,6 +69,6 @@ ou reverter um índice válido exige decisão do responsável pelo banco; remove
 a garantia de unicidade reabre o risco de colisão. Não reverter correções de
 dados ou executar DDL automaticamente durante o deploy da aplicação.
 
-Até a garantia global ser implantada, a revisão do Perfil deve registrar essa
-limitação como risco alto de integridade/autenticação e condicionar a liberação
-com múltiplos escritores à decisão explícita da equipe.
+A limitação entre escritores permanece registrada, mas a criação desse índice
+não é uma pendência da entrega atual. Não executar esta proposta como parte da
+preparação das PRs ou do deploy desta versão.

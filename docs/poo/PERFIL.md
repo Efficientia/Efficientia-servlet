@@ -66,6 +66,8 @@ Sem `-Dperfil.db.test=true`, os quatro testes de persistência do Perfil são ig
 
 O risco de unicidade entre escritores administrativos e a proposta de implantação
 do índice estão documentados em [Unicidade do e-mail do administrador](UNICIDADE_EMAIL_ADMINISTRADOR.md).
+A migração global foi retirada explicitamente do escopo desta entrega; essa
+documentação permanece como referência futura, sem mudança de índices ou constraints.
 
 - Os fluxos administrativos antigos de gravação de e-mail não participam do advisory lock. Uma garantia universal de unicidade sem distinguir caixa exige avaliar e migrar para um índice único em `lower(email)`, com tratamento prévio de conflitos existentes; nenhuma migration foi introduzida neste escopo.
 - O banco descartável usa somente o schema de conta documentado no repositório. Não foi testado o schema de produção nem a totalidade dos fluxos CRUD preexistentes.
