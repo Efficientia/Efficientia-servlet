@@ -1,6 +1,7 @@
 package com.efficientia.efficientia.view;
 
 import org.junit.jupiter.api.Test;
+import javax.imageio.ImageIO;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,13 +36,25 @@ class LandingSolutionPageTest {
         List<String> images = elementsWithClass(solution, "div", "imagem-card-solucao");
         assertEquals(3, images.size());
         List<String> expected = List.of(
-                "assets/mockup-v3-documentos.png",
-                "assets/mockup-v3-chegada.png",
-                "assets/mockup-v3-assinatura.png");
+                "assets/solucao-etapa-1.png",
+                "assets/solucao-etapa-2.png",
+                "assets/solucao-etapa-3.png");
         assertAll("Mockups aprovados", java.util.stream.IntStream.range(0, 3)
                 .mapToObj(index -> (org.junit.jupiter.api.function.Executable) () ->
                         assertTrue(images.get(index).contains("src=\"" + expected.get(index) + "\""),
                                 "Etapa " + (index + 1) + " deve usar " + expected.get(index))));
+    }
+
+    @Test
+    void preservaDimensoesETransparenciaDosPngsOficiais() throws IOException {
+        for (int etapa = 1; etapa <= 3; etapa++) {
+            var imagem = ImageIO.read(Path.of("src/main/webapp/assets/solucao-etapa-" + etapa + ".png").toFile());
+            assertNotNull(imagem);
+            assertEquals(480, imagem.getWidth());
+            assertEquals(600, imagem.getHeight());
+            assertTrue(imagem.getColorModel().hasAlpha());
+            assertEquals(0, imagem.getRGB(0, 0) >>> 24);
+        }
     }
 
     @Test
