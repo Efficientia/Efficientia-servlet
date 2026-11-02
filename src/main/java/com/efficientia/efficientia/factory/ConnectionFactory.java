@@ -72,7 +72,47 @@ public class ConnectionFactory {
         if (value == null || value.isBlank()) {
             value = System.getenv(envKey);
         }
+        if (value == null || value.isBlank()) {
+            value = readFromProcEnviron(dotKey, envKey);
+        }
+        if (value != null) {
+            value = value.trim();
+            // Remove prefixo acidental caso o usuário tenha colado "db.url=jdbc:..." no valor da variável
+            if (value.startsWith(dotKey + "=")) {
+                value = value.substring((dotKey + "=").length()).trim();
+            } else if (value.startsWith(envKey + "=")) {
+                value = value.substring((envKey + "=").length()).trim();
+            }
+            // Remove aspas acidentais nas extremidades
+            if ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'"))) {
+                value = value.substring(1, value.length() - 1).trim();
+            }
+        }
         return value;
+    }
+
+    /**
+     * Lê variáveis diretamente de /proc/1/environ em containers Linux caso o shell (/bin/sh)
+     * do Tomcat tenha filtrado variáveis com ponto no nome (como db.url, db.user, db.password).
+     */
+    private static String readFromProcEnviron(String dotKey, String envKey) {
+        File procEnv = new File("/proc/1/environ");
+        if (!procEnv.exists() || !procEnv.canRead()) {
+            return null;
+        }
+        try {
+            String raw = java.nio.file.Files.readString(procEnv.toPath(), java.nio.charset.StandardCharsets.UTF_8);
+            for (String entry : raw.split("\0")) {
+                if (entry.startsWith(dotKey + "=")) {
+                    return entry.substring((dotKey + "=").length());
+                }
+                if (entry.startsWith(envKey + "=")) {
+                    return entry.substring((envKey + "=").length());
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
     /**
@@ -87,7 +127,8 @@ public class ConnectionFactory {
         String user = getConfig("db.user", "DB_USER");
         String password = getConfig("db.password", "DB_PASSWORD");
 
-        if (url == null || user == null || password == null) {
+        if (url == null || user == null || password == null || url.isBlank() || user.isBlank() || password.isBlank()) {
+            System.err.println("[ConnectionFactory] ERRO: Credenciais ausentes (url=" + (url != null) + ", user=" + (user != null) + ", password=" + (password != null) + ").");
             throw new SQLException("Configure db.url, db.user e db.password no .env local ou DB_URL, DB_USER e DB_PASSWORD nas variáveis de ambiente.");
         }
 
@@ -99,14 +140,19 @@ public class ConnectionFactory {
         config.setPassword(password);
 
         // Otimização de parâmetros do Pool para banco remoto na nuvem (Aiven PostgreSQL)
-        config.setMaximumPoolSize(10);        // Limite seguro para não esgotar conexões do plano de nuvem
-        config.setMinimumIdle(2);             // Mantém conexões quentes e prontas para atendimento imediato
+        config.setMaximumPoolSize(5);         // Limite seguro para não esgotar as 20 conexões do plano gratuito Aiven
+        config.setMinimumIdle(1);             // Mantém conexão pronta sem sobrecarregar o limite simultâneo
         config.setIdleTimeout(60000);         // 1 minuto: encerra conexões excedentes ociosas
-        config.setConnectionTimeout(10000);   // 10 segundos: tempo limite para obter conexão
+        config.setConnectionTimeout(20000);   // 20 segundos: tolerância para cold start em nuvem
         config.setMaxLifetime(1800000);       // 30 minutos: renova conexões antes de expiração de firewall/cloud
         config.setKeepaliveTime(60000);       // 1 minuto: ping periódico preventivo contra timeout de NAT
 
-        dataSource = new HikariDataSource(config);
+        try {
+            dataSource = new HikariDataSource(config);
+        } catch (RuntimeException ex) {
+            System.err.println("[ConnectionFactory] Falha ao conectar ao banco PostgreSQL (" + url + "): " + ex.getMessage());
+            throw new SQLException("Não foi possível estabelecer conexão com o banco de dados PostgreSQL.", ex);
+        }
     }
 
     /**
