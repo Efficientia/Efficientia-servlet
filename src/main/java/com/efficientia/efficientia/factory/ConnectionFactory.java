@@ -34,7 +34,13 @@ public class ConnectionFactory {
             return Dotenv.configure().load();
         }
 
-        // 2. Tenta encontrar o .env na raiz do projeto subindo a árvore de pastas
+        // 2. Suporte nativo a Secret Files em provedores Cloud (ex: Render monta em /etc/secrets/.env)
+        File renderSecretEnv = new File("/etc/secrets/.env");
+        if (renderSecretEnv.exists()) {
+            return Dotenv.configure().directory("/etc/secrets").load();
+        }
+
+        // 3. Tenta encontrar o .env na raiz do projeto subindo a árvore de pastas
         // a partir da pasta onde a classe compilada está (cobre Tomcat, WARs explodidos e IDEs)
         try {
             var codeSource = ConnectionFactory.class.getProtectionDomain().getCodeSource();
@@ -51,8 +57,22 @@ public class ConnectionFactory {
         } catch (Exception ignored) {
         }
 
-        // 3. Fallback: carrega variáveis de ambiente do sistema sem disparar erro se o .env não for achado
+        // 4. Fallback: carrega variáveis de ambiente do sistema sem disparar erro se o .env não for achado
         return Dotenv.configure().ignoreIfMissing().load();
+    }
+
+    private static String getConfig(String dotKey, String envKey) {
+        String value = dotenv.get(dotKey);
+        if (value == null || value.isBlank()) {
+            value = dotenv.get(envKey);
+        }
+        if (value == null || value.isBlank()) {
+            value = System.getenv(dotKey);
+        }
+        if (value == null || value.isBlank()) {
+            value = System.getenv(envKey);
+        }
+        return value;
     }
 
     /**
@@ -63,12 +83,12 @@ public class ConnectionFactory {
             return;
         }
 
-        String url = dotenv.get("db.url");
-        String user = dotenv.get("db.user");
-        String password = dotenv.get("db.password");
+        String url = getConfig("db.url", "DB_URL");
+        String user = getConfig("db.user", "DB_USER");
+        String password = getConfig("db.password", "DB_PASSWORD");
 
         if (url == null || user == null || password == null) {
-            throw new SQLException("Configure db.url, db.user e db.password no .env local.");
+            throw new SQLException("Configure db.url, db.user e db.password no .env local ou DB_URL, DB_USER e DB_PASSWORD nas variáveis de ambiente.");
         }
 
         HikariConfig config = new HikariConfig();
