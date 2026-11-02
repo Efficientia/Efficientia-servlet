@@ -14,7 +14,6 @@ Documentos, tutoriais e especificações de backend Java, arquitetura MVC, DAOs,
 * **[Passo a Passo: Como Implementar um DAO](poo/passo-a-passo-dao.md):** Roteiro didático completo para criação de classes Data Access Object com JDBC puro, queries parametrizadas e tratamento de erros.
 * **[Passo a Passo: Como Implementar um Servlet](poo/passo-a-passo-servlet.md):** Roteiro prático para criação de Servlets com anotação `@WebServlet`, tratamento de GET/POST e padrão Post-Redirect-Get.
 * **[Documentação da Busca por Nome e Termos](poo/DOCUMENTACAO_BUSCA_POR_NOME.md):** Mecanismo de busca flexível (nome completo, particionado, insensível a maiúsculas/minúsculas e acentuação) implementado nas DAOs e Servlets.
-* **[Especificação de Integração Front-End × Back-End](poo/SPEC_INTEGRACAO_FRONTEND_BACKEND.md):** Conversão das telas do Design System em JSPs protegidas e dinâmicas, mapeamento campo × parâmetro × banco, ajustes nos Servlets e roteiro de testes.
 
 ---
 
@@ -28,10 +27,7 @@ Diretrizes e especificações sobre o banco relacional PostgreSQL, modelagem, co
 
 ### 3. Lógica de Programação (`docs/logica/`)
 Arquitetura de tolerância a falhas, tratamento de exceções de integridade e conversão de erros de infraestrutura SQL para regras de negócio:
-* **[Especificação de Tratamento de Exceções de Duplicidade](logica/SPEC_TRATAMENTO_EXCECOES_DUPLICIDADE.md):** Especificação arquitetural do mapeamento do código SQLState `23505` (`unique_violation`) para a hierarquia de exceções customizadas.
 * **[Documentação de Tratamento de Exceções de Duplicidade](logica/DOCUMENTACAO_TRATAMENTO_EXCECOES_DUPLICIDADE.md):** Guia prático detalhando as classes `DadoDuplicadoException`, `TratadorExcecaoBanco` e a integração com os Servlets e páginas de erro.
-* **[Especificação de Padronização de Exceções nos DAOs Auxiliares](logica/SPEC_PADRONIZACAO_EXCECOES_DAOS_AUXILIARES.md):** Especificação técnica para estender o tratamento centralizado aos DAOs auxiliares.
-* **[Plano de Implementação de Exceções nos DAOs Auxiliares](logica/PLANO_IMPLEMENTACAO_EXCECOES_DAOS_AUXILIARES.md):** Checklist de execução e testes para os DAOs auxiliares.
 
 ---
 
@@ -63,7 +59,6 @@ Infraestrutura de publicação web, containerização Docker e hospedagem em nuv
 Visão holística, conformidade curricular e padronização global do projeto:
 * **[Tecnologias Utilizadas](geral/TECNOLOGIAS_UTILIZADAS.md):** Especificação completa das tecnologias empregadas (Java, Jakarta Servlet, JSP/JSTL, JDBC, PostgreSQL, Dotenv, Regex, JUnit), contexto, justificativa técnica e localização no código.
 * **[Guia de Padronização de Código](geral/GUIA_PADRONIZACAO.md):** Normas de arquitetura MVC, separação em pacotes, padrões de nomenclatura, estilo de código Java e boas práticas.
-* **[Análise do Código e Checklist de Entregas](geral/ANALISE_E_CHECKLIST_ENTREGAS.md):** Comparativo detalhado das solicitações por disciplina do edital interdisciplinar (POO, BD1, Lógica, SO), mapeando o que está concluído e o plano de ação do que falta na aplicação Java.
 
 ---
 

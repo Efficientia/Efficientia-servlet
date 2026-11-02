@@ -43,7 +43,7 @@ A IA é treinada para gerar respostas plausíveis e persuasivas, o que se torna 
 
 ### 3.3. Amnésia Contextual e Limites de Janela de Contexto
 Em conversas longas ou repositórios com muitos arquivos:
-- A IA pode "esquecer" diretrizes e restrições acordadas em mensagens anteriores (como voltar a usar caminhos absolutos do Windows ou regredir na padronização de nomenclatura já consolidada no [NAMING_CONVENTION_DATABASE.md](NAMING_CONVENTION_DATABASE.md)).
+- A IA pode "esquecer" diretrizes e restrições acordadas em mensagens anteriores (como voltar a usar caminhos absolutos do Windows ou regredir na padronização de nomenclatura já consolidada no [NAMING_CONVENTION_DATABASE.md](../bd1/NAMING_CONVENTION_DATABASE.md)).
 - Esse comportamento exigiu que a equipe frequentemente reinjetasse restrições negativas nos prompts para manter a coerência das entregas.
 
 ### 3.4. Dificuldade com Validação de Regras de Domínio Específicas
@@ -65,7 +65,7 @@ A IA compreende padrões sintáticos universais (como a gramática do Java ou do
 | Categoria | Limitação Observada na IA | Impacto Potencial | Como a Equipe Mitigou no Projeto |
 | :--- | :--- | :--- | :--- |
 | **Pedagógica** | Risco de dependência acrítica e ilusão de aprendizado | Não aprender os conceitos fundamentais de POO, BD e SO | Estudo obrigatório do "o que faz / para que serve" e domínio de cada método commitado. |
-| **Arquitetura** | Visão fragmentada de arquivos sem integridade global | Quebra de contratos entre JSP, Servlets e PostgreSQL | Especificação prévia em documentos (`SPEC_*`) antes de codificar. |
+| **Arquitetura** | Visão fragmentada de arquivos sem integridade global | Quebra de contratos entre JSP, Servlets e PostgreSQL | Conferência do fluxo integrado e dos contratos técnicos antes de codificar. |
 | **Técnica** | Alucinações de frameworks (Spring/Hibernate) | Código incompatível com o edital de Jakarta EE e JDBC | Prompts com restrições negativas rígidas amparados no `pom.xml`. |
 | **Memória** | Perda de contexto e regras prévias em conversas longas | Regressão de padrões e convenções de código | Criação de documentos normativos fixos (`NAMING_CONVENTION`, `GUIA_PADRONIZACAO`). |
 | **Negócio** | Desconhecimento de regras do domínio pecuário | Validações e fluxos logísticos irrealistas | Especificação detalhada humana das regras de GTA, bem-estar e transporte. |

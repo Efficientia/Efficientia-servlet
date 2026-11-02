@@ -20,7 +20,7 @@ No sistema **Efficientia**, as expressões regulares são aplicadas principalmen
 
 ## 2. Resumo das Expressões Regulares Centrais (`ValidadorRegex.java`)
 
-A classe [ValidadorRegex](Efficientia/src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) centraliza os padrões de regex e fornece métodos estáticos auxiliares de teste e sanitização:
+A classe [ValidadorRegex](../../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) centraliza os padrões de regex e fornece métodos estáticos auxiliares de teste e sanitização:
 
 | Tipo de Dado | Padrão REGEX | Formatos Aceitos | Formatos Rejeitados |
 | :--- | :--- | :--- | :--- |
@@ -64,7 +64,7 @@ Efficientia/
 
 ---
 
-### 3.1. [ValidadorRegex.java](Efficientia/src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java)
+### 3.1. [ValidadorRegex.java](../../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java)
 * **Pacote:** `com.efficientia.efficientia.util`
 * **Tipo de Dado que Atende:** CPF, Celular/Telefone, Placa de Veículo, E-mail, CNPJ, Guia de Trânsito Animal (GTA) e Nota Fiscal (NF).
 * **Como Usa o REGEX:**
@@ -85,7 +85,7 @@ Efficientia/
 
 ---
 
-### 3.2. [PecuaristaServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java)
+### 3.2. [PecuaristaServlet.java](../../src/main/java/com/efficientia/efficientia/controller/PecuaristaServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Dados cadastrais do pecuarista — **CPF**, **Celular/Telefone** e **E-mail**.
 * **Como Usa o REGEX:**
@@ -103,7 +103,7 @@ Efficientia/
 
 ---
 
-### 3.3. [MotoristaServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/MotoristaServlet.java)
+### 3.3. [MotoristaServlet.java](../../src/main/java/com/efficientia/efficientia/controller/MotoristaServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Dados cadastrais do motorista — **Celular/Telefone** e **E-mail**.
 * **Como Usa o REGEX:**
@@ -118,7 +118,7 @@ Efficientia/
 
 ---
 
-### 3.4. [CaminhaoServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java)
+### 3.4. [CaminhaoServlet.java](../../src/main/java/com/efficientia/efficientia/controller/CaminhaoServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Identificadores veiculares — **Placa do Cavalo Mecânico** e **Placa da Carreta**.
 * **Como Usa o REGEX:**
@@ -133,7 +133,7 @@ Efficientia/
 
 ---
 
-### 3.5. [TrajetoServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/TrajetoServlet.java)
+### 3.5. [TrajetoServlet.java](../../src/main/java/com/efficientia/efficientia/controller/TrajetoServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Documentos fiscais e sanitários de transporte de carga viva — **Guia de Trânsito Animal (GTA)**, **Nota Fiscal (NF)** e **Status do Trajeto**.
 * **Como Usa o REGEX:**
@@ -146,7 +146,7 @@ Efficientia/
 
 ---
 
-### 3.6. [LoginServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/LoginServlet.java)
+### 3.6. [LoginServlet.java](../../src/main/java/com/efficientia/efficientia/controller/LoginServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Credencial de autenticação — **E-mail do Administrador / Usuário**.
 * **Como Usa o REGEX:**
@@ -162,7 +162,7 @@ Efficientia/
 
 ---
 
-### 3.7. [EmpresaServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java)
+### 3.7. [EmpresaServlet.java](../../src/main/java/com/efficientia/efficientia/controller/EmpresaServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Identificador de pessoa jurídica — **CNPJ da Empresa Transportadora / Frigorífico**.
 * **Como Usa o REGEX:**
@@ -174,7 +174,7 @@ Efficientia/
 
 ---
 
-### 3.8. [AdminServlet.java](Efficientia/src/main/java/com/efficientia/efficientia/controller/AdminServlet.java)
+### 3.8. [AdminServlet.java](../../src/main/java/com/efficientia/efficientia/controller/AdminServlet.java)
 * **Pacote:** `com.efficientia.efficientia.controller`
 * **Tipo de Dado que Atende:** Cadastro e manutenção de operadores do sistema — **E-mail do Administrador**.
 * **Como Usa o REGEX:**
@@ -192,30 +192,30 @@ Efficientia/
 ### 3.9. Classes da Camada de Persistência (DAOs)
 Além dos Controllers e do utilitário central, classes DAO utilizam expressões regulares nativas em Java (`replaceAll` e `split`) como camada defensiva final de sanitização dos dados antes de executar comandos SQL parametrizados:
 
-1. **[PecuaristaDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/PecuaristaDAO.java):**
+1. **[PecuaristaDAO.java](../../src/main/java/com/efficientia/efficientia/dao/impl/PecuaristaDAO.java):**
    * **Dados:** CPF e Telefone.
    * **Regex:** `cpf.replaceAll("\\D", "").trim()` e `telefone.replaceAll("\\D", "").trim()` para expurgar pontuações antes das queries.
    * **Busca:** `termo.trim().split("\\s+")` para quebrar pesquisas multi-palavras em filtros SQL.
-2. **[MotoristaDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/MotoristaDAO.java):**
+2. **[MotoristaDAO.java](../../src/main/java/com/efficientia/efficientia/dao/impl/MotoristaDAO.java):**
    * **Dados:** Telefone e termos de pesquisa.
    * **Regex:** `telefone.replaceAll("\\D", "")` e `termo.trim().split("\\s+")`.
-3. **[EmpresaDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/EmpresaDAO.java):**
+3. **[EmpresaDAO.java](../../src/main/java/com/efficientia/efficientia/dao/impl/EmpresaDAO.java):**
    * **Dados:** CNPJ e termos de pesquisa.
    * **Regex:** `cnpj.replaceAll("\\D", "").trim()` e `termo.trim().split("\\s+")`.
-4. **[EnderecoDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/EnderecoDAO.java):**
+4. **[EnderecoDAO.java](../../src/main/java/com/efficientia/efficientia/dao/impl/EnderecoDAO.java):**
    * **Dados:** CEP (Código de Endereçamento Postal).
    * **Regex:** `cep.replaceAll("\\D", "").trim()` para garantir conformidade estrita de 8 dígitos numéricos.
-5. **[AdminDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/AdminDAO.java)**, **[PropriedadeDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/PropriedadeDAO.java)**, **[InfoEmbarqueDAO.java](Efficientia/src/main/java/com/efficientia/efficientia/dao/impl/InfoEmbarqueDAO.java):**
+5. **[AdminDAO.java](../../src/main/java/com/efficientia/efficientia/dao/impl/AdminDAO.java)**, **[PropriedadeDAO.java](../../src/main/java/com/efficientia/efficientia/dao/impl/PropriedadeDAO.java)**, **[InfoEmbarqueDAO.java](../../src/main/java/com/efficientia/efficientia/dao/impl/InfoEmbarqueDAO.java):**
    * **Dados:** Termos de busca fornecidos pelo usuário em campos de pesquisa textual.
    * **Regex:** `termo.trim().split("\\s+")` para segmentar termos separados por um ou múltiplos espaços em branco.
 
 ---
 
 ### 3.10. Classes de Modelo e Segurança
-1. **[StatusTrajeto.java](Efficientia/src/main/java/com/efficientia/efficientia/model/StatusTrajeto.java):**
+1. **[StatusTrajeto.java](../../src/main/java/com/efficientia/efficientia/model/StatusTrajeto.java):**
    * **Dados:** Status do trajeto informado pelo usuário ou sistema (ex.: "Em Trânsito", "Concluído", "Pendente").
    * **Regex:** `.replaceAll("\\p{M}", "")` que usa propriedades de blocos Unicode para remover marcas de acentuação antes de converter para a enumeração interna.
-2. **[PasswordHasher.java](Efficientia/src/main/java/com/efficientia/efficientia/util/PasswordHasher.java):**
+2. **[PasswordHasher.java](../../src/main/java/com/efficientia/efficientia/util/PasswordHasher.java):**
    * **Dados:** Hash e salt de senhas de usuários.
    * **Regex:** `stored.split("\\$", -1)` para decodificar os blocos do algoritmo criptográfico seguro.
 

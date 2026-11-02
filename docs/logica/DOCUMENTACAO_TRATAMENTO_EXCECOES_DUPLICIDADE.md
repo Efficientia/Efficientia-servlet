@@ -22,8 +22,8 @@ Práticas inadequadas em arquiteturas DAO frequentemente incorrem em dois extrem
 
 ### 1.3. A Solução Implementada
 Implementou-se um subsistema coeso e desacoplado de tratamento de exceções de domínio no pacote `com.efficientia.efficientia.exception`:
-* **Hierarquia Semântica de Exceções Unchecked:** Baseada em [DadoDuplicadoException](Efficientia/src/main/java/com/efficientia/efficientia/exception/DadoDuplicadoException.java), estendendo `RuntimeException`.
-* **Tradutor Inteligente de SGBD:** O componente utilitário [TratadorExcecaoBanco](Efficientia/src/main/java/com/efficientia/efficientia/util/TratadorExcecaoBanco.java) inspeciona o `SQLState`, extrai a constraint e o valor duplicado via expressões regulares e instancia a subclasse exata de erro.
+* **Hierarquia Semântica de Exceções Unchecked:** Baseada em [DadoDuplicadoException](../../src/main/java/com/efficientia/efficientia/exception/DadoDuplicadoException.java), estendendo `RuntimeException`.
+* **Tradutor Inteligente de SGBD:** O componente utilitário [TratadorExcecaoBanco](../../src/main/java/com/efficientia/efficientia/util/TratadorExcecaoBanco.java) inspeciona o `SQLState`, extrai a constraint e o valor duplicado via expressões regulares e instancia a subclasse exata de erro.
 * **Comunicação Transparente com a Camada Web (Controller/JSP):** Os Servlets interceptam os erros tipados e redirecionam o usuário via padrão PRG (*Post-Redirect-Get*) com o parâmetro semântico `erro=cpf_duplicado`, `erro=cnpj_duplicado`, `erro=email_duplicado` ou `erro=placa_duplicada`.
 
 ---
@@ -76,7 +76,7 @@ Cada instância da exceção carrega atributos que enriquecem o log e a rastreab
 
 ## 4. O Mecanismo do `TratadorExcecaoBanco`
 
-O utilitário [TratadorExcecaoBanco](Efficientia/src/main/java/com/efficientia/efficientia/util/TratadorExcecaoBanco.java) centraliza o desacoplamento entre o PostgreSQL e o código Java.
+O utilitário [TratadorExcecaoBanco](../../src/main/java/com/efficientia/efficientia/util/TratadorExcecaoBanco.java) centraliza o desacoplamento entre o PostgreSQL e o código Java.
 
 ### 4.1. Detecção do Erro de Duplicidade
 A verificação analisa:
@@ -175,14 +175,14 @@ resp.sendRedirect(req.getContextPath() + "/pecuarista?sucesso=cadastrado");
 
 ## 6. Cobertura de Testes Automatizados (JUnit 5)
 
-A classe [TratadorExcecaoBancoTest](Efficientia/src/test/java/com/efficientia/efficientia/util/TratadorExcecaoBancoTest.java) homologa 100% dos cenários de teste unitário:
+A classe [TratadorExcecaoBancoTest](../../src/test/java/com/efficientia/efficientia/util/TratadorExcecaoBancoTest.java) homologa 100% dos cenários de teste unitário:
 - Identificação correta de violação por `SQLState 23505`.
 - Identificação por código MySQL `1062`.
 - Não classificação de erros alheios (ex: falha de conexão `08001` ou tabela inexistente `42P01`).
-- Mapeamento correto de CPF para [CpfDuplicadoException](Efficientia/src/main/java/com/efficientia/efficientia/exception/CpfDuplicadoException.java).
-- Mapeamento de CNPJ para [CnpjDuplicadoException](Efficientia/src/main/java/com/efficientia/efficientia/exception/CnpjDuplicadoException.java).
-- Mapeamento de E-mail para [EmailDuplicadoException](Efficientia/src/main/java/com/efficientia/efficientia/exception/EmailDuplicadoException.java).
-- Mapeamento de Placa (Carreta/Cavalo) para [PlacaDuplicadaException](Efficientia/src/main/java/com/efficientia/efficientia/exception/PlacaDuplicadaException.java).
-- Mapeamento de Código Corporativo para [CodigoDuplicadoException](Efficientia/src/main/java/com/efficientia/efficientia/exception/CodigoDuplicadoException.java).
-- Mapeamento de Documentos de Viagem (GTA/NF-e) para [DocumentoFiscalDuplicadoException](Efficientia/src/main/java/com/efficientia/efficientia/exception/DocumentoFiscalDuplicadoException.java).
+- Mapeamento correto de CPF para [CpfDuplicadoException](../../src/main/java/com/efficientia/efficientia/exception/CpfDuplicadoException.java).
+- Mapeamento de CNPJ para [CnpjDuplicadoException](../../src/main/java/com/efficientia/efficientia/exception/CnpjDuplicadoException.java).
+- Mapeamento de E-mail para [EmailDuplicadoException](../../src/main/java/com/efficientia/efficientia/exception/EmailDuplicadoException.java).
+- Mapeamento de Placa (Carreta/Cavalo) para [PlacaDuplicadaException](../../src/main/java/com/efficientia/efficientia/exception/PlacaDuplicadaException.java).
+- Mapeamento de Código Corporativo para [CodigoDuplicadoException](../../src/main/java/com/efficientia/efficientia/exception/CodigoDuplicadoException.java).
+- Mapeamento de Documentos de Viagem (GTA/NF-e) para [DocumentoFiscalDuplicadoException](../../src/main/java/com/efficientia/efficientia/exception/DocumentoFiscalDuplicadoException.java).
 - Comportamento seletivo de `tratarSeDuplicado`: lança exceção em caso de duplicidade e mantém a execução fluida para outros tipos de falha de banco.

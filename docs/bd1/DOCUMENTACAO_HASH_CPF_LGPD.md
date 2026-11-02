@@ -21,7 +21,7 @@ A implementação do componente `CpfHasher` contempla pilares fundamentais da LG
 
 ## 2. Tecnologias e Mecanismos Criptográficos Utilizados
 
-A classe [CpfHasher](Efficientia/src/main/java/com/efficientia/efficientia/util/CpfHasher.java) utiliza a API nativa de segurança do Java (`javax.crypto` e `java.security`), sem dependências externas adicionais, baseando-se nas seguintes tecnologias:
+A classe [CpfHasher](../../src/main/java/com/efficientia/efficientia/util/CpfHasher.java) utiliza a API nativa de segurança do Java (`javax.crypto` e `java.security`), sem dependências externas adicionais, baseando-se nas seguintes tecnologias:
 
 ### 2.1. PBKDF2 (*Password-Based Key Derivation Function 2*) com HMAC-SHA-256
 * **Definição:** Especificado pelo RFC 2898 (PKCS #5 v2.0) e pelo NIST (SP 800-132), o **PBKDF2** é um algoritmo de derivação de chave projetado para mitigar ataques de força bruta (*brute-force*) e ataques baseados em tabelas pré-computadas (*Rainbow Tables*).
@@ -57,7 +57,7 @@ Um dos aspectos acadêmicos mais ricos desta implementação é o estudo de como
 Existe uma distinção conceitual e temporal crucial entre as operações:
 1. **Fase de Entrada (Validação e Sanitização):**
    * O usuário digita o CPF no formulário web.
-   * O [ValidadorRegex](Efficientia/src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) valida a sintaxe através da expressão regular `^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$`.
+   * O [ValidadorRegex](../../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) valida a sintaxe através da expressão regular `^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$`.
    * A função `ValidadorRegex.apenasDigitos(cpf)` remove a máscara, produzindo os 11 caracteres numéricos.
 2. **Fase de Transformação (Hashing):**
    * O hash PBKDF2 é gerado **apenas após a aprovação do REGEX**.

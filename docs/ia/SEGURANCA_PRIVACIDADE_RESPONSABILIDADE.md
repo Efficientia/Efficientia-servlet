@@ -3,7 +3,7 @@
 > **Projeto:** Efficientia — Gestão Logística e Bem-Estar no Transporte Pecuário  
 > **Nível:** 1º Ano — 2º Semestre (Projeto Interdisciplinar)  
 > **Data:** 29/10/2026  
-> **Documentos relacionados:** [DOCUMENTACAO_VALIDACAO_REGEX.md](DOCUMENTACAO_VALIDACAO_REGEX.md), [TECNOLOGIAS_UTILIZADAS.md](TECNOLOGIAS_UTILIZADAS.md), [METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md)
+> **Documentos relacionados:** [DOCUMENTACAO_VALIDACAO_REGEX.md](../so/DOCUMENTACAO_VALIDACAO_REGEX.md), [TECNOLOGIAS_UTILIZADAS.md](../geral/TECNOLOGIAS_UTILIZADAS.md), [METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md](METODOLOGIA_DOCUMENTACAO_IA_E_VALIDACAO.md)
 
 Este documento responde às diretrizes de segurança da informação, privacidade de dados e uso responsável de Inteligência Artificial, considerando estritamente as tecnologias e mecanismos já implementados e ativos no código-fonte e no banco de dados do projeto **Efficientia**.
 
@@ -32,7 +32,7 @@ Este documento responde às diretrizes de segurança da informação, privacidad
 Todas as medidas abaixo estão **efetivamente implementadas e em funcionamento no código-fonte do repositório**:
 
 ### 6.2.1. Criptografia e Hashing Robusto de Senhas (`PasswordHasher`)
-- **Algoritmo PBKDF2 com HMAC-SHA-256:** As senhas dos usuários nunca são gravadas em texto claro no banco de dados. O sistema utiliza [PasswordHasher.java](../src/main/java/com/efficientia/efficientia/util/PasswordHasher.java) com derivação de chave em **600.000 iterações**.
+- **Algoritmo PBKDF2 com HMAC-SHA-256:** As senhas dos usuários nunca são gravadas em texto claro no banco de dados. O sistema utiliza [PasswordHasher.java](../../src/main/java/com/efficientia/efficientia/util/PasswordHasher.java) com derivação de chave em **600.000 iterações**.
 - **Salt Criptográfico Individual de 16 Bytes:** Cada senha cadastrada gera um salt único e aleatório através de `java.security.SecureRandom`, impedindo ataques baseados em tabelas arco-íris (*rainbow tables*).
 - **Comparação em Tempo Constante:** O método de autenticação utiliza `MessageDigest.isEqual()`, eliminando vulnerabilidades de ataque por temporização (*timing attacks* / canal lateral).
 - **Migração Automática no Login:** Se uma conta existente ainda possuir senha em formato legado, o sistema detecta a autenticação válida e migra automaticamente para o hash seguro sem interrupção do serviço.
@@ -41,7 +41,7 @@ Todas as medidas abaixo estão **efetivamente implementadas e em funcionamento n
 - **100% dos DAOs com `PreparedStatement`:** Nenhuma consulta SQL concatena valores enviados pelo usuário. Todas as operações de `INSERT`, `UPDATE`, `DELETE` e `SELECT` utilizam queries parametrizadas com bind explícito (`stmt.setString()`, `stmt.setInt()`), neutralizando qualquer tentativa de injeção de comandos SQL maliciosos.
 
 ### 6.2.3. Validação Defensiva de Entrada via REGEX
-- **Sanitização Prévia:** A classe [ValidadorRegex.java](../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) valida rigorosamente as entradas antes de qualquer persistência:
+- **Sanitização Prévia:** A classe [ValidadorRegex.java](../../src/main/java/com/efficientia/efficientia/util/ValidadorRegex.java) valida rigorosamente as entradas antes de qualquer persistência:
   - **CPF:** Expressão regular para formato com máscara ou apenas 11 dígitos numéricos (`^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$`).
   - **Telefone:** Padrão rigoroso para telefonia brasileira com DDD (`^\(?[1-9]{2}\)?\s?9?[0-9]{4}-?[0-9]{4}$`).
   - **E-mail:** Validação sintática completa com expressão regular antes de gravar.

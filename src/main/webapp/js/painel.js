@@ -4,7 +4,6 @@
  * Os dados vêm do banco via Servlets/JSP. Este script cuida apenas de experiência de uso:
  * busca interativa nos cards da Home, máscaras, alternância de visibilidade de senha com ícones,
  * conversão de data DD/MM/AAAA <-> AAAA-MM-DD, confirmação de exclusão e toasts informativos.
- * Veja docs/poo/SPEC_INTEGRACAO_FRONTEND_BACKEND.md.
  */
 document.addEventListener('DOMContentLoaded', () => {
   const toastContainer = document.getElementById('toastContainer');

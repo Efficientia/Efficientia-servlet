@@ -52,7 +52,7 @@ EfficientiaDER.pdf
 ### Documentos internos / Checklist de Entregas ###
 docs/geral/ANALISE_E_CHECKLIST_ENTREGAS.md
 
-### Artefatos locais de ferramentas de IA e conferência visual ###
+### Artefatos locais: mantenha planos, logs, capturas e checklists no workspace temporário, fora do Git ###
 /.maestri/
 /graphify-out/
 /output/
